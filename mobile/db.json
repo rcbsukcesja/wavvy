@@ -1,0 +1,365 @@
+{
+  "ngos": [
+    {
+      "id": "123231",
+      "name": "Stowarzyszenie Złota Rybka",
+      "owners": [
+        {
+          "id": "123232",
+          "username": "qb",
+          "firstName": "jakub",
+          "lastName": "wójcik",
+          "email": "j.wojcik1994@gmail.com",
+          "userType": "BUSINESS"
+        }
+      ],
+      "address": "ul. Portowa 1, 01-001 Kołobrzeg",
+      "phone": "+48508158777",
+      "email": "j.wojcik1994@gmail.com",
+      "website": "https://www.google.com",
+      "logoUrl": "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1228&q=80",
+      "socialLinks": [
+        "https://facebook.com"
+      ],
+      "creationDate": "2023-06-20T00:00:00.000Z",
+      "description": "Ennui shabby chic marfa grailed. Scenester kombucha butcher.",
+      "resource": [
+        "sala gimnastyczna"
+      ],
+      "KRS": "12323232323",
+      "NIP": "12323232323",
+      "legalStatus": "ASSOCIATION",
+      "employees": [],
+      "projects": []
+    },
+    {
+      "id": "123232",
+      "name": "Stowarzyszenie Kuternoga",
+      "owners": [
+        {
+          "id": "123232",
+          "username": "qb",
+          "firstName": "jakub",
+          "lastName": "wójcik",
+          "email": "j.wojcik1994@gmail.com",
+          "userType": "BUSINESS"
+        }
+      ],
+      "address": "ul. Portowa 1, 01-001 Kołobrzeg",
+      "phone": "+48508158777",
+      "email": "j.wojcik1994@gmail.com",
+      "website": "https://www.google.com",
+      "logoUrl": "https://images.unsplash.com/photo-1603802310139-9f3e73fd1463?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+      "socialLinks": [
+        "https://facebook.com"
+      ],
+      "creationDate": "2023-06-20T00:00:00.000Z",
+      "description": "Ennui shabby chic marfa grailed. Scenester kombucha butcher.",
+      "resource": [
+        "sala gimnastyczna"
+      ],
+      "KRS": "12323232323",
+      "NIP": "12323232323",
+      "legalStatus": "SOCIAL_COOPERATIVE",
+      "employees": [],
+      "projects": []
+    },
+    {
+      "id": "123233",
+      "name": "Fundacja \"Podróż Do Krainy Zdrowia\"",
+      "owners": [
+        {
+          "id": "123232",
+          "username": "qb",
+          "firstName": "jakub",
+          "lastName": "wójcik",
+          "email": "j.wojcik1994@gmail.com",
+          "userType": "BUSINESS"
+        }
+      ],
+      "address": "ul. Gen. Józefa Bema 3 lok. 36",
+      "phone": "+48604276174",
+      "email": "podrozdokrainyzdrowia@wp.pl",
+      "website": "http://podrozdokrainyzdrowia.org",
+      "logoUrl": "https://images.unsplash.com/photo-1477332552946-cfb384aeaf1c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      "socialLinks": [
+        "https://facebook.com"
+      ],
+      "creationDate": "2023-06-20T00:00:00.000Z",
+      "description": "Fundacja propagujące zdrowe nawyki",
+      "resource": [
+        "sala gimnastyczna"
+      ],
+      "KRS": "12323232323",
+      "NIP": "12323232323",
+      "legalStatus": "FOUNDATION",
+      "employees": [],
+      "projects": []
+    }
+  ],
+  "companies": [
+    {
+      "id": "123231",
+      "name": "PHU Bocian",
+      "owners": [
+        {
+          "id": "123232",
+          "username": "qb",
+          "firstName": "jakub",
+          "lastName": "wójcik",
+          "email": "j.wojcik1994@gmail.com",
+          "userType": "BUSINESS"
+        }
+      ],
+      "address": "ul. Portowa 1, 01-001 Kołobrzeg",
+      "phone": "+48508158777",
+      "email": "j.wojcik1994@gmail.com",
+      "website": "https://www.google.com",
+      "logoUrl": "https://images.unsplash.com/photo-1562525337-cdec6c4f2dc3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+      "socialLinks": [
+        "https://facebook.com"
+      ],
+      "creationDate": "2023-06-20T00:00:00.000Z",
+      "description": "Ennui shabby chic marfa grailed. Scenester kombucha butcher.",
+      "businessAreas": [
+        {
+          "id": "1",
+          "name": "budownictwo"
+        }
+      ],
+      "resource": [
+        "sala gimnastyczna"
+      ],
+      "donatedProjects": [
+        {
+          "id": "1232",
+          "name": "Dokarmianie rybek 2023",
+          "description": "Ennui shabby chic marfa grailed. Scenester kombucha butcher.",
+          "address": "ul. Portowa 1, 01-001 Kołobrzeg",
+          "imageLink": "https://www.google.com",
+          "link": "https://www.google.com",
+          "startTime": "2023-06-20T00:00:00.000Z",
+          "endTime": "2023-06-21T00:00:00.000Z",
+          "budget": 200000,
+          "cooperationMessage": "elo",
+          "place": "ul. Parkowa 1, 01-001 Kołobrzeg",
+          "categories": [
+            {
+              "id": "1",
+              "name": "sztuka"
+            }
+          ],
+          "status": "COMPLETED",
+          "tags": [
+            "sztuka",
+            "sport"
+          ],
+          "possibleVolunteer": true
+        }
+      ],
+      "KRS": "12323232323",
+      "NIP": "12323232323"
+    },
+    {
+      "id": "123233",
+      "name": "PHU Śmieciarka Jedzie",
+      "owners": [
+        {
+          "id": "123232",
+          "username": "qb",
+          "firstName": "jakub",
+          "lastName": "wójcik",
+          "email": "j.wojcik1994@gmail.com",
+          "userType": "BUSINESS"
+        }
+      ],
+      "address": "ul. Portowa 1, 01-001 Kołobrzeg",
+      "phone": "+48508158777",
+      "email": "j.wojcik1994@gmail.com",
+      "logoUrl": "https://images.unsplash.com/photo-1562525337-cdec6c4f2dc3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+      "website": "https://www.google.com",
+      "socialLinks": [
+        "https://facebook.com"
+      ],
+      "creationDate": "2023-06-20T00:00:00.000Z",
+      "description": "Ennui shabby chic marfa grailed. Scenester kombucha butcher.",
+      "businessAreas": [
+        {
+          "id": "1",
+          "name": "media"
+        }
+      ],
+      "resource": [
+        "sala gimnastyczna"
+      ],
+      "donatedProjects": [
+        {
+          "id": "1233",
+          "name": "Zbieranie śmieci 2023",
+          "description": "Ennui shabby chic marfa grailed. Scenester kombucha butcher.",
+          "address": "ul. Portowa 1, 01-001 Kołobrzeg",
+          "imageLink": "https://www.google.com",
+          "link": "https://www.google.com",
+          "startTime": "2023-06-20T00:00:00.000Z",
+          "endTime": "2023-06-21T00:00:00.000Z",
+          "budget": 200000,
+          "cooperationMessage": "elo",
+          "place": "ul. Parkowa 1, 01-001 Kołobrzeg",
+          "categories": [
+            {
+              "id": "1",
+              "name": "sztuka"
+            }
+          ],
+          "status": "COMPLETED",
+          "tags": [
+            "sztuka",
+            "sport"
+          ],
+          "possibleVolunteer": true
+        }
+      ],
+      "KRS": "12323232323",
+      "NIP": "12323232323"
+    },
+    {
+      "id": "123234",
+      "name": "Restauracja Portowa",
+      "owners": [
+        {
+          "id": "123232",
+          "username": "qb",
+          "firstName": "jakub",
+          "lastName": "wójcik",
+          "email": "j.wojcik1994@gmail.com",
+          "userType": "BUSINESS"
+        }
+      ],
+      "address": "ul. Portowa 1, 01-001 Kołobrzeg",
+      "phone": "+48508158777",
+      "email": "j.wojcik1994@gmail.com",
+      "website": "https://www.google.com",
+      "logoUrl": "https://images.unsplash.com/photo-1600261701148-cab9668a1052?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      "socialLinks": [
+        "https://facebook.com"
+      ],
+      "creationDate": "2023-06-20T00:00:00.000Z",
+      "description": "Restauracja dysponuje salą o pojemności 150os. Możliwa realizacja konferencji i szkoleń.",
+      "businessAreas": [
+        {
+          "id": "1",
+          "name": "gastronomia"
+        }
+      ],
+      "resource": [
+        "sala gimnastyczna"
+      ],
+      "donatedProjects": [
+        {
+          "id": "1233",
+          "name": "Zbieranie śmieci 2023",
+          "description": "Ennui shabby chic marfa grailed. Scenester kombucha butcher.",
+          "address": "ul. Portowa 1, 01-001 Kołobrzeg",
+          "imageLink": "https://www.google.com",
+          "link": "https://www.google.com",
+          "startTime": "2023-06-20T00:00:00.000Z",
+          "endTime": "2023-06-21T00:00:00.000Z",
+          "budget": 200000,
+          "cooperationMessage": "elo",
+          "place": "ul. Parkowa 1, 01-001 Kołobrzeg",
+          "categories": [
+            {
+              "id": "1",
+              "name": "sztuka"
+            }
+          ],
+          "status": "COMPLETED",
+          "tags": [
+            "sztuka",
+            "sport"
+          ],
+          "possibleVolunteer": true
+        }
+      ],
+      "KRS": "12323232323",
+      "NIP": "12323232323"
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "title": "Fundacja Finansowa Przyszłość",
+      "tag": "samorozwój",
+      "description": "Warsztaty finansowe dla młodych dorosłych: Naucz się zarządzać swoimi finansami i planować budżet, aby osiągnąć stabilność finansową.",
+      "dueDate": "2023-06-20T00:00:00.000Z",
+      "date": "23.06.2023",
+      "hourStart": "9:00",
+      "hourEnd": "18:00",
+      "likesCount": 128,
+      "image": {
+        "uri": "https://images.unsplash.com/photo-1604594849809-dfedbc827105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+        "alt": "event"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Fundacja Zrównoważony Rozwój",
+      "tag": "środowisko",
+      "description": "Konferencja o zrównoważonym rozwoju: Spotkajmy się, aby omówić strategie i rozwiązania mające na celu ochronę środowiska i zrównoważony rozwój naszego regionu.",
+      "dueDate": "2023-06-20T00:00:00.000Z",
+      "date": "23.06.2023",
+      "hourStart": "9:00",
+      "hourEnd": "18:00",
+      "likesCount": 457,
+      "image": {
+        "uri": "https://images.unsplash.com/photo-1591115765373-5207764f72e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+        "alt": "event"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Stowarzyszenie Pomoc Żywnościowa",
+      "tag": "zbiórka",
+      "description": "Zbiórka żywności dla osób potrzebujących: Dołącz do nas w akcji gromadzenia żywności i pomóż dostarczyć posiłki potrzebującym w naszej społeczności.",
+      "dueDate": "2023-06-20T00:00:00.000Z",
+      "date": "24.06.2023",
+      "hourStart": "9:00",
+      "hourEnd": "18:00",
+      "likesCount": 1553,
+      "image": {
+        "uri": "https://images.unsplash.com/photo-1588964895597-cfccd6e2dbf9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
+        "alt": "event"
+      }
+    },
+    {
+      "id": 4,
+      "title": "Akademia Kodowania Młodzieżowego",
+      "tag": "samorozwój",
+      "description": "Kurs programowania dla młodzieży: Dajemy młodzieży szansę na naukę podstaw programowania i rozwijanie umiejętności cyfrowych, aby przygotować ich do przyszłych zawodowych wyzwań.",
+      "dueDate": "2023-07-18T00:00:00.000Z",
+      "date": "23.07.2023",
+      "hourStart": "9:00",
+      "hourEnd": "18:00",
+      "likesCount": 1214,
+      "image": {
+        "uri": "https://images.unsplash.com/photo-1563394867331-e687a36112fd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1476&q=80",
+        "alt": "event sport"
+      }
+    },
+    {
+      "id": 5,
+      "title": "Kolektyw Ekspresje Artystyczne",
+      "tag": "kultura",
+      "description": "Wystawa sztuki lokalnej: Zobacz prace lokalnych artystów i wspieraj naszą lokalną społeczność artystyczną podczas naszej wystawy sztuki.",
+      "dueDate": "2023-08-18T00:00:00.000Z",
+      "date": "24.08.2023",
+      "hourStart": "9:00",
+      "hourEnd": "18:00",
+      "likesCount": 1112,
+      "image": {
+        "uri": "https://images.unsplash.com/photo-1514195037031-83d60ed3b448?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80",
+        "alt": "event"
+      }
+    }
+  ]
+}

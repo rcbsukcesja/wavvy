@@ -1,0 +1,93 @@
+{
+  "name": "expo-boilerplate",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "db": "json-server --watch db.json --port 8081",
+    "android": "expo start --android",
+    "test": "jest",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "check-typescript": "tsc --noEmit",
+    "check-eslint": "eslint './src/**/*{js,ts,jsx,tsx}'",
+    "lint": "yarn check-typescript && yarn check-eslint",
+    "release": "standard-version",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.22.5",
+    "@expo/vector-icons": "^13.0.0",
+    "@react-navigation/native": "^6.1.6",
+    "@react-navigation/native-stack": "^6.9.12",
+    "@shopify/flash-list": "1.4.0",
+    "@types/react": "~18.0.27",
+    "@types/react-native": "^0.72.2",
+    "axios": "^1.4.0",
+    "expo": "~48.0.18",
+    "expo-font": "^11.1.1",
+    "expo-navigation-bar": "^2.1.1",
+    "expo-splash-screen": "^0.18.2",
+    "expo-status-bar": "~1.4.4",
+    "jest": "^29.2.1",
+    "jest-expo": "^48.0.2",
+    "json-server": "^0.17.3",
+    "native-base": "^3.4.28",
+    "react": "18.2.0",
+    "react-hook-form": "^7.45.1",
+    "react-native": "0.71.8",
+    "react-native-safe-area-context": "4.5.0",
+    "react-native-screens": "~3.20.0",
+    "react-native-svg": "13.4.0",
+    "react-query": "^3.39.3",
+    "typescript": "^4.9.4",
+    "zustand": "^4.3.8"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@babel/plugin-syntax-jsx": "^7.22.5",
+    "@babel/preset-react": "^7.22.5",
+    "@commitlint/cli": "^17.6.5",
+    "@commitlint/config-conventional": "^17.6.5",
+    "@react-native-community/eslint-config": "^3.2.0",
+    "@testing-library/jest-native": "^5.4.2",
+    "@testing-library/react-native": "^12.1.2",
+    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
+    "@types/jest": "^29.5.2",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "@typescript-eslint/parser": "^5.59.11",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "eslint": "^8.42.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-standard-with-typescript": "^34.0.1",
+    "eslint-import-resolver-typescript": "^3.5.4",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-testing-library": "^5.11.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.2",
+    "metro-react-native-babel-preset": "^0.76.6",
+    "prettier": "^2.8.8",
+    "standard-version": "^9.5.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --cache --fix --ext .tsx --ext .ts"
+    ]
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
+    ]
+  },
+  "private": true
+}
