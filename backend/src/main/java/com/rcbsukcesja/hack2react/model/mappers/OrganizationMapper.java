@@ -1,8 +1,8 @@
 package com.rcbsukcesja.hack2react.model.mappers;
 
-import com.rcbsukcesja.hack2react.model.dto.organization.CompanyDto;
-import com.rcbsukcesja.hack2react.model.dto.organization.OrganizationDto;
-import com.rcbsukcesja.hack2react.model.dto.organization.OrganizationNGODto;
+import com.rcbsukcesja.hack2react.model.dto.view.organization.CompanyView;
+import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOView;
+import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationView;
 import com.rcbsukcesja.hack2react.model.entity.Company;
 import com.rcbsukcesja.hack2react.model.entity.Organization;
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
@@ -20,28 +20,28 @@ public abstract class OrganizationMapper {
     @Autowired
     protected OrganizationNGOMapper organizationNGOMapper;
 
-    public List<Organization> organizationDtoListToOrganizationList(List<OrganizationDto> organizationDtoList) {
+    public List<Organization> organizationViewListToOrganizationList(List<OrganizationView> organizationViewList) {
         List<Organization> organizations = new ArrayList<>();
-        if (organizationDtoList != null) {
-            for (OrganizationDto organizationDto : organizationDtoList) {
-                if (organizationDto instanceof CompanyDto companyDto) {
-                    organizations.add(companyMapper.companyDtoToCompany(companyDto));
-                } else if (organizationDto instanceof OrganizationNGODto organizationNGODto) {
-                    organizations.add(organizationNGOMapper.organizationNGODtoToOrganizationNGO(organizationNGODto));
+        if (organizationViewList != null) {
+            for (OrganizationView organizationView : organizationViewList) {
+                if (organizationView instanceof CompanyView companyView) {
+                    organizations.add(companyMapper.companyViewToCompany(companyView));
+                } else if (organizationView instanceof OrganizationNGOView organizationNGODto) {
+                    organizations.add(organizationNGOMapper.organizationNGOViewToOrganizationNGO(organizationNGODto));
                 }
             }
         }
         return organizations;
     }
 
-    public List<OrganizationDto> organizationListToOrganizationDtoList(List<Organization> organizationList) {
-        List<OrganizationDto> organizations = new ArrayList<>();
+    public List<OrganizationView> organizationListToOrganizationViewList(List<Organization> organizationList) {
+        List<OrganizationView> organizations = new ArrayList<>();
         if (organizationList != null) {
             for (Organization organization : organizationList) {
                 if (organization instanceof Company company) {
-                    organizations.add(companyMapper.companyToCompanyDto(company));
+                    organizations.add(companyMapper.companyToCompanyView(company));
                 } else if (organization instanceof OrganizationNGO organizationNGO) {
-                    organizations.add(organizationNGOMapper.organizationNGOToOrganizationNGODto(organizationNGO));
+                    organizations.add(organizationNGOMapper.organizationNGOToOrganizationNGOView(organizationNGO));
                 }
             }
         }

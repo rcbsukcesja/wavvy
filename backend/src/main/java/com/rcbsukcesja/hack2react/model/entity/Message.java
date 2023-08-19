@@ -8,12 +8,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +21,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Table(name = "MESSAGES")
 public class Message {
 
@@ -30,7 +31,7 @@ public class Message {
 
     private String text;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
@@ -40,16 +41,7 @@ public class Message {
     @JoinColumn(referencedColumnName = "id")
     private User toUser;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Message that = (Message) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "conversation_id", referencedColumnName = "id")
+    private Conversation conversation;
 }

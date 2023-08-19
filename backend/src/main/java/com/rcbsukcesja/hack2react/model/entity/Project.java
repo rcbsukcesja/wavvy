@@ -17,14 +17,14 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -32,7 +32,8 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "PROJECT")
+@EqualsAndHashCode(of = "id")
+@Table(name = "PROJECTS")
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -47,15 +48,24 @@ public class Project {
     private LocalDateTime endTime;
     private BigDecimal budget;
     private String cooperationMessage;
-    private String place;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinTable(
+            name = "organizationsNGO_projects",
+            joinColumns = {@JoinColumn(name = "project_id")},
+            inverseJoinColumns = {@JoinColumn(name = "organizationNGO_id")}
+    )
+    private Set<OrganizationNGO> organizers;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "project_categories",
             joinColumns = {@JoinColumn(name = "project_id")},
             inverseJoinColumns = {@JoinColumn(name = "business_area_id")}
     )
-    private List<BusinessArea> categories;
+    private Set<BusinessArea> categories;
 
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
@@ -63,20 +73,7 @@ public class Project {
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "tags", joinColumns = @JoinColumn(name = "tag_id"))
     @Column(name = "tag", nullable = false)
-    private List<String> tags;
+    private Set<String> tags;
 
     private boolean possibleVolunteer;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Project that = (Project) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

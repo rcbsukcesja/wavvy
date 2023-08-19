@@ -1,23 +1,26 @@
-package com.rcbsukcesja.hack2react.model.dto;
+package com.rcbsukcesja.hack2react.model.dto.view;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rcbsukcesja.hack2react.model.enums.UserType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
-@NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
 @Setter
+@Getter
 @Builder
-public class UserDto {
+public class UserView {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private UUID id;
     private String username;
     private String firstName;
     private String lastName;
     private String email;
+    private boolean deleted;
     private UserType userType;
 }

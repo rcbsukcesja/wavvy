@@ -8,20 +8,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Builder
 @Table(name = "CONVERSATIONS")
 public class Conversation {
@@ -31,34 +34,17 @@ public class Conversation {
     private UUID id;
 
 
-    @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(
-            name = "conversation_message",
-            joinColumns = {@JoinColumn(name = "conversation_id")},
-            inverseJoinColumns = {@JoinColumn(name = "message_id")}
-    )
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
 
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(
             name = "conversation_users",
             joinColumns = {@JoinColumn(name = "conversation_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
+    private Set<User> users;
 
-    private List<User> users;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Conversation that = (Conversation) o;
-        return Objects.equals(id, that.id) && Objects.equals(messages, that.messages) && Objects.equals(users, that.users);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, messages, users);
-    }
 }

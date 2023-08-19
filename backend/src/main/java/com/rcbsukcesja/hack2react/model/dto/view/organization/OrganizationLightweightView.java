@@ -1,5 +1,4 @@
-package com.rcbsukcesja.hack2react.model.dto;
-
+package com.rcbsukcesja.hack2react.model.dto.view.organization;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +8,12 @@ import lombok.Setter;
 
 import java.util.UUID;
 
-@NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
 @Setter
+@Getter
 @Builder
-public class BusinessAreaDto {
+public class OrganizationLightweightView {
     private UUID id;
     private String name;
 }

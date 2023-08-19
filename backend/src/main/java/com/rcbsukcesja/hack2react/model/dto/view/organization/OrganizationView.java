@@ -1,10 +1,9 @@
-package com.rcbsukcesja.hack2react.model.dto.organization;
+package com.rcbsukcesja.hack2react.model.dto.view.organization;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.rcbsukcesja.hack2react.model.dto.BusinessAreaDto;
-import com.rcbsukcesja.hack2react.model.dto.UserDto;
+import com.rcbsukcesja.hack2react.model.dto.view.BusinessAreaView;
+import com.rcbsukcesja.hack2react.model.dto.view.UserLightweightView;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,32 +16,32 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-@Getter
 @Setter
+@Getter
+@SuperBuilder
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         property = "dtoType"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = CompanyDto.class, name = "company"),
-        @JsonSubTypes.Type(value = OrganizationNGODto.class, name = "organizationNGO")
+        @JsonSubTypes.Type(value = CompanyView.class, name = "company"),
+        @JsonSubTypes.Type(value = OrganizationNGOView.class, name = "organizationNGO")
 })
-public abstract class OrganizationDto {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+public abstract class OrganizationView {
     private UUID id;
     private String name;
-    private List<UserDto> owners;
+    private UserLightweightView owner;
     private String address;
     private String phone;
     private String email;
     private String website;
-    private String logoUrl;
+    private byte[] logo;
     private List<String> socialLinks;
     private LocalDate creationDate;
     private String description;
-    private List<BusinessAreaDto> businnessAreas;
+    private List<BusinessAreaView> businessAreas;
     private String KRS;
     private String NIP;
+    private String REGON;
     private List<String> resource;
 }

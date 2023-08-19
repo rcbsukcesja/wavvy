@@ -13,9 +13,12 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +26,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -32,6 +34,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(of = "id")
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Organization {
@@ -40,19 +43,18 @@ public abstract class Organization {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(
-            name = "organization_owners",
-            joinColumns = {@JoinColumn(name = "organization_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")}
-    )
-    private List<User> owners;
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    private User owner;
     private String address;
     private String phone;
     private String email;
     private String website;
 
-    private String logoUrl;
+    @Lob
+    @Column(columnDefinition = "BLOB")
+    private byte[] logo;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "socialLinks", joinColumns = @JoinColumn(name = "socialLink_id"))
@@ -61,31 +63,21 @@ public abstract class Organization {
     private LocalDate creationDate;
     private String description;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "organization_business_areas",
             joinColumns = {@JoinColumn(name = "organization_id")},
             inverseJoinColumns = {@JoinColumn(name = "business_area_id")}
     )
-    private List<BusinessArea> businnessAreas;
+    private List<BusinessArea> businessAreas;
     private String KRS;
     private String NIP;
+    private String REGON;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "resources", joinColumns = @JoinColumn(name = "resource_id"))
     @Column(name = "resource", nullable = false)
     private List<String> resource;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Organization that = (Organization) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
