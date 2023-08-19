@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.rcb-sukcesja</groupId>
-    <artifactId>backend</artifactId>
+    <artifactId>wavvy-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>hack2react</name>
     <description>Communication app</description>
