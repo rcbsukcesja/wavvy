@@ -47,13 +47,13 @@ VALUES
     ('a5b7431e-0d2b-11ee-be56-0242ac120002', 'example name5', 'opis5', 'example link5', '2023-06-01', '2023-07-10', 'true', 'NGO_ONLY');
 
 INSERT INTO
-    ORGANIZATIONS(id, name, owner_id, address, phone, email, website, logo, creation_date, description, KRS, NIP, REGON)
+    ORGANIZATIONS(id, name, owner_id, address, phone, email, website, logo, creation_time, description, KRS, NIP, REGON)
 VALUES
-    ('a2daa44a-0d2d-11ee-be56-0242ac120002', 'name1', 'ccccf3b0-0d10-11ee-be56-0242ac120002', 'adres1', 'phone1', 'email1', 'website1', 'logo1','2015-06-10','opis1', '000757520', '234858990', '378955803'),
-    ('9bab7cfc-0d2e-11ee-be56-0242ac120002', 'name2', '2dc6b240-0d12-11ee-be56-0242a20002c1', 'adres2', 'phone2', 'email2', 'website2', 'logo2','2016-06-10','opis1', '000757550', '234858991', '394262080'),
-    ('a9656db2-0d2e-11ee-be56-0242ac120002', 'name3', '353feec4-0d12-11ee-be56-0242ac120002', 'adres3', 'phone3', 'email3', 'website3', 'logo3','2018-06-10','opis1', '000753520', '234858992', '930642371'),
-    ('b544b8e0-0d2e-11ee-be56-0242ac120002', 'name4', '3ed0cf62-0d12-11ee-be56-0242ac120002', 'adres4', 'phone4', 'email4', 'website4', 'logo4','2020-06-10','opis1', '000757520', '234858993', '192076468'),
-    ('c06f4f3c-0d2e-11ee-be56-0242ac120002', 'name5', '4f1b9b6c-0d12-11ee-be56-0242ac120002', 'adres5', 'phone5', 'email5', 'website5', 'logo5','2021-06-10','opis1', '000757590', '234858996', '612958850');
+    ('a2daa44a-0d2d-11ee-be56-0242ac120002', 'name1', 'ccccf3b0-0d10-11ee-be56-0242ac120002', 'adres1', 'phone1', 'email1', 'website1', 'logo1','2015-06-10T12:24:36Z','opis1', '000757520', '234858990', '378955803'),
+    ('9bab7cfc-0d2e-11ee-be56-0242ac120002', 'name2', '2dc6b240-0d12-11ee-be56-0242a20002c1', 'adres2', 'phone2', 'email2', 'website2', 'logo2','2016-06-10T12:24:36Z','opis1', '000757550', '234858991', '394262080'),
+    ('a9656db2-0d2e-11ee-be56-0242ac120002', 'name3', '353feec4-0d12-11ee-be56-0242ac120002', 'adres3', 'phone3', 'email3', 'website3', 'logo3','2018-06-10T12:24:36Z','opis1', '000753520', '234858992', '930642371'),
+    ('b544b8e0-0d2e-11ee-be56-0242ac120002', 'name4', '3ed0cf62-0d12-11ee-be56-0242ac120002', 'adres4', 'phone4', 'email4', 'website4', 'logo4','2020-06-10T12:24:36Z','opis1', '000757520', '234858993', '192076468'),
+    ('c06f4f3c-0d2e-11ee-be56-0242ac120002', 'name5', '4f1b9b6c-0d12-11ee-be56-0242ac120002', 'adres5', 'phone5', 'email5', 'website5', 'logo5','2021-06-10T12:24:36Z','opis1', '000757590', '234858996', '612958850');
 
 INSERT INTO
     COMPANIES(id)

@@ -6,8 +6,10 @@ import com.rcbsukcesja.hack2react.service.OrganizationNGOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,8 +36,16 @@ public class NGOController {
     }
 
     @PostMapping
-    public ResponseEntity<OrganizationNGOView> createNGO(@RequestBody OrganizationNGODto dto) {
+    public ResponseEntity<OrganizationNGOView> createNGO(
+            @RequestBody @Validated(OrganizationNGODto.CreateNGO.class) OrganizationNGODto dto) {
         return new ResponseEntity<>(organizationNGOService.createNGO(dto), HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{ngoId}")
+    public ResponseEntity<OrganizationNGOView> updateNGO(
+            @PathVariable UUID ngoId,
+            @RequestBody @Validated(OrganizationNGODto.UpdateNGO.class) OrganizationNGODto dto) {
+        return new ResponseEntity<>(organizationNGOService.updateNGO(ngoId, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{ngoId}")

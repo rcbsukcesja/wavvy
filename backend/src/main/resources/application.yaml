@@ -3,6 +3,9 @@ spring:
     url: jdbc:h2:mem:dev-db
     username: user
     password: user
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -10,14 +13,12 @@ spring:
     defer-datasource-initialization: true
     properties:
       hibernate:
+        show-sql: true
+        format-sql: true
         dialect: org.hibernate.dialect.H2Dialect
   h2:
     console.enabled: true
 
 logging:
   level:
-    org:
-      hibernate:
-        orm:
-          jdbc:
-            bind: TRACE
+    org.hibernate.orm.jdbc.bind: TRACE

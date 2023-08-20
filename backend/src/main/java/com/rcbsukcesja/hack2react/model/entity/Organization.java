@@ -24,8 +24,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -60,7 +61,7 @@ public abstract class Organization {
     @CollectionTable(name = "socialLinks", joinColumns = @JoinColumn(name = "socialLink_id"))
     @Column(name = "socialLink", nullable = false)
     private List<String> socialLinks;
-    private LocalDate creationDate;
+    private OffsetDateTime creationTime;
     private String description;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
@@ -70,7 +71,7 @@ public abstract class Organization {
             joinColumns = {@JoinColumn(name = "organization_id")},
             inverseJoinColumns = {@JoinColumn(name = "business_area_id")}
     )
-    private List<BusinessArea> businessAreas;
+    private Set<BusinessArea> businessAreas;
     private String KRS;
     private String NIP;
     private String REGON;
@@ -78,6 +79,6 @@ public abstract class Organization {
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "resources", joinColumns = @JoinColumn(name = "resource_id"))
     @Column(name = "resource", nullable = false)
-    private List<String> resource;
+    private List<String> resources;
 
 }

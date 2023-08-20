@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -38,7 +39,6 @@ public class ProjectService {
     public ProjectView createOrUpdateProject(UUID projectId, ProjectDto projectDto) {
         Project project = projectMapper.projectDtoToProject(projectDto);
         if (projectId != null) {
-
             getProjectByIdOrThrowException(projectId); // check if project exists
             project.setId(projectId);
         }
@@ -64,6 +64,12 @@ public class ProjectService {
     public Project getProjectByIdOrThrowException(UUID projectId) {
         return projectRepository.getProjectById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException(ErrorMessages.PROJECT_NOT_FOUND, projectId));
+    }
+
+    public Set<Project> getProjectsByIdOrThrowException(Set<UUID> projectIds) {
+        return new HashSet<>(projectIds.stream()
+                .map(this::getProjectByIdOrThrowException)
+                .toList());
     }
 
 }
