@@ -2,12 +2,17 @@ package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationNGOAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
+import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
+import com.rcbsukcesja.hack2react.exceptions.notFound.UserNotFoundException;
 import com.rcbsukcesja.hack2react.model.dto.save.OrganizationNGODto;
 import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOView;
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
 import com.rcbsukcesja.hack2react.model.mappers.OrganizationNGOMapper;
+import com.rcbsukcesja.hack2react.repositories.BusinessAreaRepository;
 import com.rcbsukcesja.hack2react.repositories.OrganizationNGORepository;
+import com.rcbsukcesja.hack2react.repositories.UserRepository;
+import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,8 @@ public class OrganizationNGOService {
 
     private final OrganizationNGOMapper organizationNGOMapper;
     private final OrganizationNGORepository organizationNGORepository;
+    private final UserRepository userRepository;
+    private final BusinessAreaRepository businessAreaRepository;
 
     public List<OrganizationNGOView> getAllNGO() {
         return organizationNGORepository.findAll().stream()
@@ -37,8 +44,9 @@ public class OrganizationNGOService {
     @Transactional
     public OrganizationNGOView createNGO(OrganizationNGODto dto) {
         validateNGO(dto);
-        // TODO: change the way of obtaining OrganizationNGO object - change id into objects
         OrganizationNGO ngo = organizationNGOMapper.organizationNGODtoToOrganizationNGO(dto);
+        ngo.setProjects(new HashSet<>());
+        ngo.setCreationTime(TimeUtils.now());
         OrganizationNGO saved = organizationNGORepository.save(ngo);
         return organizationNGOMapper.organizationNGOToOrganizationNGOView(saved);
     }
@@ -46,21 +54,58 @@ public class OrganizationNGOService {
     @Transactional
     public OrganizationNGOView updateNGO(UUID ngoId, OrganizationNGODto dto) {
         OrganizationNGO actual = getNGOByIdOrThrowException(ngoId);
-        if (!actual.getName().equalsIgnoreCase(dto.name())) {
+        if (dto.name() != null && !actual.getName().equalsIgnoreCase(dto.name())) {
             checkIfNGONameAlreadyExists(dto.name());
+            actual.setName(dto.name());
         }
-        if (!actual.getKRS().equals(dto.KRS())) {
+        if (dto.KRS() != null && !actual.getKRS().equals(dto.KRS())) {
             checkIfNGOKRSAlreadyExists(dto.KRS());
+            actual.setKRS(dto.KRS());
         }
-        if(!actual.getNIP().equals(dto.NIP())) {
+        if (dto.NIP() != null && !actual.getNIP().equals(dto.NIP())) {
             checkIfNGONIPAlreadyExists(dto.NIP());
+            actual.setNIP(dto.NIP());
         }
-        if(!actual.getREGON().equals(dto.REGON())) {
+        if (dto.REGON() != null && !actual.getREGON().equals(dto.REGON())) {
             checkIfNGOREGONAlreadyExists(dto.REGON());
+            actual.setREGON(dto.REGON());
         }
-        // TODO: update fields and return view
-        return null;
-
+        if (dto.ownerId() != null && !actual.getOwner().getId().equals(dto.ownerId())) {
+            actual.setOwner(userRepository.getUserById(dto.ownerId())
+                    .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
+        }
+        if (dto.address() != null && !actual.getAddress().equals(dto.address())) {
+            actual.setAddress(dto.address());
+        }
+        if (dto.phone() != null && !actual.getPhone().equals(dto.phone())) {
+            actual.setPhone(dto.phone());
+        }
+        if (dto.email() != null && !actual.getEmail().equals(dto.email())) {
+            actual.setEmail(dto.email());
+        }
+        if (dto.website() != null && !actual.getWebsite().equals(dto.website())) {
+            actual.setWebsite(dto.website());
+        }
+        if (dto.socialLinks() != null) {
+            actual.setSocialLinks(dto.socialLinks());
+        }
+        if (dto.description() != null && !actual.getDescription().equals(dto.description())) {
+            actual.setDescription(dto.description());
+        }
+        if (dto.businessAreaIds() != null) {
+            actual.setBusinessAreas(new HashSet<>(dto.businessAreaIds().stream()
+                    .map(id -> businessAreaRepository.getBusinessAreaById(id)
+                            .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
+                    .toList()));
+        }
+        if (dto.resources() != null) {
+            actual.setResources(dto.resources());
+        }
+        if (dto.legalStatus() != null && !actual.getLegalStatus().equals(dto.legalStatus())) {
+            actual.setLegalStatus(dto.legalStatus());
+        }
+        OrganizationNGO updated = organizationNGORepository.save(actual);
+        return organizationNGOMapper.organizationNGOToOrganizationNGOView(updated);
     }
 
     @Transactional

@@ -2,7 +2,7 @@ package com.rcbsukcesja.hack2react.exceptions.messages;
 
 public class ErrorMessages {
     public static final String BUSINESS_AREA_NOT_FOUND = "Business Area with id %s not found!";
-    public static final String BUSINESS_AREA_ALREADY_EXISTS = "Business Area with name %s already exists";
+    public static final String BUSINESS_AREA_ALREADY_EXISTS = "Business Area with name %s already exists!";
 
     public static final String USER_NOT_FOUND = "User with id %s not found!";
     public static final String USERS_EMAIL_ALREADY_EXIST = "User's email %s already exist!";

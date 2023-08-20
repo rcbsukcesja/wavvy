@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface BusinessAreaMapper {
@@ -14,6 +15,8 @@ public interface BusinessAreaMapper {
     BusinessAreaView businessAreaToBusinessAreaView(BusinessArea businessArea);
     List<BusinessArea> businessAreaViewListToBusinessAreaList(List<BusinessAreaView> businessAreaViewList);
     List<BusinessAreaView> businessAreaListToBusinessAreaViewList(List<BusinessArea> businessAreaList);
+    Set<BusinessArea> businessAreaViewSetToBusinessAreaSet(Set<BusinessAreaView> businessAreaViewSet);
+    Set<BusinessAreaView> businessAreaSetToBusinessAreaViewSet(Set<BusinessArea> businessAreaSet);
 
     @Mapping(target = "id", ignore = true)
     BusinessArea businessAreaDtoToBusinessArea(BusinessAreaDto businessAreaDto);
