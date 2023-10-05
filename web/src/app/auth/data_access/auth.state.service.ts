@@ -19,6 +19,7 @@ export interface AuthStateValue {
 export class AuthStateService {
   private $state = signal<AuthStateValue>({
     status: 'NON_AUTHENTICATED',
+    // status: 'AUTHENTICATED',
     user: null,
   });
 

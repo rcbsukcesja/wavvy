@@ -77,7 +77,7 @@ import { AddOfferFormValue } from '../data-access/offers.api.service';
         <mat-hint>Dodaj</mat-hint>
       </mat-form-field>
       <br />
-      <mat-form-field>
+      <!-- <mat-form-field>
         <mat-label>Kategorie</mat-label>
         <mat-select formControlName="categories" multiple>
           <mat-select-trigger>
@@ -89,7 +89,7 @@ import { AddOfferFormValue } from '../data-access/offers.api.service';
           </mat-select-trigger>
           <mat-option *ngFor="let category of categoryList" [value]="category">{{ category.name }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
       <br />
       <button mat-raised-button color="primary">Zapisz</button>
     </form>

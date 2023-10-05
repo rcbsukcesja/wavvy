@@ -12,7 +12,7 @@ export const routes: Routes = [
     children: [
       {
         path: 'auth',
-        loadComponent: () => import('./auth/auth.page.component'),
+        loadChildren: () => import('./auth/auth.routes'),
         canMatch: [nonAuthGuard],
       },
       {
@@ -36,6 +36,11 @@ export const routes: Routes = [
           {
             path: 'manage/projects',
             loadComponent: () => import('./features/projects/manage-projects.page.component'),
+          },
+
+          {
+            path: 'manage/register',
+            loadComponent: () => import('./features/ngo/register/ngo-register.page.component'),
           },
           {
             path: 'manage/projects/form',

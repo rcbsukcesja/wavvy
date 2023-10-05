@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AuthService, LoginFormValue } from './data_access/auth.service';
 import { LoginFormComponent } from './ui/login-form.component';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-auth-page',
   standalone: true,
-  imports: [LoginFormComponent, MatIconModule],
+  imports: [LoginFormComponent, MatIconModule, RouterLink],
   template: `
     <div class="flex flex-col items-center justify-center w-screen h-screen">
       <div class="flex flex-col mb-4">
@@ -17,6 +18,8 @@ import { MatIconModule } from '@angular/material/icon';
         <span class="text-xl ml-2 text-blue-300">na fali pomocy</span>
       </div>
       <app-login-form (login)="login($event)" />
+
+      <a class="mt-6" [routerLink]="['./join']">Dołącz do nas!</a>
     </div>
   `,
   styles: [],

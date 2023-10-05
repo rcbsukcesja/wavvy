@@ -133,13 +133,19 @@ export default class ShellComponent {
       displayValue: 'Lista projektów',
       roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER', 'CITIZEN'],
     },
-
+    {
+      icon: '',
+      link: '/manage/register',
+      displayValue: 'Rejestracja',
+      roles: ['ADMIN'],
+    },
     {
       icon: '',
       link: '/manage/offers',
       displayValue: 'Zarządzaj ofertami',
       roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER'],
     },
+
     {
       icon: '',
       link: '/manage/projects',
