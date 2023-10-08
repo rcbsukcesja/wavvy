@@ -12,9 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -45,7 +43,9 @@ public class BusinessAreaService {
             return businessAreaMapper.businessAreaToBusinessAreaView(updated);
         } else {
             checkIfBusinessAreaNameAlreadyExists(dto.name());
-            BusinessArea businessArea = businessAreaMapper.businessAreaDtoToBusinessArea(dto);
+            BusinessArea businessArea = BusinessArea.builder()
+                    .name(dto.name())
+                    .build();
             BusinessArea saved = businessAreaRepository.save(businessArea);
             return businessAreaMapper.businessAreaToBusinessAreaView(saved);
         }
@@ -63,16 +63,10 @@ public class BusinessAreaService {
         }
     }
 
-    public BusinessArea getBusinessAreaByIdOrThrowException(UUID id) {
+    private BusinessArea getBusinessAreaByIdOrThrowException(UUID id) {
         return businessAreaRepository.getBusinessAreaById(id)
                 .orElseThrow(() -> new BusinessAreaNotFoundException(
                         ErrorMessages.BUSINESS_AREA_NOT_FOUND, id));
-    }
-
-    public Set<BusinessArea> getBusinessAreasOrThrowException(Set<UUID> ids) {
-        return new HashSet<>(ids.stream()
-                .map(this::getBusinessAreaByIdOrThrowException)
-                .toList());
     }
 
 }

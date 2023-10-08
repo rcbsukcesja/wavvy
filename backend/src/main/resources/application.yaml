@@ -1,8 +1,12 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:dev-db
-    username: user
-    password: user
+    url: jdbc:postgresql://localhost:5432/wavvy
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
   jackson:
     deserialization:
       fail-on-unknown-properties: true
@@ -13,12 +17,13 @@ spring:
     defer-datasource-initialization: true
     properties:
       hibernate:
-        show-sql: true
-        format-sql: true
-        dialect: org.hibernate.dialect.H2Dialect
-  h2:
-    console.enabled: true
+        show_sql: true
+        format_sql: true
+        hbm2ddl:
+          create_namespaces: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE
+#    org.hibernate: DEBUG

@@ -1,18 +1,23 @@
 package com.rcbsukcesja.hack2react.service;
 
-import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationNGOAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.UserNotFoundException;
-import com.rcbsukcesja.hack2react.model.dto.save.OrganizationNGODto;
+import com.rcbsukcesja.hack2react.model.dto.save.OrganizationNGOPatchDto;
+import com.rcbsukcesja.hack2react.model.dto.save.OrganizationNGOSaveDto;
+import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOListView;
 import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOView;
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
+import com.rcbsukcesja.hack2react.model.entity.Resource;
+import com.rcbsukcesja.hack2react.model.entity.SocialLink;
 import com.rcbsukcesja.hack2react.model.mappers.OrganizationNGOMapper;
 import com.rcbsukcesja.hack2react.repositories.BusinessAreaRepository;
 import com.rcbsukcesja.hack2react.repositories.OrganizationNGORepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
+import com.rcbsukcesja.hack2react.utils.FileUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
+import com.rcbsukcesja.hack2react.validations.OrganizationNgoValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,45 +35,94 @@ public class OrganizationNGOService {
     private final OrganizationNGORepository organizationNGORepository;
     private final UserRepository userRepository;
     private final BusinessAreaRepository businessAreaRepository;
+    private final OrganizationNgoValidation organizationNgoValidation;
 
-    public List<OrganizationNGOView> getAllNGO() {
-        return organizationNGORepository.findAll().stream()
-                .map(organizationNGOMapper::organizationNGOToOrganizationNGOView).toList();
+    public List<OrganizationNGOListView> getAllNGO() {
+        return organizationNGORepository.getAll().stream()
+                .map(organizationNGOMapper::organizationNGOToOrganizationNGOListView).toList();
     }
 
     public OrganizationNGOView getNGOById(UUID id) {
         return organizationNGOMapper
-                .organizationNGOToOrganizationNGOView(getNGOByIdOrThrowException(id));
+                .organizationNGOToOrganizationNGOView(getNgoByIdOrThrowException(id));
     }
 
     @Transactional
-    public OrganizationNGOView createNGO(OrganizationNGODto dto) {
-        validateNGO(dto);
-        OrganizationNGO ngo = organizationNGOMapper.organizationNGODtoToOrganizationNGO(dto);
-        ngo.setProjects(new HashSet<>());
+    public OrganizationNGOView saveNGO(UUID organizationNGOId, OrganizationNGOSaveDto dto) {
+        OrganizationNGO ngo;
+        if (organizationNGOId == null) {
+            validateCreateNgo(dto);
+            ngo = new OrganizationNGO();
+            ngo.setProjects(new HashSet<>());
+            if (dto.resources() != null && !dto.resources().isEmpty()) {
+                for (String resource : dto.resources()) {
+                    Resource newResource = new Resource();
+                    newResource.setResource(resource);
+                    ngo.getResources().add(newResource);
+                    organizationNGORepository.save(ngo);
+                }
+            }
+            ngo.setSocialLinks(new HashSet<>());
+            if (dto.socialLinks() != null && !dto.socialLinks().isEmpty()) {
+                for (String link : dto.socialLinks()) {
+                    SocialLink socialLink = new SocialLink();
+                    socialLink.setLink(link);
+                    ngo.getSocialLinks().add(socialLink);
+                    organizationNGORepository.save(ngo);
+                }
+            }
+        } else {
+            ngo = getNgoByIdOrThrowException(organizationNGOId);
+            validateUpdateNgo(dto, ngo);
+            updateSocialLinks(ngo, dto.socialLinks());
+            updateResources(ngo, dto.resources());
+        }
+
+        ngo.setName(dto.name());
+        ngo.setKrs(dto.krs());
+        ngo.setNip(dto.nip());
+        ngo.setRegon(dto.regon());
+        ngo.setOwner(userRepository.getUserById(dto.ownerId())
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
+        ngo.setAddress(dto.address());
+        ngo.setPhone(dto.phone());
+        ngo.setEmail(dto.email());
+        ngo.setWebsite(dto.website());
+        ngo.setDescription(dto.description());
+        ngo.setLegalStatus(dto.legalStatus());
+        ngo.setBusinessAreas(new HashSet<>(dto.businessAreaIds().stream()
+                .map(id -> businessAreaRepository.getBusinessAreaById(id)
+                        .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
+                .toList()));
         ngo.setCreationTime(TimeUtils.now());
+        ngo.setResources(new HashSet<>());
+
         OrganizationNGO saved = organizationNGORepository.save(ngo);
         return organizationNGOMapper.organizationNGOToOrganizationNGOView(saved);
     }
 
     @Transactional
-    public OrganizationNGOView updateNGO(UUID ngoId, OrganizationNGODto dto) {
-        OrganizationNGO actual = getNGOByIdOrThrowException(ngoId);
-        if (dto.name() != null && !actual.getName().equalsIgnoreCase(dto.name())) {
-            checkIfNGONameAlreadyExists(dto.name());
-            actual.setName(dto.name());
+    public OrganizationNGOView updateNGO(UUID ngoId, OrganizationNGOPatchDto dto) {
+        OrganizationNGO actual = getNgoByIdOrThrowException(ngoId);
+        if (dto.name() != null && !actual.getName().equals(dto.name())) {
+            if (actual.getName().equalsIgnoreCase(dto.name())) {
+                actual.setName(dto.name());
+            } else {
+                organizationNgoValidation.checkIfNgoNameAlreadyExists(dto.name());
+                actual.setName(dto.name());
+            }
         }
-        if (dto.KRS() != null && !actual.getKRS().equals(dto.KRS())) {
-            checkIfNGOKRSAlreadyExists(dto.KRS());
-            actual.setKRS(dto.KRS());
+        if (dto.krs() != null && !actual.getKrs().equals(dto.krs())) {
+            organizationNgoValidation.checkIfNgoKrsAlreadyExists(dto.krs());
+            actual.setKrs(dto.krs());
         }
-        if (dto.NIP() != null && !actual.getNIP().equals(dto.NIP())) {
-            checkIfNGONIPAlreadyExists(dto.NIP());
-            actual.setNIP(dto.NIP());
+        if (dto.nip() != null && !actual.getNip().equals(dto.nip())) {
+            organizationNgoValidation.checkIfNgoNipAlreadyExists(dto.nip());
+            actual.setNip(dto.nip());
         }
-        if (dto.REGON() != null && !actual.getREGON().equals(dto.REGON())) {
-            checkIfNGOREGONAlreadyExists(dto.REGON());
-            actual.setREGON(dto.REGON());
+        if (dto.regon() != null && !actual.getRegon().equals(dto.regon())) {
+            organizationNgoValidation.checkIfNgoRegonAlreadyExists(dto.regon());
+            actual.setRegon(dto.regon());
         }
         if (dto.ownerId() != null && !actual.getOwner().getId().equals(dto.ownerId())) {
             actual.setOwner(userRepository.getUserById(dto.ownerId())
@@ -86,9 +140,9 @@ public class OrganizationNGOService {
         if (dto.website() != null && !actual.getWebsite().equals(dto.website())) {
             actual.setWebsite(dto.website());
         }
-        if (dto.socialLinks() != null) {
-            actual.setSocialLinks(dto.socialLinks());
-        }
+
+        updateSocialLinks(actual, dto.socialLinks());
+
         if (dto.description() != null && !actual.getDescription().equals(dto.description())) {
             actual.setDescription(dto.description());
         }
@@ -98,9 +152,7 @@ public class OrganizationNGOService {
                             .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
                     .toList()));
         }
-        if (dto.resources() != null) {
-            actual.setResources(dto.resources());
-        }
+        updateResources(actual, dto.resources());
         if (dto.legalStatus() != null && !actual.getLegalStatus().equals(dto.legalStatus())) {
             actual.setLegalStatus(dto.legalStatus());
         }
@@ -110,55 +162,98 @@ public class OrganizationNGOService {
 
     @Transactional
     public void deleteNGO(UUID id) {
-        OrganizationNGO ngo = getNGOByIdOrThrowException(id);
+        OrganizationNGO ngo = getNgoByIdOrThrowException(id);
         organizationNGORepository.delete(ngo);
     }
 
-    public OrganizationNGO getNGOByIdOrThrowException(UUID id) {
+    @Transactional
+    public void updateLogoPath(String fileExtension, UUID ngoId) {
+        OrganizationNGO ngo = getNgoByIdOrThrowException(ngoId);
+        ngo.setLogoPath(FileUtils.getPathAsString(fileExtension, ngoId.toString(), "logo"));
+        organizationNGORepository.save(ngo);
+    }
+
+    @Transactional
+    public String removeLogoPath(UUID ngoId) {
+        OrganizationNGO ngo = getNgoByIdOrThrowException(ngoId);
+        String filePath = ngo.getLogoPath();
+        ngo.setLogoPath(null);
+        organizationNGORepository.save(ngo);
+        return filePath;
+    }
+
+    private void updateResources(OrganizationNGO ngo, Set<String> resources) {
+        if (resources != null) {
+            if (resources.isEmpty()) {
+                ngo.getResources().clear();
+            } else {
+                ngo.getResources().removeIf(resource -> !resources.contains(resource.getResource()));
+
+                for (String resource : resources) {
+                    if (ngo.getResources().stream()
+                            .noneMatch(actualResource -> actualResource.getResource().equals(resource))) {
+                        Resource newResource = new Resource();
+                        newResource.setResource(resource);
+                        newResource.setOrganization(ngo);
+                        ngo.getResources().add(newResource);
+                        organizationNGORepository.save(ngo);
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateSocialLinks(OrganizationNGO ngo, Set<String> socialLinks) {
+        if (socialLinks != null) {
+            if (socialLinks.isEmpty()) {
+                ngo.getSocialLinks().clear();
+            } else {
+                ngo.getSocialLinks().removeIf(socialLink -> !socialLinks.contains(socialLink.getLink()));
+
+                for (String link : socialLinks) {
+                    if (ngo.getSocialLinks().stream().noneMatch(socialLink -> socialLink.getLink().equals(link))) {
+                        SocialLink socialLink = new SocialLink();
+                        socialLink.setLink(link);
+                        socialLink.setOrganization(ngo);
+                        ngo.getSocialLinks().add(socialLink);
+                        organizationNGORepository.save(ngo);
+                    }
+                }
+            }
+        }
+    }
+
+    private OrganizationNGO getNgoByIdOrThrowException(UUID id) {
         return organizationNGORepository.getOrganizationNGOById(id)
                 .orElseThrow(() -> new OrganizationNGONotFoundException(
                         ErrorMessages.ORGANIZATION_NGO_NOT_FOUND, id));
     }
 
-    public Set<OrganizationNGO> getNGOsOrThrowException(Set<UUID> organizersIds) {
+    private Set<OrganizationNGO> getNgoSetOrThrowException(Set<UUID> organizersIds) {
         return new HashSet<>(organizersIds.stream()
-                .map(this::getNGOByIdOrThrowException)
+                .map(this::getNgoByIdOrThrowException)
                 .toList());
     }
 
-    private void validateNGO(OrganizationNGODto dto) {
-        checkIfNGONameAlreadyExists(dto.name());
-        checkIfNGOKRSAlreadyExists(dto.KRS());
-        checkIfNGONIPAlreadyExists(dto.NIP());
-        checkIfNGOREGONAlreadyExists(dto.REGON());
+    private void validateCreateNgo(OrganizationNGOSaveDto dto) {
+        organizationNgoValidation.checkIfNgoNameAlreadyExists(dto.name());
+        organizationNgoValidation.checkIfNgoKrsAlreadyExists(dto.krs());
+        organizationNgoValidation.checkIfNgoNipAlreadyExists(dto.nip());
+        organizationNgoValidation.checkIfNgoRegonAlreadyExists(dto.regon());
     }
 
-    private void checkIfNGONameAlreadyExists(String name) {
-        if (organizationNGORepository.existsByNameIgnoreCase(name)) {
-            throw new OrganizationNGOAlreadyExistsException(
-                    ErrorMessages.ORGANIZATION_NGO_NAME_ALREADY_EXISTS, name);
+    private void validateUpdateNgo(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
+        if (!ngo.getName().equalsIgnoreCase(dto.name())) {
+            organizationNgoValidation.checkIfNgoNameAlreadyExists(dto.name());
         }
-    }
-
-    private void checkIfNGOKRSAlreadyExists(String krs) {
-        if (krs == null) return;
-        if (organizationNGORepository.existsByKRS(krs)) {
-            throw new OrganizationNGOAlreadyExistsException(
-                    ErrorMessages.ORGANIZATION_NGO_KRS_ALREADY_EXISTS, krs);
+        if (!ngo.getKrs().equals(dto.krs())) {
+            organizationNgoValidation.checkIfNgoKrsAlreadyExists(dto.krs());
         }
-    }
-
-    private void checkIfNGONIPAlreadyExists(String nip) {
-        if (organizationNGORepository.existsByNIP(nip)) {
-            throw new OrganizationNGOAlreadyExistsException(
-                    ErrorMessages.ORGANIZATION_NGO_NIP_ALREADY_EXISTS, nip);
+        if (!ngo.getNip().equals(dto.nip())) {
+            organizationNgoValidation.checkIfNgoNipAlreadyExists(dto.nip());
         }
-    }
-
-    private void checkIfNGOREGONAlreadyExists(String regon) {
-        if (organizationNGORepository.existsByREGON(regon)) {
-            throw new OrganizationNGOAlreadyExistsException(
-                    ErrorMessages.ORGANIZATION_NGO_REGON_ALREADY_EXISTS, regon);
+        if (!ngo.getRegon().equals(dto.regon())) {
+            organizationNgoValidation.checkIfNgoRegonAlreadyExists(dto.regon());
         }
     }
 

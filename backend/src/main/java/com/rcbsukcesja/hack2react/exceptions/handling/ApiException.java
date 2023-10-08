@@ -15,13 +15,13 @@ public class ApiException {
 
     private String message;
     private String httpStatus;
-    private String timeStamp;
+    private OffsetDateTime timeStamp;
 
     public ApiException(String message,
                         HttpStatus httpStatus,
                         OffsetDateTime timeStamp) {
         this.message = message;
         this.httpStatus = httpStatus.toString();
-        this.timeStamp = timeStamp.toString();
+        this.timeStamp = timeStamp;
     }
 }

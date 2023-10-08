@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "COMPANIES")
+@Table(name = "companies", schema = "wavvy")
 @Getter
 @Setter
 @SuperBuilder

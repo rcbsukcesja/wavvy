@@ -12,9 +12,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +28,9 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
-@Table(name = "APP_USERS")
+@Table(name = "app_users", schema = "wavvy")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -53,13 +54,11 @@ public class User {
     @Column(nullable = false)
     private UserType userType;
 
-    @OneToOne(mappedBy = "owner")
-    private Organization organization;
-
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(
             name = "conversation_users",
+            schema = "wavvy",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "conversation_id")}
     )
