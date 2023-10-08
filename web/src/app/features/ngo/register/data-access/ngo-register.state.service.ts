@@ -1,6 +1,4 @@
-import { Injectable, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
-// import { Offer } from '../model/Offer.model';
+import { Injectable } from '@angular/core';
 import { CallState } from 'src/app/core/call-state.enum';
 import { StateService } from 'src/app/core/state.service';
 import { NgoRegisterForm } from '../model/ngo-register-form.model';

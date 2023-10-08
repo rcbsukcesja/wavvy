@@ -32,7 +32,7 @@ export interface NGO {
   socialLinks: string[];
   creationDate: string;
   description: string;
-  businnessAreas: BusinessArea[];
+  businnessAreas: number[];
   KRS: string;
   NIP: string;
   resources: string[];

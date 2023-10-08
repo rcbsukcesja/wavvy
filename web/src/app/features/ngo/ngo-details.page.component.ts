@@ -65,23 +65,11 @@ import ProjectsListComponent from '../projects/projects-list.component';
           <div>
             <h3>Obszary działania:</h3>
             <ul class="flex flex-col gap-2 mt-4">
-              <li *ngFor="let area of state.details.businnessAreas">- {{ area.name }}</li>
+              <li *ngFor="let area of state.details.businnessAreas">- {{ area }}</li>
             </ul>
           </div>
           <mat-divider />
-          <div>
-            <h3>Członkowie:</h3>
-            <ul class="flex flex-col gap-2 mt-4">
-              <p *ngIf="!state.details.owners.length">Brak przypisanych użytkowników</p>
-              <ng-container *ngIf="state.details.owners.length">
-                <li *ngFor="let owner of state.details.owners">
-                  -
-                  {{ owner.firstName + ' ' + owner.lastName + ', email: ' + owner.email + ', rola: ' + owner.userType }}
-                </li>
-              </ng-container>
-            </ul>
-          </div>
-          <mat-divider />
+
           <div>
             <h3>Zasoby:</h3>
             <ul class="flex flex-col gap-2 mt-4">

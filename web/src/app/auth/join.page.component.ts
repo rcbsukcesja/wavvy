@@ -14,7 +14,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   selector: 'app-join-page',
   standalone: true,
   imports: [
-    MatSnackBarModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -56,7 +55,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
           <mat-form-field>
             <mat-label>Adres e-mail</mat-label>
             <input formControlName="email" matInput />
-            <mat-hint>Dodaj kontaktowy adres email</mat-hint>
+            <mat-hint>Adres email będzie twoim loginem</mat-hint>
           </mat-form-field>
           <mat-form-field>
             <mat-label>Telefon</mat-label>
@@ -67,6 +66,18 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
             <mat-label>Twój NGO</mat-label>
             <input type="tel" formControlName="organisation" matInput />
             <mat-hint>Podaj nazwę NGO, który reprezentujesz</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>NIP organizacji</mat-label>
+            <input formControlName="NIP" matInput />
+            <mat-hint></mat-hint>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>KRS organizacji</mat-label>
+            <input formControlName="KRS" matInput />
+            <mat-hint></mat-hint>
           </mat-form-field>
 
           <button [disabled]="loading" class="mt-4" mat-raised-button color="primary">
@@ -94,6 +105,8 @@ export default class JoinPageComponent {
     email: this.fb.control('', [Validators.required]),
     phone: this.fb.control('', [Validators.required]),
     organisation: this.fb.control('', [Validators.required]),
+    KRS: this.fb.control(''),
+    NIP: this.fb.control('', [Validators.required]),
   });
 
   register() {

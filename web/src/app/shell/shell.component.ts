@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,10 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { RouterLinkActive, RouterModule, RouterOutlet } from '@angular/router';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { HasRolePipe } from '../auth/utils/has-role.pipe';
 import { UserRoles } from '../core/user-roles.enum';
 import { AuthService } from '../auth/data_access/auth.service';
+import { AuthStateService } from '../auth/data_access/auth.state.service';
+import { ShellService } from './shell.service';
 
 export interface MenuItem {
   link: string;
@@ -33,7 +35,7 @@ export interface MenuItem {
         [opened]="(isHandset$ | async) === false">
         <mat-toolbar></mat-toolbar>
         <mat-nav-list>
-          <a *ngFor="let menuItem of menuItems | hasRole" mat-list-item [routerLink]="menuItem.link">
+          <a *ngFor="let menuItem of $menuItems()" mat-list-item [routerLink]="menuItem.link">
             <div class="flex text-sm" [routerLinkActive]="'font-semibold'">
               <mat-icon *ngIf="menuItem.icon" class="mr-2">{{ menuItem.icon }}</mat-icon> {{ menuItem.displayValue }}
             </div></a
@@ -62,7 +64,8 @@ export interface MenuItem {
               <a routerLink="/messages" class="block"
                 ><mat-icon class="!w-9 !h-9 text-3xl"> local_post_office</mat-icon>
               </a>
-              <button class="ml-4" mat-button (click)="logout()">Wyloguj</button>
+              <button *ngIf="$isAuth()" class="ml-4" mat-button (click)="logout()">Wyloguj</button>
+              <button *ngIf="!$isAuth()" class="ml-4" mat-button (click)="login()">Zaloguj</button>
             </div>
           </div>
         </mat-toolbar>
@@ -114,51 +117,20 @@ export interface MenuItem {
 export default class ShellComponent {
   private breakpointObserver = inject(BreakpointObserver);
   private authService = inject(AuthService);
+  private router = inject(Router);
+  private shellService = inject(ShellService);
+
+  private $authState = inject(AuthStateService).$value;
+  public $isAuth = computed(() => this.$authState().status === 'AUTHENTICATED');
+  public $menuItems = this.shellService.$menu;
 
   logout() {
     this.authService.logout();
   }
-  menuItems: MenuItem[] = [
-    { icon: '', link: '/ngos', displayValue: 'Lista NGO', roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER', 'CITIZEN'] },
-    { icon: '', link: '/offers', displayValue: 'Lista ofert', roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER', 'CITIZEN'] },
-    {
-      icon: '',
-      link: '/companies',
-      displayValue: 'Lista MŚP',
-      roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER', 'CITIZEN'],
-    },
-    {
-      icon: '',
-      link: '/projects',
-      displayValue: 'Lista projektów',
-      roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER', 'CITIZEN'],
-    },
-    {
-      icon: '',
-      link: '/manage/register',
-      displayValue: 'Rejestracja',
-      roles: ['ADMIN'],
-    },
-    {
-      icon: '',
-      link: '/manage/offers',
-      displayValue: 'Zarządzaj ofertami',
-      roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER'],
-    },
 
-    {
-      icon: '',
-      link: '/manage/projects',
-      displayValue: 'Zarządzaj projektami',
-      roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER', 'CITIZEN'],
-    },
-    {
-      icon: '',
-      link: '/manage/ngo-profile',
-      displayValue: 'Moja organizacja',
-      roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER', 'CITIZEN'],
-    },
-  ];
+  login() {
+    this.router.navigateByUrl('/auth');
+  }
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map(result => result.matches),

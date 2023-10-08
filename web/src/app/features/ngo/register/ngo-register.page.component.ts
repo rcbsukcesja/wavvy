@@ -59,21 +59,32 @@ import { NgoRegisterDialogComponent } from './ui/ngo-register-dialog.component';
         <td mat-cell *matCellDef="let element">{{ element.organisation }}</td>
       </ng-container>
 
+      <ng-container matColumnDef="NIP">
+        <th mat-header-cell *matHeaderCellDef>NIP</th>
+        <td mat-cell *matCellDef="let element">{{ element.NIP }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="KRS">
+        <th mat-header-cell *matHeaderCellDef>KRS</th>
+        <td mat-cell *matCellDef="let element">{{ element.KRS || '-' }}</td>
+      </ng-container>
+
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef>Status</th>
         <td mat-cell *matCellDef="let element"><app-ngo-register-form-status [status]="element.status" /></td>
       </ng-container>
 
       <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef>Data do</th>
+        <th mat-header-cell *matHeaderCellDef>Data wysłania</th>
         <td mat-cell *matCellDef="let element">{{ element.endDate | date }}</td>
       </ng-container>
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
-          <button (click)="openChangeStatus(element)"><mat-icon>edit</mat-icon></button>
-          <!-- <button (click)="remove(element)"><mat-icon>delete</mat-icon></button> -->
+          <button *ngIf="element.status === 'PENDING'" (click)="openChangeStatus(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
         </td>
       </ng-container>
 
@@ -85,7 +96,17 @@ import { NgoRegisterDialogComponent } from './ui/ngo-register-dialog.component';
 export default class RegisterNgoPageComponent implements OnInit {
   service = inject(NgoRegisterFormApiService);
   stateService = inject(NgoRegisterFormStateService);
-  displayedColumns: string[] = ['fullName', 'phone', 'email', 'organisation', 'createdAt', 'status', 'actions'];
+  displayedColumns: string[] = [
+    'fullName',
+    'phone',
+    'email',
+    'organisation',
+    'NIP',
+    'KRS',
+    'createdAt',
+    'status',
+    'actions',
+  ];
 
   dataSource = toSignal(
     this.stateService.value$.pipe(
@@ -104,18 +125,6 @@ export default class RegisterNgoPageComponent implements OnInit {
     this.service.getAll();
   }
 
-  // remove(offer: Offer) {
-  //   this.dialog
-  //     .open(RemoveDialogComponent, {
-  //       width: '250px',
-  //     })
-  //     .afterClosed()
-  //     .pipe(filter(Boolean))
-  //     .subscribe(() => {
-  //       this.service.delete(offer.id);
-  //     });
-  // }
-
   openChangeStatus(form: NgoRegisterForm) {
     this.dialog
       .open(NgoRegisterDialogComponent, {
@@ -126,31 +135,12 @@ export default class RegisterNgoPageComponent implements OnInit {
       })
       .afterClosed()
       .pipe(filter(Boolean))
-      .subscribe(formValue => {
-        // if (offer) {
-        //   this.service.update(offer.id, formValue);
-        // } else {
-        //   this.service.add(formValue);
-        // }
+      .subscribe((formValue: string | true) => {
+        if (typeof formValue === 'string') {
+          this.service.update(form.id, { reason: formValue, status: 'REJECTED' });
+        } else {
+          this.service.update(form.id, { status: 'ACCEPTED' });
+        }
       });
   }
-
-  // openOfferForm(offer?: Offer) {
-  //   this.dialog
-  //     .open(OfferFormDialogComponent, {
-  //       width: '500px',
-  //       data: {
-  //         offer: offer || null,
-  //       },
-  //     })
-  //     .afterClosed()
-  //     .pipe(filter(Boolean))
-  //     .subscribe(formValue => {
-  //       if (offer) {
-  //         this.service.update(offer.id, formValue);
-  //       } else {
-  //         this.service.add(formValue);
-  //       }
-  //     });
-  // }
 }

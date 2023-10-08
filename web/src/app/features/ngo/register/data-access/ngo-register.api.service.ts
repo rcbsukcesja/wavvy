@@ -6,10 +6,12 @@ import { NgoRegisterForm } from '../model/ngo-register-form.model';
 
 export interface GetAllOffersParams {}
 
-export type NgoRegisterFormUpdateValue = {
-  status: NgoRegisterForm['status'];
-  reason?: string;
-};
+export type NgoRegisterFormUpdateValue =
+  | {
+      status: 'REJECTED';
+      reason: string;
+    }
+  | { status: 'ACCEPTED' };
 
 @Injectable({
   providedIn: 'root',
