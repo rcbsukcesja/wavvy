@@ -10,9 +10,15 @@ public class ErrorMessages {
 
     public static final String ORGANIZATION_NGO_NOT_FOUND = "Organization NGO with id %s not found!";
     public static final String ORGANIZATION_NGO_NAME_ALREADY_EXISTS = "Organization NGO with name %s already exists";
-    public static final String ORGANIZATION_NGO_NIP_ALREADY_EXISTS = "Organization NGO with NIP %s already exists";
-    public static final String ORGANIZATION_NGO_KRS_ALREADY_EXISTS = "Organization NGO with KRS %s already exists";
-    public static final String ORGANIZATION_NGO_REGON_ALREADY_EXISTS = "Organization NGO with REGON %s already exists";
+    public static final String ORGANIZATION_NGO_NIP_ALREADY_EXISTS = "Organization NGO with nip %s already exists";
+    public static final String ORGANIZATION_NGO_KRS_ALREADY_EXISTS = "Organization NGO with krs %s already exists";
+    public static final String ORGANIZATION_NGO_REGON_ALREADY_EXISTS = "Organization NGO with regon %s already exists";
+
+    public static final String COMPANY_NOT_FOUND = "Company with id %s not found!";
+    public static final String COMPANY_NAME_ALREADY_EXISTS = "Company with name %s already exists";
+    public static final String COMPANY_NIP_ALREADY_EXISTS = "Company NGO with nip %s already exists";
+    public static final String COMPANY_KRS_ALREADY_EXISTS = "Company NGO with krs %s already exists";
+    public static final String COMPANY_REGON_ALREADY_EXISTS = "Company NGO with regon %s already exists";
 
     public static final String PROJECT_NOT_FOUND = "Project with id %s not found!";
 
@@ -21,4 +27,10 @@ public class ErrorMessages {
     public static final String OFFER_NOT_FOUND = "Offer with id %s not found!";
 
     public static final String CONVERSATION_NOT_FOUND = "Conversation with id %s not found!";
+
+    public static final String FILE_IS_EMPTY = "Failed to store empty file!";
+    public static final String FILE_IS_NOT_IMAGE = "File is not an image!";
+
+    public static final String FILE_FAILED_TO_STORE = "Failed to store file!";
+    public static final String FILE_FAILED_TO_REMOVE = "Failed to remove file!";
 }

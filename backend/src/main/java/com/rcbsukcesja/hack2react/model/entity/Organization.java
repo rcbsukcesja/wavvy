@@ -1,9 +1,7 @@
 package com.rcbsukcesja.hack2react.model.entity;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -13,8 +11,8 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -25,19 +23,18 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "ORGANIZATIONS")
+@Table(name = "organizations", schema = "wavvy")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
 @SuperBuilder
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Organization {
 
     @Id
@@ -45,7 +42,7 @@ public abstract class Organization {
     private UUID id;
     private String name;
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
+            CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
     private String address;
@@ -53,32 +50,26 @@ public abstract class Organization {
     private String email;
     private String website;
 
-    @Lob
-    @Column(columnDefinition = "BLOB")
-    private byte[] logo;
-
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "socialLinks", joinColumns = @JoinColumn(name = "socialLink_id"))
-    @Column(name = "socialLink", nullable = false)
-    private List<String> socialLinks;
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<SocialLink> socialLinks;
     private OffsetDateTime creationTime;
+    @Column(length = 2000)
     private String description;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
+            CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "organization_business_areas",
+            schema = "wavvy",
             joinColumns = {@JoinColumn(name = "organization_id")},
             inverseJoinColumns = {@JoinColumn(name = "business_area_id")}
     )
     private Set<BusinessArea> businessAreas;
-    private String KRS;
-    private String NIP;
-    private String REGON;
+    private String krs;
+    private String nip;
+    private String regon;
 
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "resources", joinColumns = @JoinColumn(name = "resource_id"))
-    @Column(name = "resource", nullable = false)
-    private List<String> resources;
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Resource> resources;
 
 }

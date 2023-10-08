@@ -3,10 +3,13 @@ package com.rcbsukcesja.hack2react.exceptions.handling;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.rcbsukcesja.hack2react.exceptions.ApiRequestException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.BusinessAreaNameAlreadyExistsException;
+import com.rcbsukcesja.hack2react.exceptions.alreadyExists.CompanyAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.EmailAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationNGOAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.UsernameAlreadyExistsException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidFileException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
+import com.rcbsukcesja.hack2react.exceptions.notFound.CompanyNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.MessageNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.ProjectNotFoundException;
@@ -28,6 +31,7 @@ public class ApiExceptionHandler {
             BusinessAreaNotFoundException.class,
             MessageNotFoundException.class,
             OrganizationNGONotFoundException.class,
+            CompanyNotFoundException.class,
             ProjectNotFoundException.class})
     public ResponseEntity<Object> handleNotFoundTypeException(ApiRequestException e) {
 
@@ -43,7 +47,10 @@ public class ApiExceptionHandler {
             EmailAlreadyExistsException.class,
             UsernameAlreadyExistsException.class,
             BusinessAreaNameAlreadyExistsException.class,
-            OrganizationNGOAlreadyExistsException.class})
+            OrganizationNGOAlreadyExistsException.class,
+            CompanyAlreadyExistsException.class,
+            InvalidFileException.class
+    })
     public ResponseEntity<Object> handleBadRequestTypeException(ApiRequestException e) {
 
         ApiException apiException = new ApiException(
@@ -72,9 +79,8 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(JsonMappingException.class)
     public ResponseEntity<Object> handleJsonMappingException(JsonMappingException e) {
-        String message = "Request body contains at least one invalid field!";
         ApiException apiException = new ApiException(
-                message,
+                e.getMessage(),
                 HttpStatus.BAD_REQUEST,
                 TimeUtils.now()
         );

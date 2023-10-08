@@ -6,11 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,8 +23,9 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
-@Table(name = "BUSINESS_AREAS")
+@Table(name = "business_areas", schema = "wavvy")
 public class BusinessArea {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,21 +34,11 @@ public class BusinessArea {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "project_categories",
-            joinColumns = {@JoinColumn(name = "business_area_id")},
-            inverseJoinColumns = {@JoinColumn(name = "project_id")}
-    )
     private Set<Project> projects;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+    @ManyToMany(mappedBy = "businessAreas", cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "organization_business_areas",
-            joinColumns = {@JoinColumn(name = "business_area_id")},
-            inverseJoinColumns = {@JoinColumn(name = "organization_id")}
-    )
     private Set<Organization> organizations;
 }

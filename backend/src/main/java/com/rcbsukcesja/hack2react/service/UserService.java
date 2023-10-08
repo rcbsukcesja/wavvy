@@ -4,7 +4,8 @@ import com.rcbsukcesja.hack2react.exceptions.alreadyExists.EmailAlreadyExistsExc
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.UsernameAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.UserNotFoundException;
-import com.rcbsukcesja.hack2react.model.dto.save.UserDto;
+import com.rcbsukcesja.hack2react.model.dto.save.UserPatchDto;
+import com.rcbsukcesja.hack2react.model.dto.save.UserSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.UserView;
 import com.rcbsukcesja.hack2react.model.entity.User;
 import com.rcbsukcesja.hack2react.model.mappers.UserMapper;
@@ -24,25 +25,43 @@ public class UserService {
     private final UserRepository userRepository;
 
     public List<UserView> getAllUsers() {
-
         return userMapper.listUserToListUserView(userRepository.findAll());
     }
 
     public UserView getUserById(UUID userId) {
-
         User user = getUserByIdOrThrowException(userId);
-
         return userMapper.userToUserView(user);
     }
 
     @Transactional
-    public UserView createUser(UserDto userDto) {
+    public UserView saveUser(UUID userId, UserSaveDto dto) {
+        User user;
+        if (userId == null) {
+            checkUserEmail(dto.email());
+            checkUsername(dto.username());
+            user = User.builder()
+                    .username(dto.username())
+                    .firstName(dto.firstName())
+                    .lastName(dto.lastName())
+                    .email(dto.email())
+                    .userType(dto.userType())
+                    .deleted(false)
+                    .build();
+        } else {
+            user = getUserByIdOrThrowException(userId);
+            if (!user.getUsername().equalsIgnoreCase(dto.username())) {
+                checkUsername(dto.username());
+            }
+            if (!user.getEmail().equalsIgnoreCase(dto.email())) {
+                checkUserEmail(dto.email());
+            }
+            user.setUsername(dto.username());
+            user.setFirstName(dto.firstName());
+            user.setLastName(dto.lastName());
+            user.setEmail(dto.email());
+            user.setUserType(dto.userType());
 
-        checkUserEmail(userDto.email());
-        checkUsername(userDto.username());
-
-        User user = userMapper.userDtoToUser(userDto);
-        user.setDeleted(false);
+        }
         User saved = userRepository.save(user);
         return userMapper.userToUserView(saved);
     }
@@ -57,18 +76,24 @@ public class UserService {
     }
 
     @Transactional
-    public UserView updateUser(UUID userId, UserDto userDto) {
-        User actual = getUserByIdOrThrowException(userId);
-        if (!actual.getUsername().equalsIgnoreCase(userDto.username())) {
-            checkUsername(userDto.username());
+    public UserView updateUser(UUID userId, UserPatchDto dto) {
+        User user = getUserByIdOrThrowException(userId);
+        if (dto.username() != null && !user.getUsername().equalsIgnoreCase(dto.username())) {
+            checkUsername(dto.username());
         }
-        if (!actual.getEmail().equalsIgnoreCase(userDto.email())) {
-            checkUserEmail(userDto.email());
+        if (dto.email() != null && !user.getEmail().equalsIgnoreCase(dto.email())) {
+            checkUserEmail(dto.email());
         }
-        User updated = userMapper.userDtoToUser(userDto);
-        updated.setId(userId);
-        updated.setDeleted(actual.isDeleted());
-        User saved = userRepository.save(updated);
+        if (dto.firstName() != null && !user.getFirstName().equals(dto.firstName())) {
+            user.setFirstName(dto.firstName());
+        }
+        if (dto.lastName() != null && !user.getLastName().equals(dto.lastName())) {
+            user.setLastName(dto.lastName());
+        }
+        if (dto.userType() != null && !user.getUserType().equals(dto.userType())) {
+            user.setUserType(dto.userType());
+        }
+        User saved = userRepository.save(user);
         return userMapper.userToUserView(saved);
     }
 

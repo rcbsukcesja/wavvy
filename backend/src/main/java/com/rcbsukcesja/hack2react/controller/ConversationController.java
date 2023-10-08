@@ -27,8 +27,7 @@ public class ConversationController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<ConversationView>> getConversationByUserId(@PathVariable UUID userId) {
-        return new ResponseEntity<>(
-                conversationService.getConversationByUserId(userId), HttpStatus.OK);
+        return new ResponseEntity<>(conversationService.getConversationByUserId(userId), HttpStatus.OK);
     }
 
     @PostMapping

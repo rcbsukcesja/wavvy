@@ -1,22 +1,41 @@
 package com.rcbsukcesja.hack2react.repositories;
 
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface OrganizationNGORepository extends JpaRepository<OrganizationNGO, UUID> {
 
+    @Query("SELECT ngo FROM OrganizationNGO ngo")
+    @EntityGraph(attributePaths = {
+            "owner",
+            "socialLinks",
+            "businessAreas",
+            "resources"
+    })
+    List<OrganizationNGO> getAll();
+
+    @EntityGraph(attributePaths = {
+            "projects",
+            "owner",
+            "socialLinks",
+            "businessAreas",
+            "resources"
+    })
     Optional<OrganizationNGO> getOrganizationNGOById(UUID id);
 
-    Boolean existsByNameIgnoreCase(String name);
+    boolean existsByNameIgnoreCase(String name);
 
-    Boolean existsByKRS(String krs);
+    boolean existsByKrs(String krs);
 
-    Boolean existsByNIP(String nip);
+    boolean existsByNip(String nip);
 
-    Boolean existsByREGON(String regon);
+    boolean existsByRegon(String regon);
 }

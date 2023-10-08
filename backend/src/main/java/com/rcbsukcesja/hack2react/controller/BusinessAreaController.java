@@ -37,7 +37,7 @@ public class BusinessAreaController {
     }
 
     @PostMapping
-    public ResponseEntity<BusinessAreaView> createConversation(
+    public ResponseEntity<BusinessAreaView> createBusinessArea(
             @RequestBody BusinessAreaDto businessAreaDto) {
         return new ResponseEntity<>(businessAreaService
                 .saveBusinessArea(null, businessAreaDto), HttpStatus.CREATED);
