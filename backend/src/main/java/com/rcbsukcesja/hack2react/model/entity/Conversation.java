@@ -26,7 +26,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Builder
-@Table(name = "CONVERSATIONS")
+@Table(name = "conversations", schema = "wavvy")
 public class Conversation {
 
     @Id
@@ -42,6 +42,7 @@ public class Conversation {
             CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(
             name = "conversation_users",
+            schema = "wavvy",
             joinColumns = {@JoinColumn(name = "conversation_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )

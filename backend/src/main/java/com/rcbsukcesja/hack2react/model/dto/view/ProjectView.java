@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,11 +25,11 @@ public class ProjectView {
     private String address;
     private String imageLink;
     private String link;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private OffsetDateTime startTime;
+    private OffsetDateTime endTime;
     private BigDecimal budget;
     private String cooperationMessage;
-    private Set<OrganizationLightweightView> organizers;
+    private OrganizationLightweightView organizer;
     private Set<BusinessAreaView> categories;
     private ProjectStatus status;
     private Set<String> tags;

@@ -8,28 +8,28 @@ services:
       - 8080:8080
     expose:
       - 8080
-#    depends_on:
-#      - db
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/wavvy
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=postgres
-#      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
-#      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-update
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db/wavvy
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
 
-#  db:
-#    image: 'postgres:15.4-bullseye'
-#    container_name: db
-#    ports:
-#      - 5432:5432
-#    expose:
-#      - 5432
-#    environment:
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_PASSWORD=postgres
-#      - POSTGRES_DB=wavvy
-#    volumes:
-#      - postgres:/var/lib/postgresql/data
+  db:
+    image: 'postgres:15.4-bullseye'
+    container_name: db
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=wavvy
+    volumes:
+      - postgres:/var/lib/postgresql/data
 
   frontend:
     build:
@@ -42,5 +42,5 @@ services:
       - API_URL=http://localhost:8080
     depends_on:
       - backend
-#volumes:
-#  postgres:
+volumes:
+  postgres:

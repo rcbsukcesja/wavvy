@@ -2,12 +2,12 @@ package com.rcbsukcesja.hack2react.model.entity;
 
 import com.rcbsukcesja.hack2react.model.enums.LegalStatus;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 import java.util.Set;
 
 @Entity
-@Table(name = "ORGANIZATIONS_NGO")
+@Table(name = "organizations_ngo", schema = "wavvy")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,16 +26,12 @@ import java.util.Set;
 @SuperBuilder
 public class OrganizationNGO extends Organization {
 
+    private String logoPath;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private LegalStatus legalStatus;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "organizationsNGO_projects",
-            joinColumns = {@JoinColumn(name = "organizationNGO_id")},
-            inverseJoinColumns = {@JoinColumn(name = "project_id")}
-    )
+    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Project> projects;
 }

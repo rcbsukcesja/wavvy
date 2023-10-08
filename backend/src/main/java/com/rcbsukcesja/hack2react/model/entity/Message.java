@@ -22,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Table(name = "MESSAGES")
+@Table(name = "messages", schema = "wavvy")
 public class Message {
 
     @Id
