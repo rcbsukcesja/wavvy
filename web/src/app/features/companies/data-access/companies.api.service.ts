@@ -3,6 +3,7 @@ import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Company } from '../model/company.model';
 import { CompaniesStateService } from './companies.state.service';
 import { tap } from 'rxjs';
+import { ID } from 'src/app/core/types/id.type';
 
 export interface GetAllCompaniesParams {}
 
@@ -12,7 +13,7 @@ export interface AddCompanyFormValue {
   startDate: string;
   endDate: string;
   link: string;
-  categories: { id: number; name: string }[];
+  categories: { id: ID; name: string }[];
 }
 
 @Injectable({
@@ -29,11 +30,11 @@ export class CompaniesApiService extends HttpBaseService {
     return this.http.post<Company>(`${this.url}`, payload);
   }
 
-  update(id: string, payload: AddCompanyFormValue) {
+  update(id: ID, payload: AddCompanyFormValue) {
     return this.http.patch<Company>(`${this.url}/${id}`, payload);
   }
 
-  delete(id: string) {
+  delete(id: ID) {
     return this.http.delete(`${this.url}/${id}`);
   }
 

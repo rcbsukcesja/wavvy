@@ -1,7 +1,24 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
@@ -11,10 +28,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { BusinessArea, NGO } from '../model/ngo.model';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { BehaviorSubject } from 'rxjs';
+import { ID } from 'src/app/core/types/id.type';
 
 export type NgoProfileFormModel = FormGroup<{
   name: FormControl<string>;
-  logo: FormControl<string>;
+  logo: FormControl<File | null>;
   KRS: FormControl<string>;
   NIP: FormControl<string>;
   description: FormControl<string>;
@@ -24,7 +43,7 @@ export type NgoProfileFormModel = FormGroup<{
   phone: FormControl<string>;
   tags: FormControl<string[]>;
   creationDate: FormControl<string>;
-  businnessAreas: FormControl<{ id: number; name: string }[]>;
+  businnessAreas: FormControl<{ id: ID; name: string }[]>;
   resources: FormArray<FormControl<string>>;
 }>;
 
@@ -43,14 +62,21 @@ export type NgoProfileFormModel = FormGroup<{
     MatDividerModule,
     MatDatepickerModule,
   ],
+  styles: [
+    `
+      /* ::-webkit-file-upload-button + span {
+        color: red;
+      } */
+    `,
+  ],
   template: `
-    <section>
+    <section *ngIf="logo$ | async as logo">
       <h2>{{ profile.name }}</h2>
       <div class="w-1/5 mb-4">
-        <img [src]="profile.logo" />
+        <img *ngIf="logo.url" [src]="logo.url" />
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="max-w-3xl">
         <div class="flex flex-col md:flex-row md:gap-4">
           <mat-form-field class="md:w-1/2">
             <mat-label>Nazwa</mat-label>
@@ -58,10 +84,8 @@ export type NgoProfileFormModel = FormGroup<{
           </mat-form-field>
           <br />
           <mat-form-field class="md:w-1/2">
-            <mat-label>Data utworzenia</mat-label>
-            <input matInput formControlName="creationDate" [matDatepicker]="picker" placeholder="Wybierz datę" />
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+            <mat-label>Adres</mat-label>
+            <textarea formControlName="address" matInput></textarea>
           </mat-form-field>
           <br />
         </div>
@@ -92,9 +116,12 @@ export type NgoProfileFormModel = FormGroup<{
         </div>
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
-            <mat-label>Adres</mat-label>
-            <textarea formControlName="address" matInput></textarea>
+            <mat-label>Data utworzenia</mat-label>
+            <input matInput formControlName="creationDate" [matDatepicker]="picker" placeholder="Wybierz datę" />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
+
           <br />
           <mat-form-field class="md:w-1/2">
             <mat-label>Strona internetowa</mat-label>
@@ -115,17 +142,21 @@ export type NgoProfileFormModel = FormGroup<{
               </mat-select-trigger>
               <mat-option *ngFor="let area of bussinessAreas" [value]="area">{{ area.name }}</mat-option>
             </mat-select>
+            <mat-hint>Minimum jeden obszar działania</mat-hint>
           </mat-form-field>
           <br />
+          <div class="md:w-1/2 flex items-center">
+            <div class="w-full flex flex-col">
+              <label [class.text-red-500]="logo$.value.error" for="logo">Logo</label>
+              <input [class.text-red-500]="logo$.value.error" id="logo" formControlName="logo" #logoInput type="file" />
+            </div>
+            <button type="button" (click)="upload()"><mat-icon>save</mat-icon></button>
+          </div>
 
-          <mat-form-field class="md:w-1/2">
-            <mat-label>Logo</mat-label>
-            <input formControlName="logo" matInput />
-          </mat-form-field>
           <br />
         </div>
-        <div class="flex flex-col md:flex-row  md:gap-4">
-          <mat-form-field class="md:w-1/2 md:pr-2">
+        <div class="flex flex-col   md:gap-4">
+          <mat-form-field>
             <mat-label>Tagi</mat-label>
             <mat-chip-grid formControlName="tags" #chipGrid aria-label="Enter tags">
               <mat-chip-row
@@ -145,21 +176,47 @@ export type NgoProfileFormModel = FormGroup<{
                 [matChipInputAddOnBlur]="addOnBlur"
                 (matChipInputTokenEnd)="add($event)" />
             </mat-chip-grid>
+            <mat-hint *ngIf="form.controls.tags as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
+              >Podaj przynajmniej 3 tagi</mat-hint
+            >
           </mat-form-field>
 
-          <mat-form-field class="md:w-1/2 md:pl-2">
-            <mat-label>Opis</mat-label>
+          <mat-form-field class="h-32">
+            <mat-label>Opis organizacji</mat-label>
             <textarea formControlName="description" matInput></textarea>
+            <mat-hint *ngIf="form.controls.description as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
+              >Przedstaw swoją organizację, czym się zajmujecie, nad rozwiązaniem jakich problemów pracujecie
+              itp</mat-hint
+            >
           </mat-form-field>
           <br />
-          <mat-form-field class="md:w-1/2 md:pl-2">
-            <mat-label>Zasoby</mat-label>
-            <input matInput />
-            <button type="button">Dodaj</button>
-          </mat-form-field>
+
+          <section formArrayName="resources">
+            <p>Zasoby organizacji</p>
+            <div *ngFor="let ctrl of form.controls.resources.controls; let i = index" class="flex">
+              <mat-form-field class="w-full">
+                <!-- <mat-label>Opis</mat-label> -->
+                <input [formControl]="ctrl" matInput />
+              </mat-form-field>
+              <button *ngIf="ctrl.disabled" (click)="ctrl.enable()"><mat-icon>edit</mat-icon></button>
+              <button *ngIf="ctrl.enabled" (click)="ctrl.disable()"><mat-icon>save</mat-icon></button>
+              <button *ngIf="ctrl.disabled" (click)="removeResource(i)"><mat-icon>remove</mat-icon></button>
+            </div>
+            <div class="flex">
+              <mat-form-field class="w-full">
+                <mat-label>Nowy zasób</mat-label>
+                <input matInput #newResource />
+                <mat-hint
+                  >Masz się czym podzielić z innymi? Czy to sala konferencyjna czy też ekspercka wiedza w wybranym
+                  temacie! Daj znać o swoich super mocach 😎</mat-hint
+                >
+              </mat-form-field>
+              <button (click)="addResource(newResource.value)" type="button">Dodaj</button>
+            </div>
+          </section>
         </div>
 
-        <div class="flex justify-center">
+        <div class="flex justify-center mt-8 mb-4">
           <button mat-raised-button color="primary">Zapisz</button>
         </div>
       </form>
@@ -171,7 +228,10 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
   @Input({ required: true }) profile!: NGO;
   @Input({ required: true }) bussinessAreas!: BusinessArea[];
   @Input() firstCompletion = false;
+  @Input() adminMode = false;
   @Output() save = new EventEmitter<Required<typeof this.form.value>>();
+  @Output() saveLogo = new EventEmitter<File>();
+  @ViewChild('logoInput') logoInput!: ElementRef<HTMLInputElement>;
 
   private builder = inject(NonNullableFormBuilder);
 
@@ -181,25 +241,65 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
 
   form!: NgoProfileFormModel;
 
+  logo$: BehaviorSubject<{ file: File | null; url: string | null; error: boolean }> = new BehaviorSubject({
+    file: null,
+    url: null,
+    error: false,
+  } as { file: File | null; url: string | null; error: boolean });
+
   tags: string[] = [];
 
   ngOnInit(): void {
     this.form = this.builder.group({
-      name: this.builder.control({ value: this.profile.name, disabled: true }),
-      logo: this.builder.control(this.profile.logo || ''),
-      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }),
-      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }),
-      description: this.builder.control(this.profile.description || ''),
-      address: this.builder.control({ value: this.profile.address || '', disabled: true }),
-      email: this.builder.control(this.profile.email || ''),
-      website: this.builder.control(this.profile.website || ''),
-      phone: this.builder.control(this.profile.phone || ''),
-      tags: this.builder.control(this.profile.tags || ['']),
-      creationDate: this.builder.control(this.profile.creationDate || ''),
-      businnessAreas: this.builder.control<{ id: number; name: string }[]>(
+      name: this.builder.control({ value: this.profile.name, disabled: true }, [Validators.required]),
+      logo: this.builder.control<File | null>(null),
+      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }, [Validators.required]),
+      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }, [Validators.required]),
+      description: this.builder.control(this.profile.description || '', [Validators.required]),
+      address: this.builder.control({ value: this.profile.address || '', disabled: true }, [Validators.required]),
+      email: this.builder.control(this.profile.email || '', [Validators.required]),
+      website: this.builder.control(this.profile.website || '', [Validators.required]),
+      phone: this.builder.control(this.profile.phone || '', [Validators.required]),
+      tags: this.builder.control(this.profile.tags || [''], [Validators.required, Validators.minLength(3)]),
+      creationDate: this.builder.control(this.profile.creationDate || '', [Validators.required]),
+      businnessAreas: this.builder.control<{ id: ID; name: string }[]>(
         this.bussinessAreas.filter(area => this.profile.businnessAreas?.includes(area.id) || [])
       ),
       resources: this.builder.array<FormControl<string>>([]),
+    });
+
+    this.form.controls.logo.valueChanges.subscribe(val => {
+      console.log(this.logoInput);
+      const logoFile = this.logoInput.nativeElement.files?.[0];
+
+      if (logoFile) {
+        const validTypes = ['image/png', 'image/jpeg'];
+        if (!validTypes.includes(logoFile.type)) {
+          this.logo$.next({
+            url: this.logo$.value.url,
+            file: null,
+            error: true,
+          });
+          return;
+        }
+
+        // Check file size (1MB = 1 * 1024 * 1024 bytes)
+        if (logoFile.size > 1 * 1024 * 1024) {
+          this.logo$.next({
+            url: this.logo$.value.url,
+            file: null,
+            error: true,
+          });
+          return;
+        }
+
+        // Prepare the link
+        this.logo$.next({
+          url: URL.createObjectURL(logoFile),
+          file: logoFile,
+          error: false,
+        });
+      }
     });
   }
 
@@ -207,11 +307,31 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) {
+      this.logo$.next({
+        ...this.logo$.value,
+        error: !Boolean(this.logo$.value.url),
+      });
+
       return;
     }
 
     this.save.emit(this.form.getRawValue());
-    console.log(this.form.value);
+    console.log(this.form.getRawValue());
+  }
+
+  upload() {
+    if (!this.logo$.value.file) {
+      return;
+    }
+    this.saveLogo.emit(this.logo$.value.file);
+  }
+
+  addResource(resourceName: string) {
+    this.form.controls.resources.push(this.builder.control({ value: resourceName, disabled: true }));
+  }
+
+  removeResource(resourceIndex: number) {
+    this.form.controls.resources.removeAt(resourceIndex);
   }
 
   add(event: MatChipInputEvent): void {

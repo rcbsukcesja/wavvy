@@ -4,6 +4,7 @@ import { ProjectsStateService } from './projects.state.service';
 import { tap } from 'rxjs';
 import { Project } from '../model/project.model';
 import { Router } from '@angular/router';
+import { ID } from 'src/app/core/types/id.type';
 
 export interface GetAllProjectsParams {}
 
@@ -13,7 +14,7 @@ export interface AddProjectFormValue {
   startDate: string;
   endDate: string;
   link: string;
-  categories: { id: number; name: string }[];
+  categories: { id: ID; name: string }[];
 }
 
 @Injectable({
@@ -39,7 +40,7 @@ export class ProjectsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  update(id: string, payload: AddProjectFormValue) {
+  update(id: ID, payload: AddProjectFormValue) {
     this.http
       .patch<Project>(`${this.url}/${id}`, payload)
       .pipe(
@@ -51,7 +52,7 @@ export class ProjectsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  delete(id: string) {
+  delete(id: ID) {
     this.http
       .delete(`${this.url}/${id}`)
       .pipe(
@@ -62,11 +63,11 @@ export class ProjectsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getById(id: string) {
+  getById(id: ID) {
     return this.http.get<Project>(`${this.url}/${id}`);
   }
 
-  getByNGOId(id: string) {
+  getByNGOId(id: ID) {
     this.stateService.setState({ loadListByNGOIdCallState: 'LOADING' });
 
     this.http

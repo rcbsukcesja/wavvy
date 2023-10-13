@@ -15,6 +15,10 @@ export const NgoProfileCompletedGuard: CanMatchFn = () => {
 
   console.log('NgoProfileCompletedGuard');
 
+  if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
+    return true;
+  }
+
   if (user && !user.profileCompleted) {
     router.navigateByUrl('/manage/ngo-profile');
 
@@ -28,7 +32,11 @@ export const NonFirstLoginGuard: CanMatchFn = () => {
   const user = inject(AuthStateService).$value().user;
   const router = inject(Router);
 
-  console.log('non first login guard', user?.firstLogin);
+  console.log('non first login guard', user);
+
+  if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
+    return true;
+  }
 
   if (user?.firstLogin) {
     router.navigateByUrl('/auth/first-login');

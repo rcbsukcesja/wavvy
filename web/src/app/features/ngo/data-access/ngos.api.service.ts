@@ -4,6 +4,7 @@ import { NGO } from '../model/ngo.model';
 import { NGOsStateService } from './ngos.state.service';
 import { tap } from 'rxjs';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
+import { ID } from 'src/app/core/types/id.type';
 
 export interface GetAllNGOsParams {}
 
@@ -28,18 +29,24 @@ export class NGOsApiService extends HttpBaseService {
     return this.http.post<NGO>(`${this.url}`, payload);
   }
 
-  updateProfile(payload: UpdateNGOProfileFormValue) {
+  updateLogo(logo: File) {
+    const formData: FormData = new FormData();
+    formData.append('file', logo);
+
+    this.http.post(`${this.url}/my`, formData).subscribe();
+  }
+
+  updateProfile(payload: UpdateNGOProfileFormValue, id: ID) {
     this.stateService.setState({ updateProfileCallState: 'LOADING' });
 
-    this.http
-      .put(`${this.url}/1`, payload)
-      .pipe(
-        tap(() => {
-          this.stateService.setState({ updateProfileCallState: 'LOADED' });
-          this.getProfile();
-        })
-      )
-      .subscribe();
+    console.log({ payload });
+
+    return this.http.put(`${this.url}/${id}`, payload).pipe(
+      tap(() => {
+        this.stateService.setState({ updateProfileCallState: 'LOADED' });
+        this.getProfile();
+      })
+    );
   }
 
   getProfile() {
@@ -69,7 +76,7 @@ export class NGOsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getById(id: string) {
+  getById(id: ID) {
     this.stateService.setState({ loadByIdCallState: 'LOADING' });
 
     this.http
@@ -82,7 +89,7 @@ export class NGOsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getCurrentNgo(id: number) {
+  getCurrentNgo(id: ID) {
     this.stateService.setState({ loadByIdCallState: 'LOADING' });
 
     this.http

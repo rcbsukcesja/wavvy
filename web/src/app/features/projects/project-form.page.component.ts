@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProjectsApiService } from './data-access/projects.api.service';
+import { ID } from 'src/app/core/types/id.type';
 
 export type ProjectForm = FormGroup<{
   status: FormControl<ProjectStatus>;
@@ -156,7 +157,7 @@ export default class ProjectFormPageComponent implements OnInit {
       link: this.builder.control(this.project?.link || ''),
       possibleVolunteer: this.builder.control(this.project?.possibleVolunteer || false),
       budget: this.builder.control(this.project?.budget || 0),
-      categories: this.builder.control<{ id: number; name: string }[]>([]),
+      categories: this.builder.control<{ id: ID; name: string }[]>([]),
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
   }

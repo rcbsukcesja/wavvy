@@ -14,6 +14,7 @@ import { take, tap } from 'rxjs';
 import { ProjectsApiService } from '../projects/data-access/projects.api.service';
 import { ProjectsStateService } from '../projects/data-access/projects.state.service';
 import ProjectsListComponent from '../projects/projects-list.component';
+import { ID } from 'src/app/core/types/id.type';
 
 @Component({
   selector: 'app-ngo-details-page',
@@ -127,7 +128,7 @@ export default class NgoDetailsPageComponent implements OnInit {
     this.projectsService.getByNGOId(id);
   }
 
-  openMessageModal(id: string, name: string) {
+  openMessageModal(id: ID, name: string) {
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',

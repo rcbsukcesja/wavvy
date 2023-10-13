@@ -1,10 +1,11 @@
 import { User } from 'src/app/auth/data_access/auth.state.service';
 import { Project } from '../../projects/model/project.model';
 import { UserData } from 'src/app/auth/models/user.model';
+import { ID } from 'src/app/core/types/id.type';
 
 export interface BusinessArea {
   name: string;
-  id: number;
+  id: ID;
 }
 
 export type LegalStatusNGO = 'FOUNDATION' | 'ASSOCIATION' | 'SOCIAL_COOPERATIVE' | 'PUBLIC_BENEFIT_ORGANIZATION';
@@ -21,7 +22,7 @@ export const legalStatusMap: LegalStatusMap = {
 };
 
 export interface NGO {
-  id: string;
+  id: ID;
   name: string;
   logo: string;
   owners: UserData[];

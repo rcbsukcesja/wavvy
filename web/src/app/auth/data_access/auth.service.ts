@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { API_URL } from 'src/app/core/API-URL.token';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NGOsApiService } from 'src/app/features/ngo/data-access/ngos.api.service';
+import { ID } from 'src/app/core/types/id.type';
 
 export type RegisterFormValue = {
   fullName: string;
@@ -45,7 +46,7 @@ export class AuthService extends HttpBaseService {
     super('users');
   }
 
-  handleFirstLogin(payload: FirstLoginFormValue, id: number) {
+  handleFirstLogin(payload: FirstLoginFormValue, id: ID) {
     return this.http.patch<User>(`${this.url}/${id}`, { firstLogin: false }).pipe(
       switchMap(user => {
         return user ? of(user) : throwError(() => new Error('Coś poszło nie tak'));
@@ -63,6 +64,7 @@ export class AuthService extends HttpBaseService {
       .pipe(
         map(([user]) => user),
         switchMap(user => {
+          console.log(user);
           return user ? of(user) : throwError(() => new Error('Login lub hasło jest niepoprawne'));
         }),
         tap(user => {

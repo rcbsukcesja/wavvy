@@ -3,6 +3,7 @@ import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { NgoRegisterFormStateService } from './ngo-register.state.service';
 import { tap } from 'rxjs';
 import { NgoRegisterForm } from '../model/ngo-register-form.model';
+import { ID } from 'src/app/core/types/id.type';
 
 export interface GetAllOffersParams {}
 
@@ -23,7 +24,7 @@ export class NgoRegisterFormApiService extends HttpBaseService {
     super('register');
   }
 
-  update(id: string, payload: NgoRegisterFormUpdateValue) {
+  update(id: ID, payload: NgoRegisterFormUpdateValue) {
     this.http
       .patch<NgoRegisterForm>(`${this.url}/${id}`, payload)
       .pipe(

@@ -14,6 +14,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from './auth/data_access/auth.service';
 import { tap } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpErrorInterceptor } from './core/http-error.interceptor';
+import { MatDialogModule } from '@angular/material/dialog';
 
 registerLocaleData(localePl);
 
@@ -47,7 +49,8 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
     importProvidersFrom(MatNativeDateModule),
-    provideHttpClient(withInterceptors([])),
+    importProvidersFrom(MatDialogModule),
+    provideHttpClient(withInterceptors([HttpErrorInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimations(),
     provideStore(),

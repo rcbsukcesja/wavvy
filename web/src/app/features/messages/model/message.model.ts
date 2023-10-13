@@ -1,10 +1,12 @@
+import { ID } from 'src/app/core/types/id.type';
+
 export type ReceiverType = 'ngo' | 'company' | 'other';
 
 export interface Message {
-  id: string;
+  id: ID;
   title: string;
   content: string;
-  receiverId: string;
+  receiverId: ID;
   receiverType: ReceiverType;
 }
 

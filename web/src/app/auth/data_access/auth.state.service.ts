@@ -1,9 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { ID } from 'src/app/core/types/id.type';
 import { UserRoles } from 'src/app/core/user-roles.enum';
 
 export interface User {
-  id: number;
+  id: ID;
   role: UserRoles;
   login: string;
   firstLogin: boolean;

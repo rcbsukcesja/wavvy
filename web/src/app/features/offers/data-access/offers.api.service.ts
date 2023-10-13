@@ -3,6 +3,7 @@ import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Offer } from '../model/offer.model';
 import { OffersStateService } from './offers.state.service';
 import { tap } from 'rxjs';
+import { ID } from 'src/app/core/types/id.type';
 
 export interface GetAllOffersParams {}
 
@@ -15,7 +16,7 @@ export interface AddOfferFormValue {
   startDate: string;
   endDate: string;
   link: string;
-  categories: { id: number; name: string }[];
+  categories: { id: ID; name: string }[];
 }
 
 @Injectable({
@@ -39,7 +40,7 @@ export class OffersApiService extends HttpBaseService {
       .subscribe();
   }
 
-  update(id: string, payload: AddOfferFormValue) {
+  update(id: ID, payload: AddOfferFormValue) {
     this.http
       .patch<Offer>(`${this.url}/${id}`, payload)
       .pipe(
@@ -50,7 +51,7 @@ export class OffersApiService extends HttpBaseService {
       .subscribe();
   }
 
-  delete(id: string) {
+  delete(id: ID) {
     this.http
       .delete(`${this.url}/${id}`)
       .pipe(

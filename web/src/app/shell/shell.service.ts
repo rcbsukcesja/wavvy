@@ -1,6 +1,7 @@
 import { Injectable, Signal, computed, inject } from '@angular/core';
 import { MenuItem } from './shell.component';
 import { AuthStateService } from '../auth/data_access/auth.state.service';
+import { UserRoles } from '../core/user-roles.enum';
 
 @Injectable({ providedIn: 'root' })
 export class ShellService {
@@ -16,7 +17,11 @@ export class ShellService {
   $menu: Signal<MenuItem[]> = computed(() => {
     const authState = this.$authState();
 
-    if (authState.user && !authState.user.profileCompleted) {
+    if (
+      authState.user &&
+      (['COMPANY_USER', 'NGO_USER'] as UserRoles[]).includes(authState.user.role) &&
+      !authState.user.profileCompleted
+    ) {
       return [this.ngoProfileMenuItem];
     }
 

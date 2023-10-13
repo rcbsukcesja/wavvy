@@ -15,6 +15,7 @@ import { LegalStatusPipe } from './utils/legal-status.pipe';
 import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { ID } from 'src/app/core/types/id.type';
 
 @Component({
   selector: 'app-ngo-list-page',
@@ -92,11 +93,11 @@ export default class NgoListPageComponent implements OnInit {
     this.service.getAll();
   }
 
-  goTo(id: string) {
+  goTo(id: ID) {
     this.router.navigateByUrl(`/ngos/${id}`);
   }
 
-  openMessageModal(id: string, name: string) {
+  openMessageModal(id: ID, name: string) {
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',
@@ -132,7 +133,7 @@ export default class NgoListPageComponent implements OnInit {
     });
   }
 
-  openCategoriessModal(items: { id: string; name: string }[]) {
+  openCategoriessModal(items: { id: ID; name: string }[]) {
     this.dialog.open(ListDialogComponent, {
       width: '450px',
       data: {

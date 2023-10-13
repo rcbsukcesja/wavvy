@@ -12,6 +12,7 @@ import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/u
 import { take, tap } from 'rxjs';
 import { ListDialogComponent } from 'src/app/shared/ui/common-list-dialog.component';
 import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.component';
+import { ID } from 'src/app/core/types/id.type';
 
 @Component({
   selector: 'app-companies.page',
@@ -75,7 +76,7 @@ export default class CompaniesListPageComponent implements OnInit {
     this.service.getAll();
   }
 
-  openMessageModal(id: string, name: string) {
+  openMessageModal(id: ID, name: string) {
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',
@@ -111,7 +112,7 @@ export default class CompaniesListPageComponent implements OnInit {
     });
   }
 
-  openCategoriessModal(items: { id: string; name: string }[]) {
+  openCategoriessModal(items: { id: ID; name: string }[]) {
     this.dialog.open(ListDialogComponent, {
       width: '450px',
       data: {

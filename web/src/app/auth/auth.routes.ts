@@ -12,6 +12,10 @@ export const FirstLoginGuard: CanMatchFn = () => {
 
   console.log('first login guards');
 
+  if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
+    return true;
+  }
+
   if (!user || !user.firstLogin) {
     router.navigateByUrl('/');
 

@@ -1,5 +1,7 @@
+import { ID } from 'src/app/core/types/id.type';
+
 export type NgoRegisterForm = {
-  id: string;
+  id: ID;
   fullName: string;
   phone: string;
   email: string;

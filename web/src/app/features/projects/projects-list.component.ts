@@ -11,6 +11,7 @@ import { MessagesApiService } from '../messages/data-access/messages.api.service
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProjectStatusPipe } from './utils/project-status.pipe';
 import { Project } from './model/project.model';
+import { ID } from 'src/app/core/types/id.type';
 
 @Component({
   selector: 'app-projects-list',
@@ -88,7 +89,7 @@ export default class ProjectsListComponent {
   messagesService = inject(MessagesApiService);
   dialog = inject(MatDialog);
 
-  openMessageModal(id: string, name: string) {
+  openMessageModal(id: ID, name: string) {
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',
