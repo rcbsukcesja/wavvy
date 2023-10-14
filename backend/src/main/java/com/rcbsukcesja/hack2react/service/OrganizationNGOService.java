@@ -94,7 +94,7 @@ public class OrganizationNGOService {
                 .map(id -> businessAreaRepository.getBusinessAreaById(id)
                         .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
                 .toList()));
-        ngo.setCreationTime(TimeUtils.now());
+        ngo.setCreationTime(TimeUtils.nowInUTC());
         ngo.setResources(new HashSet<>());
 
         OrganizationNGO saved = organizationNGORepository.save(ngo);

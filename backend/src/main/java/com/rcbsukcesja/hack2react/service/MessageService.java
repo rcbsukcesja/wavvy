@@ -37,7 +37,7 @@ public class MessageService {
         message.setToUser(toUser);
         message.setConversation(conversationService
                 .getConversationByIdOrThrowException(messageDto.conversationId()));
-        message.setCreatedAt(TimeUtils.now());
+        message.setCreatedAt(TimeUtils.nowInUTC());
         Message saved = messageRepository.save(message);
         return messageMapper.messageToMessageView(saved);
 
