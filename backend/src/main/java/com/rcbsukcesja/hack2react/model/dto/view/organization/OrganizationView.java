@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,7 +26,7 @@ public abstract class OrganizationView {
     private String email;
     private String website;
     private Set<String> socialLinks;
-    private OffsetDateTime creationTime;
+    private ZonedDateTime creationTime;
     private String description;
     private Set<BusinessAreaView> businessAreas;
     private String krs;

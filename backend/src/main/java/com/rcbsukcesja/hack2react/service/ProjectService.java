@@ -15,6 +15,7 @@ import com.rcbsukcesja.hack2react.model.mappers.ProjectMapper;
 import com.rcbsukcesja.hack2react.repositories.BusinessAreaRepository;
 import com.rcbsukcesja.hack2react.repositories.OrganizationNGORepository;
 import com.rcbsukcesja.hack2react.repositories.ProjectRepository;
+import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,8 +76,8 @@ public class ProjectService {
         project.setAddress(dto.address());
         project.setImageLink(dto.imageLink());
         project.setLink(dto.link());
-        project.setStartTime(dto.startTime());
-        project.setEndTime(dto.endTime());
+        project.setStartTime(TimeUtils.dateTimeInUTC(dto.startTime()));
+        project.setEndTime(TimeUtils.dateTimeInUTC(dto.endTime()));
         project.setBudget(dto.budget());
         project.setCooperationMessage(dto.cooperationMessage());
         project.setPossibleVolunteer(dto.possibleVolunteer());
@@ -105,10 +106,10 @@ public class ProjectService {
             project.setLink(dto.link());
         }
         if (dto.startTime() != null && !dto.startTime().equals(project.getStartTime())) {
-            project.setStartTime(dto.startTime());
+            project.setStartTime(TimeUtils.dateTimeInUTC(dto.startTime()));
         }
         if (dto.endTime() != null && !dto.endTime().equals(project.getEndTime())) {
-            project.setEndTime(dto.endTime());
+            project.setEndTime(TimeUtils.dateTimeInUTC(dto.endTime()));
         }
         if (dto.budget() != null && !dto.budget().equals(project.getBudget())) {
             project.setBudget(dto.budget());

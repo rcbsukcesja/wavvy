@@ -1,13 +1,16 @@
 package com.rcbsukcesja.hack2react.controller;
 
-import com.rcbsukcesja.hack2react.model.dto.save.OfferDto;
+import com.rcbsukcesja.hack2react.model.dto.save.OfferPatchDto;
+import com.rcbsukcesja.hack2react.model.dto.save.OfferSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.OfferView;
 import com.rcbsukcesja.hack2react.service.OfferService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,8 +31,7 @@ public class OfferController {
 
     @GetMapping
     public ResponseEntity<List<OfferView>> getAllOffers() {
-        return new ResponseEntity<>(
-                offerService.getAllOffers(), HttpStatus.OK);
+        return new ResponseEntity<>(offerService.getAllOffers(), HttpStatus.OK);
     }
 
     @GetMapping("/{offerId}")
@@ -39,18 +41,22 @@ public class OfferController {
     }
 
     @PostMapping
-    public ResponseEntity<OfferView> createOffer(@RequestBody OfferView offerView) {
-        return new ResponseEntity<>(
-                offerService.createOffer(offerView), HttpStatus.CREATED);
+    public ResponseEntity<OfferView> createOffer(@RequestBody OfferSaveDto offerSaveDto) {
+        return new ResponseEntity<>(offerService.saveOffer(null, offerSaveDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{offerId}")
-    public ResponseEntity<OfferView> updateOffer(
+    public ResponseEntity<OfferView> putUpdateOffer(
             @PathVariable UUID offerId,
-            @RequestBody OfferDto offerDto) {
-        OfferView result = offerService.updateOffer(offerId, offerDto);
-        return new ResponseEntity<>(
-                result, HttpStatus.OK);
+            @RequestBody @Valid OfferSaveDto offerSaveDto) {
+        return new ResponseEntity<>(offerService.saveOffer(offerId, offerSaveDto), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{offerId}")
+    public ResponseEntity<OfferView> patchUpdateOffer(
+            @PathVariable UUID offerId,
+            @RequestBody @Valid OfferPatchDto offerPatchDto) {
+        return new ResponseEntity<>(offerService.updateOffer(offerId, offerPatchDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

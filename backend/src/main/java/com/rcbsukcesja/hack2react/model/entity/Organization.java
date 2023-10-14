@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -52,7 +52,7 @@ public abstract class Organization {
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<SocialLink> socialLinks;
-    private OffsetDateTime creationTime;
+    private ZonedDateTime creationTime;
     @Column(length = 2000)
     private String description;
 

@@ -91,7 +91,7 @@ public class CompanyService {
                 .map(id -> businessAreaRepository.getBusinessAreaById(id)
                         .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
                 .toList()));
-        company.setCreationTime(TimeUtils.now());
+        company.setCreationTime(TimeUtils.nowInUTC());
         company.setResources(new HashSet<>());
 
         Company saved = companyRepository.save(company);

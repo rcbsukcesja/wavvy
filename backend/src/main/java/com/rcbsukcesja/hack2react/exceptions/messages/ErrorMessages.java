@@ -33,4 +33,7 @@ public class ErrorMessages {
 
     public static final String FILE_FAILED_TO_STORE = "Failed to store file!";
     public static final String FILE_FAILED_TO_REMOVE = "Failed to remove file!";
+
+    public static final String OFFER_DATE_START_AFTER_END_VALIDATION_MESSAGE = "Start date cannot be after end date";
+    public static final String OFFER_DATE_END_IN_PAST_VALIDATION_MESSAGE = "End date cannot be in the past";
 }
