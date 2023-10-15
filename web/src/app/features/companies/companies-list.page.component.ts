@@ -25,17 +25,6 @@ import { ID } from 'src/app/core/types/id.type';
           <div class="mb-4 h-10">
             <p class="font-semibold text-lg">{{ company.name }}</p>
           </div>
-          <!-- <div class="mb-4 relative h-80">
-            <div class="absolute right-0 top-0 w-8 h-8 m-2 cursor-pointer">
-              <img src="assets/images/blik-logo.jpeg" alt="My Image" />
-            </div>
-            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <img [src]="company.logo" />
-            </div>
-            <div class="absolute bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
-              {{ company.legalStatus | legalStatus }}
-            </div> -->
-          <!-- </div> -->
           <div class="mb-4">
             <p>{{ company.description }}</p>
           </div>
@@ -94,7 +83,7 @@ export default class CompaniesListPageComponent implements OnInit {
               horizontalPosition: 'end',
               verticalPosition: 'bottom',
             });
-            this.messagesService.send({ ...value, receiverId: id, receiverType: 'company' });
+            this.messagesService.send({ ...value, receiverId: id });
           }
         }),
         take(1)

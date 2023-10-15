@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OffersApiService } from './data-access/offers.api.service';
 import { OffersStateService } from './data-access/offers.state.service';
@@ -6,6 +6,8 @@ import { ListShellComponent } from 'src/app/shared/ui/list-shell.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
+import { USER_ROLES } from 'src/app/core/user-roles.enum';
 
 @Component({
   selector: 'app-offers.page',
@@ -20,7 +22,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
               <div *ngIf="offer.closeDeadline" class="text-red-600 font-bold flex items-center">
                 <mat-icon class="mr-2">warning</mat-icon> <span>Wniosek zamyka się wkrótce</span>
               </div>
-              <mat-icon class="text-red-600 ml-auto">favorite</mat-icon>
+
+              <button *ngIf="showFav" class=" ml-auto" (click)="toggleFav(offer.id)">
+                <mat-icon
+                  [class.text-red-600]="authState().user?.offersFollowed?.includes(offer.id)"
+                  [class.text-black]="!authState().user?.offersFollowed?.includes(offer.id)"
+                  >favorite</mat-icon
+                >
+              </button>
             </div>
 
             <div class="rounded-md w-fit px-2 mt-4 mb-2 bg-green-400 text-green-900">
@@ -70,7 +79,17 @@ export default class OffersListPageComponent implements OnInit {
   service = inject(OffersApiService);
   state = inject(OffersStateService).$value;
 
+  authState = inject(AuthStateService).$value;
+
+  get showFav() {
+    return this.authState().user?.role === USER_ROLES.NGO_USER;
+  }
+
   ngOnInit(): void {
     this.service.getAll();
+  }
+
+  toggleFav(offerId: number) {
+    this.service.toggleFav(this.authState().user!, offerId);
   }
 }

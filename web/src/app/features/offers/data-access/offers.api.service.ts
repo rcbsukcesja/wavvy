@@ -4,6 +4,8 @@ import { Offer } from '../model/offer.model';
 import { OffersStateService } from './offers.state.service';
 import { tap } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
+import { User } from 'src/app/auth/data_access/auth.state.service';
+import { API_URL } from 'src/app/core/API-URL.token';
 
 export interface GetAllOffersParams {}
 
@@ -27,6 +29,16 @@ export class OffersApiService extends HttpBaseService {
 
   constructor() {
     super('offers');
+  }
+
+  toggleFav(user: User, offerId: number) {
+    const alreadyFollowed = user.offersFollowed.includes(offerId);
+
+    this.http.patch(`${this.API_URL}/users/${user.id}`, {
+      offersFollowed: alreadyFollowed
+        ? user.offersFollowed.filter(id => id !== offerId)
+        : [...user.offersFollowed, offerId],
+    });
   }
 
   add(payload: AddOfferFormValue) {

@@ -62,7 +62,9 @@ export default class NgoProfilePageComponent implements OnInit {
   state = inject(NGOsStateService).$value;
 
   ngOnInit(): void {
-    this.service.getProfile();
+    if (!this.state().profile) {
+      this.service.getProfile();
+    }
   }
 
   saveLogo(logo: File) {
@@ -86,12 +88,14 @@ export default class NgoProfilePageComponent implements OnInit {
     },
     id: ID
   ) {
-    this.service.updateProfile(
-      {
-        ...formValue,
-        businnessAreas: formValue.businnessAreas.map(area => area.id),
-      },
-      id
-    );
+    this.service
+      .updateProfile(
+        {
+          ...formValue,
+          businnessAreas: formValue.businnessAreas.map(area => area.id),
+        },
+        id
+      )
+      .subscribe();
   }
 }

@@ -13,7 +13,9 @@ import { ListShellComponent } from 'src/app/shared/ui/list-shell.component';
       <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="Wiadomości" [list]="state.list">
         <ng-template #item let-message>
           <div class="mb-4"><strong>Tytuł: </strong>{{ message.title }}</div>
-          <div class="mb-4"><strong>Treść: </strong>{{ message.content }}</div>
+          <div class="mb-4"><strong>Treść: </strong>{{ message.message }}</div>
+          <div class="mb-4"><strong>Nadawca: </strong>{{ message.name }}</div>
+          <div class="mb-4"><strong>Kontakt: </strong>{{ message.contact }}</div>
           <div><strong>Wysłano: </strong>{{ message.createdAt | date : 'long' }}</div>
         </ng-template>
       </app-list-shell>

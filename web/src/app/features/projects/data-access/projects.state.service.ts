@@ -5,16 +5,12 @@ import { Project } from '../model/project.model';
 
 export interface ProjectsStateValue {
   list: Project[];
-  listByNGOId: Project[];
   loadListCallState: CallState;
-  loadListByNGOIdCallState: CallState;
 }
 
 const initialState: ProjectsStateValue = {
   list: [],
-  listByNGOId: [],
   loadListCallState: 'INITIAL',
-  loadListByNGOIdCallState: 'INITIAL',
 };
 
 @Injectable({

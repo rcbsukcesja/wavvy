@@ -43,7 +43,7 @@ export interface Project {
   link: string;
   cooperationMessage?: string;
   possibleVolunteer: boolean;
-  category: BusinessArea[];
+  categories: BusinessArea[];
 }
 
 export interface NGOProject extends Project {

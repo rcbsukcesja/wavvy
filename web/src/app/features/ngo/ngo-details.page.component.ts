@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NGOsApiService } from './data-access/ngos.api.service';
 import { NGOsStateService } from './data-access/ngos.state.service';
@@ -15,6 +15,7 @@ import { ProjectsApiService } from '../projects/data-access/projects.api.service
 import { ProjectsStateService } from '../projects/data-access/projects.state.service';
 import ProjectsListComponent from '../projects/projects-list.component';
 import { ID } from 'src/app/core/types/id.type';
+import { BusinessArea } from './model/ngo.model';
 
 @Component({
   selector: 'app-ngo-details-page',
@@ -31,14 +32,14 @@ import { ID } from 'src/app/core/types/id.type';
   ],
   template: `
     <ng-container *ngIf="state() as state">
-      <div *ngIf="state.loadListCallState === 'LOADED' && state.details" class="flex gap-6">
+      <div *ngIf="state.loadByIdCallState === 'LOADED' && state.details" class="flex gap-6">
         <aside>
           <div class="mb-4 h-10">
             <p class="font-semibold text-lg">{{ state.details.name }}</p>
           </div>
           <div class="mb-4 relative h-80 w-80">
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <img [src]="state.details.logo" />
+              <img [src]="state.details.logoUrl" />
             </div>
             <div class="absolute bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
               {{ state.details.legalStatus | legalStatus }}
@@ -66,7 +67,7 @@ import { ID } from 'src/app/core/types/id.type';
           <div>
             <h3>Obszary działania:</h3>
             <ul class="flex flex-col gap-2 mt-4">
-              <li *ngFor="let area of state.details.businnessAreas">- {{ area }}</li>
+              <li *ngFor="let area of state.details.businnessAreas">- {{ getBusinessArea(area) }}</li>
             </ul>
           </div>
           <mat-divider />
@@ -103,7 +104,7 @@ import { ID } from 'src/app/core/types/id.type';
       </div>
       <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
       <div *ngIf="projectsState() as state" class="mt-8">
-        <app-projects-list *ngIf="state.loadListByNGOIdCallState === 'LOADED'" [projects]="state.listByNGOId" />
+        <app-projects-list *ngIf="state.loadListCallState === 'LOADED'" [projects]="state.list" />
 
         <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
       </div>
@@ -112,6 +113,8 @@ import { ID } from 'src/app/core/types/id.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class NgoDetailsPageComponent implements OnInit {
+  @Input({ required: true }) bussinessAreas!: BusinessArea[];
+
   snackbar = inject(MatSnackBar);
   route = inject(ActivatedRoute);
   messagesService = inject(MessagesApiService);
@@ -126,6 +129,10 @@ export default class NgoDetailsPageComponent implements OnInit {
     const id = this.route.snapshot.params['id'];
     this.service.getById(id);
     this.projectsService.getByNGOId(id);
+  }
+
+  getBusinessArea(id: number) {
+    return this.bussinessAreas.find(ba => ba.id === id)?.name;
   }
 
   openMessageModal(id: ID, name: string) {
@@ -146,7 +153,7 @@ export default class NgoDetailsPageComponent implements OnInit {
               horizontalPosition: 'end',
               verticalPosition: 'bottom',
             });
-            this.messagesService.send({ ...value, receiverId: id, receiverType: 'ngo' });
+            this.messagesService.send({ ...value, receiverId: id });
           }
         }),
         take(1)

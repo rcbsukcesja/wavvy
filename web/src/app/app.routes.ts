@@ -1,6 +1,5 @@
 import { ActivatedRouteSnapshot, CanMatchFn, Router, Routes } from '@angular/router';
 import { authGuard } from './auth/utils/auth.guard';
-import { nonAuthGuard } from './auth/utils/non-auth.guard';
 import { inject } from '@angular/core';
 import { ProjectsApiService } from './features/projects/data-access/projects.api.service';
 import { BusinessAreaApiService } from './shared/bussiness-area.api.service';
@@ -15,7 +14,7 @@ export const NgoProfileCompletedGuard: CanMatchFn = () => {
 
   console.log('NgoProfileCompletedGuard');
 
-  if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
+  if (user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.MANAGER) {
     return true;
   }
 
@@ -34,7 +33,7 @@ export const NonFirstLoginGuard: CanMatchFn = () => {
 
   console.log('non first login guard', user);
 
-  if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
+  if (user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.MANAGER) {
     return true;
   }
 
@@ -69,6 +68,11 @@ export const routes: Routes = [
             path: 'ngos/:id',
             canMatch: [NgoProfileCompletedGuard],
             loadComponent: () => import('./features/ngo/ngo-details.page.component'),
+            resolve: {
+              bussinessAreas: () => {
+                return inject(BusinessAreaApiService).getAll();
+              },
+            },
           },
           {
             path: 'manage/offers',
@@ -92,7 +96,7 @@ export const routes: Routes = [
             canMatch: [authGuard, NgoProfileCompletedGuard],
             resolve: {
               bussinessAreas: () => {
-                return inject(BusinessAreaApiService).getAll().pipe(tap(console.log));
+                return inject(BusinessAreaApiService).getAll();
               },
             },
           },
@@ -107,7 +111,7 @@ export const routes: Routes = [
                 return service.getById(route.params['id']);
               },
               bussinessAreas: () => {
-                return inject(BusinessAreaApiService).getAll().pipe(tap(console.log));
+                return inject(BusinessAreaApiService).getAll();
               },
             },
           },

@@ -72,7 +72,7 @@ import { ID } from 'src/app/core/types/id.type';
             <div *ngIf="project.cooperationMessage" class="flex flex-col">
               <mat-icon [matTooltip]="project.cooperationMessage">spatial_audio_off</mat-icon>
             </div>
-            <div class="flex flex-col" (click)="openMessageModal(project.id, project.name)">
+            <div class="flex flex-col" (click)="openMessageModal(project.ngoId, project.name)">
               <mat-icon>forward_to_inbox</mat-icon>
             </div>
           </div>
@@ -101,13 +101,14 @@ export default class ProjectsListComponent {
       .afterClosed()
       .pipe(
         tap((value: MessageDialogFormValue) => {
+          console.log('??');
           if (value) {
             this.snackbar.open('Wiadomość została wysłana!', '', {
               duration: 3000,
               horizontalPosition: 'end',
               verticalPosition: 'bottom',
             });
-            this.messagesService.send({ ...value, receiverId: id, receiverType: 'ngo' });
+            this.messagesService.send({ ...value, receiverId: id });
           }
         }),
         take(1)

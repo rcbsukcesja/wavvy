@@ -24,22 +24,21 @@ export const legalStatusMap: LegalStatusMap = {
 export interface NGO {
   id: ID;
   name: string;
-  logo: string;
-  owners: UserData[];
+  logoUrl: string;
+  owner: UserData;
   address: string;
   phone: string;
   email: string;
   website: string;
-  socialLinks: string[];
   creationDate: string;
   description: string;
   businnessAreas: number[];
+  bankAccount?: string;
   KRS: string;
   NIP: string;
+  REGON: string;
   resources: string[];
   legalStatus: LegalStatusNGO;
-  // donors: Company[];
-  employees: UserData[];
   projects: Project[];
   tags: string[];
 }

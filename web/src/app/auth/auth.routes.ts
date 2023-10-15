@@ -5,14 +5,13 @@ import FirstLoginPageComponent from './first-login.page.component';
 import { inject } from '@angular/core';
 import { AuthStateService } from './data_access/auth.state.service';
 import { nonAuthGuard } from './utils/non-auth.guard';
+import { USER_ROLES } from '../core/user-roles.enum';
 
 export const FirstLoginGuard: CanMatchFn = () => {
   const user = inject(AuthStateService).$value().user;
   const router = inject(Router);
 
-  console.log('first login guards');
-
-  if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
+  if (user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.MANAGER) {
     return true;
   }
 

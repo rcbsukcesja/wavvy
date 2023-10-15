@@ -1,7 +1,7 @@
 import { Injectable, Signal, computed, inject } from '@angular/core';
 import { MenuItem } from './shell.component';
 import { AuthStateService } from '../auth/data_access/auth.state.service';
-import { UserRoles } from '../core/user-roles.enum';
+import { USER_ROLES, UserRoles } from '../core/user-roles.enum';
 
 @Injectable({ providedIn: 'root' })
 export class ShellService {
@@ -11,7 +11,7 @@ export class ShellService {
     icon: '',
     link: '/manage/ngo-profile',
     displayValue: 'Moja organizacja',
-    roles: ['NGO_USER', 'COMPANY_USER'],
+    roles: [USER_ROLES.NGO_USER, USER_ROLES.COMPANY_USER],
   };
 
   $menu: Signal<MenuItem[]> = computed(() => {
@@ -19,7 +19,7 @@ export class ShellService {
 
     if (
       authState.user &&
-      (['COMPANY_USER', 'NGO_USER'] as UserRoles[]).includes(authState.user.role) &&
+      ([USER_ROLES.COMPANY_USER, USER_ROLES.NGO_USER] as UserRoles[]).includes(authState.user.role) &&
       !authState.user.profileCompleted
     ) {
       return [this.ngoProfileMenuItem];
@@ -47,33 +47,33 @@ export class ShellService {
       icon: '',
       link: '/offers',
       displayValue: 'Lista ofert',
-      roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER'],
+      roles: [USER_ROLES.NGO_USER, USER_ROLES.ADMIN, USER_ROLES.COMPANY_USER],
     },
     {
       icon: '',
       link: '/companies',
       displayValue: 'Lista MŚP',
-      roles: ['NGO_USER', 'COMPANY_USER'],
+      roles: [USER_ROLES.NGO_USER, USER_ROLES.COMPANY_USER],
     },
 
     {
       icon: '',
       link: '/manage/register',
       displayValue: 'Rejestracja',
-      roles: ['ADMIN'],
+      roles: [USER_ROLES.ADMIN],
     },
     {
       icon: '',
       link: '/manage/offers',
       displayValue: 'Zarządzaj ofertami',
-      roles: ['ADMIN'],
+      roles: [USER_ROLES.ADMIN],
     },
 
     {
       icon: '',
       link: '/manage/projects',
       displayValue: 'Zarządzaj projektami',
-      roles: ['NGO_USER', 'ADMIN', 'COMPANY_USER'],
+      roles: [USER_ROLES.NGO_USER, USER_ROLES.ADMIN, USER_ROLES.COMPANY_USER],
     },
     this.ngoProfileMenuItem,
   ];

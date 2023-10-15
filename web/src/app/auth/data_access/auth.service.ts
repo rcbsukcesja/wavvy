@@ -1,12 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { AuthStateService, User } from './auth.state.service';
-import { Observable, map, of, switchMap, tap, throwError } from 'rxjs';
+import { Observable, combineLatest, map, of, switchMap, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { API_URL } from 'src/app/core/API-URL.token';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NGOsApiService } from 'src/app/features/ngo/data-access/ngos.api.service';
 import { ID } from 'src/app/core/types/id.type';
+import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
 
 export type RegisterFormValue = {
   fullName: string;
@@ -64,12 +65,11 @@ export class AuthService extends HttpBaseService {
       .pipe(
         map(([user]) => user),
         switchMap(user => {
-          console.log(user);
+          console.log({ user });
           return user ? of(user) : throwError(() => new Error('Login lub hasło jest niepoprawne'));
         }),
         tap(user => {
           this.setAuthenticatedUser(user);
-          console.log(user, user.firstLogin ? '/auth/first-login' : '/');
 
           this.router.navigateByUrl(user.firstLogin ? 'auth/first-login' : '/');
         })
@@ -100,6 +100,12 @@ export class AuthService extends HttpBaseService {
   setAuthenticatedUser(user: User) {
     localStorage.setItem('token', user.id + '');
     this.authStateService.setState({ status: 'AUTHENTICATED', user });
+
+    const rolesWithOrganisationProfile: UserRoles[] = [USER_ROLES.COMPANY_USER, USER_ROLES.NGO_USER];
+
+    if (user.profileCompleted && rolesWithOrganisationProfile.includes(user.role)) {
+      this.ngoService.getProfile();
+    }
   }
 
   register(payload: RegisterFormValue): Observable<void> {

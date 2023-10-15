@@ -147,6 +147,8 @@ export default class ProjectFormPageComponent implements OnInit {
   form!: any;
 
   ngOnInit() {
+    const preselectedAreas = this.project?.categories.map(cat => cat.id);
+
     this.form = this.builder.group({
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
       tags: this.builder.array<FormControl<string>>([]),
@@ -157,7 +159,13 @@ export default class ProjectFormPageComponent implements OnInit {
       link: this.builder.control(this.project?.link || ''),
       possibleVolunteer: this.builder.control(this.project?.possibleVolunteer || false),
       budget: this.builder.control(this.project?.budget || 0),
-      categories: this.builder.control<{ id: ID; name: string }[]>([]),
+      categories: this.builder.control<{ id: ID; name: string }[]>(
+        preselectedAreas?.length
+          ? this.bussinessAreas.filter(area => {
+              return preselectedAreas.includes(area.id);
+            })
+          : []
+      ),
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
   }

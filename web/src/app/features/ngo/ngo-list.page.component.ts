@@ -46,7 +46,7 @@ import { ID } from 'src/app/core/types/id.type';
               <img src="assets/images/blik-logo.jpeg" alt="My Image" />
             </div>
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <img [src]="ngo.logo" />
+              <img [src]="ngo.logoUrl" />
             </div>
             <div class="absolute bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
               {{ ngo.legalStatus | legalStatus }}
@@ -115,7 +115,7 @@ export default class NgoListPageComponent implements OnInit {
               horizontalPosition: 'end',
               verticalPosition: 'bottom',
             });
-            this.messagesService.send({ ...value, receiverId: id, receiverType: 'ngo' });
+            this.messagesService.send({ ...value, receiverId: id });
           }
         }),
         take(1)

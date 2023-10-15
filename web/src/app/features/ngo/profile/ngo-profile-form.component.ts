@@ -36,6 +36,8 @@ export type NgoProfileFormModel = FormGroup<{
   logo: FormControl<File | null>;
   KRS: FormControl<string>;
   NIP: FormControl<string>;
+  REGON: FormControl<string>;
+  bankAccount: FormControl<string>;
   description: FormControl<string>;
   address: FormControl<string>;
   email: FormControl<string>;
@@ -62,13 +64,7 @@ export type NgoProfileFormModel = FormGroup<{
     MatDividerModule,
     MatDatepickerModule,
   ],
-  styles: [
-    `
-      /* ::-webkit-file-upload-button + span {
-        color: red;
-      } */
-    `,
-  ],
+  styles: [``],
   template: `
     <section *ngIf="logo$ | async as logo">
       <h2>{{ profile.name }}</h2>
@@ -84,8 +80,8 @@ export type NgoProfileFormModel = FormGroup<{
           </mat-form-field>
           <br />
           <mat-form-field class="md:w-1/2">
-            <mat-label>Adres</mat-label>
-            <textarea formControlName="address" matInput></textarea>
+            <mat-label>REGON</mat-label>
+            <input formControlName="REGON" matInput />
           </mat-form-field>
           <br />
         </div>
@@ -101,6 +97,14 @@ export type NgoProfileFormModel = FormGroup<{
           </mat-form-field>
           <br />
         </div>
+
+        <div class="flex flex-col md:gap-4">
+          <mat-form-field>
+            <mat-label>Adres</mat-label>
+            <input formControlName="address" matInput />
+          </mat-form-field>
+        </div>
+
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
             <mat-label>Telefon</mat-label>
@@ -155,7 +159,16 @@ export type NgoProfileFormModel = FormGroup<{
 
           <br />
         </div>
-        <div class="flex flex-col   md:gap-4">
+        <br />
+        <div class="flex flex-col md:gap-4">
+          <mat-form-field>
+            <mat-label>Numer konta bankowego</mat-label>
+            <input formControlName="bankAccount" matInput />
+            <mat-hint *ngIf="form.controls.bankAccount.value.trim().length > 0" class="text-blue-600"
+              >Podając numer konta bankowego oświadczasz jego prawidłowość</mat-hint
+            >
+          </mat-form-field>
+
           <mat-form-field>
             <mat-label>Tagi</mat-label>
             <mat-chip-grid formControlName="tags" #chipGrid aria-label="Enter tags">
@@ -189,7 +202,6 @@ export type NgoProfileFormModel = FormGroup<{
               itp</mat-hint
             >
           </mat-form-field>
-          <br />
 
           <section formArrayName="resources">
             <p>Zasoby organizacji</p>
@@ -250,13 +262,23 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
   tags: string[] = [];
 
   ngOnInit(): void {
+    if (this.profile.logoUrl) {
+      this.logo$.next({
+        error: false,
+        file: null,
+        url: this.profile.logoUrl,
+      });
+    }
+
     this.form = this.builder.group({
       name: this.builder.control({ value: this.profile.name, disabled: true }, [Validators.required]),
       logo: this.builder.control<File | null>(null),
       KRS: this.builder.control({ value: this.profile.KRS, disabled: true }, [Validators.required]),
       NIP: this.builder.control({ value: this.profile.NIP, disabled: true }, [Validators.required]),
+      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }, [Validators.required]),
+      bankAccount: this.builder.control(this.profile.bankAccount || ''),
       description: this.builder.control(this.profile.description || '', [Validators.required]),
-      address: this.builder.control({ value: this.profile.address || '', disabled: true }, [Validators.required]),
+      address: this.builder.control(this.profile.address || '', [Validators.required]),
       email: this.builder.control(this.profile.email || '', [Validators.required]),
       website: this.builder.control(this.profile.website || '', [Validators.required]),
       phone: this.builder.control(this.profile.phone || '', [Validators.required]),
@@ -267,6 +289,12 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       ),
       resources: this.builder.array<FormControl<string>>([]),
     });
+
+    if (this.profile.resources.length) {
+      this.profile.resources.forEach(resource => {
+        this.addResource(resource);
+      });
+    }
 
     this.form.controls.logo.valueChanges.subscribe(val => {
       console.log(this.logoInput);
@@ -316,7 +344,6 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
     }
 
     this.save.emit(this.form.getRawValue());
-    console.log(this.form.getRawValue());
   }
 
   upload() {

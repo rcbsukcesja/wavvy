@@ -5,6 +5,8 @@ import { tap } from 'rxjs';
 import { Project } from '../model/project.model';
 import { Router } from '@angular/router';
 import { ID } from 'src/app/core/types/id.type';
+import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
+import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 
 export interface GetAllProjectsParams {}
 
@@ -23,6 +25,8 @@ export interface AddProjectFormValue {
 export class ProjectsApiService extends HttpBaseService {
   private stateService = inject(ProjectsStateService);
   private router = inject(Router);
+
+  private ngoState = inject(NGOsStateService).$value;
 
   constructor() {
     super('projects');
@@ -68,13 +72,13 @@ export class ProjectsApiService extends HttpBaseService {
   }
 
   getByNGOId(id: ID) {
-    this.stateService.setState({ loadListByNGOIdCallState: 'LOADING' });
+    this.stateService.setState({ loadListCallState: 'LOADING' });
 
     this.http
       .get<Project[]>(`${this.url}/?ngoId=${id}`)
       .pipe(
         tap(projects => {
-          this.stateService.setState({ loadListByNGOIdCallState: 'LOADED', listByNGOId: projects });
+          this.stateService.setState({ loadListCallState: 'LOADED', list: projects });
         })
       )
       .subscribe();
@@ -83,8 +87,17 @@ export class ProjectsApiService extends HttpBaseService {
   getAll(params: GetAllProjectsParams = {}) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
+    // todo: mock before backend
+    const ngo = this.ngoState().profile;
+
+    let url = `${this.url}`;
+
+    if (ngo) {
+      url = `${this.url}/?ngoId=${ngo.id}`;
+    }
+
     this.http
-      .get<Project[]>(`${this.url}`)
+      .get<Project[]>(url)
       .pipe(
         tap(projects => {
           this.stateService.setState({ loadListCallState: 'LOADED', list: projects });

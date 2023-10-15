@@ -12,6 +12,7 @@ import { Project } from './model/project.model';
 import { ProjectsStateService } from './data-access/projects.state.service';
 import { Router } from '@angular/router';
 import { ProjectStatusPipe } from './utils/project-status.pipe';
+import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
 
 @Component({
   selector: 'app-manage-projects-page',
@@ -80,6 +81,7 @@ import { ProjectStatusPipe } from './utils/project-status.pipe';
 export default class ManageProjectsPageComponent implements OnInit {
   private router = inject(Router);
   service = inject(ProjectsApiService);
+  ngoService = inject(NGOsStateService);
   stateService = inject(ProjectsStateService);
   displayedColumns: string[] = [
     'position',

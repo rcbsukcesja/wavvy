@@ -9,6 +9,7 @@ export interface User {
   login: string;
   firstLogin: boolean;
   profileCompleted: boolean;
+  offersFollowed: number[];
 }
 
 export type AuthStateValue =

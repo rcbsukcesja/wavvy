@@ -4,6 +4,7 @@ import { Message, MessagePayload } from '../model/message.model';
 import { MessagesStateService } from './messages.state.service';
 import { tap } from 'rxjs';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
+import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 
 export interface GetAllMessagesParams {}
 
@@ -13,6 +14,7 @@ export interface GetAllMessagesParams {}
 export class MessagesApiService extends HttpBaseService {
   private stateService = inject(MessagesStateService);
   private authStateService = inject(AuthStateService);
+  private ngoStateService = inject(NGOsStateService);
 
   constructor() {
     super('messages');
@@ -23,11 +25,14 @@ export class MessagesApiService extends HttpBaseService {
 
     const id = this.authStateService.$value().user?.id;
 
+    console.log(payload);
+
     this.http
-      .post(`${this.url}/${payload.receiverType}/${payload.receiverId}`, {
+      .post(`${this.url}`, {
         ...payload,
         senderId: id,
         createdAt: Date.now(),
+        receiverId: payload.receiverId,
       })
       .pipe(
         tap(() => {
@@ -35,21 +40,12 @@ export class MessagesApiService extends HttpBaseService {
         })
       )
       .subscribe();
-
-    // LOCAL DB
-    this.http
-      .post(`${this.url}`, {
-        ...payload,
-        senderId: id,
-        createdAt: Date.now(),
-      })
-      .subscribe();
   }
 
   getAll() {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
-    const id = this.authStateService.$value().user?.id;
+    const id = this.ngoStateService.$value().profile?.id;
 
     this.http
       .get<Message[]>(`${this.url}/?receiverId=${id}`)

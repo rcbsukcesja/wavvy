@@ -11,7 +11,7 @@ export interface GetAllNGOsParams {}
 export interface AddNGOFormValue {}
 
 export type UpdateNGOProfileFormValue = Partial<
-  Pick<NGO, 'address' | 'description' | 'email' | 'phone' | 'tags' | 'businnessAreas' | 'logo'>
+  Pick<NGO, 'address' | 'description' | 'email' | 'phone' | 'tags' | 'businnessAreas' | 'logoUrl'>
 >;
 
 @Injectable({
@@ -53,7 +53,7 @@ export class NGOsApiService extends HttpBaseService {
     this.stateService.setState({ loadProfileCallState: 'LOADING' });
 
     this.http
-      .get<NGO[]>(`${this.url}/?userId=${this.authState.$value().user!.id}`)
+      .get<NGO[]>(`${this.url}/?owner.id=${this.authState.$value().user!.id}`)
       .pipe(
         tap(([ngo]) => {
           console.log(ngo);
