@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
-import org.hibernate.validator.constraints.Length;
 
 import java.util.Set;
 import java.util.UUID;
@@ -28,23 +27,23 @@ import static com.rcbsukcesja.hack2react.validations.ValidationConstants.STANDAR
 public record OrganizationNGOPatchDto(
         @Pattern(regexp = NOT_BLANK_PATTERN,
                 message = NOT_BLANK_VALIDATION_MESSAGE)
-        @Length(max = STANDARD_TEXT_MAX_LENGTH)
+        @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String name,
         UUID ownerId,
         @Pattern(regexp = NOT_BLANK_PATTERN,
                 message = NOT_BLANK_VALIDATION_MESSAGE)
-        @Length(max = STANDARD_TEXT_MAX_LENGTH)
+        @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String address,
         @Pattern(regexp = PHONE_REGEX,
                 message = PHONE_PATTERN_VALIDATION_MESSAGE)
         String phone,
         @Email
-        @Length(max = STANDARD_TEXT_MAX_LENGTH)
+        @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String email,
-        @Length(max = STANDARD_TEXT_MAX_LENGTH)
+        @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String website,
-        Set<@Length(max = STANDARD_TEXT_MAX_LENGTH) String> socialLinks,
-        @Length(max = DESCRIPTION_MAX_LENGTH)
+        Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> socialLinks,
+        @Size(max = DESCRIPTION_MAX_LENGTH)
         String description,
         @Size(min = 1, message = NGO_BUSINESS_AREAS_NOT_EMPTY_VALIDATION_MESSAGE)
         Set<UUID> businessAreaIds,
@@ -54,7 +53,7 @@ public record OrganizationNGOPatchDto(
         String nip,
         @Pattern(regexp = REGON_REGEX, message = REGON_PATTERN_VALIDATION_MESSAGE)
         String regon,
-        Set<@Length(max = STANDARD_TEXT_MAX_LENGTH) String> resources,
+        Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> resources,
         LegalStatus legalStatus
 ) {
 

@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
@@ -31,7 +31,7 @@ public class Message {
 
     private String text;
 
-    private OffsetDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")

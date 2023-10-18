@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,8 +45,8 @@ public class Project {
     private String address;
     private String imageLink;
     private String link;
-    private OffsetDateTime startTime;
-    private OffsetDateTime endTime;
+    private ZonedDateTime startTime;
+    private ZonedDateTime endTime;
     private BigDecimal budget;
     private String cooperationMessage;
 

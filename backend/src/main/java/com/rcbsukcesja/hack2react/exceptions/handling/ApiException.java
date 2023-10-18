@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 
 @NoArgsConstructor
@@ -15,11 +15,11 @@ public class ApiException {
 
     private String message;
     private String httpStatus;
-    private OffsetDateTime timeStamp;
+    private ZonedDateTime timeStamp;
 
     public ApiException(String message,
                         HttpStatus httpStatus,
-                        OffsetDateTime timeStamp) {
+                        ZonedDateTime timeStamp) {
         this.message = message;
         this.httpStatus = httpStatus.toString();
         this.timeStamp = timeStamp;

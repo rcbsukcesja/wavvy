@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class MessageView {
     private UUID id;
     private UUID conversationId;
-    private OffsetDateTime createdAt;
+    private ZonedDateTime createdAt;
     private UserLightweightView fromUser;
     private UserLightweightView toUser;
     private String text;

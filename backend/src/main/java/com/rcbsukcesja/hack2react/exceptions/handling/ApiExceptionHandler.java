@@ -7,6 +7,7 @@ import com.rcbsukcesja.hack2react.exceptions.alreadyExists.CompanyAlreadyExistsE
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.EmailAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationNGOAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.UsernameAlreadyExistsException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidDateRangeException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidFileException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.CompanyNotFoundException;
@@ -38,7 +39,7 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.NOT_FOUND,
-                TimeUtils.now()
+                TimeUtils.nowInZone()
         );
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
@@ -49,14 +50,15 @@ public class ApiExceptionHandler {
             BusinessAreaNameAlreadyExistsException.class,
             OrganizationNGOAlreadyExistsException.class,
             CompanyAlreadyExistsException.class,
-            InvalidFileException.class
+            InvalidFileException.class,
+            InvalidDateRangeException.class
     })
     public ResponseEntity<Object> handleBadRequestTypeException(ApiRequestException e) {
 
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST,
-                TimeUtils.now()
+                TimeUtils.nowInZone()
         );
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
@@ -72,7 +74,7 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(
                 message,
                 HttpStatus.BAD_REQUEST,
-                TimeUtils.now()
+                TimeUtils.nowInZone()
         );
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
@@ -82,7 +84,7 @@ public class ApiExceptionHandler {
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST,
-                TimeUtils.now()
+                TimeUtils.nowInZone()
         );
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
     }
