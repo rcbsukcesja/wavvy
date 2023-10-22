@@ -38,14 +38,11 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<Page<ProjectView>> getAllProjects(
-            @RequestParam(required = false) List<String> statusList,
+            @RequestParam(required = false) List<ProjectStatus> statusList,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             Pageable pageable) {
-        List<ProjectStatus> projectStatusList = statusList == null ? null : statusList.stream()
-                .map(ProjectStatus::getByName)
-                .toList();
-        return new ResponseEntity<>(projectService.getAllProjects(projectStatusList, startDate, endDate, pageable), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.getAllProjects(statusList, startDate, endDate, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{projectId}")

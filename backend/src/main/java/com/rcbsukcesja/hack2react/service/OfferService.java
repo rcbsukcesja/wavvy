@@ -6,13 +6,20 @@ import com.rcbsukcesja.hack2react.model.dto.save.OfferPatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.OfferSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.OfferView;
 import com.rcbsukcesja.hack2react.model.entity.Offer;
+import com.rcbsukcesja.hack2react.model.enums.OfferScope;
 import com.rcbsukcesja.hack2react.model.mappers.OfferMapper;
 import com.rcbsukcesja.hack2react.repositories.OfferRepository;
+import com.rcbsukcesja.hack2react.specifications.OfferSpecifications;
+import com.rcbsukcesja.hack2react.validations.DateValidation;
 import com.rcbsukcesja.hack2react.validations.OfferValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,9 +30,19 @@ public class OfferService {
     private final OfferMapper offerMapper;
     private final OfferRepository offerRepository;
     private final OfferValidation offerValidation;
+    private final DateValidation dateValidation;
 
-    public List<OfferView> getAllOffers() {
-        return offerMapper.offerListToOfferViewList(offerRepository.findAll());
+    public Page<OfferView> getAllOffers(LocalDate startDate, LocalDate endDate, List<OfferScope> offerScopes,
+                                        Boolean closeDeadlineOnly, Pageable pageable) {
+        dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
+        Specification<Offer> spec = OfferSpecifications.notOutsideDateRange(startDate, endDate);
+        if (offerScopes != null && !offerScopes.isEmpty()) {
+            spec = spec.and(OfferSpecifications.isOfferScopeIn(offerScopes));
+        }
+        if (closeDeadlineOnly != null && closeDeadlineOnly) {
+            spec = spec.and(OfferSpecifications.isCloseDeadline());
+        }
+        return offerRepository.findAll(spec, pageable).map(offerMapper::offerToOfferView);
     }
 
     public OfferView getOfferById(UUID id) {
@@ -33,24 +50,18 @@ public class OfferService {
     }
 
     @Transactional
-    public OfferView saveOffer(UUID offerId, OfferSaveDto offerSaveDto) {
-        Offer offer;
-        if (offerId != null) {
-            offer = getOfferByIdOrThrowException(offerId);
-        } else {
-            offer = new Offer();
-        }
-        offer.setName(offerSaveDto.name());
-        offer.setDescription(offerSaveDto.description());
-        offer.setBudget(offerSaveDto.budget());
-        offer.setFundingLevel(offerSaveDto.fundingLevel());
-        offer.setTargetAudience(offerSaveDto.targetAudience());
-        offer.setLink(offerSaveDto.link());
-        offer.setStartDate(offerSaveDto.startDate());
-        offer.setEndDate(offerSaveDto.endDate());
-        offer.setScope(offerSaveDto.scope());
-        offerValidation.validateDates(offer.getStartDate(), offer.getEndDate());
-        Offer saved = offerRepository.save(offer);
+    public OfferView createOffer(OfferSaveDto offerSaveDto) {
+        Offer offer = new Offer();
+        setBasicOfferFields(offerSaveDto, offer);
+        Offer saved = offerRepository.saveAndFlush(offer);
+        return offerMapper.offerToOfferView(saved);
+    }
+
+    @Transactional
+    public OfferView putUpdateOffer(UUID offerId, OfferSaveDto offerSaveDto) {
+        Offer offer = getOfferByIdOrThrowException(offerId);
+        setBasicOfferFields(offerSaveDto, offer);
+        Offer saved = offerRepository.saveAndFlush(offer);
         return offerMapper.offerToOfferView(saved);
     }
 
@@ -93,8 +104,21 @@ public class OfferService {
             offerValidation.validateDates(offer.getStartDate(), offer.getEndDate());
         }
 
-        Offer saved = offerRepository.save(offer);
+        Offer saved = offerRepository.saveAndFlush(offer);
         return offerMapper.offerToOfferView(saved);
+    }
+
+    private void setBasicOfferFields(OfferSaveDto offerSaveDto, Offer offer) {
+        offer.setName(offerSaveDto.name());
+        offer.setDescription(offerSaveDto.description());
+        offer.setBudget(offerSaveDto.budget());
+        offer.setFundingLevel(offerSaveDto.fundingLevel());
+        offer.setTargetAudience(offerSaveDto.targetAudience());
+        offer.setLink(offerSaveDto.link());
+        offer.setStartDate(offerSaveDto.startDate());
+        offer.setEndDate(offerSaveDto.endDate());
+        offer.setScope(offerSaveDto.scope());
+        offerValidation.validateDates(offer.getStartDate(), offer.getEndDate());
     }
 
     @Transactional
