@@ -2,6 +2,7 @@ package com.rcbsukcesja.hack2react.it;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.HttpStatus;
+import com.rcbsukcesja.hack2react.model.dto.save.OrganizationAddressSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.save.OrganizationNGOPatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.OrganizationNGOSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOView;
@@ -89,7 +90,14 @@ class NGOControllerIT extends AbstractContainerBaseTest {
         OrganizationNGOSaveDto dto = OrganizationNGOSaveDto.builder()
                 .name("new NGO")
                 .description("description of new NGO")
-                .address("address of new NGO")
+                .address(OrganizationAddressSaveDto.builder()
+                        .houseNumber("houseNumber")
+                        .apartmentNumber("apartmentNumber")
+                        .country("country")
+                        .city("city")
+                        .street("street")
+                        .zipCode("zipCode")
+                        .build())
                 .nip("1234567890")
                 .krs("1234567890")
                 .regon("1234567890")

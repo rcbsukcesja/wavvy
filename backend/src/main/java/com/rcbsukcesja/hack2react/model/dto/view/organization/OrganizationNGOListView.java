@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class OrganizationNGOListView extends OrganizationListView {
 
-    private String logoUrl;
     private LegalStatus legalStatus;
+    private String bankAccount;
 
 }

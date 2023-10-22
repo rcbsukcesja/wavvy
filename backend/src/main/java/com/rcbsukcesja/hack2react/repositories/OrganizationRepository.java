@@ -8,4 +8,12 @@ import java.util.UUID;
 
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, UUID> {
+
+    boolean existsByNameIgnoreCase(String name);
+
+    boolean existsByKrs(String krs);
+
+    boolean existsByNip(String nip);
+
+    boolean existsByRegon(String regon);
 }

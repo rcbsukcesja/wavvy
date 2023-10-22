@@ -7,6 +7,8 @@ import com.rcbsukcesja.hack2react.model.dto.view.organization.CompanyView;
 import com.rcbsukcesja.hack2react.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,8 +30,8 @@ public class CompanyController {
     private final CompanyService organizationCompanyService;
 
     @GetMapping
-    public ResponseEntity<List<CompanyListView>> getAllCompanies() {
-        return new ResponseEntity<>(organizationCompanyService.getAllCompany(), HttpStatus.OK);
+    public ResponseEntity<Page<CompanyListView>> getAllCompanies(Pageable pageable) {
+        return new ResponseEntity<>(organizationCompanyService.getAllCompany(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{companyId}")
@@ -41,21 +42,21 @@ public class CompanyController {
     @PostMapping
     public ResponseEntity<CompanyView> createCompany(
             @RequestBody @Valid CompanySaveDto dto) {
-        return new ResponseEntity<>(organizationCompanyService.createOrUpdateCompany(null, dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(organizationCompanyService.createCompany(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{companyId}")
     public ResponseEntity<CompanyView> putUpdateCompany(
             @PathVariable UUID companyId,
             @RequestBody @Valid CompanySaveDto dto) {
-        return new ResponseEntity<>(organizationCompanyService.createOrUpdateCompany(companyId, dto), HttpStatus.OK);
+        return new ResponseEntity<>(organizationCompanyService.putUpdateCompany(companyId, dto), HttpStatus.OK);
     }
 
     @PatchMapping("/{companyId}")
     public ResponseEntity<CompanyView> patchUpdateCompany(
             @PathVariable UUID companyId,
             @RequestBody @Valid CompanyPatchDto dto) {
-        return new ResponseEntity<>(organizationCompanyService.updateCompany(companyId, dto), HttpStatus.OK);
+        return new ResponseEntity<>(organizationCompanyService.patchUpdateCompany(companyId, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{companyId}")

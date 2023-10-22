@@ -17,8 +17,8 @@ import java.util.Set;
 @SuperBuilder
 public class OrganizationNGOView extends OrganizationView {
 
-    private String logoPath;
     private LegalStatus legalStatus;
+    private String bankAccount;
     private Set<ProjectLightweightView> projects;
 
 }
