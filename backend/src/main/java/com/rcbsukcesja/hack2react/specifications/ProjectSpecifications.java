@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectSpecifications {
@@ -16,7 +17,7 @@ public class ProjectSpecifications {
     public static Specification<Project> notOutsideDateRange(LocalDate startDate, LocalDate endDate) {
         return (root, query, criteriaBuilder) -> {
 
-            Predicate finalPredicate = criteriaBuilder.conjunction();
+            List<Predicate> predicates = new ArrayList<>();
 
             if (startDate != null) {
                 // Beginning of startDate at 00:00:00
@@ -29,7 +30,7 @@ public class ProjectSpecifications {
                                 criteriaBuilder.lessThan(root.get("endTime"), startOfDay)
                         )
                 );
-                finalPredicate = criteriaBuilder.and(finalPredicate, notBothBeforeStart);
+                predicates.add(notBothBeforeStart);
             }
 
             if (endDate != null) {
@@ -43,10 +44,10 @@ public class ProjectSpecifications {
                                 criteriaBuilder.greaterThan(root.get("endTime"), endOfDay)
                         )
                 );
-                finalPredicate = criteriaBuilder.and(finalPredicate, notBothAfterEnd);
+                predicates.add(notBothAfterEnd);
             }
 
-            return finalPredicate;
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 

@@ -14,6 +14,7 @@ public class TimeUtils {
 
     private static final String ZONE = "Europe/Warsaw";
     public static final ZoneId ZONE_ID = ZoneId.of(ZONE);
+    public static final int CLOSE_DEADLINE_DAYS = 7;
 
     public ZonedDateTime nowInUTC() {
         return ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MICROS);
@@ -44,6 +45,6 @@ public class TimeUtils {
     }
 
     public boolean isCloseDeadline(LocalDate deadline) {
-        return deadline.minusDays(7).isBefore(today()) && !today().isAfter(deadline);
+        return deadline.minusDays(CLOSE_DEADLINE_DAYS).isBefore(today()) && !today().isAfter(deadline);
     }
 }

@@ -5,15 +5,14 @@ import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 
 import java.util.Arrays;
 
-public enum OfferScope {
+public enum OfferStatus {
 
-    HIDDEN,
-    PUBLIC,
-    NGO_ONLY,
-    NGO_AND_COMPANY;
+    NOT_STARTED,
+    ACTIVE,
+    EXPIRED;
 
-    public static OfferScope getByName(String name) {
-        return Arrays.stream(OfferScope.values())
+    public static OfferStatus getByName(String name) {
+        return Arrays.stream(OfferStatus.values())
                 .filter(e -> e.name().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new InvalidEnumParameterException(ErrorMessages.INVALID_ENUM_NAME, name));
