@@ -9,6 +9,7 @@ import com.rcbsukcesja.hack2react.model.dto.save.UserSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.UserView;
 import com.rcbsukcesja.hack2react.model.entity.User;
 import com.rcbsukcesja.hack2react.model.mappers.UserMapper;
+import com.rcbsukcesja.hack2react.notificator.mail.MessageManager;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class UserService {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final MessageManager messageManager;
 
     public List<UserView> getAllUsers() {
         return userMapper.listUserToListUserView(userRepository.findAll());
@@ -63,6 +65,7 @@ public class UserService {
 
         }
         User saved = userRepository.save(user);
+        messageManager.sendWelcomeMessage(saved.getEmail());
         return userMapper.userToUserView(saved);
     }
 

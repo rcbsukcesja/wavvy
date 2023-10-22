@@ -1,4 +1,17 @@
 spring:
+  mail:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+          ssl:
+            enable: true
+    host: smtp.poczta.onet.pl
+    username: wavvy@op.pl
+    password: Rcbsukcesja123$
+    port: 465
   datasource:
     url: jdbc:postgresql://localhost:5432/wavvy
     username: postgres
