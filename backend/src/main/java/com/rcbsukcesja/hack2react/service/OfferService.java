@@ -11,6 +11,7 @@ import com.rcbsukcesja.hack2react.model.enums.OfferStatus;
 import com.rcbsukcesja.hack2react.model.mappers.OfferMapper;
 import com.rcbsukcesja.hack2react.repositories.OfferRepository;
 import com.rcbsukcesja.hack2react.specifications.OfferSpecifications;
+import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
 import com.rcbsukcesja.hack2react.validations.OfferValidation;
 import lombok.RequiredArgsConstructor;
@@ -65,12 +66,13 @@ public class OfferService {
     public OfferView putUpdateOffer(UUID offerId, OfferSaveDto offerSaveDto) {
         Offer offer = getOfferByIdOrThrowException(offerId);
         setBasicOfferFields(offerSaveDto, offer);
+        offer.setUpdatedAt(TimeUtils.nowInUTC());
         Offer saved = offerRepository.saveAndFlush(offer);
         return offerMapper.offerToOfferView(saved);
     }
 
     @Transactional
-    public OfferView updateOffer(UUID offerId, OfferPatchDto offerPatchDto) {
+    public OfferView patchUpdateOffer(UUID offerId, OfferPatchDto offerPatchDto) {
         Offer offer = getOfferByIdOrThrowException(offerId);
         boolean dateChanged = false;
 
@@ -108,6 +110,7 @@ public class OfferService {
             offerValidation.validateDates(offer.getStartDate(), offer.getEndDate());
         }
 
+        offer.setUpdatedAt(TimeUtils.nowInUTC());
         Offer saved = offerRepository.saveAndFlush(offer);
         return offerMapper.offerToOfferView(saved);
     }

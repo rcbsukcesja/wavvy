@@ -11,6 +11,8 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -25,6 +27,10 @@ public interface OfferMapper {
     @Named("endDateToCloseDeadline")
     default boolean endDateToCloseDeadline(LocalDate endDate) {
         return TimeUtils.isCloseDeadline(endDate);
+    }
+
+    default LocalDateTime UTCtoLocalDateTimeInZone(ZonedDateTime zonedDateTime) {
+        return TimeUtils.toLocalDateTimeInZone(zonedDateTime);
     }
 
     @AfterMapping

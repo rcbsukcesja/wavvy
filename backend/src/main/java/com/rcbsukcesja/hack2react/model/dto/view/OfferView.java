@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -29,4 +30,6 @@ public class OfferView {
     private LocalDate endDate;
     private boolean closeDeadline;
     private OfferStatus status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

@@ -68,7 +68,7 @@ public class OfferController {
     public ResponseEntity<OfferView> patchUpdateOffer(
             @PathVariable UUID offerId,
             @RequestBody @Valid OfferPatchDto offerPatchDto) {
-        return new ResponseEntity<>(offerService.updateOffer(offerId, offerPatchDto), HttpStatus.OK);
+        return new ResponseEntity<>(offerService.patchUpdateOffer(offerId, offerPatchDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
