@@ -7,6 +7,7 @@ import com.rcbsukcesja.hack2react.model.dto.save.OfferSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.OfferView;
 import com.rcbsukcesja.hack2react.model.entity.Offer;
 import com.rcbsukcesja.hack2react.model.enums.OfferScope;
+import com.rcbsukcesja.hack2react.model.enums.OfferStatus;
 import com.rcbsukcesja.hack2react.model.mappers.OfferMapper;
 import com.rcbsukcesja.hack2react.repositories.OfferRepository;
 import com.rcbsukcesja.hack2react.specifications.OfferSpecifications;
@@ -32,10 +33,13 @@ public class OfferService {
     private final OfferValidation offerValidation;
     private final DateValidation dateValidation;
 
-    public Page<OfferView> getAllOffers(LocalDate startDate, LocalDate endDate, List<OfferScope> offerScopes,
-                                        Boolean closeDeadlineOnly, Pageable pageable) {
+    public Page<OfferView> getAllOffers(LocalDate startDate, LocalDate endDate, List<OfferStatus> offerStatuses,
+                                        List<OfferScope> offerScopes, Boolean closeDeadlineOnly, Pageable pageable) {
         dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
         Specification<Offer> spec = OfferSpecifications.notOutsideDateRange(startDate, endDate);
+        if (offerStatuses != null && !offerStatuses.isEmpty()) {
+            spec = spec.and(OfferSpecifications.isStatusIn(offerStatuses));
+        }
         if (offerScopes != null && !offerScopes.isEmpty()) {
             spec = spec.and(OfferSpecifications.isOfferScopeIn(offerScopes));
         }

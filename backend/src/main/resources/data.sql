@@ -61,7 +61,7 @@ INSERT INTO wavvy.wavvy.offers(id, name, description, budget, funding_level, tar
 VALUES ('ff435fd6-0d2a-11ee-be56-0242ac120002', 'Grant na Rozwój Kultury Lokalnej',
         'Ten grant jest przeznaczony dla artystów, muzeów i innych instytucji kultury w Kołobrzegu, które pracują nad promowaniem i zachowaniem lokalnej kultury i dziedzictwa.',
         '100000.00', '70', 'Artyści, muzea, instytucje kultury',
-        'https://kolobrzeg-grants.com/granty-na-rozwoj-kultury-lokalnej', '2023-10-01', '2024-09-30', 'PUBLIC'),
+        'https://kolobrzeg-grants.com/granty-na-rozwoj-kultury-lokalnej', '2023-10-23', '2023-10-25', 'PUBLIC'),
        ('7af33516-0d2b-11ee-be56-0242ac120002', 'Grant na Aktywność Społeczną',
         'Grant jest przeznaczony dla lokalnych organizacji non-profit, które promują aktywność społeczną i zaangażowanie w mieście i okolicach miasta Kołobrzeg.',
         '50000.00', '80', 'Lokalne organizacje non-profit',
@@ -69,7 +69,7 @@ VALUES ('ff435fd6-0d2a-11ee-be56-0242ac120002', 'Grant na Rozwój Kultury Lokaln
        ('89ca650a-0d2b-11ee-be56-0242ac120002', 'Grant na Ochronę Środowiska',
         'Ten grant jest przeznaczony dla organizacji non-profit i inicjatyw społecznych w mieście Kołobrzeg, które koncentrują się na ochronie środowiska i promowaniu zrównoważonego rozwoju.',
         '75000.00', '85', 'Organizacje ekologiczne i inicjatywy społeczne',
-        'https://kolobrzeg-grants.com/granty-na-ochrone-srodowiska', '2023-08-02', '2024-07-31', 'PUBLIC');
+        'https://kolobrzeg-grants.com/granty-na-ochrone-srodowiska', '2023-10-10', '2023-10-25', 'PUBLIC');
 
 INSERT INTO wavvy.wavvy.organizations(id, organization_type, name, owner_id, street, house_number, apartment_number,
                                       city, zip_code, country, phone, email, website, logo_path,

@@ -4,6 +4,7 @@ import com.rcbsukcesja.hack2react.model.dto.save.OfferPatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.OfferSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.OfferView;
 import com.rcbsukcesja.hack2react.model.enums.OfferScope;
+import com.rcbsukcesja.hack2react.model.enums.OfferStatus;
 import com.rcbsukcesja.hack2react.service.OfferService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +38,12 @@ public class OfferController {
     public ResponseEntity<Page<OfferView>> getAllOffers(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            @RequestParam List<OfferScope> offerScopes,
+            @RequestParam(required = false) List<OfferStatus> offerStatuses,
+            @RequestParam(required = false) List<OfferScope> offerScopes,
             @RequestParam(required = false) Boolean closeDeadlineOnly,
             Pageable pageable) {
-        return new ResponseEntity<>(offerService.getAllOffers(startDate, endDate, offerScopes, closeDeadlineOnly, pageable), HttpStatus.OK);
+        return new ResponseEntity<>(offerService.getAllOffers(startDate, endDate, offerStatuses,
+                offerScopes, closeDeadlineOnly, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{offerId}")
