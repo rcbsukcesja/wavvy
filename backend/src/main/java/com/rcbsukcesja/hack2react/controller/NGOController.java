@@ -8,7 +8,8 @@ import com.rcbsukcesja.hack2react.service.OrganizationNGOService;
 import com.rcbsukcesja.hack2react.service.StorageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,11 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,8 +32,8 @@ public class NGOController {
     private final StorageService storageService;
 
     @GetMapping
-    public ResponseEntity<List<OrganizationNGOListView>> getAllNGO() {
-        return new ResponseEntity<>(organizationNGOService.getAllNGO(), HttpStatus.OK);
+    public ResponseEntity<Page<OrganizationNGOListView>> getAllNGO(Pageable pageable) {
+        return new ResponseEntity<>(organizationNGOService.getAllNGO(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{ngoId}")
@@ -46,21 +44,21 @@ public class NGOController {
     @PostMapping
     public ResponseEntity<OrganizationNGOView> createNGO(
             @RequestBody @Valid OrganizationNGOSaveDto dto) {
-        return new ResponseEntity<>(organizationNGOService.saveNGO(null, dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(organizationNGOService.createNGO(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{ngoId}")
     public ResponseEntity<OrganizationNGOView> putUpdateNGO(
             @PathVariable UUID ngoId,
             @RequestBody @Valid OrganizationNGOSaveDto dto) {
-        return new ResponseEntity<>(organizationNGOService.saveNGO(ngoId, dto), HttpStatus.OK);
+        return new ResponseEntity<>(organizationNGOService.putUpdateNGO(ngoId, dto), HttpStatus.OK);
     }
 
     @PatchMapping("/{ngoId}")
     public ResponseEntity<OrganizationNGOView> patchUpdateNGO(
             @PathVariable UUID ngoId,
             @RequestBody @Valid OrganizationNGOPatchDto dto) {
-        return new ResponseEntity<>(organizationNGOService.updateNGO(ngoId, dto), HttpStatus.OK);
+        return new ResponseEntity<>(organizationNGOService.patchUpdateNGO(ngoId, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{ngoId}")
@@ -68,25 +66,4 @@ public class NGOController {
         organizationNGOService.deleteNGO(ngoId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-    @PostMapping("/{ngoId}/logo")
-    public ResponseEntity<?> uploadLogo(
-            @PathVariable UUID ngoId,
-            @RequestParam("file") MultipartFile file) {
-        storageService.store(file, ngoId.toString(), "logo");
-        String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
-        organizationNGOService.updateLogoPath(fileExtension, ngoId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{ngoId}/logo")
-    public ResponseEntity<?> removeLogo(
-            @PathVariable UUID ngoId) {
-        String filePath = organizationNGOService.removeLogoPath(ngoId);
-        if (filePath != null) {
-            storageService.remove(filePath);
-        }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
 }

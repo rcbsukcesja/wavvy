@@ -40,19 +40,19 @@ VALUES ('54fb43a6-0d19-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac1
        ('54fb43a6-0d19-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002');
 
 INSERT INTO wavvy.wavvy.messages(id, text, created_at, from_user_id, to_user_id, conversation_id)
-VALUES ('6601b652-0d15-11ee-be56-0242ac120002', 'text1', '2023-06-10T16:00:00.000000000Z',
+VALUES ('6601b652-0d15-11ee-be56-0242ac120002', 'text1', '2023-06-10T16:00:00.000000000',
         '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
         '54fb43a6-0d19-11ee-be56-0242ac120002'),
-       ('71de5b92-0d15-11ee-be56-0242ac120002', 'text2', '2023-06-10T16:01:00.000000000Z',
+       ('71de5b92-0d15-11ee-be56-0242ac120002', 'text2', '2023-06-10T16:01:00.000000000',
         '3ed0cf62-0d12-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002',
         '54fb43a6-0d19-11ee-be56-0242ac120002'),
-       ('7cd1b620-0d15-11ee-be56-0242ac120002', 'text3', '2023-06-10T16:02:00.000000000Z',
+       ('7cd1b620-0d15-11ee-be56-0242ac120002', 'text3', '2023-06-10T16:02:00.000000000',
         '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
         '54fb43a6-0d19-11ee-be56-0242ac120002'),
-       ('88119a32-0d15-11ee-be56-0242ac120002', 'text4', '2023-06-10T16:03:00.000000000Z',
+       ('88119a32-0d15-11ee-be56-0242ac120002', 'text4', '2023-06-10T16:03:00.000000000',
         '3ed0cf62-0d12-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002',
         '54fb43a6-0d19-11ee-be56-0242ac120002'),
-       ('90b1d38c-0d15-11ee-be56-0242ac120002', 'text5', '2023-06-10T16:04:00.000000000Z',
+       ('90b1d38c-0d15-11ee-be56-0242ac120002', 'text5', '2023-06-10T16:04:00.000000000',
         '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
         '54fb43a6-0d19-11ee-be56-0242ac120002');
 
@@ -71,49 +71,52 @@ VALUES ('ff435fd6-0d2a-11ee-be56-0242ac120002', 'Grant na Rozwój Kultury Lokaln
         '75000.00', '85', 'Organizacje ekologiczne i inicjatywy społeczne',
         'https://kolobrzeg-grants.com/granty-na-ochrone-srodowiska', '2023-08-02', '2024-07-31', 'PUBLIC');
 
-INSERT INTO wavvy.wavvy.organizations_ngo(id, name, owner_id, address, phone, email, website, logo_path, creation_time,
-                                          description, krs, nip, regon, legal_status)
-VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'Liga Morska i Rzeczna', '2dc6b240-0d12-11ee-be56-0242a20002c1',
-        'Chodkiewicza 3B/1', '693996135',
-        'kontakt@lmir.kolobrzeg.pl', 'https://www.facebook.com/lmir.gdynia/?locale=pl_PL', null, '2023-06-20T00:00:00Z',
+INSERT INTO wavvy.wavvy.organizations(id, organization_type, name, owner_id, street, house_number, apartment_number,
+                                      city, zip_code, country, phone, email, website, logo_path,
+                                      created_at, updated_at, description, krs, nip, regon, legal_status, bank_account)
+VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'NGO', 'Liga Morska i Rzeczna', '2dc6b240-0d12-11ee-be56-0242a20002c1',
+        'Chodkiewicza', '3B', '1', 'Kołobrzeg', '78-100', 'Polska', '693996135',
+        'kontakt@lmir.kolobrzeg.pl', 'https://www.facebook.com/lmir.gdynia/?locale=pl_PL', null, '2023-06-20T00:00:00',
+        '2023-06-20T00:00:00',
         'Celem ligi jest: 1/kształtowanie i stałe rozwijanie świadomości morskiej społeczeństwa Polskiego jako jednej z podstaw bytu narodowego, 2/kształtowania w społeczeństwie, ze szczególnym uwzględnieniem młodzieży, zrozumienia roli i znaczenia szeroko rozumianej gospodarki wodnej, żeglugi morskiej i śródlądowej oraz ochrony środowiska.',
         '000753580', '234858992',
-        '930642371', 'ASSOCIATION'),
-       ('b544b8e0-0d2e-11ee-be56-0242ac120002', 'ZHP Bałtycki Hufiec Morski w Kołobrzegu',
-        '353feec4-0d12-11ee-be56-0242ac120002', 'Komenda Hufca ZHP Kołobrzeg ul. Słowińców 1', '943522114',
+        '930642371', 'ASSOCIATION', '25102031501478016953990306'),
+       ('b544b8e0-0d2e-11ee-be56-0242ac120002', 'NGO', 'ZHP Bałtycki Hufiec Morski w Kołobrzegu',
+        '353feec4-0d12-11ee-be56-0242ac120002', 'Słowińców', '1', null, 'Kołobrzeg', '78-100', 'Polska', '943522114',
         'olga.korowadzka@zhp.net.pl', 'https://www.facebook.com/zhpkolobrzeg/?locale=pl_PL', null,
-        '2020-06-10T12:24:36Z',
+        '2020-06-10T12:24:36', '2020-06-10T12:24:36',
         '1) stwarzanie warunków do wszechstronnego, inetelektualnego, społecznego, duchowego, emocjonalnego i fizycznego rozwoju człowieka; 2) nieskrępowane kształtowanie osobowości człowieka odpowiedzialnego, przy poszanowaniu jego prawa do wolności i godności, w tym wolności od wszelkich nałogów; 3) upowszechnianie i umacnianie w społeczeństwie przywiązania do wartości: wolności, prawdy, sprawiedliwości, demokracji, samorządności, równouprawnienia, tolerancji i przyjaźni; 4) stwarzanie warunków do nawiązywania i utrwalania silnych więzi międzyludzkich ponad podziałami rasowymi, narodowościowymi i wyznaniowymi.',
         '000757520', '234858993',
-        '192076468', 'ASSOCIATION'),
-       ('c06f4f3c-0d2e-11ee-be56-0242ac120002', 'Kołobrzeski Międzyszkolny Klub Lekkoatletyczny "Sztorm"',
-        '03c79bef-4282-4326-be74-8acb180d7f03', 'Bogusława X/22', '792367411',
+        '192076468', 'ASSOCIATION', '22102051389741970611730870'),
+       ('c06f4f3c-0d2e-11ee-be56-0242ac120002', 'NGO', 'Kołobrzeski Międzyszkolny Klub Lekkoatletyczny "Sztorm"',
+        '03c79bef-4282-4326-be74-8acb180d7f03', 'Bogusława X', '22', null, 'Kołobrzeg', '78-100', 'Polska', '792367411',
         'osemkakolobrzeg@wp.pl', 'https://powiat.kolobrzeg.pl/opis-289-uczniowski_klub_sportowy_osemka.html', null,
-        '2021-06-10T12:24:36Z',
+        '2021-01-10T12:24:36', '2021-01-10T12:24:36',
         'Planowanie i organizowanie pozalekcyjnego życia sportowego uczniów w oparciu o możliwości obiektowe i sprzętowe szkoły oraz pomoc organizacyjną i materialną rodziców i sympatyków Klubu, angażowanie wszystkich uczniów do różnorodnych form aktywności ruchowej, gier i zabaw dostosowanych do wieku, stopnia sprawności i zainteresowań sportowych, uczestniczenie w imprezach sportowych organizowanych na terenie działania samorządu terytorialnego i poza nim.',
         '000757590', '234858996',
-        '612958850', 'ASSOCIATION');
-
-INSERT INTO wavvy.wavvy.companies(id, name, owner_id, address, phone, email, website, creation_time, description, krs,
-                                  nip, regon)
-VALUES ('a2daa44a-0d2d-11ee-be56-0242ac120002', 'Technologiczny Startup Kołobrzeg',
-        '3ed0cf62-0d12-11ee-be56-0242ac120002', 'ul. Morska 1, 78-100 Kołobrzeg', '508158776',
-        'kontakt@tsk.pl', 'https://www.tsk.pl', '2023-06-20T00:00:00Z',
+        '612958850', 'ASSOCIATION', '28870710321365697594072650'),
+       ('a2daa44a-0d2d-11ee-be56-0242ac120002', 'COMPANY', 'Technologiczny Startup Kołobrzeg',
+        '3ed0cf62-0d12-11ee-be56-0242ac120002', 'Morska', '1', null, 'Kołobrzeg', '78-100', 'Polska', '508158776',
+        'kontakt@tsk.pl', 'https://www.tsk.pl', null, '2023-06-20T00:00:00', '2023-06-20T00:00:00',
         'Jesteśmy innowacyjnym startupem technologicznym z Kołobrzegu, specjalizującym się w tworzeniu zaawansowanych rozwiązań dla sektora medycznego. Nasze produkty pomagają lekarzom i pacjentom w zarządzaniu informacjami o stanie zdrowia, a także umożliwiają zdalną komunikację i konsultacje. Wierzymy w moc technologii w przekształcaniu opieki zdrowotnej i dążymy do bycia na czele tej transformacji.',
         '000757530', '234858990',
-        '378955803'),
-       ('9bab7cfc-0d2e-11ee-be56-0242ac120002', 'Restauracja Przystań', '4f1b9b6c-0d12-11ee-be56-0242ac120002',
-        'ul. Portowa 2, 78-100 Kołobrzeg', '508158775',
-        'kontakt@przystan.kolobrzeg.pl', 'https://www.przystan.kolobrzeg.pl', '2016-06-10T12:24:36Z',
+        '378955803', null, null),
+       ('9bab7cfc-0d2e-11ee-be56-0242ac120002', 'COMPANY', 'Restauracja Przystań',
+        '4f1b9b6c-0d12-11ee-be56-0242ac120002',
+        'Portowa', '2', null, 'Kołobrzeg', '78-100', 'Polska', '508158775',
+        'kontakt@przystan.kolobrzeg.pl', 'https://www.przystan.kolobrzeg.pl', null, '2016-06-10T12:24:36',
+        '2016-06-10T12:24:36',
         'Nasza restauracja oferuje najlepsze dania kuchni bałtyckiej, skupiając się na świeżych, lokalnych składnikach i autentycznych przepisach. Położona w sercu Kołobrzegu, z widokiem na morze, Restauracja Przystań jest idealnym miejscem na rodzinny obiad, romantyczną kolację czy spotkanie z przyjaciółmi. Pragniemy, by każdy posiłek u nas był nie tylko satysfakcjonującym doświadczeniem kulinarycznym, ale także niezapomnianym przeżyciem.',
         '000757550', '234858991',
-        '394262080'),
-       ('4b0e9873-47f7-499a-8190-5aff4ac16dde', 'Kołobrzeska Galeria Sztuki', '528f7db6-d46f-465b-a93a-6d67f9ab85c9',
-        'ul. Sztuki 3, 78-100 Kołobrzeg', '123123123',
-        'kontakt@galeria.kolobrzeg.pl', 'https://www.galeria.kolobrzeg.pl', '2016-06-10T12:24:36Z',
+        '394262080', null, null),
+       ('4b0e9873-47f7-499a-8190-5aff4ac16dde', 'COMPANY', 'Kołobrzeska Galeria Sztuki',
+        '528f7db6-d46f-465b-a93a-6d67f9ab85c9',
+        'Sztuki', '3', null, 'Kołobrzeg', '78-100', 'Polska', '123123123',
+        'kontakt@galeria.kolobrzeg.pl', 'https://www.galeria.kolobrzeg.pl', null, '2016-06-10T12:24:36',
+        '2016-06-10T12:24:36',
         'Promujemy lokalnych artystów i organizujemy wystawy sztuki współczesnej, które angażują społeczność Kołobrzegu i przyciągają zwiedzających z całego kraju. Nasza misja to rozwijanie kultury i sztuki w regionie, tworzenie przestrzeni do dyskusji i refleksji, a także edukowanie publiczności na temat wartości i znaczenia sztuki. Wierzymy, że sztuka ma moc inspirowania i łączenia ludzi, a nasza galeria jest miejscem, gdzie te spotkania mogą się zdarzyć.',
         '000757221', '234858111',
-        '394262090');
+        '394262090', null, null);
 
 INSERT INTO wavvy.wavvy.organization_business_areas(organization_id, business_area_id)
 VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'd132b605-0f0c-4e5b-8c27-567e16e71551'),
@@ -129,29 +132,28 @@ VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'd132b605-0f0c-4e5b-8c27-567e16e
        ('4b0e9873-47f7-499a-8190-5aff4ac16dde', 'ac0f9444-0d14-11ee-be56-0242ac120002'),
        ('4b0e9873-47f7-499a-8190-5aff4ac16dde', '43ff85e5-1e07-4337-8e8c-9439f203642f');
 
-INSERT INTO wavvy.wavvy.projects(id, name, description, address, image_link, link, start_Time, end_Time, budget,
-                                 cooperation_Message, status, possible_Volunteer, organizer_id)
+INSERT INTO wavvy.wavvy.projects(id, name, description, street, house_number, apartment_number, zip_code, city, country,
+                                 image_link, start_Time, end_Time, budget,
+                                 cooperation_Message, status, possible_Volunteer, organizer_id, created_at, updated_at)
 VALUES ('9457f49a-15de-4a67-8870-6c7c5dd4746e', 'Zbiórka żywności',
         'Zbiórka żywności dla osób potrzebujących: Dołącz do nas w akcji gromadzenia żywności i pomóż dostarczyć posiłki potrzebującym w naszej społeczności.',
-        'brak',
+        null, null, null, null, null, null,
         'https://images.unsplash.com/photo-1461354464878-ad92f492a5a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
-        'wwww.onet.pl',
-        '2023-06-10T16:00:00+00:00', '2023-06-10T19:00:00+00:00', '2500.00',
+        '2023-06-10T16:00:00', '2023-06-10T19:00:00', '2500.00',
         'siemanko szukamy psychologa do współpracy!!!',
-        'PLANNED', 'true', 'b544b8e0-0d2e-11ee-be56-0242ac120002'),
+        2, 'true', 'b544b8e0-0d2e-11ee-be56-0242ac120002', '2023-05-10T16:00:00', '2023-05-10T16:00:00'),
        ('6e17f538-7280-4251-bbe7-5d44bc8b1bf6', 'Edukacyjny program o znaczeniu gospodarki wodnej',
         'Edukacyjny program mający na celu kształtowanie zrozumienia roli i znaczenia gospodarki wodnej, żeglugi morskiej i śródlądowej.',
-        'brak',
+        null, null, null, null, null, null,
         'https://images.unsplash.com/photo-1581093588401-fbb62a02f120?ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80',
-        'https://www.facebook.com/lmir.gdynia/?locale=pl_PL',
-        '2023-01-01T23:00:00+00:00', '2024-02-29T23:59:59+00:00', '50000.00', '', 'OBTAINING_FINANCING', 'true',
-        'a9656db2-0d2e-11ee-be56-0242ac120002'),
-       ('44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'Bieg Niepodległości', 'Promocja ruchu', 'Bogusława X/22',
+        '2023-01-01T23:00:00', '2024-02-29T23:59:59', '50000.00', '', 3, 'true',
+        'a9656db2-0d2e-11ee-be56-0242ac120002', '2022-12-10T16:00:00', '2022-12-10T16:00:00'),
+       ('44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'Bieg Niepodległości', 'Promocja ruchu',
+        'Bogusława X', '22', null, '78-100', 'Kołobrzeg', 'Polska',
         'https://images.unsplash.com/photo-1597892657493-6847b9640bac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
-        'https://www.bieg.kolobrzeg.pl/inne-imprezy-biegowe/bieg-niepodleglosci',
-        '2022-11-11T10:00:00+00:00', '2022-11-11T13:00:00+00:00', '30000.00',
+        '2022-11-11T10:00:00', '2022-11-11T13:00:00', '30000.00',
         'Poszukujemy wolontariuszy do obsługi biegu.',
-        'COMPLETED', 'true', 'c06f4f3c-0d2e-11ee-be56-0242ac120002');
+        7, 'true', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', '2022-03-10T16:00:00', '2022-03-10T16:00:00');
 
 INSERT INTO wavvy.wavvy.tags(id, project_id, tag)
 VALUES ('4a16e0e4-ca1b-4d82-bdd0-84011b9e9ad5', '9457f49a-15de-4a67-8870-6c7c5dd4746e', 'zbiórka żywności'),
@@ -161,6 +163,17 @@ VALUES ('4a16e0e4-ca1b-4d82-bdd0-84011b9e9ad5', '9457f49a-15de-4a67-8870-6c7c5dd
        ('89751836-dafd-4c29-8296-dbdf56f95dd2', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'bieg'),
        ('4f00069a-9385-465c-bb4b-90c065cadd1a', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'niepodległość'),
        ('419c1f74-6821-4aa6-a484-c2ba6614f1fa', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'promocja ruchu');
+
+INSERT INTO wavvy.wavvy.project_links(id, project_id, link)
+VALUES ('58f6a175-60e7-4efc-b78a-2d8d37fb5e45', '9457f49a-15de-4a67-8870-6c7c5dd4746e', 'https://www.onet.pl'),
+       ('a9a8b864-9e82-4f38-9b0b-ec6c02e7d4d7', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6',
+        'https://www.facebook.com/lmir.gdynia/?locale=pl_PL'),
+       ('c1a0d9f3-aa48-4823-9f4d-8f9176f93671', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6', 'link2'),
+       ('3a2c1407-d5a9-46b0-b857-0861a75d5572', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6', 'link3'),
+       ('e361f1cf-24c5-4b47-842b-69b0a1cc8a3b', '44135c4c-6b9a-405e-a18c-6354b5eb06f7',
+        'https://www.bieg.kolobrzeg.pl/inne-imprezy-biegowe/bieg-niepodleglosci'),
+       ('cc301982-4a09-4aa1-8d09-1e3d5c6c853b', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'link4'),
+       ('92fc68a0-3ef3-4c3e-9a1d-47f378e69b3d', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'link5');
 
 INSERT INTO wavvy.wavvy.social_links(id, organization_id, link)
 VALUES ('013701d1-6a46-449f-8e18-c78144aaeba9', 'a2daa44a-0d2d-11ee-be56-0242ac120002', 'https://www.facebook.com/tsk'),
@@ -181,8 +194,3 @@ VALUES ('b04ce852-4ab6-44fa-8887-153c1c838210', 'a2daa44a-0d2d-11ee-be56-0242ac1
        ('4704aa6b-5998-4171-b31e-e92d90de6101', 'b544b8e0-0d2e-11ee-be56-0242ac120002', 'Namiot polowy'),
        ('26c2960d-bef0-4b18-90f9-b4e63c942888', 'b544b8e0-0d2e-11ee-be56-0242ac120002', 'Grill przemysłowy'),
        ('08decab5-0c6b-4f22-82cc-3aeebe8ba904', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', 'Stadion sportowy');
-
-INSERT INTO wavvy.wavvy.project_categories(project_id, business_area_id)
-VALUES ('9457f49a-15de-4a67-8870-6c7c5dd4746e', '13857a2c-0d14-11ee-be56-0242ac120002'),
-       ('6e17f538-7280-4251-bbe7-5d44bc8b1bf6', 'ac0f9444-0d14-11ee-be56-0242ac120002'),
-       ('44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'bd47cb32-0d14-11ee-be56-0242ac120002');

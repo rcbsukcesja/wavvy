@@ -11,18 +11,20 @@ import com.rcbsukcesja.hack2react.model.dto.view.organization.CompanyView;
 import com.rcbsukcesja.hack2react.model.entity.Company;
 import com.rcbsukcesja.hack2react.model.entity.Resource;
 import com.rcbsukcesja.hack2react.model.entity.SocialLink;
+import com.rcbsukcesja.hack2react.model.mappers.AddressMapper;
 import com.rcbsukcesja.hack2react.model.mappers.CompanyMapper;
 import com.rcbsukcesja.hack2react.repositories.BusinessAreaRepository;
 import com.rcbsukcesja.hack2react.repositories.CompanyRepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
-import com.rcbsukcesja.hack2react.validations.CompanyValidation;
+import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,11 +36,12 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
     private final BusinessAreaRepository businessAreaRepository;
-    private final CompanyValidation companyValidation;
+    private final OrganizationValidation organizationValidation;
+    private final AddressMapper addressMapper;
 
-    public List<CompanyListView> getAllCompany() {
-        return companyRepository.getAll().stream()
-                .map(companyMapper::companyToCompanyListView).toList();
+    public Page<CompanyListView> getAllCompany(Pageable pageable) {
+        return companyRepository.findAll(pageable)
+                .map(companyMapper::companyToCompanyListView);
     }
 
     public CompanyView getCompanyById(UUID id) {
@@ -47,86 +50,88 @@ public class CompanyService {
     }
 
     @Transactional
-    public CompanyView createOrUpdateCompany(UUID companyId, CompanySaveDto dto) {
-        Company company;
-        if (companyId == null) {
-            validateCreateCompany(dto);
-            company = new Company();
-            if (dto.resources() != null && !dto.resources().isEmpty()) {
-                for (String resource : dto.resources()) {
-                    Resource newResource = new Resource();
-                    newResource.setResource(resource);
-                    company.getResources().add(newResource);
-                    companyRepository.save(company);
-                }
+    public CompanyView createCompany(CompanySaveDto dto) {
+        validateCreateCompany(dto);
+        Company company = new Company();
+
+        setCompanyBasicFields(dto, company);
+
+        company.setResources(new HashSet<>());
+        company.setSocialLinks(new HashSet<>());
+
+        company = companyRepository.save(company);
+
+        if (dto.resources() != null && !dto.resources().isEmpty()) {
+            Set<Resource> resources = new HashSet<>();
+            for (String resource : dto.resources()) {
+                Resource newResource = new Resource();
+                newResource.setResource(resource);
+                newResource.setOrganization(company);
+                resources.add(newResource);
             }
-            company.setSocialLinks(new HashSet<>());
-            if (dto.socialLinks() != null && !dto.socialLinks().isEmpty()) {
-                for (String link : dto.socialLinks()) {
-                    SocialLink socialLink = new SocialLink();
-                    socialLink.setLink(link);
-                    company.getSocialLinks().add(socialLink);
-                    companyRepository.save(company);
-                }
-            }
-        } else {
-            company = getCompanyByIdOrThrowException(companyId);
-            validateUpdateCompany(dto, company);
-            updateSocialLinks(company, dto.socialLinks());
-            updateResources(company, dto.resources());
+            company.setResources(resources);
         }
 
-        company.setName(dto.name());
-        company.setKrs(dto.krs());
-        company.setNip(dto.nip());
-        company.setRegon(dto.regon());
-        company.setOwner(userRepository.getUserById(dto.ownerId())
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
-        company.setAddress(dto.address());
-        company.setPhone(dto.phone());
-        company.setEmail(dto.email());
-        company.setWebsite(dto.website());
-        company.setDescription(dto.description());
-        company.setBusinessAreas(new HashSet<>(dto.businessAreaIds().stream()
-                .map(id -> businessAreaRepository.getBusinessAreaById(id)
-                        .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
-                .toList()));
-        company.setCreationTime(TimeUtils.nowInUTC());
-        company.setResources(new HashSet<>());
+        if (dto.socialLinks() != null && !dto.socialLinks().isEmpty()) {
+            Set<SocialLink> socialLinks = new HashSet<>();
+            for (String link : dto.socialLinks()) {
+                SocialLink socialLink = new SocialLink();
+                socialLink.setLink(link);
+                socialLink.setOrganization(company);
+                socialLinks.add(socialLink);
+            }
+            company.setSocialLinks(socialLinks);
+        }
 
-        Company saved = companyRepository.save(company);
+        company = companyRepository.saveAndFlush(company);
+        return companyMapper.companyToCompanyView(company);
+    }
+
+    @Transactional
+    public CompanyView putUpdateCompany(UUID companyId, CompanySaveDto dto) {
+        Company company = getCompanyByIdOrThrowException(companyId);
+        validateUpdateCompany(dto, company);
+
+        setCompanyBasicFields(dto, company);
+
+        updateSocialLinks(company, dto.socialLinks());
+        updateResources(company, dto.resources());
+
+        company.setUpdatedAt(TimeUtils.nowInUTC());
+
+        Company saved = companyRepository.saveAndFlush(company);
         return companyMapper.companyToCompanyView(saved);
     }
 
     @Transactional
-    public CompanyView updateCompany(UUID companyId, CompanyPatchDto dto) {
+    public CompanyView patchUpdateCompany(UUID companyId, CompanyPatchDto dto) {
         Company actual = getCompanyByIdOrThrowException(companyId);
         if (dto.name() != null && !actual.getName().equals(dto.name())) {
             if (actual.getName().equalsIgnoreCase(dto.name())) {
                 actual.setName(dto.name());
             } else {
-                companyValidation.checkIfCompanyNameAlreadyExists(dto.name());
+                organizationValidation.checkIfOrganizationNameAlreadyExists(dto.name());
                 actual.setName(dto.name());
             }
         }
         if (dto.krs() != null && !actual.getKrs().equals(dto.krs())) {
-            companyValidation.checkIfCompanyKrsAlreadyExists(dto.krs());
+            organizationValidation.checkIfOrganizationKrsAlreadyExists(dto.krs());
             actual.setKrs(dto.krs());
         }
         if (dto.nip() != null && !actual.getNip().equals(dto.nip())) {
-            companyValidation.checkIfCompanyNipAlreadyExists(dto.nip());
+            organizationValidation.checkIfOrganizationNipAlreadyExists(dto.nip());
             actual.setNip(dto.nip());
         }
         if (dto.regon() != null && !actual.getRegon().equals(dto.regon())) {
-            companyValidation.checkIfCompanyRegonAlreadyExists(dto.regon());
+            organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
             actual.setRegon(dto.regon());
         }
         if (dto.ownerId() != null && !actual.getOwner().getId().equals(dto.ownerId())) {
             actual.setOwner(userRepository.getUserById(dto.ownerId())
                     .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
         }
-        if (dto.address() != null && !actual.getAddress().equals(dto.address())) {
-            actual.setAddress(dto.address());
+        if (dto.address() != null && !actual.getAddress().equals(addressMapper.organizationAddressPatchDtoToAddress(dto.address()))) {
+            actual.setAddress(addressMapper.organizationAddressPatchDtoToAddress(dto.address()));
         }
         if (dto.phone() != null && !actual.getPhone().equals(dto.phone())) {
             actual.setPhone(dto.phone());
@@ -137,9 +142,6 @@ public class CompanyService {
         if (dto.website() != null && !actual.getWebsite().equals(dto.website())) {
             actual.setWebsite(dto.website());
         }
-
-        updateSocialLinks(actual, dto.socialLinks());
-
         if (dto.description() != null && !actual.getDescription().equals(dto.description())) {
             actual.setDescription(dto.description());
         }
@@ -149,7 +151,10 @@ public class CompanyService {
                             .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
                     .toList()));
         }
+        updateSocialLinks(actual, dto.socialLinks());
         updateResources(actual, dto.resources());
+
+        actual.setUpdatedAt(TimeUtils.nowInUTC());
 
         Company updated = companyRepository.save(actual);
         return companyMapper.companyToCompanyView(updated);
@@ -159,6 +164,24 @@ public class CompanyService {
     public void deleteCompany(UUID id) {
         Company company = getCompanyByIdOrThrowException(id);
         companyRepository.delete(company);
+    }
+
+    private void setCompanyBasicFields(CompanySaveDto dto, Company company) {
+        company.setName(dto.name());
+        company.setKrs(dto.krs());
+        company.setNip(dto.nip());
+        company.setRegon(dto.regon());
+        company.setOwner(userRepository.getUserById(dto.ownerId())
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
+        company.setAddress(addressMapper.organizationAddressSaveDtoToAddress(dto.address()));
+        company.setPhone(dto.phone());
+        company.setEmail(dto.email());
+        company.setWebsite(dto.website());
+        company.setDescription(dto.description());
+        company.setBusinessAreas(new HashSet<>(dto.businessAreaIds().stream()
+                .map(id -> businessAreaRepository.getBusinessAreaById(id)
+                        .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
+                .toList()));
     }
 
     private void updateResources(Company company, Set<String> resources) {
@@ -175,7 +198,6 @@ public class CompanyService {
                         newResource.setResource(resource);
                         newResource.setOrganization(company);
                         company.getResources().add(newResource);
-                        companyRepository.save(company);
                     }
                 }
             }
@@ -195,7 +217,6 @@ public class CompanyService {
                         socialLink.setLink(link);
                         socialLink.setOrganization(company);
                         company.getSocialLinks().add(socialLink);
-                        companyRepository.save(company);
                     }
                 }
             }
@@ -208,31 +229,25 @@ public class CompanyService {
                         ErrorMessages.COMPANY_NOT_FOUND, id));
     }
 
-    private Set<Company> getCompanySetOrThrowException(Set<UUID> organizersIds) {
-        return new HashSet<>(organizersIds.stream()
-                .map(this::getCompanyByIdOrThrowException)
-                .toList());
-    }
-
     private void validateCreateCompany(CompanySaveDto dto) {
-        companyValidation.checkIfCompanyNameAlreadyExists(dto.name());
-        companyValidation.checkIfCompanyKrsAlreadyExists(dto.krs());
-        companyValidation.checkIfCompanyNipAlreadyExists(dto.nip());
-        companyValidation.checkIfCompanyRegonAlreadyExists(dto.regon());
+        organizationValidation.checkIfOrganizationNameAlreadyExists(dto.name());
+        organizationValidation.checkIfOrganizationKrsAlreadyExists(dto.krs());
+        organizationValidation.checkIfOrganizationNipAlreadyExists(dto.nip());
+        organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
     }
 
     private void validateUpdateCompany(CompanySaveDto dto, Company company) {
         if (!company.getName().equalsIgnoreCase(dto.name())) {
-            companyValidation.checkIfCompanyNameAlreadyExists(dto.name());
+            organizationValidation.checkIfOrganizationNameAlreadyExists(dto.name());
         }
         if (!company.getKrs().equals(dto.krs())) {
-            companyValidation.checkIfCompanyKrsAlreadyExists(dto.krs());
+            organizationValidation.checkIfOrganizationKrsAlreadyExists(dto.krs());
         }
         if (!company.getNip().equals(dto.nip())) {
-            companyValidation.checkIfCompanyNipAlreadyExists(dto.nip());
+            organizationValidation.checkIfOrganizationNipAlreadyExists(dto.nip());
         }
         if (!company.getRegon().equals(dto.regon())) {
-            companyValidation.checkIfCompanyRegonAlreadyExists(dto.regon());
+            organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
         }
     }
 

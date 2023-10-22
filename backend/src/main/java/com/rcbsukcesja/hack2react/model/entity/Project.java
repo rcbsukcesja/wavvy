@@ -1,20 +1,17 @@
 package com.rcbsukcesja.hack2react.model.entity;
 
 import com.rcbsukcesja.hack2react.model.enums.ProjectStatus;
+import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -42,33 +39,42 @@ public class Project {
     private String name;
     @Column(length = 2000)
     private String description;
-    private String address;
+    private Address address;
+    private String imagePath;
     private String imageLink;
-    private String link;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<ProjectLink> links;
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime startTime;
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime endTime;
     private BigDecimal budget;
     private String cooperationMessage;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
+            CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private OrganizationNGO organizer;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "project_categories",
-            schema = "wavvy",
-            joinColumns = {@JoinColumn(name = "project_id")},
-            inverseJoinColumns = {@JoinColumn(name = "business_area_id")}
-    )
-    private Set<BusinessArea> categories;
-
-    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "INTEGER")
     private ProjectStatus status;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Tag> tags;
 
     private boolean possibleVolunteer;
+
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
+    private ZonedDateTime createdAt;
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
+    private ZonedDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = TimeUtils.nowInUTC();
+        }
+        if (updatedAt == null) {
+            updatedAt = createdAt;
+        }
+    }
 }

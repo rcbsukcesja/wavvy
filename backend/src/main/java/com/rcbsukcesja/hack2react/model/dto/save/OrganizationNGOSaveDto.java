@@ -11,6 +11,8 @@ import lombok.Builder;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.BANK_ACCOUNT;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.BANK_ACCOUNT_VALIDATION_MESSAGE;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.DESCRIPTION_MAX_LENGTH;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.KRS_PATTERN_VALIDATION_MESSAGE;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.KRS_REGEX;
@@ -30,9 +32,8 @@ public record OrganizationNGOSaveDto(
         String name,
         @NotNull
         UUID ownerId,//TODO: remove from here and set it by system
-        @NotBlank
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String address,
+        @NotNull
+        OrganizationAddressSaveDto address,
         @Pattern(regexp = PHONE_REGEX, message = PHONE_PATTERN_VALIDATION_MESSAGE)
         String phone,
         @Email
@@ -50,12 +51,13 @@ public record OrganizationNGOSaveDto(
         String krs,
         @Pattern(regexp = NIP_REGEX, message = NIP_PATTERN_VALIDATION_MESSAGE)
         String nip,
-        @NotBlank
         @Pattern(regexp = REGON_REGEX, message = REGON_PATTERN_VALIDATION_MESSAGE)
         String regon,
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> resources,
         @NotNull
-        LegalStatus legalStatus
+        LegalStatus legalStatus,
+        @Pattern(regexp = BANK_ACCOUNT, message = BANK_ACCOUNT_VALIDATION_MESSAGE)
+        String bankAccount
 ) {
 
 }

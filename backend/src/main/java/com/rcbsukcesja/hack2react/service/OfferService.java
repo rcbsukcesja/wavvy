@@ -49,7 +49,7 @@ public class OfferService {
         offer.setStartDate(offerSaveDto.startDate());
         offer.setEndDate(offerSaveDto.endDate());
         offer.setScope(offerSaveDto.scope());
-        offerValidation.validateDates(offer);
+        offerValidation.validateDates(offer.getStartDate(), offer.getEndDate());
         Offer saved = offerRepository.save(offer);
         return offerMapper.offerToOfferView(saved);
     }
@@ -90,7 +90,7 @@ public class OfferService {
         }
 
         if (dateChanged) {
-            offerValidation.validateDates(offer);
+            offerValidation.validateDates(offer.getStartDate(), offer.getEndDate());
         }
 
         Offer saved = offerRepository.save(offer);

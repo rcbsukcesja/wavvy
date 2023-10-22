@@ -5,14 +5,17 @@ import com.rcbsukcesja.hack2react.exceptions.ApiRequestException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.BusinessAreaNameAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.CompanyAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.EmailAlreadyExistsException;
-import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationNGOAlreadyExistsException;
+import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationAlreadyExistsException;
+import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationsAlreadyAttachedToBusinessAreaException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.UsernameAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidDateRangeException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidEnumParameterException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidFileException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.CompanyNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.MessageNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
+import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.ProjectNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.UserNotFoundException;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
@@ -31,6 +34,7 @@ public class ApiExceptionHandler {
             UserNotFoundException.class,
             BusinessAreaNotFoundException.class,
             MessageNotFoundException.class,
+            OrganizationNotFoundException.class,
             OrganizationNGONotFoundException.class,
             CompanyNotFoundException.class,
             ProjectNotFoundException.class})
@@ -48,10 +52,12 @@ public class ApiExceptionHandler {
             EmailAlreadyExistsException.class,
             UsernameAlreadyExistsException.class,
             BusinessAreaNameAlreadyExistsException.class,
-            OrganizationNGOAlreadyExistsException.class,
+            OrganizationAlreadyExistsException.class,
             CompanyAlreadyExistsException.class,
             InvalidFileException.class,
-            InvalidDateRangeException.class
+            InvalidDateRangeException.class,
+            OrganizationsAlreadyAttachedToBusinessAreaException.class,
+            InvalidEnumParameterException.class
     })
     public ResponseEntity<Object> handleBadRequestTypeException(ApiRequestException e) {
 

@@ -6,15 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 @Builder
-public class UserLightweightView {
-
-    private UUID id;
-    private String displayName;
+public class AddressView {
+    private String street;
+    private String houseNumber;
+    private String apartmentNumber;
+    private String city;
+    private String zipCode;
+    private String country;
 }

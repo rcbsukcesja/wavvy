@@ -10,10 +10,18 @@ public interface ValidationConstants {
     String KRS_REGEX = "^\\d{10}$";
     String NOT_BLANK_PATTERN = "^(?!\\s*$).+";
 
+    String BANK_ACCOUNT = "^[0-9]{26}$";
+
+    String ZIP_CODE_REGEX = "^[0-9]{2}-[0-9]{3}$";
+
     String NOT_BLANK_VALIDATION_MESSAGE = "Field cannot be blank";
     String PHONE_PATTERN_VALIDATION_MESSAGE = "Phone number should have 9 digits";
     String REGON_PATTERN_VALIDATION_MESSAGE = "REGON should have 9 or 14 digits";
     String NIP_PATTERN_VALIDATION_MESSAGE = "NIP should have 10 digits";
     String KRS_PATTERN_VALIDATION_MESSAGE = "KRS should have 10 digits";
     String NGO_BUSINESS_AREAS_NOT_EMPTY_VALIDATION_MESSAGE = "Business area ids cannot be empty";
+
+    String BANK_ACCOUNT_VALIDATION_MESSAGE = "Bank account should have 26 digits";
+
+    String ZIP_CODE_VALIDATION_MESSAGE = "Zip code should have 5 digits and be in format XX-XXX";
 }
