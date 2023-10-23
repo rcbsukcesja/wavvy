@@ -94,4 +94,19 @@ public class ProjectController {
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/like/{projectId}")
+    public ResponseEntity<ProjectView> updateProjectAddLike(
+            @PathVariable UUID projectId,
+            @RequestParam String clientId) {
+        return new ResponseEntity<>(projectService.updateProjectAddLike(projectId, clientId), HttpStatus.OK);
+    }
+
+    @PatchMapping("/like/{projectId}")
+    public ResponseEntity<ProjectView> updateProjectRemoveLike(
+            @PathVariable UUID projectId,
+            @RequestParam String clientId) {
+        return new ResponseEntity<>(projectService.updateProjectRemoveLike(projectId, clientId), HttpStatus.OK);
+    }
+
 }
