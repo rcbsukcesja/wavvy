@@ -35,4 +35,5 @@ public class ProjectView {
     private boolean possibleVolunteer;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Set<String> likes;
 }

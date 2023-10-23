@@ -244,4 +244,24 @@ public class ProjectService {
                 .orElseThrow(() -> new OrganizationNGONotFoundException(
                         ErrorMessages.ORGANIZATION_NGO_NOT_FOUND, id));
     }
+
+    public ProjectView updateProjectAddLike(UUID projectId, String clientId) {
+        Project project = getProjectByIdOrThrowException(projectId);
+        if (project.getLikes()== null){
+            project.setLikes(new HashSet<>());
+        }
+        project.getLikes().add(clientId);
+
+        return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
+    }
+
+    public ProjectView  updateProjectRemoveLike(UUID projectId, String clientId) {
+        Project project = getProjectByIdOrThrowException(projectId);
+        if (project.getLikes()== null){
+            project.setLikes(new HashSet<>());
+        }
+        project.getLikes().remove(clientId);
+
+        return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
+    }
 }

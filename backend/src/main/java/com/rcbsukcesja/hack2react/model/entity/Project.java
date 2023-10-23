@@ -67,6 +67,7 @@ public class Project {
     private ZonedDateTime createdAt;
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime updatedAt;
+    private Set<String> likes ;
 
     @PrePersist
     public void prePersist() {
