@@ -66,13 +66,13 @@ export type NgoProfileFormModel = FormGroup<{
   ],
   styles: [``],
   template: `
-    <section *ngIf="logo$ | async as logo">
+    <section *ngIf="logo$ | async as logo" class="max-w-3xl">
       <h2>{{ profile.name }}</h2>
       <div class="w-1/5 mb-4">
         <img *ngIf="logo.url" [src]="logo.url" />
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="max-w-3xl">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="flex flex-col md:flex-row md:gap-4">
           <mat-form-field class="md:w-1/2">
             <mat-label>Nazwa</mat-label>
@@ -203,8 +203,8 @@ export type NgoProfileFormModel = FormGroup<{
             >
           </mat-form-field>
 
-          <section formArrayName="resources">
-            <p>Zasoby organizacji</p>
+          <section class="mt-4" formArrayName="resources">
+            <p class="font-semibold">Zasoby organizacji</p>
             <div *ngFor="let ctrl of form.controls.resources.controls; let i = index" class="flex">
               <mat-form-field class="w-full">
                 <!-- <mat-label>Opis</mat-label> -->

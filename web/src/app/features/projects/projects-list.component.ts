@@ -30,30 +30,32 @@ import { ID } from 'src/app/core/types/id.type';
   template: `
     <app-list-shell listName="Projekty" [list]="projects">
       <div #filters class="mb-2">
-        <div class="ml-auto">
-          <label> Sortuj:</label>
-          <select>
-            <option>od najnowszych</option>
-            <option>od najstarszych</option>
-          </select>
+        <div class="ml-auto flex gap-4">
+          <span> Sortuj:</span>
+          <button class="font-bold">od najnowszych</button>
+          <button>od najstarszych</button>
         </div>
       </div>
       <ng-template #item let-project>
         <div class="">
-          <div>
+          <!-- <div>
             <mat-icon class="text-red-600 ml-auto">favorite</mat-icon>
-          </div>
+          </div> -->
           <div class="relative">
             <div class="absolute bg-black text-white right-0 text-sm px-1 py-2">{{ project.startTime | date }}</div>
+            <div class="absolute bg-black text-white right-0 top-12 text-sm px-1 py-2">
+              {{ project.endTime | date }}
+            </div>
             <img [src]="project.imageLink" />
             <div class="absolute bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
               {{ project.ngo }}
             </div>
           </div>
           <div class="rounded-md w-fit px-2 mt-4 mb-2 bg-green-400 text-green-900">
-            {{ project.status?.name | projectStatus }}
+            {{ project.status | projectStatus }}
           </div>
           <p class="font-semibold text-lg">{{ project.name }}</p>
+          <p class="line-clamp-3">{{ project.description }}</p>
           <div class="mb-2">
             <span *ngFor="let tag of project.tags; let last = last">#{{ tag }} </span>
           </div>

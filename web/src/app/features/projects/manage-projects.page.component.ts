@@ -22,7 +22,7 @@ import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
     <header>
       <h2>Zarządzaj projektami</h2>
     </header>
-    <button mat-raised-button color="primary" (click)="goToProjectForm()">Dodaj</button>
+    <button class="mb-4" mat-raised-button color="primary" (click)="goToProjectForm()">Dodaj</button>
 
     <table *ngIf="dataSource() as data" mat-table [dataSource]="data" class="mat-elevation-z8">
       <ng-container matColumnDef="position">
@@ -32,7 +32,7 @@ import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
 
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let element">{{ element.status.name | projectStatus }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.status | projectStatus }}</td>
       </ng-container>
 
       <ng-container matColumnDef="name">

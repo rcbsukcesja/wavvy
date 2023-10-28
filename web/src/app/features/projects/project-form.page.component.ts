@@ -1,6 +1,13 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { PROJECT_STATUS, Project, ProjectStatus } from './model/project.model';
-import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { PROJECT_STATUS, Project, ProjectStatus, projectStatusMap } from './model/project.model';
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +19,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProjectsApiService } from './data-access/projects.api.service';
 import { ID } from 'src/app/core/types/id.type';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent, MatChipEditedEvent, MatChipsModule } from '@angular/material/chips';
 
 export type ProjectForm = FormGroup<{
   status: FormControl<ProjectStatus>;
@@ -40,6 +49,15 @@ export type ProjectForm = FormGroup<{
     MatSelectModule,
     MatCheckboxModule,
     CommonModule,
+    MatChipsModule,
+  ],
+  styles: [
+    `
+      :host {
+        display: block;
+        @apply max-w-3xl;
+      }
+    `,
   ],
   template: `
     <h2>{{ project ? 'Edytowanie projektu' : 'Dodawanie projektu' }}</h2>
@@ -62,7 +80,7 @@ export type ProjectForm = FormGroup<{
         <mat-label>Wiadomość do współpracy!</mat-label>
         <textarea formControlName="cooperationMessage" matInput></textarea>
         <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
-        <mat-hint>Dodaj opis</mat-hint>
+        <mat-hint>Daj znać kogo/czego potrzebujesz</mat-hint>
       </mat-form-field>
       <br />
       <mat-form-field>
@@ -91,7 +109,7 @@ export type ProjectForm = FormGroup<{
       <mat-form-field>
         <mat-label>Status</mat-label>
         <mat-select formControlName="status">
-          <mat-option *ngFor="let status of projectStatuses" [value]="status">{{ status.name }}</mat-option>
+          <mat-option *ngFor="let status of projectStatuses" [value]="status.value">{{ status.label }}</mat-option>
         </mat-select>
       </mat-form-field>
       <br />
@@ -108,6 +126,27 @@ export type ProjectForm = FormGroup<{
       </mat-form-field>
       <br />
       <mat-form-field>
+        <mat-label>Tagi</mat-label>
+        <mat-chip-grid formControlName="tags" #chipGrid aria-label="Enter tags">
+          <mat-chip-row *ngFor="let tag of tags" (removed)="remove(tag)" [editable]="true" (edited)="edit(tag, $event)">
+            {{ tag }}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+          <input
+            placeholder="Nowy tag"
+            [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            [matChipInputAddOnBlur]="true"
+            (matChipInputTokenEnd)="add($event)" />
+        </mat-chip-grid>
+        <mat-hint *ngIf="form.controls.tags as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
+          >Podaj przynajmniej jeden tag</mat-hint
+        >
+      </mat-form-field>
+      <br />
+      <mat-form-field>
         <mat-label>Kategorie</mat-label>
         <mat-select formControlName="categories" multiple>
           <mat-select-trigger>
@@ -121,6 +160,7 @@ export type ProjectForm = FormGroup<{
         </mat-select>
       </mat-form-field>
       <br />
+
       <button mat-raised-button color="primary">Zapisz</button>
     </form>
   `,
@@ -131,27 +171,62 @@ export default class ProjectFormPageComponent implements OnInit {
 
   service = inject(ProjectsApiService);
 
-  projectStatuses = [
-    {
-      id: 1,
-      name: PROJECT_STATUS.IDEA,
-    },
-    {
-      id: 2,
-      name: PROJECT_STATUS.PLANNED,
-    },
-  ];
+  projectStatuses = Object.entries(projectStatusMap).map(([status, label], index) => {
+    return {
+      id: index + 1,
+      value: status,
+      label,
+    };
+  });
 
   builder = inject(NonNullableFormBuilder);
 
   form!: any;
 
+  separatorKeysCodes = [ENTER, COMMA] as const;
+  tags: string[] = [];
+
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      this.tags.push(value);
+    }
+
+    event.chipInput!.clear();
+  }
+
+  remove(tag: string): void {
+    const index = this.tags.indexOf(tag);
+
+    if (index >= 0) {
+      this.tags.splice(index, 1);
+    }
+  }
+
+  edit(tag: string, event: MatChipEditedEvent) {
+    const value = event.value.trim();
+
+    if (!value) {
+      this.remove(tag);
+      return;
+    }
+
+    const index = this.tags.indexOf(tag);
+    if (index >= 0) {
+      this.tags[index] = value;
+    }
+  }
+
   ngOnInit() {
     const preselectedAreas = this.project?.categories.map(cat => cat.id);
+    console.log(this.project);
+
+    this.tags = this.project?.tags || [];
 
     this.form = this.builder.group({
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
-      tags: this.builder.array<FormControl<string>>([]),
+      tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || ''),
       description: this.builder.control(this.project?.description || ''),
       endTime: this.builder.control(this.project?.endTime || ''),
@@ -171,6 +246,12 @@ export default class ProjectFormPageComponent implements OnInit {
   }
 
   addProject() {
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid) {
+      return;
+    }
+
     if (this.project) {
       this.service.update(this.project.id, this.form.getRawValue());
     } else {
