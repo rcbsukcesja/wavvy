@@ -3,13 +3,15 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { MessagesApiService } from './data-access/messages.api.service';
 import { MessagesStateService } from './data-access/messages.state.service';
 import { ListShellComponent } from 'src/app/shared/ui/list-shell.component';
+import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
 
 @Component({
   selector: 'app-messages.page',
   standalone: true,
-  imports: [CommonModule, ListShellComponent, DatePipe],
+  imports: [CommonModule, ListShellComponent, DatePipe, CommonFiltersComponent],
   template: `
     <ng-container *ngIf="state() as state">
+      <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
       <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="Wiadomości" [list]="state.list">
         <ng-template #item let-message>
           <div class="mb-4"><strong>Tytuł: </strong>{{ message.title }}</div>
@@ -31,5 +33,9 @@ export default class MessagesListPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.service.getAll();
+  }
+
+  onFiltersChanged(filters: CommonFilters) {
+    this.service.getAll(filters);
   }
 }

@@ -76,8 +76,10 @@ import { OffersStateService } from './data-access/offers.state.service';
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
-          <button (click)="openOfferForm(element)"><mat-icon>edit</mat-icon></button>
-          <button (click)="remove(element)"><mat-icon>delete</mat-icon></button>
+          <div class="flex gap-4">
+            <button (click)="openOfferForm(element)"><mat-icon>edit</mat-icon></button>
+            <button (click)="remove(element)"><mat-icon>delete</mat-icon></button>
+          </div>
         </td>
       </ng-container>
 

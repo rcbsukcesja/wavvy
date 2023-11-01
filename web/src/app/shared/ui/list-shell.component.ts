@@ -9,7 +9,7 @@ import { ListTileComponent } from './list-tile.component';
   template: `
     <header>
       <p class="text-2xl font-semibold">{{ listName }}</p>
-      <ng-content #filters></ng-content>
+      <ng-content [select]="'app-common-filters'" />
     </header>
     <section>
       <div class="flex flex-wrap flex-col md:flex-row">

@@ -8,13 +8,22 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { USER_ROLES } from 'src/app/core/user-roles.enum';
+import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
 
 @Component({
   selector: 'app-offers.page',
   standalone: true,
-  imports: [CommonModule, ListShellComponent, MatIconModule, MatDividerModule, MatTooltipModule],
+  imports: [
+    CommonModule,
+    ListShellComponent,
+    MatIconModule,
+    MatDividerModule,
+    MatTooltipModule,
+    CommonFiltersComponent,
+  ],
   template: `
     <ng-container *ngIf="state() as state">
+      <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
       <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="Oferty" [list]="state.list">
         <ng-template #item let-offer>
           <div class="relative">
@@ -83,6 +92,10 @@ export default class OffersListPageComponent implements OnInit {
 
   get showFav() {
     return this.authState().user?.role === USER_ROLES.NGO_USER;
+  }
+
+  onFiltersChanged(filters: CommonFilters) {
+    this.service.getAll(filters);
   }
 
   ngOnInit(): void {

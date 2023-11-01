@@ -4,7 +4,7 @@ import { ListShellComponent } from 'src/app/shared/ui/list-shell.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
 import { tap, take } from 'rxjs';
 import { MessagesApiService } from '../messages/data-access/messages.api.service';
@@ -12,6 +12,21 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProjectStatusPipe } from './utils/project-status.pipe';
 import { Project } from './model/project.model';
 import { ID } from 'src/app/core/types/id.type';
+
+@Component({
+  standalone: true,
+  imports: [MatDividerModule, MatDialogModule],
+  template: `
+    <h1 mat-dialog-title>{{ data.name }}</h1>
+    <div mat-dialog-content>
+      <mat-divider />
+      {{ data.description }}
+    </div>
+  `,
+})
+class DescriptionDialogComponent {
+  data = inject(MAT_DIALOG_DATA);
+}
 
 @Component({
   selector: 'app-projects-list',
@@ -29,21 +44,14 @@ import { ID } from 'src/app/core/types/id.type';
   ],
   template: `
     <app-list-shell listName="Projekty" [list]="projects">
-      <div #filters class="mb-2">
-        <div class="ml-auto flex gap-4">
-          <span> Sortuj:</span>
-          <button class="font-bold">od najnowszych</button>
-          <button>od najstarszych</button>
-        </div>
-      </div>
       <ng-template #item let-project>
         <div class="">
           <!-- <div>
             <mat-icon class="text-red-600 ml-auto">favorite</mat-icon>
           </div> -->
           <div class="relative">
-            <div class="absolute bg-black text-white right-0 text-sm px-1 py-2">{{ project.startTime | date }}</div>
-            <div class="absolute bg-black text-white right-0 top-12 text-sm px-1 py-2">
+            <div class="absolute bg-black text-white right-28 text-sm px-1 py-2">{{ project.startTime | date }}</div>
+            <div class="absolute bg-black text-white right-0 text-sm px-1 py-2">
               {{ project.endTime | date }}
             </div>
             <img [src]="project.imageLink" />
@@ -56,6 +64,13 @@ import { ID } from 'src/app/core/types/id.type';
           </div>
           <p class="font-semibold text-lg">{{ project.name }}</p>
           <p class="line-clamp-3">{{ project.description }}</p>
+          <button (click)="openDescriptionDialog(project.name, project.description)" class="ml-auto block -mt-1 mb-2">
+            Pełny opis
+          </button>
+          <p *ngIf="project.link">
+            <span class="font-semibold">Więcej informacji: </span>
+            <a class="underline" [href]="project.link" target="_blank">{{ project.link }}</a>
+          </p>
           <div class="mb-2">
             <span *ngFor="let tag of project.tags; let last = last">#{{ tag }} </span>
           </div>
@@ -90,6 +105,12 @@ export default class ProjectsListComponent {
   snackbar = inject(MatSnackBar);
   messagesService = inject(MessagesApiService);
   dialog = inject(MatDialog);
+
+  openDescriptionDialog(name: string, description: string) {
+    this.dialog.open(DescriptionDialogComponent, {
+      data: { name, description },
+    });
+  }
 
   openMessageModal(id: ID, name: string) {
     this.dialog

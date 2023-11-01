@@ -5,6 +5,7 @@ import { MessagesStateService } from './messages.state.service';
 import { tap } from 'rxjs';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
+import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 
 export interface GetAllMessagesParams {}
 
@@ -42,13 +43,22 @@ export class MessagesApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll() {
+  getAll(params: CommonFilters = { sort: DEFAULT_SORT }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const id = this.ngoStateService.$value().profile?.id;
 
+    const url = new URL(this.url);
+    const sp = new URLSearchParams({
+      _sort: 'createdAt',
+      _order: params.sort,
+      receiverId: this.ngoStateService.$value().profile?.id.toString() || '',
+    });
+
+    url.search = sp.toString();
+
     this.http
-      .get<Message[]>(`${this.url}/?receiverId=${id}`)
+      .get<Message[]>(url.href)
       .pipe(
         tap(messages => {
           this.stateService.setState({ loadListCallState: 'LOADED', list: messages });

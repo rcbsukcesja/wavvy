@@ -6,6 +6,7 @@ import { tap } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
 import { User } from 'src/app/auth/data_access/auth.state.service';
 import { API_URL } from 'src/app/core/API-URL.token';
+import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 
 export interface GetAllOffersParams {}
 
@@ -74,11 +75,16 @@ export class OffersApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: GetAllOffersParams = {}) {
+  getAll(params: CommonFilters = { sort: DEFAULT_SORT }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
+    const url = new URL(this.url);
+    const sp = new URLSearchParams({ _sort: 'startDate', _order: params.sort });
+
+    url.search = sp.toString();
+
     return this.http
-      .get<Offer[]>(`${this.url}`)
+      .get<Offer[]>(url.href)
       .pipe(
         tap(offers => {
           this.stateService.setState({ loadListCallState: 'LOADED', list: offers });

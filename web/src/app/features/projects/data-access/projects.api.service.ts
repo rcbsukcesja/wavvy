@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ID } from 'src/app/core/types/id.type';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
+import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 
 export interface GetAllProjectsParams {}
 
@@ -84,20 +85,23 @@ export class ProjectsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: GetAllProjectsParams = {}) {
+  getAll(params: CommonFilters = { sort: DEFAULT_SORT }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     // todo: mock before backend
     const ngo = this.ngoState().profile;
 
-    let url = `${this.url}`;
+    const url = new URL(this.url);
+    const sp = new URLSearchParams({ _sort: 'startTime', _order: params.sort });
 
     if (ngo) {
-      url = `${this.url}/?ngoId=${ngo.id}`;
+      sp.append('ngoId', ngo.id.toString());
     }
 
+    url.search = sp.toString();
+
     this.http
-      .get<Project[]>(url)
+      .get<Project[]>(url.href)
       .pipe(
         tap(projects => {
           this.stateService.setState({ loadListCallState: 'LOADED', list: projects });

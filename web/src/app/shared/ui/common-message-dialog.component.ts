@@ -16,7 +16,7 @@ export interface MessageDialogFormValue {
   template: `
     <h1 mat-dialog-title>Wyślij wiadomość {{ this.data.connector }} {{ this.data.name }}</h1>
     <div mat-dialog-content>
-      <form [formGroup]="form">
+      <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field class="w-full">
           <mat-label>Tytuł</mat-label>
           <input formControlName="title" matInput />
@@ -37,11 +37,11 @@ export interface MessageDialogFormValue {
           <textarea formControlName="name" matInput></textarea>
         </mat-form-field>
         <br />
+        <div mat-dialog-actions>
+          <button mat-button [mat-dialog-close]="false">Anuluj</button>
+          <button mat-button>Wyślij</button>
+        </div>
       </form>
-    </div>
-    <div mat-dialog-actions>
-      <button mat-button [mat-dialog-close]="false">Anuluj</button>
-      <button mat-button [mat-dialog-close]="form.value" cdkFocusInitial>Wyślij</button>
     </div>
   `,
   standalone: true,
@@ -58,4 +58,14 @@ export class MessageDialogComponent {
     contact: this.builder.control('', [Validators.required]),
     name: this.builder.control('', [Validators.required]),
   });
+
+  submit() {
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid) {
+      return;
+    }
+
+    this.dialogRef.close(this.form.getRawValue());
+  }
 }

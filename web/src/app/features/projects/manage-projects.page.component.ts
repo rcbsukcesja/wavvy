@@ -42,7 +42,9 @@ import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
 
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef>Opis</th>
-        <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+        <td mat-cell *matCellDef="let element">
+          <p class="line-clamp-4">{{ element.description }}</p>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="startTime">
@@ -68,8 +70,10 @@ import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
-          <button (click)="goToProjectForm(element)"><mat-icon>edit</mat-icon></button>
-          <button (click)="remove(element)"><mat-icon>delete</mat-icon></button>
+          <div class="flex gap-4">
+            <button (click)="goToProjectForm(element)"><mat-icon>edit</mat-icon></button>
+            <button (click)="remove(element)"><mat-icon>delete</mat-icon></button>
+          </div>
         </td>
       </ng-container>
 
