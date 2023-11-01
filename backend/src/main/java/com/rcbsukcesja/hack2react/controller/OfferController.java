@@ -6,12 +6,14 @@ import com.rcbsukcesja.hack2react.model.dto.view.OfferView;
 import com.rcbsukcesja.hack2react.model.enums.OfferScope;
 import com.rcbsukcesja.hack2react.model.enums.OfferStatus;
 import com.rcbsukcesja.hack2react.service.OfferService;
+import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -41,9 +43,12 @@ public class OfferController {
             @RequestParam(required = false) List<OfferStatus> offerStatuses,
             @RequestParam(required = false) List<OfferScope> offerScopes,
             @RequestParam(required = false) Boolean closeDeadlineOnly,
-            Pageable pageable) {
-        return new ResponseEntity<>(offerService.getAllOffers(startDate, endDate, offerStatuses,
-                offerScopes, closeDeadlineOnly, pageable), HttpStatus.OK);
+            @RequestParam(required = false) Boolean followedByUser,
+            Pageable pageable,
+            Authentication authentication) {
+        UUID userId = TokenUtils.getUserId(authentication);
+        return ResponseEntity.ok(offerService.getAllOffers(startDate, endDate, offerStatuses,
+                offerScopes, closeDeadlineOnly, followedByUser, userId, pageable));
     }
 
     @GetMapping("/{offerId}")
@@ -75,6 +80,20 @@ public class OfferController {
     public ResponseEntity<?> deleteOffer(@PathVariable("id") UUID id) {
         offerService.deleteOffer(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/{id}/follow")
+    public ResponseEntity<?> followOffer(@PathVariable("id") UUID id, Authentication authentication) {
+        UUID userId = TokenUtils.getUserId(authentication);
+        offerService.followOffer(id, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/unfollow")
+    public ResponseEntity<?> unfollowOffer(@PathVariable("id") UUID id, Authentication authentication) {
+        UUID userId = TokenUtils.getUserId(authentication);
+        offerService.unfollowOffer(id, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

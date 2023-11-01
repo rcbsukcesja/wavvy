@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class OfferSpecifications {
 
@@ -84,5 +85,12 @@ public class OfferSpecifications {
             }
             return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    public static Specification<Offer> isFollowedByUser(UUID userId) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isMember(userId, root.get("followingUsers"));
+    }
+    public static Specification<Offer> isNotFollowedByUser(UUID userId) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isNotMember(userId, root.get("followingUsers"));
     }
 }
