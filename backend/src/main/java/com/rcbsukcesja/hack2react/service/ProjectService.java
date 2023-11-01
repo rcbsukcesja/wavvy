@@ -1,25 +1,32 @@
 package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
-import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.ProjectNotFoundException;
 import com.rcbsukcesja.hack2react.model.dto.save.ProjectPatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.ProjectSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.ProjectView;
-import com.rcbsukcesja.hack2react.model.entity.BusinessArea;
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
 import com.rcbsukcesja.hack2react.model.entity.Project;
+import com.rcbsukcesja.hack2react.model.entity.ProjectLink;
 import com.rcbsukcesja.hack2react.model.entity.Tag;
+import com.rcbsukcesja.hack2react.model.enums.ProjectStatus;
+import com.rcbsukcesja.hack2react.model.mappers.AddressMapper;
 import com.rcbsukcesja.hack2react.model.mappers.ProjectMapper;
-import com.rcbsukcesja.hack2react.repositories.BusinessAreaRepository;
 import com.rcbsukcesja.hack2react.repositories.OrganizationNGORepository;
 import com.rcbsukcesja.hack2react.repositories.ProjectRepository;
+import com.rcbsukcesja.hack2react.specifications.ProjectSpecifications;
+import com.rcbsukcesja.hack2react.utils.FileUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
+import com.rcbsukcesja.hack2react.validations.DateValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,10 +39,16 @@ public class ProjectService {
     private final ProjectMapper projectMapper;
     private final ProjectRepository projectRepository;
     private final OrganizationNGORepository organizationNGORepository;
-    private final BusinessAreaRepository businessAreaRepository;
+    private final DateValidation dateValidation;
+    private final AddressMapper addressMapper;
 
-    public List<ProjectView> getAllProjects() {
-        return projectMapper.projectListToProjectViewList(projectRepository.getAll());
+    public Page<ProjectView> getAllProjects(List<ProjectStatus> statusList, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
+        Specification<Project> spec = ProjectSpecifications.notOutsideDateRange(startDate, endDate);
+        if (statusList != null && !statusList.isEmpty()) {
+            spec = spec.and(ProjectSpecifications.statusInStatusList(statusList));
+        }
+        return projectRepository.findAll(spec, pageable).map(projectMapper::projectToProjectView);
     }
 
     public ProjectView getProjectById(UUID projectId) {
@@ -43,52 +56,58 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectView saveProject(UUID projectId, ProjectSaveDto dto) {
-        Project project;
-        if (projectId == null) {
-            project = new Project();
+    public ProjectView createProject(ProjectSaveDto dto) {
+        Project project = new Project();
 
-            project.setCategories(new HashSet<>());
-            if (dto.categoryIds() != null && !dto.categoryIds().isEmpty()) {
-                Set<BusinessArea> categories = getBusinessAreasOrThrowException(dto.categoryIds());
-                project.setCategories(categories);
+        setBasicProjectFields(dto, project);
+        project.setTags(new HashSet<>());
+        project.setLinks(new HashSet<>());
+
+        project = projectRepository.save(project);
+
+        if (dto.tags() != null && !dto.tags().isEmpty()) {
+            Set<Tag> tags = new HashSet<>();
+            for (String tag : dto.tags()) {
+                Tag newTag = new Tag();
+                newTag.setId(UUID.randomUUID());
+                newTag.setProject(project);
+                newTag.setTag(tag);
+                tags.add(newTag);
             }
-
-            project.setTags(new HashSet<>());
-            if (dto.tags() != null && !dto.tags().isEmpty()) {
-                for (String tag : dto.tags()) {
-                    Tag newTag = new Tag();
-                    newTag.setTag(tag);
-                    project.getTags().add(newTag);
-                    projectRepository.save(project);
-                }
-            }
-        } else {
-            project = getProjectByIdOrThrowException(projectId);
-
-            updateCategories(project, dto.categoryIds());
-            updateTags(project, dto.tags());
-
+            project.setTags(tags);
         }
 
-        project.setName(dto.name());
-        project.setDescription(dto.description());
-        project.setAddress(dto.address());
-        project.setImageLink(dto.imageLink());
-        project.setLink(dto.link());
-        project.setStartTime(TimeUtils.dateTimeInUTC(dto.startTime()));
-        project.setEndTime(TimeUtils.dateTimeInUTC(dto.endTime()));
-        project.setBudget(dto.budget());
-        project.setCooperationMessage(dto.cooperationMessage());
-        project.setPossibleVolunteer(dto.possibleVolunteer());
-        project.setStatus(dto.status());
-        project.setOrganizer(getNgoByIdOrThrowException(dto.organizerId()));
+        if (dto.links() != null && !dto.links().isEmpty()) {
+            Set<ProjectLink> links = new HashSet<>();
+            for (String link : dto.links()) {
+                ProjectLink newLink = new ProjectLink();
+                newLink.setId(UUID.randomUUID());
+                newLink.setProject(project);
+                newLink.setLink(link);
+                links.add(newLink);
+            }
+            project.setLinks(links);
+        }
 
-        return projectMapper.projectToProjectView(projectRepository.save(project));
+        return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
     }
 
     @Transactional
-    public ProjectView updateProject(UUID projectId, ProjectPatchDto dto) {
+    public ProjectView putUpdateProject(UUID projectId, ProjectSaveDto dto) {
+        Project project = getProjectByIdOrThrowException(projectId);
+
+        setBasicProjectFields(dto, project);
+
+        updateTags(project, dto.tags());
+        updateLinks(project, dto.links());
+
+        project.setUpdatedAt(TimeUtils.nowInUTC());
+
+        return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
+    }
+
+    @Transactional
+    public ProjectView patchUpdateProject(UUID projectId, ProjectPatchDto dto) {
         Project project = getProjectByIdOrThrowException(projectId);
         if (dto.name() != null && !dto.name().equals(project.getName())) {
             project.setName(dto.name());
@@ -96,20 +115,14 @@ public class ProjectService {
         if (dto.description() != null && !dto.description().equals(project.getDescription())) {
             project.setDescription(dto.description());
         }
-        if (dto.address() != null && !dto.address().equals(project.getAddress())) {
-            project.setAddress(dto.address());
-        }
-        if (dto.imageLink() != null && !dto.imageLink().equals(project.getImageLink())) {
-            project.setImageLink(dto.imageLink());
-        }
-        if (dto.link() != null && !dto.link().equals(project.getLink())) {
-            project.setLink(dto.link());
+        if (dto.address() != null && !project.getAddress().equals(addressMapper.projectAddressPatchDtoToAddress(dto.address()))) {
+            project.setAddress(addressMapper.projectAddressPatchDtoToAddress(dto.address()));
         }
         if (dto.startTime() != null && !dto.startTime().equals(project.getStartTime())) {
-            project.setStartTime(TimeUtils.dateTimeInUTC(dto.startTime()));
+            project.setStartTime(TimeUtils.zonedDateTimeInUTC(dto.startTime()));
         }
         if (dto.endTime() != null && !dto.endTime().equals(project.getEndTime())) {
-            project.setEndTime(TimeUtils.dateTimeInUTC(dto.endTime()));
+            project.setEndTime(TimeUtils.zonedDateTimeInUTC(dto.endTime()));
         }
         if (dto.budget() != null && !dto.budget().equals(project.getBudget())) {
             project.setBudget(dto.budget());
@@ -127,16 +140,52 @@ public class ProjectService {
             project.setPossibleVolunteer(dto.possibleVolunteer());
         }
         updateTags(project, dto.tags());
-        updateCategories(project, dto.categoryIds());
+        updateLinks(project, dto.links());
 
+        project.setUpdatedAt(TimeUtils.nowInUTC());
 
-        return projectMapper.projectToProjectView(projectRepository.save(project));
+        return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
     }
 
     @Transactional
     public void deleteProject(UUID projectId) {
         Project project = getProjectByIdOrThrowException(projectId);
         projectRepository.delete(project);
+    }
+
+    @Transactional
+    public void updateImagePath(String fileExtension, UUID id) {
+        Project project = getProjectByIdOrThrowException(id);
+        project.setImagePath(FileUtils.getPathAsString(fileExtension, id.toString(), "project-image"));
+        // TODO: change to getImageLink() when implemented
+        project.setImageLink(FileUtils.getPathAsString(fileExtension, id.toString(), "project-image"));
+        project.setUpdatedAt(TimeUtils.nowInUTC());
+        projectRepository.saveAndFlush(project);
+    }
+
+    @Transactional
+    public String removeImagePath(UUID id) {
+        Project project = getProjectByIdOrThrowException(id);
+        String filePath = project.getImagePath();
+        project.setImagePath(null);
+        project.setImageLink(null);
+
+        project.setUpdatedAt(TimeUtils.nowInUTC());
+        projectRepository.saveAndFlush(project);
+        return filePath;
+    }
+
+    private void setBasicProjectFields(ProjectSaveDto dto, Project project) {
+        project.setName(dto.name());
+        project.setDescription(dto.description());
+        project.setAddress(addressMapper.projectAddressSaveDtoToAddress(dto.address()));
+        project.setStartTime(TimeUtils.zonedDateTimeInUTC(dto.startTime()));
+        project.setEndTime(TimeUtils.zonedDateTimeInUTC(dto.endTime()));
+        project.setBudget(dto.budget());
+        project.setCooperationMessage(dto.cooperationMessage());
+        project.setPossibleVolunteer(dto.possibleVolunteer());
+        project.setStatus(dto.status());
+        project.setOrganizer(getNgoByIdOrThrowException(dto.organizerId()));
     }
 
     private void updateTags(Project project, Set<String> tags) {
@@ -153,26 +202,26 @@ public class ProjectService {
                         newTag.setTag(tag);
                         newTag.setProject(project);
                         project.getTags().add(newTag);
-                        projectRepository.save(project);
                     }
                 }
             }
         }
     }
 
-    private void updateCategories(Project project, Set<UUID> categoryIds) {
-        if (categoryIds != null) {
-            if (categoryIds.isEmpty()) {
-                project.getCategories().clear();
+    private void updateLinks(Project project, Set<String> links) {
+        if (links != null) {
+            if (links.isEmpty()) {
+                project.getLinks().clear();
             } else {
-                project.getCategories().removeIf(category -> !categoryIds.contains(category.getId()));
+                project.getLinks().removeIf(link -> !links.contains(link.getLink()));
 
-                for (UUID categoryId : categoryIds) {
-                    if (project.getCategories().stream()
-                            .noneMatch(actualCategory -> actualCategory.getId().equals(categoryId))) {
-                        BusinessArea category = getBusinessAreaByIdOrThrowException(categoryId);
-                        project.getCategories().add(category);
-                        projectRepository.save(project);
+                for (String link : links) {
+                    if (project.getLinks().stream()
+                            .noneMatch(actualLink -> actualLink.getLink().equals(link))) {
+                        ProjectLink newLink = new ProjectLink();
+                        newLink.setLink(link);
+                        newLink.setProject(project);
+                        project.getLinks().add(newLink);
                     }
                 }
             }
@@ -196,15 +245,23 @@ public class ProjectService {
                         ErrorMessages.ORGANIZATION_NGO_NOT_FOUND, id));
     }
 
-    private BusinessArea getBusinessAreaByIdOrThrowException(UUID id) {
-        return businessAreaRepository.getBusinessAreaById(id)
-                .orElseThrow(() -> new BusinessAreaNotFoundException(
-                        ErrorMessages.BUSINESS_AREA_NOT_FOUND, id));
+    public ProjectView updateProjectAddLike(UUID projectId, String clientId) {
+        Project project = getProjectByIdOrThrowException(projectId);
+        if (project.getLikes()== null){
+            project.setLikes(new HashSet<>());
+        }
+        project.getLikes().add(clientId);
+
+        return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
     }
 
-    private Set<BusinessArea> getBusinessAreasOrThrowException(Set<UUID> ids) {
-        return new HashSet<>(ids.stream()
-                .map(this::getBusinessAreaByIdOrThrowException)
-                .toList());
+    public ProjectView  updateProjectRemoveLike(UUID projectId, String clientId) {
+        Project project = getProjectByIdOrThrowException(projectId);
+        if (project.getLikes()== null){
+            project.setLikes(new HashSet<>());
+        }
+        project.getLikes().remove(clientId);
+
+        return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
     }
 }

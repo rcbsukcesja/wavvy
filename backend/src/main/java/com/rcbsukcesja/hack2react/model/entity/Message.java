@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.model.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +32,7 @@ public class Message {
 
     private String text;
 
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime createdAt;
 
     @ManyToOne

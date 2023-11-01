@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.model.dto.view;
 
+import com.rcbsukcesja.hack2react.model.enums.OfferStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -27,4 +29,7 @@ public class OfferView {
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean closeDeadline;
+    private OfferStatus status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

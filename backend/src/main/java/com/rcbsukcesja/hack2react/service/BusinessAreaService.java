@@ -1,6 +1,7 @@
 package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.BusinessAreaNameAlreadyExistsException;
+import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationsAlreadyAttachedToBusinessAreaException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.model.dto.save.BusinessAreaDto;
@@ -36,6 +37,7 @@ public class BusinessAreaService {
         if (businessAreaId != null) {
             BusinessArea actual = getBusinessAreaByIdOrThrowException(businessAreaId);
             if (!actual.getName().equalsIgnoreCase(dto.name())) {
+                checkIfOrganizationsAreAttachedToBusinessArea(actual);
                 checkIfBusinessAreaNameAlreadyExists(dto.name());
             }
             actual.setName(dto.name());
@@ -54,6 +56,14 @@ public class BusinessAreaService {
     public void deleteBusinessArea(UUID businessAreaId) {
         BusinessArea businessArea = getBusinessAreaByIdOrThrowException(businessAreaId);
         businessAreaRepository.delete(businessArea);
+    }
+
+    private void checkIfOrganizationsAreAttachedToBusinessArea(BusinessArea businessArea) {
+        if (!businessArea.getOrganizations().isEmpty()) {
+            throw new OrganizationsAlreadyAttachedToBusinessAreaException(
+                    ErrorMessages.BUSINESS_AREA_ALREADY_ATTACHED_TO_ORGANIZATION,
+                    businessArea.getId());
+        }
     }
 
     private void checkIfBusinessAreaNameAlreadyExists(String name) {

@@ -3,6 +3,7 @@ package com.rcbsukcesja.hack2react.model.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,11 +35,7 @@ public class BusinessArea {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "categories", cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    private Set<Project> projects;
-
     @ManyToMany(mappedBy = "businessAreas", cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
+            CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private Set<Organization> organizations;
 }

@@ -9,6 +9,8 @@ import lombok.Builder;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.BANK_ACCOUNT;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.BANK_ACCOUNT_VALIDATION_MESSAGE;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.DESCRIPTION_MAX_LENGTH;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.KRS_PATTERN_VALIDATION_MESSAGE;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.KRS_REGEX;
@@ -30,10 +32,7 @@ public record OrganizationNGOPatchDto(
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String name,
         UUID ownerId,
-        @Pattern(regexp = NOT_BLANK_PATTERN,
-                message = NOT_BLANK_VALIDATION_MESSAGE)
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String address,
+        OrganizationAddressPatchDto address,
         @Pattern(regexp = PHONE_REGEX,
                 message = PHONE_PATTERN_VALIDATION_MESSAGE)
         String phone,
@@ -54,7 +53,9 @@ public record OrganizationNGOPatchDto(
         @Pattern(regexp = REGON_REGEX, message = REGON_PATTERN_VALIDATION_MESSAGE)
         String regon,
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> resources,
-        LegalStatus legalStatus
+        LegalStatus legalStatus,
+        @Pattern(regexp = BANK_ACCOUNT, message = BANK_ACCOUNT_VALIDATION_MESSAGE)
+        String bankAccount
 ) {
 
 }

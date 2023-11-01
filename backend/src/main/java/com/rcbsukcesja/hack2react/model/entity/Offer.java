@@ -1,6 +1,7 @@
 package com.rcbsukcesja.hack2react.model.entity;
 
 import com.rcbsukcesja.hack2react.model.enums.OfferScope;
+import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +20,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
@@ -43,6 +46,21 @@ public class Offer {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
+    private ZonedDateTime createdAt;
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
+    private ZonedDateTime updatedAt;
+
     @Enumerated(EnumType.STRING)
     private OfferScope scope;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = TimeUtils.nowInUTC();
+        }
+        if (updatedAt == null) {
+            updatedAt = createdAt;
+        }
+    }
 }

@@ -25,26 +25,17 @@ public record ProjectPatchDto(
                 message = NOT_BLANK_VALIDATION_MESSAGE)
         @Size(max = DESCRIPTION_MAX_LENGTH)
         String description,
-        @Pattern(regexp = NOT_BLANK_PATTERN,
-                message = NOT_BLANK_VALIDATION_MESSAGE)
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String address,
-        @Pattern(regexp = NOT_BLANK_PATTERN,
-                message = NOT_BLANK_VALIDATION_MESSAGE)
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String imageLink,
-
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String link,
+        ProjectAddressPatchDto address,
         ZonedDateTime startTime,
         ZonedDateTime endTime,
         BigDecimal budget,
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String cooperationMessage,
         UUID organizerId,
-        Set<UUID> categoryIds,
         ProjectStatus status,
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
+
+        Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> links,
         boolean possibleVolunteer
 ) {
 }

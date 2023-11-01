@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,16 +22,18 @@ public class ProjectView {
     private UUID id;
     private String name;
     private String description;
-    private String address;
+    private AddressView address;
     private String imageLink;
-    private String link;
-    private ZonedDateTime startTime;
-    private ZonedDateTime endTime;
+    private Set<String> links;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private BigDecimal budget;
     private String cooperationMessage;
     private OrganizationLightweightView organizer;
-    private Set<BusinessAreaView> categories;
     private ProjectStatus status;
     private Set<String> tags;
     private boolean possibleVolunteer;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Set<String> likes;
 }

@@ -22,14 +22,7 @@ public record ProjectSaveDto(
         @NotBlank
         @Size(max = DESCRIPTION_MAX_LENGTH)
         String description,
-        @NotBlank
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String address,
-        @NotBlank
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String imageLink,
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String link,
+        ProjectAddressSaveDto address,
         @NotNull
         ZonedDateTime startTime,
         @NotNull
@@ -38,11 +31,14 @@ public record ProjectSaveDto(
         BigDecimal budget,
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String cooperationMessage,
+
+        @NotNull
         UUID organizerId, // TODO: remove from here and set it by system
-        Set<UUID> categoryIds,
         @NotNull
         ProjectStatus status,
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
+
+        Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> links,
         @NotNull
         boolean possibleVolunteer
 ) {

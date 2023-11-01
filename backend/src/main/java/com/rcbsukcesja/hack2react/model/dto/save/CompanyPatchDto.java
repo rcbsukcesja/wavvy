@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.model.dto.save;
 
+import com.rcbsukcesja.hack2react.model.enums.LegalStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -29,10 +30,7 @@ public record CompanyPatchDto(
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String name,
         UUID ownerId,
-        @Pattern(regexp = NOT_BLANK_PATTERN,
-                message = NOT_BLANK_VALIDATION_MESSAGE)
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String address,
+        OrganizationAddressPatchDto address,
         @Pattern(regexp = PHONE_REGEX,
                 message = PHONE_PATTERN_VALIDATION_MESSAGE)
         String phone,
@@ -48,11 +46,16 @@ public record CompanyPatchDto(
         Set<UUID> businessAreaIds,
         @Pattern(regexp = KRS_REGEX, message = KRS_PATTERN_VALIDATION_MESSAGE)
         String krs,
+        @Pattern(regexp = NOT_BLANK_PATTERN,
+                message = NOT_BLANK_VALIDATION_MESSAGE)
         @Pattern(regexp = NIP_REGEX, message = NIP_PATTERN_VALIDATION_MESSAGE)
         String nip,
+        @Pattern(regexp = NOT_BLANK_PATTERN,
+                message = NOT_BLANK_VALIDATION_MESSAGE)
         @Pattern(regexp = REGON_REGEX, message = REGON_PATTERN_VALIDATION_MESSAGE)
         String regon,
-        Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> resources
+        Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> resources,
+        LegalStatus legalStatus
 ) {
 
 }
