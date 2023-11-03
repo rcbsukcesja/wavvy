@@ -57,6 +57,18 @@ import { BusinessArea } from './model/ngo.model';
               <p class="!m-0 !ml-3 inline-block">Wesprzyj</p>
             </div>
           </div>
+          <div class="mt-4">
+            <div>
+              <span class="block font-semibold">Tagi organizacji</span>
+              <ng-container *ngFor="let tag of state.details.tags; let last = last">
+                <span [class.pr-1]="!last">#{{ tag }}</span>
+              </ng-container>
+            </div>
+            <div class="mt-4">
+              <span class="block font-semibold">Numer konta:</span>
+              {{ state.details.bankAccount }}
+            </div>
+          </div>
         </aside>
         <section class="flex flex-col gap-6">
           <div>
@@ -95,7 +107,8 @@ import { BusinessArea } from './model/ngo.model';
                   <mat-icon> mail</mat-icon> <strong>E-mail: </strong>{{ state.details.email }}
                 </li>
                 <li class="flex items-center gap-2">
-                  <mat-icon> language</mat-icon> <strong>Strona internetowa: </strong>{{ state.details.website }}
+                  <mat-icon> language</mat-icon> <strong>Strona internetowa: </strong
+                  ><a [href]="state.details.website" target="_blank">{{ state.details.website }}</a>
                 </li>
               </div>
             </ul>

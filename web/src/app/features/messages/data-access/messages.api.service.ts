@@ -6,6 +6,7 @@ import { tap } from 'rxjs';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
+import { MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
 
 export interface GetAllMessagesParams {}
 
@@ -19,6 +20,11 @@ export class MessagesApiService extends HttpBaseService {
 
   constructor() {
     super('messages');
+  }
+
+  sendToCity(messageValue: MessageDialogFormValue) {
+    // todo: provide city user id
+    this.send({ ...messageValue, receiverId: 321 });
   }
 
   send(payload: MessagePayload) {
@@ -43,7 +49,7 @@ export class MessagesApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: CommonFilters = { sort: DEFAULT_SORT }) {
+  getAll(params: CommonFilters = { sort: DEFAULT_SORT, search: '' }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const id = this.ngoStateService.$value().profile?.id;
@@ -53,6 +59,7 @@ export class MessagesApiService extends HttpBaseService {
       _sort: 'createdAt',
       _order: params.sort,
       receiverId: this.ngoStateService.$value().profile?.id.toString() || '',
+      q: params.search,
     });
 
     url.search = sp.toString();

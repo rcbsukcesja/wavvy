@@ -282,13 +282,15 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       email: this.builder.control(this.profile.email || '', [Validators.required]),
       website: this.builder.control(this.profile.website || '', [Validators.required]),
       phone: this.builder.control(this.profile.phone || '', [Validators.required]),
-      tags: this.builder.control(this.profile.tags || [''], [Validators.required, Validators.minLength(3)]),
+      tags: this.builder.control(this.profile.tags || [], [Validators.required, Validators.minLength(3)]),
       creationDate: this.builder.control(this.profile.creationDate || '', [Validators.required]),
       businnessAreas: this.builder.control<{ id: ID; name: string }[]>(
         this.bussinessAreas.filter(area => this.profile.businnessAreas?.includes(area.id) || [])
       ),
       resources: this.builder.array<FormControl<string>>([]),
     });
+
+    this.tags = this.form.controls.tags.value;
 
     if (this.profile.resources.length) {
       this.profile.resources.forEach(resource => {

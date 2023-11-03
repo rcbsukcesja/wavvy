@@ -33,6 +33,13 @@ export class ProjectsApiService extends HttpBaseService {
     super('projects');
   }
 
+  uploadProjectImage(logo: File) {
+    const formData: FormData = new FormData();
+    formData.append('file', logo);
+
+    this.http.post(`${this.url}/logo`, formData).subscribe();
+  }
+
   add(payload: AddProjectFormValue) {
     this.http
       .post<Project>(`${this.url}`, payload)
@@ -85,14 +92,14 @@ export class ProjectsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: CommonFilters = { sort: DEFAULT_SORT }) {
+  getAll(params: CommonFilters = { sort: DEFAULT_SORT, search: '' }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     // todo: mock before backend
     const ngo = this.ngoState().profile;
 
     const url = new URL(this.url);
-    const sp = new URLSearchParams({ _sort: 'startTime', _order: params.sort });
+    const sp = new URLSearchParams({ _sort: 'startTime', _order: params.sort, q: params.search });
 
     if (ngo) {
       sp.append('ngoId', ngo.id.toString());

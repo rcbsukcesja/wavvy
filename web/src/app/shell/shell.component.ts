@@ -61,7 +61,7 @@ export interface MenuItem {
               <span class="text-xs ml-2 text-blue-300">na fali pomocy</span>
             </div>
             <div class="flex justify-between items-start">
-              <a routerLink="/messages" class="block"
+              <a *ngIf="$isAuth()" routerLink="/messages" class="block"
                 ><mat-icon class="!w-9 !h-9 text-3xl"> local_post_office</mat-icon>
               </a>
               <button *ngIf="$isAuth()" class="ml-4" mat-button (click)="logout()">Wyloguj</button>

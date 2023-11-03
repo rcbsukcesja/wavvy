@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Input } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ListShellComponent } from 'src/app/shared/ui/list-shell.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProjectStatusPipe } from './utils/project-status.pipe';
 import { Project } from './model/project.model';
 import { ID } from 'src/app/core/types/id.type';
+import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 
 @Component({
   standalone: true,
@@ -46,12 +47,15 @@ class DescriptionDialogComponent {
     <app-list-shell listName="Projekty" [list]="projects">
       <ng-template #item let-project>
         <div class="">
-          <!-- <div>
-            <mat-icon class="text-red-600 ml-auto">favorite</mat-icon>
-          </div> -->
           <div class="relative">
-            <div class="absolute bg-black text-white right-28 text-sm px-1 py-2">{{ project.startTime | date }}</div>
-            <div class="absolute bg-black text-white right-0 text-sm px-1 py-2">
+            <div
+              [ngClass]="project.startTime !== project.endTime ? 'right-28' : 'right-0'"
+              class="absolute bg-black text-white  text-sm px-1 py-2">
+              {{ project.startTime | date }}
+            </div>
+            <div
+              *ngIf="project.startTime !== project.endTime"
+              class="absolute bg-black text-white right-0 text-sm px-1 py-2">
               {{ project.endTime | date }}
             </div>
             <img [src]="project.imageLink" />
@@ -64,7 +68,9 @@ class DescriptionDialogComponent {
           </div>
           <p class="font-semibold text-lg">{{ project.name }}</p>
           <p class="line-clamp-3">{{ project.description }}</p>
-          <button (click)="openDescriptionDialog(project.name, project.description)" class="ml-auto block -mt-1 mb-2">
+          <button
+            (click)="openDescriptionDialog(project.name, project.description)"
+            class="ml-auto block -mt-1 mb-2 bg-black text-white px-2 py-1 rounded-md">
             Pełny opis
           </button>
           <p *ngIf="project.link">
@@ -76,7 +82,7 @@ class DescriptionDialogComponent {
           </div>
           <mat-divider />
           <div class="flex justify-between mt-4 items-center">
-            <div *ngIf="project.budget" class="flex flex-col items-center">
+            <div *ngIf="project.budget && isAuth()" class="flex flex-col items-center">
               <span class="text-xs"> Budżet</span><mat-icon>paid</mat-icon>
               <span class="text-xs">{{ project.budget }}</span>
             </div>
@@ -101,6 +107,10 @@ class DescriptionDialogComponent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ProjectsListComponent {
+  private authState = inject(AuthStateService).$value;
+
+  protected isAuth = computed(() => this.authState().status === 'AUTHENTICATED');
+
   @Input() projects!: Project[];
   snackbar = inject(MatSnackBar);
   messagesService = inject(MessagesApiService);

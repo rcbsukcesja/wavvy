@@ -9,6 +9,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { USER_ROLES } from 'src/app/core/user-roles.enum';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
+import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MessagesApiService } from '../messages/data-access/messages.api.service';
+import { ID } from 'src/app/core/types/id.type';
+import { tap, take } from 'rxjs';
 
 @Component({
   selector: 'app-offers.page',
@@ -20,6 +26,8 @@ import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-
     MatDividerModule,
     MatTooltipModule,
     CommonFiltersComponent,
+    MatDialogModule,
+    MatSnackBarModule,
   ],
   template: `
     <ng-container *ngIf="state() as state">
@@ -72,9 +80,9 @@ import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-
               </div>
             </div>
             <mat-divider />
-            <div class="flex justify-end mt-4">
+            <button class="flex justify-end mt-4" (click)="openMessageModal(offer.name)">
               <div class="flex flex-col"><mat-icon>forward_to_inbox</mat-icon></div>
-            </div>
+            </button>
           </div>
         </ng-template>
       </app-list-shell>
@@ -85,6 +93,10 @@ import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class OffersListPageComponent implements OnInit {
+  private dialog = inject(MatDialog);
+  private snackbar = inject(MatSnackBar);
+  private messagesService = inject(MessagesApiService);
+
   service = inject(OffersApiService);
   state = inject(OffersStateService).$value;
 
@@ -104,5 +116,31 @@ export default class OffersListPageComponent implements OnInit {
 
   toggleFav(offerId: number) {
     this.service.toggleFav(this.authState().user!, offerId);
+  }
+
+  openMessageModal(name: string) {
+    this.dialog
+      .open(MessageDialogComponent, {
+        width: '500px',
+        data: {
+          name,
+          connector: 'odnośnie oferty',
+        },
+      })
+      .afterClosed()
+      .pipe(
+        tap((value: MessageDialogFormValue) => {
+          if (value) {
+            this.snackbar.open('Wiadomość została wysłana!', '', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'bottom',
+            });
+            this.messagesService.sendToCity({ ...value });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 }

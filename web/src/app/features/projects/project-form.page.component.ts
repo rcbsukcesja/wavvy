@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { PROJECT_STATUS, Project, ProjectStatus, projectStatusMap } from './model/project.model';
 import {
   FormArray,
@@ -21,8 +21,10 @@ import { ProjectsApiService } from './data-access/projects.api.service';
 import { ID } from 'src/app/core/types/id.type';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipEditedEvent, MatChipsModule } from '@angular/material/chips';
+import { BehaviorSubject } from 'rxjs';
 
 export type ProjectForm = FormGroup<{
+  image: FormControl<File | null>;
   status: FormControl<ProjectStatus>;
   name: FormControl<string>;
   description: FormControl<string>;
@@ -61,6 +63,24 @@ export type ProjectForm = FormGroup<{
   ],
   template: `
     <h2>{{ project ? 'Edytowanie projektu' : 'Dodawanie projektu' }}</h2>
+    <section class="flex">
+      <div *ngIf="logo$ | async as logo" class="w-1/5 mb-4">
+        <img *ngIf="logo.url" [src]="logo.url" />
+      </div>
+
+      <div class="md:w-1/2 flex items-center h-fit ml-8">
+        <div class="flex flex-col">
+          <label [class.text-red-500]="logo$.value.error" for="logo">Obrazek</label>
+          <input
+            [class.text-red-500]="logo$.value.error"
+            id="logo"
+            [formControl]="form.controls.image"
+            #logoInput
+            type="file" />
+        </div>
+        <button type="button" (click)="upload()"><mat-icon>save</mat-icon></button>
+      </div>
+    </section>
     <form [formGroup]="form" (ngSubmit)="addProject()" class="flex flex-col">
       <mat-form-field>
         <mat-label>Nazwa</mat-label>
@@ -171,6 +191,20 @@ export default class ProjectFormPageComponent implements OnInit {
 
   service = inject(ProjectsApiService);
 
+  logo$: BehaviorSubject<{ file: File | null; url: string | null; error: boolean }> = new BehaviorSubject({
+    file: null,
+    url: null,
+    error: false,
+  } as { file: File | null; url: string | null; error: boolean });
+
+  upload() {
+    if (!this.logo$.value.file) {
+      return;
+    }
+
+    this.service.uploadProjectImage(this.logo$.value.file);
+  }
+
   projectStatuses = Object.entries(projectStatusMap).map(([status, label], index) => {
     return {
       id: index + 1,
@@ -218,13 +252,23 @@ export default class ProjectFormPageComponent implements OnInit {
     }
   }
 
+  @ViewChild('logoInput') logoInput!: ElementRef<HTMLInputElement>;
+
   ngOnInit() {
+    if (this.project?.imageLink) {
+      this.logo$.next({
+        error: false,
+        file: null,
+        url: this.project.imageLink,
+      });
+    }
+
     const preselectedAreas = this.project?.categories.map(cat => cat.id);
-    console.log(this.project);
 
     this.tags = this.project?.tags || [];
 
     this.form = this.builder.group({
+      image: this.builder.control<File | null>(null),
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || ''),
@@ -242,6 +286,39 @@ export default class ProjectFormPageComponent implements OnInit {
           : []
       ),
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
+    });
+
+    this.form.controls.image.valueChanges.subscribe(() => {
+      const logoFile = this.logoInput.nativeElement.files?.[0];
+
+      if (logoFile) {
+        const validTypes = ['image/png', 'image/jpeg'];
+        if (!validTypes.includes(logoFile.type)) {
+          this.logo$.next({
+            url: this.logo$.value.url,
+            file: null,
+            error: true,
+          });
+          return;
+        }
+
+        // Check file size (1MB = 1 * 1024 * 1024 bytes)
+        if (logoFile.size > 1 * 1024 * 1024) {
+          this.logo$.next({
+            url: this.logo$.value.url,
+            file: null,
+            error: true,
+          });
+          return;
+        }
+
+        // Prepare the link
+        this.logo$.next({
+          url: URL.createObjectURL(logoFile),
+          file: logoFile,
+          error: false,
+        });
+      }
     });
   }
 

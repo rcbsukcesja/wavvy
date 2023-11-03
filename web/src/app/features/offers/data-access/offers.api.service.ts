@@ -4,8 +4,7 @@ import { Offer } from '../model/offer.model';
 import { OffersStateService } from './offers.state.service';
 import { tap } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
-import { User } from 'src/app/auth/data_access/auth.state.service';
-import { API_URL } from 'src/app/core/API-URL.token';
+import { AuthStateService, User } from 'src/app/auth/data_access/auth.state.service';
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 
 export interface GetAllOffersParams {}
@@ -27,6 +26,7 @@ export interface AddOfferFormValue {
 })
 export class OffersApiService extends HttpBaseService {
   private stateService = inject(OffersStateService);
+  private authState = inject(AuthStateService);
 
   constructor() {
     super('offers');
@@ -35,11 +35,21 @@ export class OffersApiService extends HttpBaseService {
   toggleFav(user: User, offerId: number) {
     const alreadyFollowed = user.offersFollowed.includes(offerId);
 
-    this.http.patch(`${this.API_URL}/users/${user.id}`, {
-      offersFollowed: alreadyFollowed
-        ? user.offersFollowed.filter(id => id !== offerId)
-        : [...user.offersFollowed, offerId],
-    });
+    this.http
+      .patch<User>(`${this.API_URL}/users/${user.id}`, {
+        offersFollowed: alreadyFollowed
+          ? user.offersFollowed.filter(id => id !== offerId)
+          : [...user.offersFollowed, offerId],
+      })
+      .pipe(
+        tap(user => {
+          this.authState.setState({
+            status: 'AUTHENTICATED',
+            user,
+          });
+        })
+      )
+      .subscribe();
   }
 
   add(payload: AddOfferFormValue) {
@@ -75,11 +85,11 @@ export class OffersApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: CommonFilters = { sort: DEFAULT_SORT }) {
+  getAll(params: CommonFilters = { sort: DEFAULT_SORT, search: '' }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const url = new URL(this.url);
-    const sp = new URLSearchParams({ _sort: 'startDate', _order: params.sort });
+    const sp = new URLSearchParams({ _sort: 'startDate', _order: params.sort, q: params.search });
 
     url.search = sp.toString();
 
