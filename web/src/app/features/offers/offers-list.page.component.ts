@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OffersApiService } from './data-access/offers.api.service';
 import { OffersStateService } from './data-access/offers.state.service';
@@ -14,7 +14,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MessagesApiService } from '../messages/data-access/messages.api.service';
 import { ID } from 'src/app/core/types/id.type';
-import { tap, take } from 'rxjs';
+import { tap, take, BehaviorSubject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PaginationFilters } from 'src/app/core/types/pagination.type';
+import PaginationComponent from 'src/app/shared/ui/pagination.component';
 
 @Component({
   selector: 'app-offers.page',
@@ -28,6 +31,7 @@ import { tap, take } from 'rxjs';
     CommonFiltersComponent,
     MatDialogModule,
     MatSnackBarModule,
+    PaginationComponent,
   ],
   template: `
     <ng-container *ngIf="state() as state">
@@ -86,6 +90,7 @@ import { tap, take } from 'rxjs';
           </div>
         </ng-template>
       </app-list-shell>
+      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
       <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
     </ng-container>
   `,
@@ -97,6 +102,14 @@ export default class OffersListPageComponent implements OnInit {
   private snackbar = inject(MatSnackBar);
   private messagesService = inject(MessagesApiService);
 
+  private destroyRef = inject(DestroyRef);
+  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters>({
+    pageIndex: 0,
+    pageSize: 5,
+    search: '',
+    sort: 'desc',
+  });
+
   service = inject(OffersApiService);
   state = inject(OffersStateService).$value;
 
@@ -107,11 +120,24 @@ export default class OffersListPageComponent implements OnInit {
   }
 
   onFiltersChanged(filters: CommonFilters) {
-    this.service.getAll(filters);
+    this.filters$$.next({
+      ...this.filters$$.value,
+      ...filters,
+    });
+  }
+
+  handlePageEvent(e: { pageSize: number; pageIndex: number }) {
+    this.filters$$.next({
+      ...this.filters$$.value,
+      pageIndex: e.pageIndex,
+      pageSize: e.pageSize,
+    });
   }
 
   ngOnInit(): void {
-    this.service.getAll();
+    this.filters$$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(filters => {
+      this.service.getAll(filters);
+    });
   }
 
   toggleFav(offerId: number) {

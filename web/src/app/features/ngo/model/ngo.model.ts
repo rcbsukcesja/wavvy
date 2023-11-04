@@ -21,6 +21,11 @@ export const legalStatusMap: LegalStatusMap = {
   PUBLIC_BENEFIT_ORGANIZATION: 'Organizacja Pożytku Publicznego',
 };
 
+export const NgoStatus = {
+  ACTIVE: 'ACTIVE',
+  DISABLED: 'DISABLED',
+} as const;
+
 export interface NGO {
   id: ID;
   name: string;
@@ -41,4 +46,5 @@ export interface NGO {
   legalStatus: LegalStatusNGO;
   projects: Project[];
   tags: string[];
+  status: keyof typeof NgoStatus;
 }

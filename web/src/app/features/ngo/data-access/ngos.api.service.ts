@@ -1,17 +1,21 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
-import { NGO } from '../model/ngo.model';
+import { NGO, NgoStatus } from '../model/ngo.model';
 import { NGOsStateService } from './ngos.state.service';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { ID } from 'src/app/core/types/id.type';
+import { PaginationFilters } from 'src/app/core/types/pagination.type';
+import { ListApiResponse } from 'src/app/core/types/list-response.type';
 
 export interface GetAllNGOsParams {}
 
 export interface AddNGOFormValue {}
 
 export type UpdateNGOProfileFormValue = Partial<
-  Pick<NGO, 'address' | 'description' | 'email' | 'phone' | 'tags' | 'businnessAreas' | 'logoUrl'>
+  Pick<NGO, 'address' | 'description' | 'email' | 'phone' | 'tags' | 'businnessAreas' | 'logoUrl'> & {
+    status?: keyof typeof NgoStatus;
+  }
 >;
 
 @Injectable({
@@ -41,7 +45,7 @@ export class NGOsApiService extends HttpBaseService {
 
     console.log({ payload });
 
-    return this.http.put(`${this.url}/${id}`, payload).pipe(
+    return this.http.patch(`${this.url}/${id}`, payload).pipe(
       tap(() => {
         this.stateService.setState({ updateProfileCallState: 'LOADED' });
         this.getProfile();
@@ -63,14 +67,43 @@ export class NGOsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: GetAllNGOsParams = {}) {
+  getAll(params: PaginationFilters = { pageIndex: 0, pageSize: 5 }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
+    const url = new URL(this.url);
+    const sp = new URLSearchParams({
+      // _sort: 'startTime',
+      // _order: params.sort,
+      // q: params.search,
+      // _page: params.pageIndex.toString(),
+      _start: (params.pageIndex * params.pageSize).toString(),
+      _limit: params.pageSize.toString(),
+    });
+
+    url.search = sp.toString();
+
     this.http
-      .get<NGO[]>(`${this.url}`)
+      .get<NGO[]>(url.href, { observe: 'response' })
       .pipe(
-        tap(ngos => {
-          this.stateService.setState({ loadListCallState: 'LOADED', list: ngos });
+        map(response => {
+          const totalCount = response.headers.get('X-Total-Count');
+
+          return {
+            content: response.body,
+            empty: response.body?.length === 0,
+            last: false,
+            number: params.pageIndex,
+            numberOfElements: response.body?.length,
+            totalElements: totalCount ? +totalCount : 0,
+            totalPages: totalCount ? Math.ceil(+totalCount / params.pageSize) : 0,
+          } as ListApiResponse<NGO>;
+        }),
+        tap(response => {
+          this.stateService.setState({
+            loadListCallState: 'LOADED',
+            list: response.content,
+            totalElements: response.totalElements,
+          });
         })
       )
       .subscribe();

@@ -11,6 +11,7 @@ export interface NGOsStateValue {
   loadByIdCallState: CallState;
   loadProfileCallState: CallState;
   updateProfileCallState: CallState;
+  totalElements: number;
 }
 
 const initialState: NGOsStateValue = {
@@ -21,6 +22,7 @@ const initialState: NGOsStateValue = {
   loadListCallState: 'INITIAL',
   loadProfileCallState: 'INITIAL',
   updateProfileCallState: 'INITIAL',
+  totalElements: 0,
 };
 
 @Injectable({

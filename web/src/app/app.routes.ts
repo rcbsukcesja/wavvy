@@ -1,4 +1,4 @@
-import { ActivatedRouteSnapshot, CanMatchFn, Router, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, CanMatchFn, ResolveFn, Router, Routes } from '@angular/router';
 import { authGuard } from './auth/utils/auth.guard';
 import { inject } from '@angular/core';
 import { ProjectsApiService } from './features/projects/data-access/projects.api.service';
@@ -6,7 +6,13 @@ import { BusinessAreaApiService } from './shared/bussiness-area.api.service';
 import { tap } from 'rxjs';
 import { AuthStateService } from './auth/data_access/auth.state.service';
 import { roleGuard } from './auth/utils/role.guard';
-import { USER_ROLES } from './core/user-roles.enum';
+import { USER_ROLES, UserRoles } from './core/user-roles.enum';
+
+export const resolveUserRole: ResolveFn<UserRoles | undefined> = () => {
+  const user = inject(AuthStateService).$value().user;
+
+  return user?.role;
+};
 
 export const NgoProfileCompletedGuard: CanMatchFn = () => {
   const user = inject(AuthStateService).$value().user;
@@ -57,6 +63,9 @@ export const routes: Routes = [
       {
         path: '',
         canMatch: [NonFirstLoginGuard],
+        resolve: {
+          role: resolveUserRole,
+        },
         loadComponent: () => import('./shell/shell.component'),
         children: [
           {
@@ -75,19 +84,50 @@ export const routes: Routes = [
             },
           },
           {
+            path: 'manage/ngos',
+            loadComponent: () => import('./features/ngo/manage-ngos.page.component'),
+            canMatch: [authGuard, NgoProfileCompletedGuard, roleGuard],
+            data: {
+              roles: [USER_ROLES.ADMIN],
+            },
+            resolve: {
+              role: resolveUserRole,
+            },
+          },
+          {
+            path: 'manage/companies',
+            loadComponent: () => import('./features/companies/manage-companies.page.component'),
+            canMatch: [authGuard, NgoProfileCompletedGuard, roleGuard],
+            data: {
+              roles: [USER_ROLES.ADMIN],
+            },
+            resolve: {
+              role: resolveUserRole,
+            },
+          },
+          {
             path: 'manage/offers',
             loadComponent: () => import('./features/offers/manage-offers.page.component'),
-            canMatch: [authGuard, NgoProfileCompletedGuard],
+            canMatch: [authGuard, NgoProfileCompletedGuard, roleGuard],
+            data: {
+              roles: [USER_ROLES.ADMIN],
+            },
           },
           {
             path: 'manage/projects',
             loadComponent: () => import('./features/projects/manage-projects.page.component'),
             canMatch: [authGuard, NgoProfileCompletedGuard],
+            resolve: {
+              role: resolveUserRole,
+            },
           },
 
           {
             path: 'manage/register',
-            canMatch: [NgoProfileCompletedGuard],
+            canMatch: [authGuard, NgoProfileCompletedGuard, roleGuard],
+            data: {
+              roles: [USER_ROLES.ADMIN],
+            },
             loadComponent: () => import('./features/ngo/register/ngo-register.page.component'),
           },
           {

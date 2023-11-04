@@ -64,6 +64,18 @@ export class ShellService {
     },
     {
       icon: '',
+      link: '/manage/ngos',
+      displayValue: 'Zarządzaj NGO',
+      roles: [USER_ROLES.ADMIN],
+    },
+    {
+      icon: '',
+      link: '/manage/companies',
+      displayValue: 'Zarządzaj firmami',
+      roles: [USER_ROLES.ADMIN],
+    },
+    {
+      icon: '',
       link: '/manage/offers',
       displayValue: 'Zarządzaj ofertami',
       roles: [USER_ROLES.ADMIN],

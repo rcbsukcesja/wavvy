@@ -9,7 +9,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { BusinessArea, NGO } from './model/ngo.model';
+import { BusinessArea } from './model/ngo.model';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { NgoProfileFirstCompletionComponent } from './profile/ngo-profile-form.component';
