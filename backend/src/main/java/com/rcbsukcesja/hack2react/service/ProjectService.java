@@ -245,23 +245,18 @@ public class ProjectService {
                         ErrorMessages.ORGANIZATION_NGO_NOT_FOUND, id));
     }
 
-    public ProjectView updateProjectAddLike(UUID projectId, String clientId) {
+    public ProjectView updateProjectLike(UUID projectId, String clientId) {
         Project project = getProjectByIdOrThrowException(projectId);
-        if (project.getLikes()== null){
+        if (project.getLikes() == null) {
             project.setLikes(new HashSet<>());
         }
-        project.getLikes().add(clientId);
+        if (project.getLikes().contains(clientId)) {
+            project.getLikes().remove(clientId);
+        } else {
+            project.getLikes().add(clientId);
+        }
 
         return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
     }
 
-    public ProjectView  updateProjectRemoveLike(UUID projectId, String clientId) {
-        Project project = getProjectByIdOrThrowException(projectId);
-        if (project.getLikes()== null){
-            project.setLikes(new HashSet<>());
-        }
-        project.getLikes().remove(clientId);
-
-        return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
-    }
 }
