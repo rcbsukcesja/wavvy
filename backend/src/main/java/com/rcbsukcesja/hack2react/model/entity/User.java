@@ -54,13 +54,4 @@ public class User {
     @Column(nullable = false)
     private UserType userType;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.REFRESH, CascadeType.DETACH})
-    @JoinTable(
-            name = "conversation_users",
-            schema = "wavvy",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "conversation_id")}
-    )
-    private List<Conversation> conversations;
 }

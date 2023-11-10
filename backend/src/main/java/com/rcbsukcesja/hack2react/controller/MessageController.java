@@ -24,31 +24,10 @@ public class MessageController {
 
     private final MessageService messageService;
 
-
-    @GetMapping("/{id}")
-    public ResponseEntity<MessageView> getMessageById(@PathVariable("id") UUID id) {
-        return new ResponseEntity<>(
-                messageService.getMessageById(id), HttpStatus.OK);
-    }
-
     @PostMapping
     public ResponseEntity<MessageView> createMessage(@RequestBody MessageDto messageDto) {
         return new ResponseEntity<>(messageService.createMessage(messageDto)
                 , HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{messageId}")
-    public ResponseEntity<MessageView> updateMessage(
-            @PathVariable UUID messageId,
-            @RequestBody MessageDto messageDto) {
-        return new ResponseEntity<>(
-                messageService.updateMessage(messageId, messageDto), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMessage(@PathVariable("id") UUID id) {
-        messageService.deleteMessage(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

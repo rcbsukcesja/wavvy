@@ -17,7 +17,6 @@ import java.util.UUID;
 @Builder
 public class MessageView {
     private UUID id;
-    private UUID conversationId;
     private ZonedDateTime createdAt;
     private UserLightweightView fromUser;
     private UserLightweightView toUser;

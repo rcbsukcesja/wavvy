@@ -7,6 +7,7 @@ import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
 import com.rcbsukcesja.hack2react.model.entity.Message;
 import com.rcbsukcesja.hack2react.model.entity.User;
 import com.rcbsukcesja.hack2react.model.mappers.MessageMapper;
+import com.rcbsukcesja.hack2react.notificator.mail.MessageManager;
 import com.rcbsukcesja.hack2react.repositories.MessageRepository;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,8 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
-    private final ConversationService conversationService;
     private final UserService userService;
-
-    public MessageView getMessageById(UUID id) {
-        return messageMapper.messageToMessageView(getMessageOrThrowException(id));
-    }
+    private final MessageManager messageManager;
 
     @Transactional
     public MessageView createMessage(MessageDto messageDto) {
@@ -35,34 +32,10 @@ public class MessageService {
         User toUser = userService.getUserByIdOrThrowException(messageDto.toUserId());
         message.setFromUser(fromUser);
         message.setToUser(toUser);
-        message.setConversation(conversationService
-                .getConversationByIdOrThrowException(messageDto.conversationId()));
         message.setCreatedAt(TimeUtils.nowInUTC());
         Message saved = messageRepository.save(message);
+        messageManager.sendMessageToUser(message);
         return messageMapper.messageToMessageView(saved);
 
     }
-
-    @Transactional
-    public MessageView updateMessage(UUID messageId, MessageDto messageDto) {
-        Message actual = getMessageOrThrowException(messageId);
-        actual.setConversation(conversationService
-                .getConversationByIdOrThrowException(messageDto.conversationId()));
-        actual.setText(messageDto.text());
-
-        Message saved = messageRepository.save(actual);
-        return messageMapper.messageToMessageView(saved);
-    }
-
-    @Transactional
-    public void deleteMessage(UUID id) {
-        Message message = getMessageOrThrowException(id);
-        messageRepository.delete(message);
-    }
-
-    public Message getMessageOrThrowException(UUID id) {
-        return messageRepository.getMessageById(id)
-                .orElseThrow(() -> new MessageNotFoundException(ErrorMessages.MESSAGE_NOT_FOUND, id));
-    }
-
 }

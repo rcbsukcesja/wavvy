@@ -43,7 +43,4 @@ public class Message {
     @JoinColumn(referencedColumnName = "id")
     private User toUser;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "conversation_id", referencedColumnName = "id")
-    private Conversation conversation;
 }

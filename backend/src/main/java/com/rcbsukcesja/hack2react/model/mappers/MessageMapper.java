@@ -13,7 +13,6 @@ public interface MessageMapper {
 
     Message messageViewToMessage(MessageView messageView);
 
-    @Mapping(source = "conversation.id", target = "conversationId")
     MessageView messageToMessageView(Message message);
 
     List<Message> messageViewListToMessageList(List<MessageView> messageViews);
