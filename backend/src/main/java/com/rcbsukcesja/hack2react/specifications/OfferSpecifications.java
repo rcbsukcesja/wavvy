@@ -1,15 +1,22 @@
 package com.rcbsukcesja.hack2react.specifications;
 
 import com.rcbsukcesja.hack2react.model.entity.Offer;
+import com.rcbsukcesja.hack2react.model.entity.User;
 import com.rcbsukcesja.hack2react.model.enums.OfferScope;
 import com.rcbsukcesja.hack2react.model.enums.OfferStatus;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.SetJoin;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class OfferSpecifications {
@@ -45,7 +52,7 @@ public class OfferSpecifications {
         };
     }
 
-    public static Specification<Offer> isOfferScopeIn(List<OfferScope> offerScopes) {
+    public static Specification<Offer> isOfferScopeIn(Set<OfferScope> offerScopes) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = root.get("scope").in(offerScopes);
             return query.where(predicate).getRestriction();
@@ -63,7 +70,7 @@ public class OfferSpecifications {
         };
     }
 
-    public static Specification<Offer> isStatusIn(List<OfferStatus> offerStatuses) {
+    public static Specification<Offer> isStatusIn(Set<OfferStatus> offerStatuses) {
         return (root, query, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
@@ -88,9 +95,25 @@ public class OfferSpecifications {
     }
 
     public static Specification<Offer> isFollowedByUser(UUID userId) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.isMember(userId, root.get("followingUsers"));
+        return ((root, query, criteriaBuilder) -> {
+            Subquery<Offer> followedOffersSubquery = getFollowedOffersSubquery(userId, query, criteriaBuilder);
+            return criteriaBuilder.in(root).value(followedOffersSubquery);
+        });
     }
+
     public static Specification<Offer> isNotFollowedByUser(UUID userId) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.isNotMember(userId, root.get("followingUsers"));
+        return (root, query, criteriaBuilder) -> {
+            Subquery<Offer> followedOffersSubquery = getFollowedOffersSubquery(userId, query, criteriaBuilder);
+            return criteriaBuilder.not(criteriaBuilder.in(root).value(followedOffersSubquery));
+        };
+    }
+
+    private static Subquery<Offer> getFollowedOffersSubquery(UUID userId, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        Subquery<Offer> followedOffersSubquery = getFollowedOffersSubquery(userId, query, criteriaBuilder);
+        Root<Offer> followedOffersRoot = followedOffersSubquery.from(Offer.class);
+        SetJoin<Offer, User> followedUsers = followedOffersRoot.joinSet("followingUsers");
+        followedOffersSubquery.select(followedOffersRoot);
+        followedOffersSubquery.where(criteriaBuilder.equal(followedUsers.get("id"), userId));
+        return followedOffersSubquery;
     }
 }

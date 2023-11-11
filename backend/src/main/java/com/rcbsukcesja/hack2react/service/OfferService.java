@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -38,8 +38,8 @@ public class OfferService {
     private final OfferValidation offerValidation;
     private final DateValidation dateValidation;
 
-    public Page<OfferView> getAllOffers(LocalDate startDate, LocalDate endDate, List<OfferStatus> offerStatuses,
-                                        List<OfferScope> offerScopes, Boolean closeDeadlineOnly, Boolean followedByUser,
+    public Page<OfferView> getAllOffers(LocalDate startDate, LocalDate endDate, Set<OfferStatus> offerStatuses,
+                                        Set<OfferScope> offerScopes, Boolean closeDeadlineOnly, Boolean followedByUser,
                                         UUID userId, Pageable pageable) {
         dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
         Specification<Offer> spec = OfferSpecifications.notOutsideDateRange(startDate, endDate);
@@ -52,11 +52,12 @@ public class OfferService {
         if (closeDeadlineOnly != null && closeDeadlineOnly) {
             spec = spec.and(OfferSpecifications.isCloseDeadline());
         }
-        if (followedByUser != null && followedByUser) {
-            spec = spec.and(OfferSpecifications.isFollowedByUser(userId));
-        }
-        if (followedByUser != null && !followedByUser) {
-            spec = spec.and(OfferSpecifications.isNotFollowedByUser(userId));
+        if (followedByUser != null) {
+            if (followedByUser) {
+                spec = spec.and(OfferSpecifications.isFollowedByUser(userId));
+            } else {
+                spec = spec.and(OfferSpecifications.isNotFollowedByUser(userId));
+            }
         }
         return offerRepository.findAll(spec, pageable).map(offerMapper::offerToOfferView);
     }
@@ -130,15 +131,11 @@ public class OfferService {
     public void followOffer(UUID offerId, UUID userId) {
         Offer offer = getOfferByIdOrThrowException(offerId);
         User user = geUserByIdOrThrowException(userId);
-        offer.getFollowingUsers().add(user);
-        offerRepository.saveAndFlush(offer);
-    }
-
-    @Transactional
-    public void unfollowOffer(UUID offerId, UUID userId) {
-        Offer offer = getOfferByIdOrThrowException(offerId);
-        User user = geUserByIdOrThrowException(userId);
-        offer.getFollowingUsers().remove(user);
+        if (offer.getFollowingUsers().contains(user)) {
+            offer.getFollowingUsers().remove(user);
+        } else {
+            offer.getFollowingUsers().add(user);
+        }
         offerRepository.saveAndFlush(offer);
     }
 

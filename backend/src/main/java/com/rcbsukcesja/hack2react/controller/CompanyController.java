@@ -7,6 +7,7 @@ import com.rcbsukcesja.hack2react.model.dto.view.organization.CompanyView;
 import com.rcbsukcesja.hack2react.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class CompanyController {
     private final CompanyService organizationCompanyService;
 
     @GetMapping
-    public ResponseEntity<Page<CompanyListView>> getAllCompanies(Pageable pageable) {
+    public ResponseEntity<Page<CompanyListView>> getAllCompanies(@ParameterObject Pageable pageable) {
         return new ResponseEntity<>(organizationCompanyService.getAllCompany(pageable), HttpStatus.OK);
     }
 

@@ -9,6 +9,7 @@ import com.rcbsukcesja.hack2react.service.StorageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class ProjectController {
             @RequestParam(required = false) List<ProjectStatus> statusList,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
         return new ResponseEntity<>(projectService.getAllProjects(statusList, startDate, endDate, pageable), HttpStatus.OK);
     }
 

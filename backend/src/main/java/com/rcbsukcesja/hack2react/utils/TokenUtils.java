@@ -13,7 +13,7 @@ public class TokenUtils {
     public static UUID getUserId(Authentication authentication) {
         if (authentication instanceof JwtAuthenticationToken jwtAuthentication) {
             Map<String, Object> claims = jwtAuthentication.getToken().getClaims();
-            return (UUID) claims.get("sub");
+            return UUID.fromString((String) claims.get("sub"));
         }
         return null;
     }
