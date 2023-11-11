@@ -95,4 +95,12 @@ public class ProjectController {
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/like/{projectId}")
+    public ResponseEntity<ProjectView> updateProjectLike(
+            @PathVariable UUID projectId,
+            @RequestParam String clientId) {
+        return new ResponseEntity<>(projectService.updateProjectLike(projectId, clientId), HttpStatus.OK);
+    }
+
 }
