@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CompaniesApiService } from './data-access/companies.api.service';
 import { CompaniesStateService } from './data-access/companies.state.service';
@@ -9,32 +9,39 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MessagesApiService } from '../messages/data-access/messages.api.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
-import { take, tap } from 'rxjs';
+import { BehaviorSubject, take, tap } from 'rxjs';
 import { ListDialogComponent } from 'src/app/shared/ui/common-list-dialog.component';
 import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.component';
+import { ID } from 'src/app/core/types/id.type';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
+import PaginationComponent from 'src/app/shared/ui/pagination.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PaginationFilters } from 'src/app/core/types/pagination.type';
 
 @Component({
   selector: 'app-companies.page',
   standalone: true,
-  imports: [CommonModule, ListShellComponent, MatDividerModule, MatIconModule, MatSnackBarModule, MatDialogModule],
+  imports: [
+    CommonFiltersComponent,
+    PaginationComponent,
+    MatTooltipModule,
+    CommonModule,
+    ListShellComponent,
+    MatDividerModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatDialogModule,
+  ],
   template: `
     <ng-container *ngIf="state() as state">
+      <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
+
       <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="state.list">
         <ng-template #item let-company>
           <div class="mb-4 h-10">
             <p class="font-semibold text-lg">{{ company.name }}</p>
           </div>
-          <!-- <div class="mb-4 relative h-80">
-            <div class="absolute right-0 top-0 w-8 h-8 m-2 cursor-pointer">
-              <img src="assets/images/blik-logo.jpeg" alt="My Image" />
-            </div>
-            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <img [src]="company.logo" />
-            </div>
-            <div class="absolute bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
-              {{ company.legalStatus | legalStatus }}
-            </div> -->
-          <!-- </div> -->
           <div class="mb-4">
             <p>{{ company.description }}</p>
           </div>
@@ -43,12 +50,18 @@ import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.
             <div class="cursor-pointer" (click)="openMessageModal(company.id, company.name)">
               <mat-icon>forward_to_inbox</mat-icon>
             </div>
+            @if (company.resources?.length) {
             <div class="cursor-pointer" (click)="openResourcesModal(company.resources)">
               <mat-icon>build</mat-icon>
             </div>
+            }
+            <!--  -->
+            @if (company.businnessAreas?.length) {
             <div class="cursor-pointer" (click)="openCategoriessModal(company.businnessAreas)">
               <mat-icon>assignment</mat-icon>
             </div>
+            }
+
             <div
               class="cursor-pointer"
               (click)="openContactModal(company.address, company.phone, company.email, company.website)">
@@ -58,6 +71,7 @@ import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.
         </ng-template>
       </app-list-shell>
       <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
+      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     </ng-container>
   `,
   styles: [],
@@ -72,10 +86,36 @@ export default class CompaniesListPageComponent implements OnInit {
   state = inject(CompaniesStateService).$value;
 
   ngOnInit(): void {
-    this.service.getAll();
+    this.filters$$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(filters => {
+      this.service.getAll(filters);
+    });
   }
 
-  openMessageModal(id: string, name: string) {
+  private destroyRef = inject(DestroyRef);
+
+  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters>({
+    pageIndex: 0,
+    pageSize: 5,
+    search: '',
+    sort: 'desc',
+  });
+
+  onFiltersChanged(filters: CommonFilters) {
+    this.filters$$.next({
+      ...this.filters$$.value,
+      ...filters,
+    });
+  }
+
+  handlePageEvent(e: { pageSize: number; pageIndex: number }) {
+    this.filters$$.next({
+      ...this.filters$$.value,
+      pageIndex: e.pageIndex,
+      pageSize: e.pageSize,
+    });
+  }
+
+  openMessageModal(id: ID, name: string) {
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',
@@ -93,7 +133,7 @@ export default class CompaniesListPageComponent implements OnInit {
               horizontalPosition: 'end',
               verticalPosition: 'bottom',
             });
-            this.messagesService.send({ ...value, receiverId: id, receiverType: 'company' });
+            this.messagesService.send({ ...value, receiverId: id });
           }
         }),
         take(1)
@@ -111,7 +151,7 @@ export default class CompaniesListPageComponent implements OnInit {
     });
   }
 
-  openCategoriessModal(items: { id: string; name: string }[]) {
+  openCategoriessModal(items: { id: ID; name: string }[]) {
     this.dialog.open(ListDialogComponent, {
       width: '450px',
       data: {

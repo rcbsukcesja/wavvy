@@ -1,5 +1,7 @@
+import { ID } from 'src/app/core/types/id.type';
+
 export interface Offer {
-  id: string;
+  id: ID;
   name: string;
   description: string;
   budget: number;
@@ -10,5 +12,5 @@ export interface Offer {
   link: string;
   closeDeadline: boolean;
   scope: string;
-  categories: { id: number; name: string }[];
+  categories: { id: ID; name: string }[];
 }

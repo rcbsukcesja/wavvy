@@ -10,8 +10,6 @@ export class HasRolePipe implements PipeTransform {
   role = inject(AuthStateService).$value().user?.role;
 
   transform<T extends WithUserRoles>(menuItems: T[]): T[] {
-    if (!this.role) return [];
-
-    return menuItems.filter(menuItem => menuItem.roles.includes(this.role!));
+    return menuItems.filter(menuItem => menuItem.roles.length === 0 || menuItem.roles.includes(this.role!));
   }
 }

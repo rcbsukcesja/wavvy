@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { AddOfferFormValue } from '../data-access/offers.api.service';
+import { ID } from 'src/app/core/types/id.type';
 
 @Component({
   selector: 'app-add-offer-form',
@@ -77,7 +78,7 @@ import { AddOfferFormValue } from '../data-access/offers.api.service';
         <mat-hint>Dodaj</mat-hint>
       </mat-form-field>
       <br />
-      <mat-form-field>
+      <!-- <mat-form-field>
         <mat-label>Kategorie</mat-label>
         <mat-select formControlName="categories" multiple>
           <mat-select-trigger>
@@ -89,7 +90,7 @@ import { AddOfferFormValue } from '../data-access/offers.api.service';
           </mat-select-trigger>
           <mat-option *ngFor="let category of categoryList" [value]="category">{{ category.name }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
       <br />
       <button mat-raised-button color="primary">Zapisz</button>
     </form>
@@ -122,7 +123,7 @@ export class AddOfferFormComponent {
     fundingLevel: FormControl<number>;
     targetAudience: FormControl<string>;
     link: FormControl<string>;
-    categories: FormControl<{ id: number; name: string }[]>;
+    categories: FormControl<{ id: ID; name: string }[]>;
   }>;
 
   addOffer() {
@@ -130,7 +131,7 @@ export class AddOfferFormComponent {
   }
 
   ngOnInit() {
-    let preselectedCategories: { id: number; name: string }[] = [];
+    let preselectedCategories: { id: ID; name: string }[] = [];
 
     if (this.formValue) {
       preselectedCategories = this.categoryList.filter(cat =>
@@ -147,9 +148,7 @@ export class AddOfferFormComponent {
       startDate: this.builder.control(this.formValue?.startDate || ''),
       endDate: this.builder.control(this.formValue?.endDate || ''),
       link: this.builder.control(this.formValue?.link || ''),
-      categories: this.builder.control<{ id: number; name: string }[]>(preselectedCategories),
+      categories: this.builder.control<{ id: ID; name: string }[]>(preselectedCategories),
     });
-
-    console.log(this.form.value);
   }
 }

@@ -1,9 +1,10 @@
 import { User } from 'src/app/auth/data_access/auth.state.service';
-import { BusinessArea } from '../../ngo/model/ngo.model';
+import { BusinessArea, NgoStatus } from '../../ngo/model/ngo.model';
 import { Project } from '../../projects/model/project.model';
+import { ID } from 'src/app/core/types/id.type';
 
 export interface Company {
-  id: string;
+  id: ID;
   name: string;
   owners: User[];
   address: string;
@@ -18,4 +19,6 @@ export interface Company {
   NIP: string;
   resource: string[];
   donatedProjects: Project[];
+  status: keyof typeof NgoStatus;
+  disabled: boolean;
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NGOsApiService } from './data-access/ngos.api.service';
 import { NGOsStateService } from './data-access/ngos.state.service';
@@ -14,6 +14,8 @@ import { take, tap } from 'rxjs';
 import { ProjectsApiService } from '../projects/data-access/projects.api.service';
 import { ProjectsStateService } from '../projects/data-access/projects.state.service';
 import ProjectsListComponent from '../projects/projects-list.component';
+import { ID } from 'src/app/core/types/id.type';
+import { BusinessArea } from './model/ngo.model';
 
 @Component({
   selector: 'app-ngo-details-page',
@@ -30,14 +32,14 @@ import ProjectsListComponent from '../projects/projects-list.component';
   ],
   template: `
     <ng-container *ngIf="state() as state">
-      <div *ngIf="state.loadListCallState === 'LOADED' && state.details" class="flex gap-6">
+      <div *ngIf="state.loadByIdCallState === 'LOADED' && state.details" class="flex gap-6">
         <aside>
           <div class="mb-4 h-10">
             <p class="font-semibold text-lg">{{ state.details.name }}</p>
           </div>
           <div class="mb-4 relative h-80 w-80">
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <img [src]="state.details.logo" />
+              <img [src]="state.details.logoUrl" />
             </div>
             <div class="absolute bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
               {{ state.details.legalStatus | legalStatus }}
@@ -50,9 +52,21 @@ import ProjectsListComponent from '../projects/projects-list.component';
               <mat-icon>forward_to_inbox</mat-icon>
               <p class="!m-0 !ml-3 inline-block">Napisz do nas</p>
             </div>
-            <div class="w-8 h-8 cursor-pointer flex items-center">
+            <!-- <div class="w-8 h-8 cursor-pointer flex items-center">
               <img src="assets/images/blik-logo.jpeg" alt="My Image" />
               <p class="!m-0 !ml-3 inline-block">Wesprzyj</p>
+            </div> -->
+          </div>
+          <div class="mt-4">
+            <div>
+              <span class="block font-semibold">Tagi organizacji</span>
+              <ng-container *ngFor="let tag of state.details.tags; let last = last">
+                <span [class.pr-1]="!last">#{{ tag }}</span>
+              </ng-container>
+            </div>
+            <div class="mt-4">
+              <span class="block font-semibold">Numer konta:</span>
+              {{ state.details.bankAccount }}
             </div>
           </div>
         </aside>
@@ -65,23 +79,11 @@ import ProjectsListComponent from '../projects/projects-list.component';
           <div>
             <h3>Obszary działania:</h3>
             <ul class="flex flex-col gap-2 mt-4">
-              <li *ngFor="let area of state.details.businnessAreas">- {{ area.name }}</li>
+              <li *ngFor="let area of state.details.businnessAreas">- {{ getBusinessArea(area) }}</li>
             </ul>
           </div>
           <mat-divider />
-          <div>
-            <h3>Członkowie:</h3>
-            <ul class="flex flex-col gap-2 mt-4">
-              <p *ngIf="!state.details.owners.length">Brak przypisanych użytkowników</p>
-              <ng-container *ngIf="state.details.owners.length">
-                <li *ngFor="let owner of state.details.owners">
-                  -
-                  {{ owner.firstName + ' ' + owner.lastName + ', email: ' + owner.email + ', rola: ' + owner.userType }}
-                </li>
-              </ng-container>
-            </ul>
-          </div>
-          <mat-divider />
+
           <div>
             <h3>Zasoby:</h3>
             <ul class="flex flex-col gap-2 mt-4">
@@ -105,7 +107,8 @@ import ProjectsListComponent from '../projects/projects-list.component';
                   <mat-icon> mail</mat-icon> <strong>E-mail: </strong>{{ state.details.email }}
                 </li>
                 <li class="flex items-center gap-2">
-                  <mat-icon> language</mat-icon> <strong>Strona internetowa: </strong>{{ state.details.website }}
+                  <mat-icon> language</mat-icon> <strong>Strona internetowa: </strong
+                  ><a [href]="state.details.website" target="_blank">{{ state.details.website }}</a>
                 </li>
               </div>
             </ul>
@@ -114,7 +117,7 @@ import ProjectsListComponent from '../projects/projects-list.component';
       </div>
       <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
       <div *ngIf="projectsState() as state" class="mt-8">
-        <app-projects-list *ngIf="state.loadListByNGOIdCallState === 'LOADED'" [projects]="state.listByNGOId" />
+        <app-projects-list *ngIf="state.loadListCallState === 'LOADED'" [projects]="state.list" />
 
         <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
       </div>
@@ -123,6 +126,8 @@ import ProjectsListComponent from '../projects/projects-list.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class NgoDetailsPageComponent implements OnInit {
+  @Input({ required: true }) bussinessAreas!: BusinessArea[];
+
   snackbar = inject(MatSnackBar);
   route = inject(ActivatedRoute);
   messagesService = inject(MessagesApiService);
@@ -139,7 +144,11 @@ export default class NgoDetailsPageComponent implements OnInit {
     this.projectsService.getByNGOId(id);
   }
 
-  openMessageModal(id: string, name: string) {
+  getBusinessArea(id: number) {
+    return this.bussinessAreas.find(ba => ba.id === id)?.name;
+  }
+
+  openMessageModal(id: ID, name: string) {
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',
@@ -157,7 +166,7 @@ export default class NgoDetailsPageComponent implements OnInit {
               horizontalPosition: 'end',
               verticalPosition: 'bottom',
             });
-            this.messagesService.send({ ...value, receiverId: id, receiverType: 'ngo' });
+            this.messagesService.send({ ...value, receiverId: id });
           }
         }),
         take(1)

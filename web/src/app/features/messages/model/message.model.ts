@@ -1,11 +1,15 @@
+import { ID } from 'src/app/core/types/id.type';
+
 export type ReceiverType = 'ngo' | 'company' | 'other';
 
 export interface Message {
-  id: string;
+  id: ID;
   title: string;
-  content: string;
-  receiverId: string;
-  receiverType: ReceiverType;
+  message: string;
+  receiverId: number;
+  name: string;
+  contact: string; // email | phone number
+  createdAt: string;
 }
 
-export type MessagePayload = Omit<Message, 'id'>;
+export type MessagePayload = Omit<Message, 'id' | 'createdAt'>;

@@ -1,10 +1,11 @@
 import { User } from 'src/app/auth/data_access/auth.state.service';
 import { Project } from '../../projects/model/project.model';
 import { UserData } from 'src/app/auth/models/user.model';
+import { ID } from 'src/app/core/types/id.type';
 
 export interface BusinessArea {
   name: string;
-  id: number;
+  id: ID;
 }
 
 export type LegalStatusNGO = 'FOUNDATION' | 'ASSOCIATION' | 'SOCIAL_COOPERATIVE' | 'PUBLIC_BENEFIT_ORGANIZATION';
@@ -20,25 +21,33 @@ export const legalStatusMap: LegalStatusMap = {
   PUBLIC_BENEFIT_ORGANIZATION: 'Organizacja Pożytku Publicznego',
 };
 
+export const NgoStatus = {
+  ACTIVE: 'ACTIVE',
+  DISABLED: 'DISABLED',
+} as const;
+
 export interface NGO {
-  id: string;
+  id: ID;
   name: string;
-  logo: string;
-  owners: UserData[];
+  logoUrl: string;
+  owner: UserData;
   address: string;
   phone: string;
   email: string;
   website: string;
-  socialLinks: string[];
   creationDate: string;
   description: string;
-  businnessAreas: BusinessArea[];
+  businnessAreas: number[];
+  bankAccount?: string;
   KRS: string;
   NIP: string;
+  REGON: string;
   resources: string[];
   legalStatus: LegalStatusNGO;
-  // donors: Company[];
-  employees: UserData[];
   projects: Project[];
   tags: string[];
+  status: keyof typeof NgoStatus;
+  disabled: boolean;
+  confirmed: true;
+  followedByUser: ID[];
 }

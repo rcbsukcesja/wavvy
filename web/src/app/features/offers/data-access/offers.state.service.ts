@@ -8,11 +8,13 @@ import { StateService } from 'src/app/core/state.service';
 export interface OffersStateValue {
   list: Offer[];
   loadListCallState: CallState;
+  totalElements: number;
 }
 
 const initialState: OffersStateValue = {
   list: [],
   loadListCallState: 'INITIAL',
+  totalElements: 0,
 };
 
 @Injectable({

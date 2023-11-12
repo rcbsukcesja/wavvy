@@ -6,11 +6,13 @@ import { StateService } from 'src/app/core/state.service';
 export interface CompaniesStateValue {
   list: Company[];
   loadListCallState: CallState;
+  totalElements: number;
 }
 
 const initialState: CompaniesStateValue = {
   list: [],
   loadListCallState: 'INITIAL',
+  totalElements: 0,
 };
 
 @Injectable({

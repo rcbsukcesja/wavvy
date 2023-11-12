@@ -1,17 +1,26 @@
 import { Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { AuthStatus } from '../utils/auth-status.enum';
+import { ID } from 'src/app/core/types/id.type';
 import { UserRoles } from 'src/app/core/user-roles.enum';
 
 export interface User {
-  id: number;
+  id: ID;
   role: UserRoles;
+  login: string;
+  firstLogin: boolean;
+  profileCompleted: boolean;
+  offersFollowed: number[];
 }
 
-export interface AuthStateValue {
-  status: AuthStatus;
-  user: User | null;
-}
+export type AuthStateValue =
+  | {
+      status: 'AUTHENTICATED';
+      user: User;
+    }
+  | {
+      status: 'NON_AUTHENTICATED';
+      user: null;
+    };
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +39,7 @@ export class AuthStateService {
     return toObservable(this.$state);
   }
 
-  setState(value: Partial<AuthStateValue>) {
+  setState(value: AuthStateValue) {
     this.$state.update(state => ({ ...state, ...value }));
   }
 }

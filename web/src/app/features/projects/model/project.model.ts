@@ -1,3 +1,4 @@
+import { ID } from 'src/app/core/types/id.type';
 import { BusinessArea } from '../../ngo/model/ngo.model';
 
 export const PROJECT_STATUS = {
@@ -27,14 +28,14 @@ export const projectStatusMap: ProjectStatusMap = {
 };
 
 export interface Project {
-  id: string;
+  id: ID;
   name: string;
   description: string;
   startTime: string;
   address: string;
   endTime: string;
   ngo: string;
-  ngoId: string;
+  ngoid: ID;
   budget: number;
   status: ProjectStatus;
   tags: string[];
@@ -42,10 +43,11 @@ export interface Project {
   link: string;
   cooperationMessage?: string;
   possibleVolunteer: boolean;
-  category: BusinessArea[];
+  categories: BusinessArea[];
+  disabled: boolean;
 }
 
 export interface NGOProject extends Project {
-  ngoId: string;
+  ngoid: ID;
   ngoName: string;
 }

@@ -7,12 +7,14 @@ export interface MessagesStateValue {
   sendCallState: CallState;
   list: Message[];
   loadListCallState: CallState;
+  totalElements: number;
 }
 
 const initialState: MessagesStateValue = {
   sendCallState: 'INITIAL',
   list: [],
   loadListCallState: 'INITIAL',
+  totalElements: 0,
 };
 
 @Injectable({
