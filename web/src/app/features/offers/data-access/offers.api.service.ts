@@ -101,32 +101,18 @@ export class OffersApiService extends HttpBaseService {
 
     const url = new URL(this.url);
     const sp = new URLSearchParams({
-      _sort: 'startTime',
-      _order: params.sort,
+      sort: `startDate,${params.sort}`,
+      // TODO parametr do wyszukiwania
       q: params.search,
-      // _page: params.pageIndex.toString(),
-      _start: (params.pageIndex * params.pageSize).toString(),
-      _limit: params.pageSize.toString(),
+      page: params.pageIndex.toString(),
+      size: params.pageSize.toString(),
     });
 
     url.search = sp.toString();
 
     return this.http
-      .get<Offer[]>(url.href, { observe: 'response' })
+      .get<ListApiResponse<Offer>>(url.href)
       .pipe(
-        map(response => {
-          const totalCount = response.headers.get('X-Total-Count');
-
-          return {
-            content: response.body,
-            empty: response.body?.length === 0,
-            last: false,
-            number: params.pageIndex,
-            numberOfElements: response.body?.length,
-            totalElements: totalCount ? +totalCount : 0,
-            totalPages: totalCount ? Math.ceil(+totalCount / params.pageSize) : 0,
-          } as ListApiResponse<Offer>;
-        }),
         tap(response => {
           this.stateService.setState({
             loadListCallState: 'LOADED',

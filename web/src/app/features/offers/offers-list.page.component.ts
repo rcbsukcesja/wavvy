@@ -19,6 +19,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
+import { API_URL } from 'src/app/core/API-URL.token';
 
 @Component({
   selector: 'app-offers.page',
@@ -33,6 +34,13 @@ import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
     MatDialogModule,
     MatSnackBarModule,
     PaginationComponent,
+  ],
+  providers: [
+    OffersApiService,
+    {
+      provide: API_URL,
+      useValue: 'http://localhost:8080',
+    },
   ],
   template: `
     <ng-container *ngIf="state() as state">
