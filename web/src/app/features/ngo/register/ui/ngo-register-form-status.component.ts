@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   selector: 'app-ngo-register-form-status',
-  template: ` <div class="rounded-full h-4 w-4 mx-auto" [ngClass]="status.toLowerCase()"></div> `,
+  template: ` <div class="rounded-full h-4 w-4 mx-auto" [ngClass]="status ? 'rejected' : 'accepted'"></div> `,
   styles: [
     `
       .pending {
@@ -25,5 +25,5 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgoRegisterFormStatusComponent {
-  @Input() status!: NgoRegisterForm['status'];
+  @Input({ required: true }) status!: boolean;
 }

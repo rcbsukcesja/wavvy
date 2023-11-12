@@ -18,6 +18,7 @@ import { tap, take, BehaviorSubject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
+import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
 
 @Component({
   selector: 'app-offers.page',
@@ -45,11 +46,7 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
               </div>
 
               <button *ngIf="showFav" class=" ml-auto" (click)="toggleFav(offer.id)">
-                <mat-icon
-                  [class.text-red-600]="authState().user?.offersFollowed?.includes(offer.id)"
-                  [class.text-black]="!authState().user?.offersFollowed?.includes(offer.id)"
-                  >favorite</mat-icon
-                >
+                <mat-icon [ngClass]="followed()?.includes(offer.id) ? 'text-red-600' : 'text-black'">favorite</mat-icon>
               </button>
             </div>
 
@@ -114,6 +111,10 @@ export default class OffersListPageComponent implements OnInit {
   state = inject(OffersStateService).$value;
 
   authState = inject(AuthStateService).$value;
+
+  ngoState = inject(NGOsStateService).$value;
+
+  followed = computed(() => this.ngoState().profile?.followedByUser);
 
   get showFav() {
     return this.authState().user?.role === USER_ROLES.NGO_USER;

@@ -17,6 +17,7 @@ export interface AddCompanyFormValue {
   endDate: string;
   link: string;
   categories: { id: ID; name: string }[];
+  disabled?: boolean;
 }
 
 @Injectable({
@@ -41,15 +42,15 @@ export class CompaniesApiService extends HttpBaseService {
     return this.http.delete(`${this.url}/${id}`);
   }
 
-  getAll(params: PaginationFilters = { pageIndex: 0, pageSize: 5 }) {
+  getAll(params: PaginationFilters & { search: string } = { pageIndex: 0, pageSize: 5, search: '' }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const url = new URL(this.url);
     const sp = new URLSearchParams({
       // _sort: 'startTime',
       // _order: params.sort,
-      // q: params.search,
-      // _page: params.pageIndex.toString(),
+      q: params.search,
+      _page: params.pageIndex.toString(),
       _start: (params.pageIndex * params.pageSize).toString(),
       _limit: params.pageSize.toString(),
     });

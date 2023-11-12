@@ -150,7 +150,5 @@ export class AddOfferFormComponent {
       link: this.builder.control(this.formValue?.link || ''),
       categories: this.builder.control<{ id: ID; name: string }[]>(preselectedCategories),
     });
-
-    console.log(this.form.value);
   }
 }

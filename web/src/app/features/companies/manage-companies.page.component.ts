@@ -1,4 +1,4 @@
-import { NgIf, DatePipe } from '@angular/common';
+import { NgIf, DatePipe, NgClass } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,6 +17,7 @@ import { Project } from '../projects/model/project.model';
 import { CompaniesApiService } from './data-access/companies.api.service';
 import { CompaniesStateService } from './data-access/companies.state.service';
 import { Company } from './model/company.model';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-manage-companies-page',
@@ -46,7 +47,13 @@ import { Company } from './model/company.model';
 
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let element">{{ element.status | ngoStatus }}</td>
+          <td mat-cell *matCellDef="let element">
+            <div
+              class="rounded-full h-4 w-4 mx-auto"
+              [matTooltip]="'Skontaktuj się z miastem by dowiedzieć się o powodzie'"
+              [matTooltipDisabled]="!element.disabled"
+              [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="name">
@@ -82,6 +89,8 @@ import { Company } from './model/company.model';
     PaginationComponent,
     CommonFiltersComponent,
     NgoStatusPipe,
+    NgClass,
+    MatTooltipModule,
   ],
 })
 export default class ManageCompaniesPageComponent implements OnInit {
@@ -115,14 +124,14 @@ export default class ManageCompaniesPageComponent implements OnInit {
       .open(ChangeNgoStatusDialogComponent, {
         width: '500px',
         data: {
-          status: company.status,
+          disabled: company.disabled,
         } as ChangeStatusDialogData,
       })
       .afterClosed()
       .pipe(
         take(1),
         switchMap(status => {
-          return this.service.update(company.id, { status });
+          return this.service.update(company.id, { disabled: status });
         })
       )
       .subscribe(() => {

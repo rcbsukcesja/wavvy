@@ -1,4 +1,4 @@
-import { NgIf, DatePipe } from '@angular/common';
+import { NgIf, DatePipe, NgClass } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,7 +6,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { BehaviorSubject, map, filter, take, switchMap } from 'rxjs';
+import { BehaviorSubject, map, filter, take, switchMap, EMPTY } from 'rxjs';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CommonFiltersComponent, CommonFilters } from 'src/app/shared/ui/common-filters.component';
 import { RemoveDialogComponent } from 'src/app/shared/ui/common-remove-dialog.component';
@@ -16,10 +16,9 @@ import { ProjectStatusPipe } from '../projects/utils/project-status.pipe';
 import { NGOsStateService } from './data-access/ngos.state.service';
 import { NGOsApiService } from './data-access/ngos.api.service';
 import { NgoStatusPipe } from './utils/ngo-status.pipe';
-import { ID } from 'src/app/core/types/id.type';
 import { ChangeNgoStatusDialogComponent, ChangeStatusDialogData } from './ui/change-ngo-status.component';
 import { NGO } from './model/ngo.model';
-import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-manage-ngos-page',
@@ -49,7 +48,13 @@ import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
 
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let element">{{ element.status | ngoStatus }}</td>
+          <td mat-cell *matCellDef="let element">
+            <div
+              class="rounded-full h-4 w-4 mx-auto"
+              [matTooltip]="'Skontaktuj się z miastem by dowiedzieć się o powodzie'"
+              [matTooltipDisabled]="!element.disabled"
+              [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="name">
@@ -86,6 +91,8 @@ import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
     PaginationComponent,
     CommonFiltersComponent,
     NgoStatusPipe,
+    NgClass,
+    MatTooltipModule,
   ],
 })
 export default class ManageNGOsPageComponent implements OnInit {
@@ -119,14 +126,18 @@ export default class ManageNGOsPageComponent implements OnInit {
       .open(ChangeNgoStatusDialogComponent, {
         width: '500px',
         data: {
-          status: ngo.status,
+          disabled: ngo.disabled,
         } as ChangeStatusDialogData,
       })
       .afterClosed()
       .pipe(
         take(1),
         switchMap(status => {
-          return this.service.updateProfile({ status }, ngo.id);
+          if (status === undefined) {
+            return EMPTY;
+          }
+
+          return this.service.updateProfile({ disabled: status }, ngo.id);
         })
       )
       .subscribe(() => {

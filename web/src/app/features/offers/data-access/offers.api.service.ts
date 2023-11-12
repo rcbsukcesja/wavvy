@@ -8,6 +8,7 @@ import { AuthStateService, User } from 'src/app/auth/data_access/auth.state.serv
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
+import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 
 export interface GetAllOffersParams {}
 
@@ -28,26 +29,34 @@ export interface AddOfferFormValue {
 })
 export class OffersApiService extends HttpBaseService {
   private stateService = inject(OffersStateService);
-  private authState = inject(AuthStateService);
+  private ngoState = inject(NGOsStateService);
 
   constructor() {
     super('offers');
   }
 
   toggleFav(user: User, offerId: number) {
-    const alreadyFollowed = user.offersFollowed.includes(offerId);
+    const ngo = this.ngoState.$value().profile;
+
+    if (!ngo) {
+      return;
+    }
+
+    const alreadyFollowed = ngo.followedByUser.includes(offerId);
+    const payload = alreadyFollowed
+      ? ngo.followedByUser.filter(id => id !== offerId)
+      : [...ngo.followedByUser, offerId];
 
     this.http
-      .patch<User>(`${this.API_URL}/users/${user.id}`, {
-        offersFollowed: alreadyFollowed
-          ? user.offersFollowed.filter(id => id !== offerId)
-          : [...user.offersFollowed, offerId],
-      })
+      .patch<User>(`${this.API_URL}/${offerId}/follow`, payload)
       .pipe(
         tap(user => {
-          this.authState.setState({
-            status: 'AUTHENTICATED',
-            user,
+          this.ngoState.setState({
+            ...this.ngoState.$value(),
+            profile: {
+              ...ngo,
+              followedByUser: payload,
+            },
           });
         })
       )

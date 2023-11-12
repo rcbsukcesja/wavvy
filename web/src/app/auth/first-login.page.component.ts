@@ -102,13 +102,11 @@ export default class FirstLoginPageComponent {
   }
 
   updatePassword() {
-    console.log('hey!');
     this.form.markAllAsTouched();
 
     if (this.form.invalid) {
       return;
     }
-    console.log('go!');
 
     this.loading = true;
     this.authService

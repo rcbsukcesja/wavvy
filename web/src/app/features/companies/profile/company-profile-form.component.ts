@@ -25,32 +25,30 @@ import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { BusinessArea, NGO } from '../model/ngo.model';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
+import { NGO, BusinessArea } from '../../ngo/model/ngo.model';
+import { NgoProfileFormModel } from '../../ngo/profile/ngo-profile-form.component';
 
-export type NgoProfileFormModel = FormGroup<{
+export type CompanyProfileFormModel = FormGroup<{
   name: FormControl<string>;
   logo: FormControl<File | null>;
   KRS: FormControl<string>;
   NIP: FormControl<string>;
   REGON: FormControl<string>;
-  bankAccount: FormControl<string>;
   description: FormControl<string>;
   address: FormControl<string>;
   email: FormControl<string>;
   website: FormControl<string>;
   phone: FormControl<string>;
-  tags: FormControl<string[]>;
-  creationDate: FormControl<string>;
   businnessAreas: FormControl<{ id: ID; name: string }[]>;
   resources: FormArray<FormControl<string>>;
 }>;
 
 @Component({
-  selector: 'app-ngo-profile-form',
+  selector: 'app-company-profile-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -119,12 +117,12 @@ export type NgoProfileFormModel = FormGroup<{
           <br />
         </div>
         <div class="flex flex-col md:flex-row  md:gap-4">
-          <mat-form-field class="md:w-1/2">
+          <!-- <mat-form-field class="md:w-1/2">
             <mat-label>Data utworzenia</mat-label>
             <input matInput formControlName="creationDate" [matDatepicker]="picker" placeholder="Wybierz datę" />
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
+          </mat-form-field> -->
 
           <br />
           <mat-form-field class="md:w-1/2">
@@ -161,15 +159,15 @@ export type NgoProfileFormModel = FormGroup<{
         </div>
         <br />
         <div class="flex flex-col md:gap-4">
-          <mat-form-field>
+          <!-- <mat-form-field>
             <mat-label>Numer konta bankowego</mat-label>
             <input formControlName="bankAccount" matInput />
             <mat-hint *ngIf="form.controls.bankAccount.value.trim().length > 0" class="text-blue-600"
               >Podając numer konta bankowego oświadczasz jego prawidłowość</mat-hint
             >
-          </mat-form-field>
+          </mat-form-field> -->
 
-          <mat-form-field>
+          <!-- <mat-form-field>
             <mat-label>Tagi</mat-label>
             <mat-chip-grid formControlName="tags" #chipGrid aria-label="Enter tags">
               <mat-chip-row
@@ -192,7 +190,7 @@ export type NgoProfileFormModel = FormGroup<{
             <mat-hint *ngIf="form.controls.tags as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
               >Podaj przynajmniej 3 tagi</mat-hint
             >
-          </mat-form-field>
+          </mat-form-field> -->
 
           <mat-form-field class="h-32">
             <mat-label>Opis organizacji</mat-label>
@@ -236,7 +234,7 @@ export type NgoProfileFormModel = FormGroup<{
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgoProfileFirstCompletionComponent implements OnInit {
+export class CompanyProfileFirstCompletionComponent implements OnInit {
   @Input({ required: true }) profile!: NGO;
   @Input({ required: true }) bussinessAreas!: BusinessArea[];
   @Input() firstCompletion = false;
@@ -251,7 +249,7 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
   ngoProfile: NGO | null = null;
   separatorKeysCodes = [ENTER, COMMA] as const;
 
-  form!: NgoProfileFormModel;
+  form!: CompanyProfileFormModel;
 
   logo$: BehaviorSubject<{ file: File | null; url: string | null; error: boolean }> = new BehaviorSubject({
     file: null,
@@ -276,21 +274,21 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       KRS: this.builder.control({ value: this.profile.KRS, disabled: true }, [Validators.required]),
       NIP: this.builder.control({ value: this.profile.NIP, disabled: true }, [Validators.required]),
       REGON: this.builder.control({ value: this.profile.REGON, disabled: true }, [Validators.required]),
-      bankAccount: this.builder.control(this.profile.bankAccount || ''),
+      // bankAccount: this.builder.control(this.profile.bankAccount || ''),
       description: this.builder.control(this.profile.description || '', [Validators.required]),
       address: this.builder.control(this.profile.address || '', [Validators.required]),
       email: this.builder.control(this.profile.email || '', [Validators.required]),
       website: this.builder.control(this.profile.website || '', [Validators.required]),
       phone: this.builder.control(this.profile.phone || '', [Validators.required]),
-      tags: this.builder.control(this.profile.tags || [], [Validators.required, Validators.minLength(3)]),
-      creationDate: this.builder.control(this.profile.creationDate || '', [Validators.required]),
+      // tags: this.builder.control(this.profile.tags || [], [Validators.required, Validators.minLength(3)]),
+      // creationDate: this.builder.control(this.profile.creationDate || '', [Validators.required]),
       businnessAreas: this.builder.control<{ id: ID; name: string }[]>(
         this.bussinessAreas.filter(area => this.profile.businnessAreas?.includes(area.id) || [])
       ),
       resources: this.builder.array<FormControl<string>>([]),
     });
 
-    this.tags = this.form.controls.tags.value;
+    // this.tags = this.form.controls.tags.value;
 
     if (this.profile.resources?.length) {
       this.profile.resources.forEach(resource => {

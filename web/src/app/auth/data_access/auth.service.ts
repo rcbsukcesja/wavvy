@@ -54,7 +54,7 @@ export class AuthService extends HttpBaseService {
       }),
       tap(user => {
         this.setAuthenticatedUser(user);
-        this.router.navigateByUrl('/manage/ngo-profile');
+        this.router.navigateByUrl('/manage/my-profile');
       })
     );
   }
@@ -65,7 +65,6 @@ export class AuthService extends HttpBaseService {
       .pipe(
         map(([user]) => user),
         switchMap(user => {
-          console.log({ user });
           return user ? of(user) : throwError(() => new Error('Login lub hasło jest niepoprawne'));
         }),
         tap(user => {
@@ -103,7 +102,7 @@ export class AuthService extends HttpBaseService {
 
     const rolesWithOrganisationProfile: UserRoles[] = [USER_ROLES.COMPANY_USER, USER_ROLES.NGO_USER];
 
-    if (user.profileCompleted && rolesWithOrganisationProfile.includes(user.role)) {
+    if (rolesWithOrganisationProfile.includes(user.role)) {
       this.ngoService.getProfile();
     }
   }

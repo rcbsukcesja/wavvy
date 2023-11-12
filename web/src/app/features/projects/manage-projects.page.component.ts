@@ -1,4 +1,4 @@
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe, NgClass, NgIf } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +18,8 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
 import { UserRoles, USER_ROLES } from 'src/app/core/user-roles.enum';
 import { ChangeNgoStatusDialogComponent, ChangeStatusDialogData } from '../ngo/ui/change-ngo-status.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ID } from 'src/app/core/types/id.type';
 
 @Component({
   selector: 'app-manage-projects-page',
@@ -32,6 +34,8 @@ import { ChangeNgoStatusDialogComponent, ChangeStatusDialogData } from '../ngo/u
     ProjectStatusPipe,
     PaginationComponent,
     CommonFiltersComponent,
+    NgClass,
+    MatTooltipModule,
   ],
   template: `
     <header>
@@ -51,7 +55,16 @@ import { ChangeNgoStatusDialogComponent, ChangeStatusDialogData } from '../ngo/u
 
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let element">{{ element.status | projectStatus }}</td>
+          <td mat-cell *matCellDef="let element">
+            <div class="flex items-center">
+              {{ element.status | projectStatus }}
+              <div
+                class="rounded-full h-4 w-4 ml-1 shrink-0"
+                [matTooltip]="'Skontaktuj się z miastem by dowiedzieć się o powodzie'"
+                [matTooltipDisabled]="!element.disabled"
+                [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
+            </div>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="name">
@@ -90,9 +103,28 @@ import { ChangeNgoStatusDialogComponent, ChangeStatusDialogData } from '../ngo/u
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-4">
-              <button *ngIf="role !== ADMIN_ROLE" (click)="goToProjectForm(element)"><mat-icon>edit</mat-icon></button>
-              <button *ngIf="role === ADMIN_ROLE" (click)="changeStatus(element)"><mat-icon>edit</mat-icon></button>
-              <button *ngIf="role !== ADMIN_ROLE" (click)="remove(element)"><mat-icon>delete</mat-icon></button>
+              <button [matTooltip]="'Pokaż projekt'" (click)="showProjectOnList(element.id)">
+                <mat-icon>preview</mat-icon>
+              </button>
+              <button *ngIf="role !== ADMIN_ROLE" [matTooltip]="'Edytuj projekt'" (click)="goToProjectForm(element)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <ng-container *ngIf="role !== ADMIN_ROLE">
+                <input #input type="file" class="w-0 absolute" (change)="handleChange($event, element.id)" />
+                <button
+                  [matTooltip]="'Nie dodałeś logo projektu, przez co korzysta od z domyślnego placeholdera'"
+                  [matTooltipDisabled]="!!element.imageLink"
+                  (click)="input.click()"
+                  [ngClass]="!!element.imageLink ? 'text-green-500' : 'text-red-500'">
+                  <mat-icon>image</mat-icon>
+                </button>
+              </ng-container>
+              <button [matTooltip]="'Zmień status'" *ngIf="role === ADMIN_ROLE" (click)="changeStatus(element)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button [matTooltip]="'Usuń projekt'" *ngIf="role !== ADMIN_ROLE" (click)="remove(element)">
+                <mat-icon>delete</mat-icon>
+              </button>
             </div>
           </td>
         </ng-container>
@@ -117,18 +149,33 @@ export default class ManageProjectsPageComponent implements OnInit {
     sort: 'desc',
   });
 
+  handleChange(e: Event, projectId: ID) {
+    const input = e.target as HTMLInputElement;
+    if (!input.files) {
+      alert('Nie załadowano zdjęcia');
+
+      return;
+    }
+
+    this.service.uploadProjectImage(input.files[0], projectId);
+  }
+
+  showProjectOnList(id: ID) {
+    this.router.navigateByUrl(`/projects?projectId=${id}`);
+  }
+
   changeStatus(project: Project) {
     this.dialog
       .open(ChangeNgoStatusDialogComponent, {
         width: '500px',
         data: {
-          status: project.disabled ? 'DISABLED' : 'ACTIVE',
+          disabled: project.disabled,
         } as ChangeStatusDialogData,
       })
       .afterClosed()
       .pipe(take(1))
       .subscribe(status => {
-        this.service.update(project.id, { disabled: status === 'DISABLED' }, this.filters$$.value);
+        this.service.update(project.id, { disabled: status }, this.filters$$.value);
       });
   }
 

@@ -53,8 +53,8 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([HttpErrorInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimations(),
-    provideStore(),
-    provideRouterStore(),
+    // provideStore(),
+    // provideRouterStore(),
     importProvidersFrom(MatSnackBarModule),
   ],
 };

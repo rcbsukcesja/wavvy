@@ -6,7 +6,8 @@
     "start": "node set-env && ng serve",
     "build": "node set-env && ng build",
     "watch": "node set-env && ng build --watch --configuration development",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "api:mock": "npx json-server --watch db.json"
   },
   "private": true,
   "dependencies": {
@@ -20,10 +21,10 @@
     "@angular/platform-browser": "^17.0.1",
     "@angular/platform-browser-dynamic": "^17.0.1",
     "@angular/router": "^17.0.1",
-    "@ngrx/effects": "^16.0.1",
-    "@ngrx/entity": "^16.0.1",
-    "@ngrx/router-store": "^16.0.1",
-    "@ngrx/store": "^16.0.1",
+    "@ngrx/effects": "^16.3.0",
+    "@ngrx/entity": "^16.3.0",
+    "@ngrx/router-store": "^16.3.0",
+    "@ngrx/store": "^16.3.0",
     "dotenv": "^16.3.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

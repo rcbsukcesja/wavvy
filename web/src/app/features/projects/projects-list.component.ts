@@ -13,6 +13,8 @@ import { ProjectStatusPipe } from './utils/project-status.pipe';
 import { Project } from './model/project.model';
 import { ID } from 'src/app/core/types/id.type';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
+import { RouterLink } from '@angular/router';
+import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
 
 @Component({
   standalone: true,
@@ -42,26 +44,30 @@ class DescriptionDialogComponent {
     MatSnackBarModule,
     DatePipe,
     ProjectStatusPipe,
+    RouterLink,
+    MatIconModule,
   ],
   template: `
     <app-list-shell listName="Projekty" [list]="projects">
       <ng-template #item let-project>
         <div class="">
-          <div class="relative">
+          <div
+            class="relative h-80 bg-cover"
+            [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
+            @if (project.disabled && $ngoId() === project.ngoId) {
             <div
-              [ngClass]="project.startTime !== project.endTime ? 'right-28' : 'right-0'"
-              class="absolute bg-black text-white  text-sm px-1 py-2">
-              {{ project.startTime | date }}
+              class="absolute left-2 top-2 text-red-600 "
+              [matTooltip]="'Skontaktuj się z miastem by dowiedzieć się o powodzie zablokowania projektu'">
+              <mat-icon>warning</mat-icon>
             </div>
-            <div
-              *ngIf="project.startTime !== project.endTime"
-              class="absolute bg-black text-white right-0 text-sm px-1 py-2">
-              {{ project.endTime | date }}
+            }
+            <div class="absolute bg-black text-white right-0  text-xs px-1 py-2 flex items-center">
+              <mat-icon class="mr-2">schedule</mat-icon> <span>{{ project.startTime | date }}</span>
+              <span *ngIf="project.startTime !== project.endTime" class="pl-1">- {{ project.endTime | date }}</span>
             </div>
-            <img [src]="project.imageLink" />
-            <div class="absolute bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
-              {{ project.ngo }}
-            </div>
+          </div>
+          <div class="bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
+            <a [routerLink]="'/ngos/' + project.ngoId">{{ project.ngo }}</a>
           </div>
           <div class="rounded-md w-fit px-2 mt-4 mb-2 bg-green-400 text-green-900">
             {{ project.status | projectStatus }}
@@ -70,7 +76,7 @@ class DescriptionDialogComponent {
           <p class="line-clamp-3">{{ project.description }}</p>
           <button
             (click)="openDescriptionDialog(project.name, project.description)"
-            class="ml-auto block -mt-1 mb-2 bg-black text-white px-2 py-1 rounded-md">
+            class="ml-auto block -mt-1 mb-2 bg-black text-white px-2 py-1 rounded-md hover:bg-opacity-70 transition">
             Pełny opis
           </button>
           <p *ngIf="project.link">
@@ -108,6 +114,9 @@ class DescriptionDialogComponent {
 })
 export default class ProjectsListComponent {
   private authState = inject(AuthStateService).$value;
+  private profileState = inject(NGOsStateService).$value;
+
+  $ngoId = computed(() => this.profileState().profile?.id);
 
   protected isAuth = computed(() => this.authState().status === 'AUTHENTICATED');
 
@@ -134,7 +143,6 @@ export default class ProjectsListComponent {
       .afterClosed()
       .pipe(
         tap((value: MessageDialogFormValue) => {
-          console.log('??');
           if (value) {
             this.snackbar.open('Wiadomość została wysłana!', '', {
               duration: 3000,

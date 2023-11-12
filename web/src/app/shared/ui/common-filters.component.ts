@@ -18,6 +18,7 @@ export const DEFAULT_SORT = 'desc';
   template: `
     <section #filters class="mb-4">
       <div class="ml-auto flex gap-4">
+        @if (!hideSort) {
         <span> Sortuj:</span>
         <button (click)="sortBy = 'desc'; emitFiltersChanged()" [class.font-bold]="sortBy === 'desc'">
           od najnowszych
@@ -25,6 +26,7 @@ export const DEFAULT_SORT = 'desc';
         <button (click)="sortBy = 'asc'; emitFiltersChanged()" [class.font-bold]="sortBy === 'asc'">
           od najstarszych
         </button>
+        }
 
         <input [formControl]="searchCtrl" class="bg-transparent border-b border-b-black " placeholder="Wyszukaj" />
       </div>
@@ -35,13 +37,13 @@ export const DEFAULT_SORT = 'desc';
 })
 export class CommonFiltersComponent {
   @Input() sortBy: CommonFilters['sort'] = DEFAULT_SORT;
+  @Input() hideSort = false;
   @Output() filtersChanged = new EventEmitter<CommonFilters>();
 
   searchCtrl = new FormControl('', { nonNullable: true });
 
   constructor() {
     this.searchCtrl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(250), distinctUntilChanged()).subscribe(() => {
-      console.log(this.searchCtrl.value);
       this.emitFiltersChanged();
     });
   }

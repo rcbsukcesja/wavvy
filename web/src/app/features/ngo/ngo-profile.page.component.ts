@@ -15,6 +15,7 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { NgoProfileFirstCompletionComponent } from './profile/ngo-profile-form.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ID } from 'src/app/core/types/id.type';
+import { CompanyProfileFirstCompletionComponent } from '../companies/profile/company-profile-form.component';
 
 @Component({
   selector: 'app-ngo-profile-page',
@@ -31,12 +32,15 @@ import { ID } from 'src/app/core/types/id.type';
     MatDividerModule,
     NgoProfileFirstCompletionComponent,
     MatProgressSpinnerModule,
+    CompanyProfileFirstCompletionComponent,
   ],
   template: `
     <ng-container *ngIf="state() as state">
       <p *ngIf="state.loadProfileCallState === 'LOADING'">
         <mat-spinner [diameter]="16" />
       </p>
+
+      @if($authState().user?.role === 'NGO_USER') {
       <app-ngo-profile-form
         *ngIf="state.loadProfileCallState === 'LOADED'"
         (save)="save($event, state.profile!.id)"
@@ -44,6 +48,15 @@ import { ID } from 'src/app/core/types/id.type';
         [bussinessAreas]="bussinessAreas"
         [firstCompletion]="!!$firstCompletion()"
         [profile]="state.profile!" />
+      } @else {
+      <app-company-profile-form
+        *ngIf="state.loadProfileCallState === 'LOADED'"
+        (save)="saveCompany($event, state.profile!.id)"
+        (saveLogo)="saveLogo($event)"
+        [bussinessAreas]="bussinessAreas"
+        [firstCompletion]="!!$firstCompletion()"
+        [profile]="state.profile!" />
+      }
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +64,7 @@ import { ID } from 'src/app/core/types/id.type';
 export default class NgoProfilePageComponent implements OnInit {
   @Input() bussinessAreas!: BusinessArea[];
   private service = inject(NGOsApiService);
-  private $authState = inject(AuthStateService).$value;
+  public $authState = inject(AuthStateService).$value;
 
   $firstCompletion = computed(() => {
     const user = this.$authState().user;
@@ -83,6 +96,32 @@ export default class NgoProfilePageComponent implements OnInit {
       phone: string;
       tags: string[];
       creationDate: string;
+      businnessAreas: { id: ID; name: string }[];
+      resources: string[];
+    },
+    id: ID
+  ) {
+    this.service
+      .updateProfile(
+        {
+          ...formValue,
+          businnessAreas: formValue.businnessAreas.map(area => area.id),
+        },
+        id
+      )
+      .subscribe();
+  }
+
+  saveCompany(
+    formValue: {
+      name: string;
+      KRS: string;
+      NIP: string;
+      description: string;
+      address: string;
+      email: string;
+      website: string;
+      phone: string;
       businnessAreas: { id: ID; name: string }[];
       resources: string[];
     },

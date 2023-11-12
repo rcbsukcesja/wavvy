@@ -71,13 +71,13 @@ import { NgoRegisterDialogComponent } from './ui/ngo-register-dialog.component';
 
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let element"><app-ngo-register-form-status [status]="element.status" /></td>
+        <td mat-cell *matCellDef="let element"><app-ngo-register-form-status [status]="element.disabled" /></td>
       </ng-container>
 
-      <ng-container matColumnDef="createdAt">
+      <!-- <ng-container matColumnDef="createdAt">
         <th mat-header-cell *matHeaderCellDef>Data wysłania</th>
         <td mat-cell *matCellDef="let element">{{ element.endDate | date }}</td>
-      </ng-container>
+      </ng-container> -->
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
@@ -97,13 +97,14 @@ export default class RegisterNgoPageComponent implements OnInit {
   service = inject(NgoRegisterFormApiService);
   stateService = inject(NgoRegisterFormStateService);
   displayedColumns: string[] = [
+    'position',
     'fullName',
     'phone',
     'email',
     'organisation',
     'NIP',
     'KRS',
-    'createdAt',
+    // 'createdAt',
     'status',
     'actions',
   ];

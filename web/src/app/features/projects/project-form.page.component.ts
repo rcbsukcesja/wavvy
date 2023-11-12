@@ -63,24 +63,12 @@ export type ProjectForm = FormGroup<{
   ],
   template: `
     <h2>{{ project ? 'Edytowanie projektu' : 'Dodawanie projektu' }}</h2>
-    <section class="flex">
-      <div *ngIf="logo$ | async as logo" class="w-1/5 mb-4">
-        <img *ngIf="logo.url" [src]="logo.url" />
-      </div>
-
-      <div class="md:w-1/2 flex items-center h-fit ml-8">
-        <div class="flex flex-col">
-          <label [class.text-red-500]="logo$.value.error" for="logo">Obrazek</label>
-          <input
-            [class.text-red-500]="logo$.value.error"
-            id="logo"
-            [formControl]="form.controls.image"
-            #logoInput
-            type="file" />
-        </div>
-        <button type="button" (click)="upload()"><mat-icon>save</mat-icon></button>
-      </div>
+    @if (project?.imageLink; as link) {
+    <section class="flex w-1/4 mb-4">
+      <img [src]="link" />
     </section>
+    }
+
     <form [formGroup]="form" (ngSubmit)="addProject()" class="flex flex-col">
       <mat-form-field>
         <mat-label>Nazwa</mat-label>
@@ -197,13 +185,13 @@ export default class ProjectFormPageComponent implements OnInit {
     error: false,
   } as { file: File | null; url: string | null; error: boolean });
 
-  upload() {
-    if (!this.logo$.value.file) {
-      return;
-    }
+  // upload() {
+  //   if (!this.logo$.value.file) {
+  //     return;
+  //   }
 
-    this.service.uploadProjectImage(this.logo$.value.file);
-  }
+  //   this.service.uploadProjectImage(this.logo$.value.file, this.project!.id);
+  // }
 
   projectStatuses = Object.entries(projectStatusMap).map(([status, label], index) => {
     return {
@@ -268,7 +256,7 @@ export default class ProjectFormPageComponent implements OnInit {
     this.tags = this.project?.tags || [];
 
     this.form = this.builder.group({
-      image: this.builder.control<File | null>(null),
+      // image: this.builder.control<File | null>(null),
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || ''),
@@ -288,38 +276,38 @@ export default class ProjectFormPageComponent implements OnInit {
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
 
-    this.form.controls.image.valueChanges.subscribe(() => {
-      const logoFile = this.logoInput.nativeElement.files?.[0];
+    // this.form.controls.image.valueChanges.subscribe(() => {
+    //   const logoFile = this.logoInput.nativeElement.files?.[0];
 
-      if (logoFile) {
-        const validTypes = ['image/png', 'image/jpeg'];
-        if (!validTypes.includes(logoFile.type)) {
-          this.logo$.next({
-            url: this.logo$.value.url,
-            file: null,
-            error: true,
-          });
-          return;
-        }
+    //   if (logoFile) {
+    //     const validTypes = ['image/png', 'image/jpeg'];
+    //     if (!validTypes.includes(logoFile.type)) {
+    //       this.logo$.next({
+    //         url: this.logo$.value.url,
+    //         file: null,
+    //         error: true,
+    //       });
+    //       return;
+    //     }
 
-        // Check file size (1MB = 1 * 1024 * 1024 bytes)
-        if (logoFile.size > 1 * 1024 * 1024) {
-          this.logo$.next({
-            url: this.logo$.value.url,
-            file: null,
-            error: true,
-          });
-          return;
-        }
+    //     // Check file size (1MB = 1 * 1024 * 1024 bytes)
+    //     if (logoFile.size > 1 * 1024 * 1024) {
+    //       this.logo$.next({
+    //         url: this.logo$.value.url,
+    //         file: null,
+    //         error: true,
+    //       });
+    //       return;
+    //     }
 
-        // Prepare the link
-        this.logo$.next({
-          url: URL.createObjectURL(logoFile),
-          file: logoFile,
-          error: false,
-        });
-      }
-    });
+    //     // Prepare the link
+    //     this.logo$.next({
+    //       url: URL.createObjectURL(logoFile),
+    //       file: logoFile,
+    //       error: false,
+    //     });
+    //   }
+    // });
   }
 
   addProject() {

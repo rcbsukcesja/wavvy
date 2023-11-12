@@ -47,4 +47,7 @@ export interface NGO {
   projects: Project[];
   tags: string[];
   status: keyof typeof NgoStatus;
+  disabled: boolean;
+  confirmed: true;
+  followedByUser: ID[];
 }

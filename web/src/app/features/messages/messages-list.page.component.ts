@@ -1,14 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MessagesApiService } from './data-access/messages.api.service';
 import { MessagesStateService } from './data-access/messages.state.service';
 import { ListShellComponent } from 'src/app/shared/ui/list-shell.component';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
+import PaginationComponent from 'src/app/shared/ui/pagination.component';
+import { BehaviorSubject } from 'rxjs';
+import { PaginationFilters } from 'src/app/core/types/pagination.type';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-messages.page',
   standalone: true,
-  imports: [CommonModule, ListShellComponent, DatePipe, CommonFiltersComponent],
+  imports: [CommonModule, ListShellComponent, DatePipe, CommonFiltersComponent, PaginationComponent],
   template: `
     <ng-container *ngIf="state() as state">
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
@@ -21,6 +25,8 @@ import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-
           <div><strong>Wysłano: </strong>{{ message.createdAt | date : 'long' }}</div>
         </ng-template>
       </app-list-shell>
+      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+
       <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
     </ng-container>
   `,
@@ -31,11 +37,32 @@ export default class MessagesListPageComponent implements OnInit {
   service = inject(MessagesApiService);
   state = inject(MessagesStateService).$value;
 
+  private destroyRef = inject(DestroyRef);
+  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters & { id?: string }>({
+    pageIndex: 0,
+    pageSize: 5,
+    search: '',
+    sort: 'desc',
+  });
+
   ngOnInit(): void {
-    this.service.getAll();
+    this.filters$$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(filters => {
+      this.service.getAll(filters);
+    });
   }
 
   onFiltersChanged(filters: CommonFilters) {
-    this.service.getAll(filters);
+    this.filters$$.next({
+      ...this.filters$$.value,
+      ...filters,
+    });
+  }
+
+  handlePageEvent(e: { pageSize: number; pageIndex: number }) {
+    this.filters$$.next({
+      ...this.filters$$.value,
+      pageIndex: e.pageIndex,
+      pageSize: e.pageSize,
+    });
   }
 }

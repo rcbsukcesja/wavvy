@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CompaniesApiService } from './data-access/companies.api.service';
 import { CompaniesStateService } from './data-access/companies.state.service';
@@ -9,17 +9,34 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MessagesApiService } from '../messages/data-access/messages.api.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
-import { take, tap } from 'rxjs';
+import { BehaviorSubject, take, tap } from 'rxjs';
 import { ListDialogComponent } from 'src/app/shared/ui/common-list-dialog.component';
 import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.component';
 import { ID } from 'src/app/core/types/id.type';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
+import PaginationComponent from 'src/app/shared/ui/pagination.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PaginationFilters } from 'src/app/core/types/pagination.type';
 
 @Component({
   selector: 'app-companies.page',
   standalone: true,
-  imports: [CommonModule, ListShellComponent, MatDividerModule, MatIconModule, MatSnackBarModule, MatDialogModule],
+  imports: [
+    CommonFiltersComponent,
+    PaginationComponent,
+    MatTooltipModule,
+    CommonModule,
+    ListShellComponent,
+    MatDividerModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatDialogModule,
+  ],
   template: `
     <ng-container *ngIf="state() as state">
+      <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
+
       <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="state.list">
         <ng-template #item let-company>
           <div class="mb-4 h-10">
@@ -33,12 +50,18 @@ import { ID } from 'src/app/core/types/id.type';
             <div class="cursor-pointer" (click)="openMessageModal(company.id, company.name)">
               <mat-icon>forward_to_inbox</mat-icon>
             </div>
+            @if (company.resources?.length) {
             <div class="cursor-pointer" (click)="openResourcesModal(company.resources)">
               <mat-icon>build</mat-icon>
             </div>
+            }
+            <!--  -->
+            @if (company.businnessAreas?.length) {
             <div class="cursor-pointer" (click)="openCategoriessModal(company.businnessAreas)">
               <mat-icon>assignment</mat-icon>
             </div>
+            }
+
             <div
               class="cursor-pointer"
               (click)="openContactModal(company.address, company.phone, company.email, company.website)">
@@ -48,6 +71,7 @@ import { ID } from 'src/app/core/types/id.type';
         </ng-template>
       </app-list-shell>
       <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
+      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     </ng-container>
   `,
   styles: [],
@@ -62,7 +86,33 @@ export default class CompaniesListPageComponent implements OnInit {
   state = inject(CompaniesStateService).$value;
 
   ngOnInit(): void {
-    this.service.getAll();
+    this.filters$$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(filters => {
+      this.service.getAll(filters);
+    });
+  }
+
+  private destroyRef = inject(DestroyRef);
+
+  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters>({
+    pageIndex: 0,
+    pageSize: 5,
+    search: '',
+    sort: 'desc',
+  });
+
+  onFiltersChanged(filters: CommonFilters) {
+    this.filters$$.next({
+      ...this.filters$$.value,
+      ...filters,
+    });
+  }
+
+  handlePageEvent(e: { pageSize: number; pageIndex: number }) {
+    this.filters$$.next({
+      ...this.filters$$.value,
+      pageIndex: e.pageIndex,
+      pageSize: e.pageSize,
+    });
   }
 
   openMessageModal(id: ID, name: string) {

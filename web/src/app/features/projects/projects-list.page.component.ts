@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectsApiService } from './data-access/projects.api.service';
 import { ProjectsStateService } from './data-access/projects.state.service';
@@ -25,8 +25,10 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
   imports: [CommonModule, ProjectsListComponent, CommonFiltersComponent, PaginationComponent],
 })
 export default class ProjectsListPageComponent implements OnInit {
+  @Input() projectId?: string;
+
   private destroyRef = inject(DestroyRef);
-  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters>({
+  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters & { id?: string }>({
     pageIndex: 0,
     pageSize: 5,
     search: '',
@@ -37,6 +39,7 @@ export default class ProjectsListPageComponent implements OnInit {
   state = inject(ProjectsStateService).$value;
 
   ngOnInit(): void {
+    this.filters$$.next({ ...this.filters$$.value, id: this.projectId });
     this.filters$$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(filters => {
       this.service.getAll(filters);
     });

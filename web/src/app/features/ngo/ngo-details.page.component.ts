@@ -52,10 +52,10 @@ import { BusinessArea } from './model/ngo.model';
               <mat-icon>forward_to_inbox</mat-icon>
               <p class="!m-0 !ml-3 inline-block">Napisz do nas</p>
             </div>
-            <div class="w-8 h-8 cursor-pointer flex items-center">
+            <!-- <div class="w-8 h-8 cursor-pointer flex items-center">
               <img src="assets/images/blik-logo.jpeg" alt="My Image" />
               <p class="!m-0 !ml-3 inline-block">Wesprzyj</p>
-            </div>
+            </div> -->
           </div>
           <div class="mt-4">
             <div>

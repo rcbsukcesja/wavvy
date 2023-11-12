@@ -7,6 +7,8 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { ID } from 'src/app/core/types/id.type';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
+import { CommonFilters } from 'src/app/shared/ui/common-filters.component';
+import { USER_ROLES } from 'src/app/core/user-roles.enum';
 
 export interface GetAllNGOsParams {}
 
@@ -14,7 +16,7 @@ export interface AddNGOFormValue {}
 
 export type UpdateNGOProfileFormValue = Partial<
   Pick<NGO, 'address' | 'description' | 'email' | 'phone' | 'tags' | 'businnessAreas' | 'logoUrl'> & {
-    status?: keyof typeof NgoStatus;
+    disabled?: boolean;
   }
 >;
 
@@ -43,8 +45,6 @@ export class NGOsApiService extends HttpBaseService {
   updateProfile(payload: UpdateNGOProfileFormValue, id: ID) {
     this.stateService.setState({ updateProfileCallState: 'LOADING' });
 
-    console.log({ payload });
-
     return this.http.patch(`${this.url}/${id}`, payload).pipe(
       tap(() => {
         this.stateService.setState({ updateProfileCallState: 'LOADED' });
@@ -56,26 +56,33 @@ export class NGOsApiService extends HttpBaseService {
   getProfile() {
     this.stateService.setState({ loadProfileCallState: 'LOADING' });
 
+    const user = this.authState.$value().user;
+
+    if (!user) {
+      return;
+    }
+
     this.http
-      .get<NGO[]>(`${this.url}/?owner.id=${this.authState.$value().user!.id}`)
+      .get<NGO[]>(
+        `${user.role === USER_ROLES.NGO_USER ? this.url : 'http://localhost:3000/companies'}/?owner.id=${user.id}`
+      )
       .pipe(
         tap(([ngo]) => {
-          console.log(ngo);
           this.stateService.setState({ loadProfileCallState: 'LOADED', profile: ngo });
         })
       )
       .subscribe();
   }
 
-  getAll(params: PaginationFilters = { pageIndex: 0, pageSize: 5 }) {
+  getAll(params: PaginationFilters & { search: string } = { pageIndex: 0, pageSize: 5, search: '' }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const url = new URL(this.url);
     const sp = new URLSearchParams({
       // _sort: 'startTime',
       // _order: params.sort,
-      // q: params.search,
-      // _page: params.pageIndex.toString(),
+      q: params.search,
+      _page: params.pageIndex.toString(),
       _start: (params.pageIndex * params.pageSize).toString(),
       _limit: params.pageSize.toString(),
     });

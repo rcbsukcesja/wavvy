@@ -34,11 +34,11 @@ export class ProjectsApiService extends HttpBaseService {
     super('projects');
   }
 
-  uploadProjectImage(logo: File) {
+  uploadProjectImage(logo: File, projectId: ID) {
     const formData: FormData = new FormData();
     formData.append('file', logo);
 
-    this.http.post(`${this.url}/logo`, formData).subscribe();
+    this.http.post(`${this.url}/${projectId}/logo`, formData).subscribe();
   }
 
   add(payload: AddProjectFormValue) {
@@ -97,11 +97,18 @@ export class ProjectsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: CommonFilters & PaginationFilters = { sort: DEFAULT_SORT, search: '', pageIndex: 0, pageSize: 5 }) {
+  getAll(
+    params: CommonFilters & PaginationFilters & { id?: string } = {
+      sort: DEFAULT_SORT,
+      search: '',
+      pageIndex: 0,
+      pageSize: 5,
+    }
+  ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     // todo: mock before backend
-    const ngo = this.ngoState().profile;
+    // const ngo = this.ngoState().profile;
 
     const url = new URL(this.url);
     const sp = new URLSearchParams({
@@ -111,11 +118,12 @@ export class ProjectsApiService extends HttpBaseService {
       // _page: params.pageIndex.toString(),
       _start: (params.pageIndex * params.pageSize).toString(),
       _limit: params.pageSize.toString(),
+      id_like: params.id || '',
     });
 
-    if (ngo) {
-      sp.append('ngoId', ngo.id.toString());
-    }
+    // if (ngo) {
+    //   sp.append('ngoId', ngo.id.toString());
+    // }
 
     url.search = sp.toString();
 

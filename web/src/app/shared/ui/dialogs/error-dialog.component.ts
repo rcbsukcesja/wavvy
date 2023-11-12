@@ -29,6 +29,6 @@ export class ErrorDialogComponent {
   dialogData = inject<ErrorDialogData>(MAT_DIALOG_DATA);
 
   retry() {
-    this.dialogData.next(this.dialogData.req).pipe(tap(console.log)).subscribe();
+    this.dialogData.next(this.dialogData.req).subscribe();
   }
 }
