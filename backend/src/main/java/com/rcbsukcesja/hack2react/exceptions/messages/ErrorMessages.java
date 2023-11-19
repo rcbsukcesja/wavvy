@@ -39,4 +39,6 @@ public class ErrorMessages {
     public static final String INVALID_ENUM_VALUE = "Could not find enum with value: %s";
     public static final String INVALID_ENUM_ID = "Could not find enum with id: %s";
     public static final String INVALID_ENUM_NAME = "Could not find enum: %s";
+
+    public static final String INVALID_OFFER_SCOPE = "Requested offer scopes are not allowed for this user";
 }

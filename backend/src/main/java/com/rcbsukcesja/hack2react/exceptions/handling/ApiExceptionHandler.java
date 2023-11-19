@@ -11,6 +11,7 @@ import com.rcbsukcesja.hack2react.exceptions.alreadyExists.UsernameAlreadyExists
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidDateRangeException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidEnumParameterException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidFileException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferScopeException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.CompanyNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.MessageNotFoundException;
@@ -57,7 +58,8 @@ public class ApiExceptionHandler {
             InvalidFileException.class,
             InvalidDateRangeException.class,
             OrganizationsAlreadyAttachedToBusinessAreaException.class,
-            InvalidEnumParameterException.class
+            InvalidEnumParameterException.class,
+            InvalidOfferScopeException.class
     })
     public ResponseEntity<Object> handleBadRequestTypeException(ApiRequestException e) {
 

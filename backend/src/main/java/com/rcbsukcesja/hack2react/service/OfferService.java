@@ -2,14 +2,17 @@ package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OfferNotFoundException;
+import com.rcbsukcesja.hack2react.exceptions.notFound.UserNotFoundException;
 import com.rcbsukcesja.hack2react.model.dto.save.OfferPatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.OfferSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.OfferView;
 import com.rcbsukcesja.hack2react.model.entity.Offer;
+import com.rcbsukcesja.hack2react.model.entity.User;
 import com.rcbsukcesja.hack2react.model.enums.OfferScope;
 import com.rcbsukcesja.hack2react.model.enums.OfferStatus;
 import com.rcbsukcesja.hack2react.model.mappers.OfferMapper;
 import com.rcbsukcesja.hack2react.repositories.OfferRepository;
+import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.specifications.OfferSpecifications;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
@@ -22,7 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -31,11 +34,13 @@ public class OfferService {
 
     private final OfferMapper offerMapper;
     private final OfferRepository offerRepository;
+    private final UserRepository userRepository;
     private final OfferValidation offerValidation;
     private final DateValidation dateValidation;
 
-    public Page<OfferView> getAllOffers(LocalDate startDate, LocalDate endDate, List<OfferStatus> offerStatuses,
-                                        List<OfferScope> offerScopes, Boolean closeDeadlineOnly, Pageable pageable) {
+    public Page<OfferView> getAllOffers(LocalDate startDate, LocalDate endDate, Set<OfferStatus> offerStatuses,
+                                        Set<OfferScope> offerScopes, Boolean closeDeadlineOnly, Boolean followedByUser,
+                                        UUID userId, Pageable pageable) {
         dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
         Specification<Offer> spec = OfferSpecifications.notOutsideDateRange(startDate, endDate);
         if (offerStatuses != null && !offerStatuses.isEmpty()) {
@@ -46,6 +51,13 @@ public class OfferService {
         }
         if (closeDeadlineOnly != null && closeDeadlineOnly) {
             spec = spec.and(OfferSpecifications.isCloseDeadline());
+        }
+        if (followedByUser != null) {
+            if (followedByUser) {
+                spec = spec.and(OfferSpecifications.isFollowedByUser(userId));
+            } else {
+                spec = spec.and(OfferSpecifications.isNotFollowedByUser(userId));
+            }
         }
         return offerRepository.findAll(spec, pageable).map(offerMapper::offerToOfferView);
     }
@@ -115,6 +127,18 @@ public class OfferService {
         return offerMapper.offerToOfferView(saved);
     }
 
+    @Transactional
+    public void followOffer(UUID offerId, UUID userId) {
+        Offer offer = getOfferByIdOrThrowException(offerId);
+        User user = geUserByIdOrThrowException(userId);
+        if (offer.getFollowingUsers().contains(user)) {
+            offer.getFollowingUsers().remove(user);
+        } else {
+            offer.getFollowingUsers().add(user);
+        }
+        offerRepository.saveAndFlush(offer);
+    }
+
     private void setBasicOfferFields(OfferSaveDto offerSaveDto, Offer offer) {
         offer.setName(offerSaveDto.name());
         offer.setDescription(offerSaveDto.description());
@@ -138,6 +162,12 @@ public class OfferService {
         return offerRepository.getOfferById(id)
                 .orElseThrow(() -> new OfferNotFoundException(
                         ErrorMessages.OFFER_NOT_FOUND, id));
+    }
+
+    public User geUserByIdOrThrowException(UUID id) {
+        return userRepository.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException(
+                        ErrorMessages.USER_NOT_FOUND, id));
     }
 
 }

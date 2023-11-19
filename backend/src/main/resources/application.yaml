@@ -1,4 +1,14 @@
+wavvy:
+  keycloak:
+    realm: ${KEYCLOAK_REALM}
+    auth-server-url: ${KEYCLOAK_URL}
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}
+          jwk-set-uri: ${KEYCLOAK_LOCAL_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
   mail:
     properties:
       mail:
@@ -8,14 +18,14 @@ spring:
           auth: true
           ssl:
             enable: true
-    host: smtp.poczta.onet.pl
-    username: wavvy@op.pl
-    password: Rcbsukcesja123$
-    port: 465
+    host: ${EMAIL_SMTP_HOST}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    port: ${EMAIL_SMTP_PORT}
   datasource:
-    url: jdbc:postgresql://localhost:5432/wavvy
-    username: postgres
-    password: postgres
+    url: ${DATABASE_URL}/${DATABASE_NAME}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   sql:
     init:
@@ -35,7 +45,11 @@ spring:
         hbm2ddl:
           create_namespaces: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: ${SWAGGER_CLIENT_ID}
+      client-secret: ${SWAGGER_CLIENT_SECRET}
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE
