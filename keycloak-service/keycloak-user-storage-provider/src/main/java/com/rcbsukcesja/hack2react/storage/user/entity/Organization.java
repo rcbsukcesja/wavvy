@@ -1,7 +1,6 @@
-package com.rcbsukcesja.hack2react.model.entity;
+package com.rcbsukcesja.hack2react.storage.user.entity;
 
-import com.rcbsukcesja.hack2react.utils.TimeUtils;
-import jakarta.persistence.CascadeType;
+import com.rcbsukcesja.hack2react.storage.user.utils.TimeUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -12,10 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -27,8 +22,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
 import java.util.UUID;
+
 
 @Entity
 @Table(name = "organizations", schema = "wavvy")
@@ -47,38 +42,16 @@ public abstract class Organization {
     private UUID id;
     private String name;
     @OneToOne(mappedBy = "organization", fetch = FetchType.LAZY)
-    private User owner;
-    private Address address;
-    private String phone;
-    private String email;
-    private String website;
-    private String logoPath;
-    private String logoUrl;
+    private CustomUserEntity owner;
 
-    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<SocialLink> socialLinks;
-    @Column(columnDefinition = "TIMESTAMP", nullable = false)
+    @Column(name = "CREATED_AT", columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime createdAt;
-    @Column(columnDefinition = "TIMESTAMP", nullable = false)
+    @Column(name = "UPDATED_AT", columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime updatedAt;
-    @Column(length = 2000)
-    private String description;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "organization_business_areas",
-            schema = "wavvy",
-            joinColumns = {@JoinColumn(name = "organization_id")},
-            inverseJoinColumns = {@JoinColumn(name = "business_area_id")}
-    )
-    private Set<BusinessArea> businessAreas;
     private String krs;
     private String nip;
     private String regon;
-
-    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Resource> resources;
 
     @PrePersist
     public void prePersist() {

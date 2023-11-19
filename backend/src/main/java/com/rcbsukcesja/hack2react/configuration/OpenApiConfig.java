@@ -14,8 +14,9 @@ import org.springframework.context.annotation.Configuration;
         type = SecuritySchemeType.OAUTH2,
         name = "OAuth2",
         flows = @OAuthFlows(
-                authorizationCode = @OAuthFlow(authorizationUrl = "http://localhost:8090/realms/wavvy/protocol/openid-connect/auth",
-                        tokenUrl = "http://localhost:8090/realms/wavvy/protocol/openid-connect/token")
+                password = @OAuthFlow(
+                        tokenUrl = "http://localhost:8090/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token"
+                )
         )
 )
 @OpenAPIDefinition(

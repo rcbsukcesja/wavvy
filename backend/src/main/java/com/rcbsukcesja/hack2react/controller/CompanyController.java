@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,11 +32,13 @@ public class CompanyController {
     private final CompanyService organizationCompanyService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_NGO')")
     public ResponseEntity<Page<CompanyListView>> getAllCompanies(@ParameterObject Pageable pageable) {
         return new ResponseEntity<>(organizationCompanyService.getAllCompany(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{companyId}")
+    @PreAuthorize("hasRole('ROLE_NGO')")
     public ResponseEntity<?> getCompanyById(@PathVariable UUID companyId) {
         return new ResponseEntity<>(organizationCompanyService.getCompanyById(companyId), HttpStatus.OK);
     }

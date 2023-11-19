@@ -33,8 +33,8 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest()
                         .authenticated())
-                .cors(AbstractHttpConfigurer::disable)
-                .csrf(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(authority -> authority
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())));
         return http.build();

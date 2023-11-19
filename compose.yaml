@@ -6,7 +6,7 @@ services:
     container_name: keycloak
     environment:
       - KC_DB=postgres
-      - KC_DB_URL=jdbc:postgresql://${KEYCLOAK_DB_HOST}:${KEYCLOAK_DB_PORT}/${KEYCLOAK_DB_NAME}
+      - KC_DB_URL=jdbc:postgresql://${KEYCLOAK_DB_HOST}/${KEYCLOAK_DB_NAME}
       - KC_DB_USERNAME=${KEYCLOAK_DB_USERNAME}
       - KC_DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
       - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN_USERNAME}
@@ -16,24 +16,34 @@ services:
       - EMAIL=${EMAIL}
       - EMAIL_USERNAME=${EMAIL_USERNAME}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - DATABASE_LOCAL_URL=${DATABASE_LOCAL_URL}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - KC_LOG_LEVEL=info
+      - DEBUG=true
+      - DEBUG_PORT=*:5005
     ports:
       - 8090:8080
+      - 5005:5005
+    expose:
+      - 8090
     depends_on:
       - keycloak-db
+      - db
 
   keycloak-db:
     image: 'postgres:15.4-bullseye'
     container_name: keycloak-db
+    command: postgres -c max_prepared_transactions=200
     ports:
       - 5433:5432
-    expose:
-      - 5433
     environment:
       - POSTGRES_USER=${KEYCLOAK_DB_USERNAME}
       - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
       - POSTGRES_DB=${KEYCLOAK_DB_NAME}
     volumes:
-      - keycloak-db:/var/lib/postgresql/data
+      - keycloak-db1:/var/lib/postgresql/data
 
   backend:
     build:
@@ -58,7 +68,8 @@ services:
       - SPRING_MAIL_PASSWORD=${EMAIL_PASSWORD}
       - SPRING_MAIL_PORT=${EMAIL_SMTP_PORT}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
-      - KEYCLOAK_URL=${KEYCLOAK_LOCAL_URL}
+      - KEYCLOAK_URL=${KEYCLOAK_URL}
+      - KEYCLOAK_LOCAL_URL=${KEYCLOAK_LOCAL_URL}
       - SWAGGER_CLIENT_ID=${SWAGGER_CLIENT_ID}
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
 
@@ -67,8 +78,6 @@ services:
     container_name: db
     ports:
       - 5432:5432
-    expose:
-      - 5432
     environment:
       - POSTGRES_USER=${DATABASE_USERNAME}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
@@ -83,10 +92,12 @@ services:
     container_name: wavvy-frontend
     ports:
       - 4200:80
+    expose:
+      - 4200
     environment:
       - API_URL=http://localhost:8080
     depends_on:
       - backend
 volumes:
   postgres:
-  keycloak-db:
+  keycloak-db1:

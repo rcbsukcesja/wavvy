@@ -1,14 +1,14 @@
 wavvy:
   keycloak:
-    realm: ${KEYCLOAK_REALM:wavvy}
-    auth-server-url: ${KEYCLOAK_URL:http://localhost:8090}
+    realm: ${KEYCLOAK_REALM}
+    auth-server-url: ${KEYCLOAK_URL}
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${wavvy.keycloak.auth-server-url}/realms/${wavvy.keycloak.realm}
-          jwk-set-uri: ${wavvy.keycloak.auth-server-url}/realms/${wavvy.keycloak.realm}/protocol/openid-connect/certs
+          issuer-uri: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}
+          jwk-set-uri: ${KEYCLOAK_LOCAL_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
   mail:
     properties:
       mail:
@@ -23,9 +23,9 @@ spring:
     password: ${EMAIL_PASSWORD}
     port: ${EMAIL_SMTP_PORT}
   datasource:
-    url: ${DATABASE_URL}/${DATABASE_NAME:wavvy}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
+    url: ${DATABASE_URL}/${DATABASE_NAME}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   sql:
     init:
