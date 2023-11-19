@@ -30,6 +30,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
+import { CustomValidators } from 'src/app/shared/custom.validator';
 
 export type NgoProfileFormModel = FormGroup<{
   name: FormControl<string>;
@@ -39,12 +40,14 @@ export type NgoProfileFormModel = FormGroup<{
   REGON: FormControl<string>;
   bankAccount: FormControl<string>;
   description: FormControl<string>;
-  address: FormControl<string>;
+  street: FormControl<string>;
+  zipcode: FormControl<string>;
+  city: FormControl<string>;
   email: FormControl<string>;
   website: FormControl<string>;
   phone: FormControl<string>;
   tags: FormControl<string[]>;
-  creationDate: FormControl<string>;
+  foundedAt: FormControl<string>;
   businnessAreas: FormControl<{ id: ID; name: string }[]>;
   resources: FormArray<FormControl<string>>;
 }>;
@@ -68,7 +71,7 @@ export type NgoProfileFormModel = FormGroup<{
   template: `
     <section *ngIf="logo$ | async as logo" class="max-w-3xl">
       <h2>{{ profile.name }}</h2>
-      <div class="w-1/5 mb-4">
+      <div class="w-2/5 mb-4">
         <img *ngIf="logo.url" [src]="logo.url" />
       </div>
 
@@ -99,16 +102,32 @@ export type NgoProfileFormModel = FormGroup<{
         </div>
 
         <div class="flex flex-col md:gap-4">
+          <label>Adres</label>
           <mat-form-field>
-            <mat-label>Adres</mat-label>
-            <input formControlName="address" matInput />
+            <mat-label>Ulica</mat-label>
+            <input formControlName="street" matInput />
           </mat-form-field>
+          <div class="flex flex-col md:flex-row  md:gap-4">
+            <mat-form-field class="md:w-1/2">
+              <mat-label>Kod pocztowy</mat-label>
+              <input formControlName="zipcode" matInput />
+              <mat-hint>Format 00-000</mat-hint>
+            </mat-form-field>
+            <br />
+
+            <mat-form-field class="md:w-1/2">
+              <mat-label>Miasto</mat-label>
+              <input formControlName="city" matInput />
+            </mat-form-field>
+          </div>
+          <hr class="mb-6" />
         </div>
 
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
             <mat-label>Telefon</mat-label>
             <input formControlName="phone" matInput />
+            <mat-hint>Format 793793793</mat-hint>
           </mat-form-field>
           <br />
 
@@ -121,7 +140,7 @@ export type NgoProfileFormModel = FormGroup<{
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
             <mat-label>Data utworzenia</mat-label>
-            <input matInput formControlName="creationDate" [matDatepicker]="picker" placeholder="Wybierz datę" />
+            <input matInput formControlName="foundedAt" [matDatepicker]="picker" placeholder="Wybierz datę" />
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
@@ -194,9 +213,9 @@ export type NgoProfileFormModel = FormGroup<{
             >
           </mat-form-field>
 
-          <mat-form-field class="h-32">
+          <mat-form-field>
             <mat-label>Opis organizacji</mat-label>
-            <textarea formControlName="description" matInput></textarea>
+            <textarea class="!h-48" formControlName="description" matInput></textarea>
             <mat-hint *ngIf="form.controls.description as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
               >Przedstaw swoją organizację, czym się zajmujecie, nad rozwiązaniem jakich problemów pracujecie
               itp</mat-hint
@@ -271,23 +290,51 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
     }
 
     this.form = this.builder.group({
-      name: this.builder.control({ value: this.profile.name, disabled: true }, [Validators.required]),
+      name: this.builder.control({ value: this.profile.name, disabled: true }, [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
       logo: this.builder.control<File | null>(null),
-      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }, [Validators.required]),
-      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }, [Validators.required]),
-      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }, [Validators.required]),
-      bankAccount: this.builder.control(this.profile.bankAccount || ''),
-      description: this.builder.control(this.profile.description || '', [Validators.required]),
-      address: this.builder.control(this.profile.address || '', [Validators.required]),
-      email: this.builder.control(this.profile.email || '', [Validators.required]),
-      website: this.builder.control(this.profile.website || '', [Validators.required]),
-      phone: this.builder.control(this.profile.phone || '', [Validators.required]),
+      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }, [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
+      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }, [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
+      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }, [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
+      bankAccount: this.builder.control(this.profile.bankAccount || '', [
+        Validators.minLength(26),
+        Validators.maxLength(26),
+      ]),
+      description: this.builder.control(this.profile.description || '', [
+        Validators.required,
+        CustomValidators.longMaxLength,
+      ]),
+      street: this.builder.control(this.profile.street || '', [Validators.required, CustomValidators.maxLength]),
+      zipcode: this.builder.control(this.profile.zipcode || '78-100', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(6),
+      ]),
+      city: this.builder.control(this.profile.city || '', [Validators.required, CustomValidators.maxLength]),
+      email: this.builder.control(this.profile.email || '', [Validators.required, CustomValidators.maxLength]),
+      website: this.builder.control(this.profile.website || '', [Validators.required, CustomValidators.maxLength]),
+      phone: this.builder.control(this.profile.phone || '', [
+        Validators.required,
+        Validators.minLength(9),
+        Validators.maxLength(9),
+      ]),
       tags: this.builder.control(this.profile.tags || [], [Validators.required, Validators.minLength(3)]),
-      creationDate: this.builder.control(this.profile.creationDate || '', [Validators.required]),
+      foundedAt: this.builder.control(this.profile.foundedAt || '', [Validators.required]),
       businnessAreas: this.builder.control<{ id: ID; name: string }[]>(
         this.bussinessAreas.filter(area => this.profile.businnessAreas?.includes(area.id) || [])
       ),
-      resources: this.builder.array<FormControl<string>>([]),
+      resources: this.builder.array<FormControl<string>>([], [Validators.maxLength(20)]),
     });
 
     this.tags = this.form.controls.tags.value;
@@ -355,7 +402,9 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
   }
 
   addResource(resourceName: string) {
-    this.form.controls.resources.push(this.builder.control({ value: resourceName, disabled: true }));
+    this.form.controls.resources.push(
+      this.builder.control({ value: resourceName, disabled: true }, [Validators.required, CustomValidators.maxLength])
+    );
   }
 
   removeResource(resourceIndex: number) {

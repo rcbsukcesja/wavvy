@@ -1,4 +1,4 @@
-import { DatePipe, NgClass, NgIf } from '@angular/common';
+import { DatePipe, JsonPipe, NgClass, NgIf } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,7 +17,11 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
 import { UserRoles, USER_ROLES } from 'src/app/core/user-roles.enum';
-import { ChangeNgoStatusDialogComponent, ChangeStatusDialogData } from '../ngo/ui/change-ngo-status.component';
+import {
+  ChangeStatusDialogComponent,
+  ChangeStatusDialogData,
+  DisableFormValue,
+} from '../ngo/ui/change-ngo-status.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ID } from 'src/app/core/types/id.type';
 
@@ -36,6 +40,7 @@ import { ID } from 'src/app/core/types/id.type';
     CommonFiltersComponent,
     NgClass,
     MatTooltipModule,
+    JsonPipe,
   ],
   template: `
     <header>
@@ -50,7 +55,7 @@ import { ID } from 'src/app/core/types/id.type';
       <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
-          <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.position + data.positionModifier }}</td>
         </ng-container>
 
         <ng-container matColumnDef="status">
@@ -60,7 +65,7 @@ import { ID } from 'src/app/core/types/id.type';
               {{ element.status | projectStatus }}
               <div
                 class="rounded-full h-4 w-4 ml-1 shrink-0"
-                [matTooltip]="'Skontaktuj się z miastem by dowiedzieć się o powodzie'"
+                [matTooltip]="'Powód blokady: ' + element.reason"
                 [matTooltipDisabled]="!element.disabled"
                 [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
             </div>
@@ -166,7 +171,7 @@ export default class ManageProjectsPageComponent implements OnInit {
 
   changeStatus(project: Project) {
     this.dialog
-      .open(ChangeNgoStatusDialogComponent, {
+      .open(ChangeStatusDialogComponent, {
         width: '500px',
         data: {
           disabled: project.disabled,
@@ -174,8 +179,12 @@ export default class ManageProjectsPageComponent implements OnInit {
       })
       .afterClosed()
       .pipe(take(1))
-      .subscribe(status => {
-        this.service.update(project.id, { disabled: status }, this.filters$$.value);
+      .subscribe((state: DisableFormValue) => {
+        if (state === undefined) {
+          return;
+        }
+
+        this.service.update(project.id, { disabled: state.shouldDisable, reason: state.reason }, this.filters$$.value);
       });
   }
 
@@ -186,7 +195,7 @@ export default class ManageProjectsPageComponent implements OnInit {
   displayedColumns: string[] = [
     'position',
     'name',
-    'description',
+    // 'description',
     'startTime',
     'endTime',
     'budget',
@@ -204,6 +213,7 @@ export default class ManageProjectsPageComponent implements OnInit {
             ...offer,
           })),
           totalElements,
+          positionModifier: this.filters$$.value.pageIndex * this.filters$$.value.pageSize,
         };
       })
     )
@@ -225,7 +235,11 @@ export default class ManageProjectsPageComponent implements OnInit {
 
   ngOnInit() {
     this.filters$$.subscribe(filters => {
-      this.service.getAll(filters);
+      if (this.role === 'ADMIN') {
+        this.service.getAll(filters);
+      } else {
+        this.service.getAllMine(filters);
+      }
     });
   }
 

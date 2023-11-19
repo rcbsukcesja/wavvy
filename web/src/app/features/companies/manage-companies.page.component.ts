@@ -11,13 +11,15 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CommonFiltersComponent, CommonFilters } from 'src/app/shared/ui/common-filters.component';
 import { RemoveDialogComponent } from 'src/app/shared/ui/common-remove-dialog.component';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
-import { ChangeNgoStatusDialogComponent, ChangeStatusDialogData } from '../ngo/ui/change-ngo-status.component';
+import { ChangeStatusDialogComponent, ChangeStatusDialogData } from '../ngo/ui/change-ngo-status.component';
 import { NgoStatusPipe } from '../ngo/utils/ngo-status.pipe';
 import { Project } from '../projects/model/project.model';
 import { CompaniesApiService } from './data-access/companies.api.service';
 import { CompaniesStateService } from './data-access/companies.state.service';
 import { Company } from './model/company.model';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ID } from 'src/app/core/types/id.type';
+import { NgoRegisterDialogComponent } from '../ngo/register/ui/ngo-register-dialog.component';
 
 @Component({
   selector: 'app-manage-companies-page',
@@ -26,13 +28,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     <header>
       <h2>Zarządzaj firmami</h2>
     </header>
-    <!-- <button class="mb-4" mat-raised-button color="primary" (click)="goToProjectForm()">Dodaj</button> -->
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
     <ng-container *ngIf="dataSource() as data">
       <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
-          <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.position + data.positionModifier }}</td>
         </ng-container>
 
         <ng-container matColumnDef="phone">
@@ -61,13 +62,30 @@ import { MatTooltipModule } from '@angular/material/tooltip';
           <td mat-cell *matCellDef="let element">{{ element.name }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="confirmed">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-icon [matTooltip]="'Status potwierdzenia firmy'">verified</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.confirmed) {
+            <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
+            } @else {
+            <mat-icon>hourglass_empty</mat-icon>
+            }
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-4">
+              <button [matTooltip]="'Pokaż firmę'" (click)="showCompanyOnList(element.id)">
+                <mat-icon>preview</mat-icon>
+              </button>
+              <button [matTooltip]="'Zatwierdź firmę'" (click)="openConfirmationDialog(element)">
+                <mat-icon>check</mat-icon>
+              </button>
               <button (click)="edit(element)"><mat-icon>edit</mat-icon></button>
-              <!-- <button (click)="goToProjectForm(element)"><mat-icon>edit</mat-icon></button> -->
-              <!-- <button (click)="remove(element)"><mat-icon>delete</mat-icon></button> -->
             </div>
           </td>
         </ng-container>
@@ -113,15 +131,39 @@ export default class ManageCompaniesPageComponent implements OnInit {
     // 'startTime',
     // 'endTime',
     // 'budget',
+    'confirmed',
+
     'status',
     // 'visibility',
     // 'tags',
     'actions',
   ];
 
+  openConfirmationDialog(element: Company) {
+    this.dialog
+      .open(NgoRegisterDialogComponent, {
+        width: '500px',
+        data: {
+          element,
+        },
+      })
+      .afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (!confirmed) {
+          return;
+        }
+
+        this.service.confirm(element.id);
+      });
+  }
+
+  showCompanyOnList(id: ID) {
+    this.router.navigateByUrl(`/companies?companyId=${id}`);
+  }
+
   edit(company: Company) {
     this.dialog
-      .open(ChangeNgoStatusDialogComponent, {
+      .open(ChangeStatusDialogComponent, {
         width: '500px',
         data: {
           disabled: company.disabled,
@@ -148,6 +190,7 @@ export default class ManageCompaniesPageComponent implements OnInit {
             ...offer,
           })),
           totalElements,
+          positionModifier: this.filters$$.value.pageIndex * this.filters$$.value.pageSize,
         };
       })
     )

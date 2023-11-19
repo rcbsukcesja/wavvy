@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
-import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { AddOfferFormValue } from '../data-access/offers.api.service';
-import { ID } from 'src/app/core/types/id.type';
+import { CustomValidators } from 'src/app/shared/custom.validator';
 
 @Component({
   selector: 'app-add-offer-form',
@@ -28,25 +28,25 @@ import { ID } from 'src/app/core/types/id.type';
       <mat-form-field>
         <mat-label>Nazwa</mat-label>
         <input formControlName="name" matInput />
-        <mat-hint>Dodaj nazwę</mat-hint>
+        <mat-hint>Dodaj nazwę oferty</mat-hint>
       </mat-form-field>
       <br />
       <mat-form-field>
         <mat-label>Opis</mat-label>
         <textarea formControlName="description" matInput></textarea>
-        <mat-hint>Dodaj opis</mat-hint>
+        <mat-hint>Dodaj skrócony, ogólny opis dotyczący oferty</mat-hint>
       </mat-form-field>
       <br />
       <mat-form-field>
         <mat-label>Grupa docelowa</mat-label>
         <textarea formControlName="targetAudience" matInput></textarea>
-        <mat-hint>Dodaj opis grupy docelowej</mat-hint>
+        <mat-hint>Dodaj opis grupy docelowej, do której kierowana jest oferta</mat-hint>
       </mat-form-field>
       <br />
       <mat-form-field>
         <mat-label>Data rozpoczęcia naboru</mat-label>
         <input matInput formControlName="startDate" [matDatepicker]="datepicker" />
-        <mat-hint>DD/MM/YYYY</mat-hint>
+        <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
         <mat-datepicker #datepicker> </mat-datepicker>
       </mat-form-field>
@@ -54,7 +54,7 @@ import { ID } from 'src/app/core/types/id.type';
       <mat-form-field>
         <mat-label>Data zakończenia naboru</mat-label>
         <input matInput formControlName="endDate" [matDatepicker]="datepicker2" />
-        <mat-hint>DD/MM/YYYY</mat-hint>
+        <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
         <mat-datepicker #datepicker2> </mat-datepicker>
       </mat-form-field>
@@ -62,12 +62,14 @@ import { ID } from 'src/app/core/types/id.type';
       <div class="flex gap-4">
         <mat-form-field>
           <mat-label>Budżet (PLN)</mat-label>
-          <input formControlName="budget" matInput type="number" min="0" />
+          <input formControlName="budget" matInput type="number" min="0" max="9999999" />
+          <mat-hint>Wartość w podana w złotówkach</mat-hint>
         </mat-form-field>
 
         <mat-form-field>
           <mat-label>Poziom finansowania (%)</mat-label>
-          <input formControlName="fundingLevel" matInput type="number" min="0" max="100" />
+          <input formControlName="fundingLevel" matInput type="number" min="1" max="100" />
+          <mat-hint>Wartość między 1, a 100</mat-hint>
         </mat-form-field>
       </div>
       <br />
@@ -75,44 +77,19 @@ import { ID } from 'src/app/core/types/id.type';
       <mat-form-field>
         <mat-label>Link do BIP</mat-label>
         <input formControlName="link" matInput />
-        <mat-hint>Dodaj</mat-hint>
+        <mat-hint>Dodaj link do szczegółów oferty</mat-hint>
       </mat-form-field>
-      <br />
-      <!-- <mat-form-field>
-        <mat-label>Kategorie</mat-label>
-        <mat-select formControlName="categories" multiple>
-          <mat-select-trigger>
-            {{ form.controls.categories.value[0]?.name || '' }}
-            <span *ngIf="(form.controls.categories.value.length || 0) > 1">
-              (+{{ (form.controls.categories.value.length || 0) - 1 }}
-              {{ form.controls.categories.value.length === 2 ? 'other' : 'others' }})
-            </span>
-          </mat-select-trigger>
-          <mat-option *ngFor="let category of categoryList" [value]="category">{{ category.name }}</mat-option>
-        </mat-select>
-      </mat-form-field> -->
       <br />
       <button mat-raised-button color="primary">Zapisz</button>
     </form>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddOfferFormComponent {
+export class AddOfferFormComponent implements OnInit {
   @Input() formValue?: AddOfferFormValue;
   @Output() add = new EventEmitter<AddOfferFormValue>();
 
   private builder = inject(NonNullableFormBuilder);
-
-  categoryList = [
-    {
-      name: 'kategoria1',
-      id: 1,
-    },
-    {
-      name: 'kategoria2',
-      id: 2,
-    },
-  ];
 
   form!: FormGroup<{
     name: FormControl<string>;
@@ -123,7 +100,6 @@ export class AddOfferFormComponent {
     fundingLevel: FormControl<number>;
     targetAudience: FormControl<string>;
     link: FormControl<string>;
-    categories: FormControl<{ id: ID; name: string }[]>;
   }>;
 
   addOffer() {
@@ -131,24 +107,21 @@ export class AddOfferFormComponent {
   }
 
   ngOnInit() {
-    let preselectedCategories: { id: ID; name: string }[] = [];
-
-    if (this.formValue) {
-      preselectedCategories = this.categoryList.filter(cat =>
-        this.formValue?.categories.some(({ id }) => id === cat.id)
-      );
-    }
-
     this.form = this.builder.group({
-      name: this.builder.control(this.formValue?.name || ''),
-      description: this.builder.control(this.formValue?.description || ''),
-      targetAudience: this.builder.control(this.formValue?.targetAudience || ''),
-      budget: this.builder.control(this.formValue?.budget || 0),
-      fundingLevel: this.builder.control(this.formValue?.fundingLevel || 0),
-      startDate: this.builder.control(this.formValue?.startDate || ''),
-      endDate: this.builder.control(this.formValue?.endDate || ''),
-      link: this.builder.control(this.formValue?.link || ''),
-      categories: this.builder.control<{ id: ID; name: string }[]>(preselectedCategories),
+      name: this.builder.control(this.formValue?.name || '', [Validators.required, CustomValidators.maxLength]),
+      description: this.builder.control(this.formValue?.description || '', [
+        Validators.required,
+        CustomValidators.longMaxLength,
+      ]),
+      targetAudience: this.builder.control(this.formValue?.targetAudience || '', [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
+      budget: this.builder.control(this.formValue?.budget || 0, [Validators.required, Validators.max(9999999)]),
+      fundingLevel: this.builder.control(this.formValue?.fundingLevel || 0, [Validators.required, Validators.max(100)]),
+      startDate: this.builder.control(this.formValue?.startDate || '', [Validators.required]),
+      endDate: this.builder.control(this.formValue?.endDate || '', [Validators.required]),
+      link: this.builder.control(this.formValue?.link || '', [Validators.required, CustomValidators.maxLength]),
     });
   }
 }

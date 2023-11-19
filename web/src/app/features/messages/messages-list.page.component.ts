@@ -27,7 +27,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       </app-list-shell>
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
 
-      <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
+      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
     </ng-container>
   `,
   styles: [],

@@ -22,6 +22,9 @@ import { ID } from 'src/app/core/types/id.type';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipEditedEvent, MatChipsModule } from '@angular/material/chips';
 import { BehaviorSubject } from 'rxjs';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export type ProjectForm = FormGroup<{
   image: FormControl<File | null>;
@@ -52,6 +55,7 @@ export type ProjectForm = FormGroup<{
     MatCheckboxModule,
     CommonModule,
     MatChipsModule,
+    MatTooltipModule,
   ],
   styles: [
     `
@@ -88,20 +92,32 @@ export type ProjectForm = FormGroup<{
         <mat-label>Wiadomość do współpracy!</mat-label>
         <textarea formControlName="cooperationMessage" matInput></textarea>
         <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
-        <mat-hint>Daj znać kogo/czego potrzebujesz</mat-hint>
+        <mat-hint class="flex items-center"
+          >Daj znać kogo/czego potrzebujesz, ta wiadomość wyświetli się po najechaniu na ikonę
+          <mat-icon
+            [matTooltip]="form.controls.cooperationMessage.value"
+            [matTooltipDisabled]="!form.controls.cooperationMessage.value"
+            class="ml-2"
+            >spatial_audio_off</mat-icon
+          >
+          na widoku projektu
+        </mat-hint>
       </mat-form-field>
       <br />
       <mat-form-field>
         <mat-label>Planowany budżet</mat-label>
         <input formControlName="budget" matInput />
         <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
-        <mat-hint>Dodaj opis</mat-hint>
+        <mat-hint
+          >Daj znać jakiego budżetu potrzebujesz. Ta informacja będzie widoczna tylko dla zalogowanych
+          użytkowników</mat-hint
+        >
       </mat-form-field>
       <br />
       <mat-form-field>
         <mat-label>Data rozpoczęcia </mat-label>
         <input matInput formControlName="startTime" [matDatepicker]="datepicker" />
-        <mat-hint>DD/MM/YYYY</mat-hint>
+        <mat-hint>Format daty: dd/mm/yyyy z</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
         <mat-datepicker #datepicker> </mat-datepicker>
       </mat-form-field>
@@ -109,7 +125,7 @@ export type ProjectForm = FormGroup<{
       <mat-form-field>
         <mat-label>Data zakończenia </mat-label>
         <input matInput formControlName="endTime" [matDatepicker]="datepicker2" />
-        <mat-hint>DD/MM/YYYY</mat-hint>
+        <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
         <mat-datepicker #datepicker2> </mat-datepicker>
       </mat-form-field>
@@ -122,7 +138,8 @@ export type ProjectForm = FormGroup<{
       </mat-form-field>
       <br />
 
-      <mat-checkbox class="example-margin" formControlName="possibleVolunteer">Wolontariat</mat-checkbox>
+      <label>Czy szukasz wolontariuszy do projektu?</label>
+      <mat-checkbox class="example-margin" formControlName="possibleVolunteer">Tak</mat-checkbox>
 
       <br />
 
@@ -184,14 +201,6 @@ export default class ProjectFormPageComponent implements OnInit {
     url: null,
     error: false,
   } as { file: File | null; url: string | null; error: boolean });
-
-  // upload() {
-  //   if (!this.logo$.value.file) {
-  //     return;
-  //   }
-
-  //   this.service.uploadProjectImage(this.logo$.value.file, this.project!.id);
-  // }
 
   projectStatuses = Object.entries(projectStatusMap).map(([status, label], index) => {
     return {

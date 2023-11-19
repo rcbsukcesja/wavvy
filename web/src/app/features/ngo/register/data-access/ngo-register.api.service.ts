@@ -20,7 +20,6 @@ export type NgoRegisterFormUpdateValue =
 export class NgoRegisterFormApiService extends HttpBaseService {
   private stateService = inject(NgoRegisterFormStateService);
 
-  // TODO common endpoint to fetch organisation that are not confirmed yet
   constructor() {
     super('register');
   }

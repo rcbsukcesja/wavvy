@@ -35,14 +35,14 @@ import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-
     <header>
       <h2>Zarządzaj ofertami</h2>
     </header>
-    <button mat-raised-button color="primary" (click)="openOfferForm()">Dodaj</button>
+    <button mat-raised-button color="primary" class="mb-4" (click)="openOfferForm()">Dodaj</button>
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
 
     <ng-container *ngIf="dataSource() as data">
       <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
-          <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.position + data.positionModifier }}</td>
         </ng-container>
 
         <ng-container matColumnDef="name">
@@ -67,7 +67,7 @@ import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-
 
         <ng-container matColumnDef="fundingLevel">
           <th mat-header-cell *matHeaderCellDef>Poziom finansowania</th>
-          <td mat-cell *matCellDef="let element">{{ element.fundingLevel }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.fundingLevel }}%</td>
         </ng-container>
 
         <ng-container matColumnDef="startDate">
@@ -129,6 +129,7 @@ export default class ManageOffersPageComponent implements OnInit {
             ...offer,
           })),
           totalElements,
+          positionModifier: this.filters$$.value.pageIndex * this.filters$$.value.pageSize,
         };
       })
     )

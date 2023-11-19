@@ -36,8 +36,8 @@ export class LoginFormComponent {
   private builder = inject(NonNullableFormBuilder);
 
   form = this.builder.group({
-    login: this.builder.control('ziomek@ziomek.pl'),
-    password: this.builder.control('ziomek@ziomek.pl'),
+    login: this.builder.control('ngo3'),
+    password: this.builder.control('ngo3'),
   });
 
   emitLogin() {

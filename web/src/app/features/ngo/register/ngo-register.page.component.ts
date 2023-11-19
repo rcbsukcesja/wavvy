@@ -31,7 +31,6 @@ import { NgoRegisterDialogComponent } from './ui/ngo-register-dialog.component';
     <header>
       <h2>Rejestracja organizacji</h2>
     </header>
-    <!-- <button mat-raised-button color="primary" (click)="openOfferForm()">Dodaj</button> -->
 
     <table *ngIf="dataSource() as data" mat-table [dataSource]="data" class="mat-elevation-z8">
       <ng-container matColumnDef="position">
@@ -82,7 +81,7 @@ import { NgoRegisterDialogComponent } from './ui/ngo-register-dialog.component';
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
-          <button *ngIf="element.status === 'PENDING'" (click)="openChangeStatus(element)">
+          <button *ngIf="!element.confirmed" (click)="openChangeStatus(element)">
             <mat-icon>edit</mat-icon>
           </button>
         </td>

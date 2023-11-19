@@ -45,6 +45,7 @@ export interface Project {
   possibleVolunteer: boolean;
   categories: BusinessArea[];
   disabled: boolean;
+  reason?: string;
 }
 
 export interface NGOProject extends Project {

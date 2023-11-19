@@ -17,7 +17,7 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
       <app-projects-list *ngIf="state.loadListCallState === 'LOADED'" [projects]="state.list" />
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
-      <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
+      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
     </ng-container>
   `,
   styles: [],

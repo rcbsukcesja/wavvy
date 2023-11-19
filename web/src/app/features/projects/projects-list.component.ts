@@ -55,9 +55,7 @@ class DescriptionDialogComponent {
             class="relative h-80 bg-cover"
             [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
             @if (project.disabled && $ngoId() === project.ngoId) {
-            <div
-              class="absolute left-2 top-2 text-red-600 "
-              [matTooltip]="'Skontaktuj się z miastem by dowiedzieć się o powodzie zablokowania projektu'">
+            <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
               <mat-icon>warning</mat-icon>
             </div>
             }

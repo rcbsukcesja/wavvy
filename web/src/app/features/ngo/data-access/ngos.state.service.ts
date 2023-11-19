@@ -41,7 +41,11 @@ export class NGOsStateService extends StateService<NGOsStateValue> {
         filter(s => s.status === 'NON_AUTHENTICATED')
       )
       .subscribe(s => {
-        this.setState(initialState);
+        this.setState({
+          ...this.$value(),
+          details: null,
+          profile: null,
+        });
       });
   }
 }

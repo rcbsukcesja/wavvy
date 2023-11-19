@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { CommonModule, SlicePipe } from '@angular/common';
 import { ListShellComponent } from 'src/app/shared/ui/list-shell.component';
 import { NGOsApiService } from './data-access/ngos.api.service';
@@ -110,13 +110,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
           </div>
         </ng-template>
       </app-list-shell>
-      <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
+      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class NgoListPageComponent implements OnInit {
+  @Input() ngoId?: string;
+
   snackbar = inject(MatSnackBar);
   messagesService = inject(MessagesApiService);
   $authState = inject(AuthStateService).$value;
@@ -129,6 +131,8 @@ export default class NgoListPageComponent implements OnInit {
   public $isAuth = computed(() => this.$authState().status === 'AUTHENTICATED');
 
   ngOnInit(): void {
+    this.filters$$.next({ ...this.filters$$.value, id: this.ngoId });
+
     this.filters$$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(filters => {
       this.service.getAll(filters);
     });
@@ -136,7 +140,7 @@ export default class NgoListPageComponent implements OnInit {
 
   private destroyRef = inject(DestroyRef);
 
-  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters>({
+  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters & { id?: string }>({
     pageIndex: 0,
     pageSize: 5,
     search: '',

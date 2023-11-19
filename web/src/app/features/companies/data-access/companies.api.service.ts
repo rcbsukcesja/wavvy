@@ -18,6 +18,7 @@ export interface AddCompanyFormValue {
   link: string;
   categories: { id: ID; name: string }[];
   disabled?: boolean;
+  reason?: string;
 }
 
 @Injectable({
@@ -29,6 +30,8 @@ export class CompaniesApiService extends HttpBaseService {
   constructor() {
     super('companies');
   }
+
+  confirm(id: ID) {}
 
   add(payload: AddCompanyFormValue) {
     return this.http.post<Company>(`${this.url}`, payload);
@@ -42,7 +45,7 @@ export class CompaniesApiService extends HttpBaseService {
     return this.http.delete(`${this.url}/${id}`);
   }
 
-  getAll(params: PaginationFilters & { search: string } = { pageIndex: 0, pageSize: 5, search: '' }) {
+  getAll(params: PaginationFilters & { search: string } & { id?: string } = { pageIndex: 0, pageSize: 5, search: '' }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const url = new URL(this.url);
@@ -50,9 +53,10 @@ export class CompaniesApiService extends HttpBaseService {
       // _sort: 'startTime',
       // _order: params.sort,
       q: params.search,
-      _page: params.pageIndex.toString(),
+      // _page: params.pageIndex.toString(),
       _start: (params.pageIndex * params.pageSize).toString(),
       _limit: params.pageSize.toString(),
+      id_like: params.id || '',
     });
 
     url.search = sp.toString();

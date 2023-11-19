@@ -16,9 +16,16 @@ import { ProjectStatusPipe } from '../projects/utils/project-status.pipe';
 import { NGOsStateService } from './data-access/ngos.state.service';
 import { NGOsApiService } from './data-access/ngos.api.service';
 import { NgoStatusPipe } from './utils/ngo-status.pipe';
-import { ChangeNgoStatusDialogComponent, ChangeStatusDialogData } from './ui/change-ngo-status.component';
+import {
+  ChangeStatusDialogComponent,
+  ChangeStatusDialogData,
+  DisableFormValue,
+} from './ui/change-ngo-status.component';
 import { NGO } from './model/ngo.model';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ID } from 'src/app/core/types/id.type';
+import { NgoRegisterDialogComponent } from './register/ui/ngo-register-dialog.component';
+import { LegalStatusPipe } from './utils/legal-status.pipe';
 
 @Component({
   selector: 'app-manage-ngos-page',
@@ -27,13 +34,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     <header>
       <h2>Zarządzaj NGO</h2>
     </header>
-    <!-- <button class="mb-4" mat-raised-button color="primary" (click)="goToProjectForm()">Dodaj</button> -->
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
     <ng-container *ngIf="dataSource() as data">
       <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
-          <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.position + data.positionModifier }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="legalStatus">
+          <th mat-header-cell *matHeaderCellDef>Forma</th>
+          <td mat-cell *matCellDef="let element">{{ element.legalStatus | legalStatus }}</td>
         </ng-container>
 
         <ng-container matColumnDef="phone">
@@ -62,10 +73,29 @@ import { MatTooltipModule } from '@angular/material/tooltip';
           <td mat-cell *matCellDef="let element">{{ element.name }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="confirmed">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-icon [matTooltip]="'Status potwierdzenia firmy'">verified</mat-icon>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.confirmed) {
+            <mat-icon>check</mat-icon>
+            } @else {
+            <mat-icon>hourglass_empty</mat-icon>
+            }
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-4">
+              <button [matTooltip]="'Pokaż NGO'" (click)="showNgoOnList(element.id)">
+                <mat-icon>preview</mat-icon>
+              </button>
+              <button [matTooltip]="'Zatwierdź NGO'" (click)="openConfirmationDialog(element)">
+                <mat-icon>check</mat-icon>
+              </button>
               <button (click)="edit(element)"><mat-icon>edit</mat-icon></button>
               <!-- <button (click)="goToProjectForm(element)"><mat-icon>edit</mat-icon></button> -->
               <!-- <button (click)="remove(element)"><mat-icon>delete</mat-icon></button> -->
@@ -93,6 +123,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     NgoStatusPipe,
     NgClass,
     MatTooltipModule,
+    LegalStatusPipe,
   ],
 })
 export default class ManageNGOsPageComponent implements OnInit {
@@ -109,21 +140,45 @@ export default class ManageNGOsPageComponent implements OnInit {
   displayedColumns: string[] = [
     'position',
     'name',
+    'legalStatus',
     'phone',
     'email',
     // 'description',
     // 'startTime',
     // 'endTime',
     // 'budget',
+    'confirmed',
     'status',
     // 'visibility',
     // 'tags',
     'actions',
   ];
 
+  showNgoOnList(id: ID) {
+    this.router.navigateByUrl(`/ngos?ngoId=${id}`);
+  }
+
+  openConfirmationDialog(element: NGO) {
+    this.dialog
+      .open(NgoRegisterDialogComponent, {
+        width: '500px',
+        data: {
+          element,
+        },
+      })
+      .afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (!confirmed) {
+          return;
+        }
+
+        this.service.confirm(element.id);
+      });
+  }
+
   edit(ngo: NGO) {
     this.dialog
-      .open(ChangeNgoStatusDialogComponent, {
+      .open(ChangeStatusDialogComponent, {
         width: '500px',
         data: {
           disabled: ngo.disabled,
@@ -132,12 +187,12 @@ export default class ManageNGOsPageComponent implements OnInit {
       .afterClosed()
       .pipe(
         take(1),
-        switchMap(status => {
-          if (status === undefined) {
+        switchMap((state: DisableFormValue) => {
+          if (!state) {
             return EMPTY;
           }
 
-          return this.service.updateProfile({ disabled: status }, ngo.id);
+          return this.service.updateProfile({ disabled: state.shouldDisable, reason: state.reason }, ngo.id);
         })
       )
       .subscribe(() => {
@@ -154,6 +209,7 @@ export default class ManageNGOsPageComponent implements OnInit {
             ...offer,
           })),
           totalElements,
+          positionModifier: this.filters$$.value.pageIndex * this.filters$$.value.pageSize,
         };
       })
     )

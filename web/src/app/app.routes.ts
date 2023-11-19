@@ -155,7 +155,7 @@ export const routes: Routes = [
           },
           {
             path: 'manage/my-profile',
-            loadComponent: () => import('./features/ngo/ngo-profile.page.component'),
+            loadComponent: () => import('./features/ngo/profile.page.component'),
             canMatch: [authGuard, roleGuard],
             data: {
               roles: [USER_ROLES.NGO_USER, USER_ROLES.COMPANY_USER],

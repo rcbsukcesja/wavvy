@@ -6,7 +6,10 @@ dotenv.config();
 
 const content = `
 export const environment = {
- API_URL: '${process.env.API_URL}'
+ API_URL: '${process.env.API_URL}',
+ KEYCLOAK_URL: '${process.env.KEYCLOAK_URL}',
+ KEYCLOAK_REALM: '${process.env.KEYCLOAK_REALM}',
+ KEYCLOAK_CLIENT_ID: '${process.env.KEYCLOAK_CLIENT_ID}'
 };
 `;
 

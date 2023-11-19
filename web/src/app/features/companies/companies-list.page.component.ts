@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CompaniesApiService } from './data-access/companies.api.service';
 import { CompaniesStateService } from './data-access/companies.state.service';
@@ -70,7 +70,7 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
           </div>
         </ng-template>
       </app-list-shell>
-      <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
+      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     </ng-container>
   `,
@@ -78,6 +78,7 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class CompaniesListPageComponent implements OnInit {
+  @Input() companyId?: string;
   snackbar = inject(MatSnackBar);
   messagesService = inject(MessagesApiService);
   dialog = inject(MatDialog);
@@ -86,6 +87,7 @@ export default class CompaniesListPageComponent implements OnInit {
   state = inject(CompaniesStateService).$value;
 
   ngOnInit(): void {
+    this.filters$$.next({ ...this.filters$$.value, id: this.companyId });
     this.filters$$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(filters => {
       this.service.getAll(filters);
     });
@@ -93,7 +95,7 @@ export default class CompaniesListPageComponent implements OnInit {
 
   private destroyRef = inject(DestroyRef);
 
-  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters>({
+  private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters & { id?: string }>({
     pageIndex: 0,
     pageSize: 5,
     search: '',

@@ -21,7 +21,7 @@ export interface AddOfferFormValue {
   startDate: string;
   endDate: string;
   link: string;
-  categories: { id: ID; name: string }[];
+  // categories: { id: ID; name: string }[];
 }
 
 @Injectable({
@@ -42,13 +42,17 @@ export class OffersApiService extends HttpBaseService {
       return;
     }
 
+    console.log(ngo);
+
     const alreadyFollowed = ngo.followedByUser.includes(offerId);
     const payload = alreadyFollowed
       ? ngo.followedByUser.filter(id => id !== offerId)
       : [...ngo.followedByUser, offerId];
 
     this.http
-      .patch<User>(`${this.API_URL}/${offerId}/follow`, payload)
+      .patch<User>(`${this.API_URL}/ngos/${ngo.id}`, {
+        followedByUser: payload,
+      })
       .pipe(
         tap(user => {
           this.ngoState.setState({
@@ -101,7 +105,7 @@ export class OffersApiService extends HttpBaseService {
 
     const url = new URL(this.url);
     const sp = new URLSearchParams({
-      _sort: 'startTime',
+      _sort: 'startDate',
       _order: params.sort,
       q: params.search,
       // _page: params.pageIndex.toString(),

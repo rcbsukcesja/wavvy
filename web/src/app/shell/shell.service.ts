@@ -56,15 +56,15 @@ export class ShellService {
       icon: '',
       link: '/companies',
       displayValue: 'Lista MŚP',
-      roles: [USER_ROLES.NGO_USER],
+      roles: [USER_ROLES.NGO_USER, USER_ROLES.ADMIN],
     },
 
-    {
-      icon: '',
-      link: '/manage/confirmation',
-      displayValue: 'Rejestracja',
-      roles: [USER_ROLES.ADMIN],
-    },
+    // {
+    //   icon: '',
+    //   link: '/manage/confirmation',
+    //   displayValue: 'Rejestracja',
+    //   roles: [USER_ROLES.ADMIN],
+    // },
     {
       icon: '',
       link: '/manage/ngos',

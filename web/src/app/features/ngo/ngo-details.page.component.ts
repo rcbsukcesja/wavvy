@@ -39,7 +39,7 @@ import { BusinessArea } from './model/ngo.model';
           </div>
           <div class="mb-4 relative h-80 w-80">
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <img [src]="state.details.logoUrl" />
+              <img [src]="state.details.logoUrl || '/assets/images/placeholder.jpg'" />
             </div>
             <div class="absolute bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
               {{ state.details.legalStatus | legalStatus }}
@@ -64,10 +64,12 @@ import { BusinessArea } from './model/ngo.model';
                 <span [class.pr-1]="!last">#{{ tag }}</span>
               </ng-container>
             </div>
+            @if (state.details.bankAccount) {
             <div class="mt-4">
               <span class="block font-semibold">Numer konta:</span>
               {{ state.details.bankAccount }}
             </div>
+            }
           </div>
         </aside>
         <section class="flex flex-col gap-6">
@@ -96,7 +98,8 @@ import { BusinessArea } from './model/ngo.model';
             <ul class="flex gap-6 mt-4">
               <div>
                 <li class="flex items-center gap-2 mb-4">
-                  <mat-icon> place</mat-icon> <strong>Adres: </strong>{{ state.details.address }}
+                  <mat-icon> place</mat-icon> <strong>Adres: </strong>{{ state.details.street }},
+                  {{ state.details.zipcode }} {{ state.details.city }}
                 </li>
                 <li class="flex items-center gap-2">
                   <mat-icon> phone</mat-icon> <strong>Telefon: </strong>{{ state.details.phone }}
@@ -115,11 +118,15 @@ import { BusinessArea } from './model/ngo.model';
           </div>
         </section>
       </div>
-      <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
-      <div *ngIf="projectsState() as state" class="mt-8">
-        <app-projects-list *ngIf="state.loadListCallState === 'LOADED'" [projects]="state.list" />
+      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
+      <div *ngIf="projectsState() as projectState" class="mt-8">
+        <app-projects-list *ngIf="projectState.loadListCallState === 'LOADED'" [projects]="projectState.list" />
 
-        <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
+        @if (projectState.loadListCallState === 'LOADED' && !projectState.list.length) {
+        <p>{{ state.details?.name }} nie prowadzi w tej chwili żadnych projektów</p>
+        }
+
+        <p *ngIf="projectState.loadListCallState === 'LOADING'">Ładowanie...</p>
       </div>
     </ng-container>
   `,

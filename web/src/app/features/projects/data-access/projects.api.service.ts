@@ -19,6 +19,7 @@ export interface AddProjectFormValue {
   endDate: string;
   link: string;
   categories: { id: ID; name: string }[];
+  reason?: string;
 }
 
 @Injectable({
@@ -92,6 +93,63 @@ export class ProjectsApiService extends HttpBaseService {
       .pipe(
         tap(projects => {
           this.stateService.setState({ loadListCallState: 'LOADED', list: projects });
+        })
+      )
+      .subscribe();
+  }
+
+  getAllMine(
+    params: CommonFilters & PaginationFilters & { id?: string } = {
+      sort: DEFAULT_SORT,
+      search: '',
+      pageIndex: 0,
+      pageSize: 5,
+    }
+  ) {
+    this.stateService.setState({ loadListCallState: 'LOADING' });
+
+    // todo: mock before backend
+    const ngo = this.ngoState().profile;
+
+    const url = new URL(this.url);
+    const sp = new URLSearchParams({
+      _sort: 'startTime',
+      _order: params.sort,
+      q: params.search,
+      // _page: params.pageIndex.toString(),
+      _start: (params.pageIndex * params.pageSize).toString(),
+      _limit: params.pageSize.toString(),
+      // id_like: params.id || '',
+    });
+
+    if (ngo) {
+      sp.append('ngoId', ngo.id.toString());
+    }
+
+    url.search = sp.toString();
+
+    this.http
+      .get<Project[]>(url.href, { observe: 'response' })
+      .pipe(
+        map(response => {
+          const totalCount = response.headers.get('X-Total-Count');
+
+          return {
+            content: response.body,
+            empty: response.body?.length === 0,
+            last: false,
+            number: params.pageIndex,
+            numberOfElements: response.body?.length,
+            totalElements: totalCount ? +totalCount : 0,
+            totalPages: totalCount ? Math.ceil(+totalCount / params.pageSize) : 0,
+          } as ListApiResponse<Project>;
+        }),
+        tap(response => {
+          this.stateService.setState({
+            loadListCallState: 'LOADED',
+            list: response.content,
+            totalElements: response.totalElements,
+          });
         })
       )
       .subscribe();

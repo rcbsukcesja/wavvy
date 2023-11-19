@@ -15,8 +15,12 @@ export interface GetAllNGOsParams {}
 export interface AddNGOFormValue {}
 
 export type UpdateNGOProfileFormValue = Partial<
-  Pick<NGO, 'address' | 'description' | 'email' | 'phone' | 'tags' | 'businnessAreas' | 'logoUrl'> & {
+  Pick<
+    NGO,
+    'street' | 'city' | 'zipcode' | 'description' | 'email' | 'phone' | 'tags' | 'businnessAreas' | 'logoUrl'
+  > & {
     disabled?: boolean;
+    reason?: string;
   }
 >;
 
@@ -30,6 +34,8 @@ export class NGOsApiService extends HttpBaseService {
   constructor() {
     super('ngos');
   }
+
+  confirm(id: ID) {}
 
   add(payload: AddNGOFormValue) {
     return this.http.post<NGO>(`${this.url}`, payload);
@@ -74,7 +80,7 @@ export class NGOsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: PaginationFilters & { search: string } = { pageIndex: 0, pageSize: 5, search: '' }) {
+  getAll(params: PaginationFilters & { search: string } & { id?: string } = { pageIndex: 0, pageSize: 5, search: '' }) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const url = new URL(this.url);
@@ -82,9 +88,10 @@ export class NGOsApiService extends HttpBaseService {
       // _sort: 'startTime',
       // _order: params.sort,
       q: params.search,
-      _page: params.pageIndex.toString(),
+      // _page: params.pageIndex.toString(),
       _start: (params.pageIndex * params.pageSize).toString(),
       _limit: params.pageSize.toString(),
+      id_like: params.id || '',
     });
 
     url.search = sp.toString();
@@ -106,6 +113,7 @@ export class NGOsApiService extends HttpBaseService {
           } as ListApiResponse<NGO>;
         }),
         tap(response => {
+          console.log({ response });
           this.stateService.setState({
             loadListCallState: 'LOADED',
             list: response.content,

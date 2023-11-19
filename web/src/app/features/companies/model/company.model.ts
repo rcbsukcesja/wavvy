@@ -21,4 +21,5 @@ export interface Company {
   donatedProjects: Project[];
   status: keyof typeof NgoStatus;
   disabled: boolean;
+  reason?: string;
 }

@@ -22,15 +22,12 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
   ],
   template: ` <h1 mat-dialog-title>
-      <span>Wniosek</span>
-      <button mat-outline-button [mat-dialog-close]="false" class="ml-14">
-        <mat-icon class="align-middle">close</mat-icon>
-      </button>
+      {{ dialogData.element.name }}
     </h1>
     <div mat-dialog-content>
-      {{ dialogData.form.organisation }}
+      <p>todo: dodac tekst</p>
 
-      <form [formGroup]="form">
+      <!-- <form [formGroup]="form">
         <mat-form-field class="w-full">
           <mat-label>Powód odrzucenia, min. 10 znaków</mat-label>
           <textarea formControlName="reason" matInput #textarea></textarea>
@@ -40,22 +37,17 @@ import { MatInputModule } from '@angular/material/input';
             </span></mat-hint
           >
         </mat-form-field>
-      </form>
+      </form> -->
 
       <footer class="flex justify-between">
-        <button mat-raised-button [mat-dialog-close]="true">Potwierdź wniosek</button>
-        <button
-          [mat-dialog-close]="textarea.value"
-          [disabled]="form.untouched || (form.touched && form.invalid)"
-          mat-raised-button>
-          Odrzuć wniosek
-        </button>
+        <button mat-raised-button [mat-dialog-close]="true">Zatwierdź organizacje</button>
+        <button [mat-dialog-close]="false" mat-raised-button>Anuluj</button>
       </footer>
     </div>`,
 })
 export class NgoRegisterDialogComponent {
   dialogRef = inject<MatDialogRef<NgoRegisterDialogComponent>>(MatDialogRef);
-  dialogData = inject<{ form: NgoRegisterForm }>(MAT_DIALOG_DATA);
+  dialogData = inject<{ element: { name: string } }>(MAT_DIALOG_DATA);
 
   MAX_LENGTH = 300;
 

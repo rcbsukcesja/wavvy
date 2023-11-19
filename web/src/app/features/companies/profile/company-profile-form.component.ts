@@ -38,8 +38,10 @@ export type CompanyProfileFormModel = FormGroup<{
   KRS: FormControl<string>;
   NIP: FormControl<string>;
   REGON: FormControl<string>;
+  street: FormControl<string>;
+  zipcode: FormControl<string>;
+  city: FormControl<string>;
   description: FormControl<string>;
-  address: FormControl<string>;
   email: FormControl<string>;
   website: FormControl<string>;
   phone: FormControl<string>;
@@ -95,13 +97,34 @@ export type CompanyProfileFormModel = FormGroup<{
           </mat-form-field>
           <br />
         </div>
+        <div class="flex flex-col md:gap-4">
+          <label>Adres</label>
+          <mat-form-field>
+            <mat-label>Ulica</mat-label>
+            <input formControlName="street" matInput />
+          </mat-form-field>
+          <div class="flex flex-col md:flex-row  md:gap-4">
+            <mat-form-field class="md:w-1/2">
+              <mat-label>Kod pocztowy</mat-label>
+              <input formControlName="zipcode" matInput />
+              <mat-hint>Format 00-000</mat-hint>
+            </mat-form-field>
+            <br />
 
+            <mat-form-field class="md:w-1/2">
+              <mat-label>Miasto</mat-label>
+              <input formControlName="city" matInput />
+            </mat-form-field>
+          </div>
+          <hr class="mb-6" />
+        </div>
+        <!--
         <div class="flex flex-col md:gap-4">
           <mat-form-field>
             <mat-label>Adres</mat-label>
             <input formControlName="address" matInput />
           </mat-form-field>
-        </div>
+        </div> -->
 
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
@@ -159,39 +182,6 @@ export type CompanyProfileFormModel = FormGroup<{
         </div>
         <br />
         <div class="flex flex-col md:gap-4">
-          <!-- <mat-form-field>
-            <mat-label>Numer konta bankowego</mat-label>
-            <input formControlName="bankAccount" matInput />
-            <mat-hint *ngIf="form.controls.bankAccount.value.trim().length > 0" class="text-blue-600"
-              >Podając numer konta bankowego oświadczasz jego prawidłowość</mat-hint
-            >
-          </mat-form-field> -->
-
-          <!-- <mat-form-field>
-            <mat-label>Tagi</mat-label>
-            <mat-chip-grid formControlName="tags" #chipGrid aria-label="Enter tags">
-              <mat-chip-row
-                *ngFor="let tag of tags"
-                (removed)="remove(tag)"
-                [editable]="true"
-                (edited)="edit(tag, $event)">
-                {{ tag }}
-                <button matChipRemove>
-                  <mat-icon>cancel</mat-icon>
-                </button>
-              </mat-chip-row>
-              <input
-                placeholder="Nowy tag"
-                [matChipInputFor]="chipGrid"
-                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                [matChipInputAddOnBlur]="addOnBlur"
-                (matChipInputTokenEnd)="add($event)" />
-            </mat-chip-grid>
-            <mat-hint *ngIf="form.controls.tags as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
-              >Podaj przynajmniej 3 tagi</mat-hint
-            >
-          </mat-form-field> -->
-
           <mat-form-field class="h-32">
             <mat-label>Opis organizacji</mat-label>
             <textarea formControlName="description" matInput></textarea>
@@ -276,7 +266,9 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
       REGON: this.builder.control({ value: this.profile.REGON, disabled: true }, [Validators.required]),
       // bankAccount: this.builder.control(this.profile.bankAccount || ''),
       description: this.builder.control(this.profile.description || '', [Validators.required]),
-      address: this.builder.control(this.profile.address || '', [Validators.required]),
+      street: this.builder.control(this.profile.street || '', [Validators.required]),
+      city: this.builder.control(this.profile.city || '', [Validators.required]),
+      zipcode: this.builder.control(this.profile.zipcode || '', [Validators.required]),
       email: this.builder.control(this.profile.email || '', [Validators.required]),
       website: this.builder.control(this.profile.website || '', [Validators.required]),
       phone: this.builder.control(this.profile.phone || '', [Validators.required]),

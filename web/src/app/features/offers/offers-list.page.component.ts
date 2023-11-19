@@ -81,14 +81,18 @@ import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
               </div>
             </div>
             <mat-divider />
-            <button class="flex justify-end mt-4" (click)="openMessageModal(offer.name)">
-              <div class="flex flex-col"><mat-icon>forward_to_inbox</mat-icon></div>
-            </button>
+            <div class="flex justify-between mt-4">
+              <button (click)="openMessageModal(offer.name)">
+                <mat-icon>forward_to_inbox</mat-icon>
+              </button>
+
+              <a class="font-bold" [href]="offer.link" target="_blank"> BIP </a>
+            </div>
           </div>
         </ng-template>
       </app-list-shell>
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
-      <p *ngIf="state.loadListCallState === 'LOADING'">LOADING...</p>
+      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
     </ng-container>
   `,
   styles: [],

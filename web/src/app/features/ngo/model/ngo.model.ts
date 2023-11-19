@@ -1,4 +1,3 @@
-import { User } from 'src/app/auth/data_access/auth.state.service';
 import { Project } from '../../projects/model/project.model';
 import { UserData } from 'src/app/auth/models/user.model';
 import { ID } from 'src/app/core/types/id.type';
@@ -31,11 +30,13 @@ export interface NGO {
   name: string;
   logoUrl: string;
   owner: UserData;
-  address: string;
+  street: string;
+  zipcode: string;
+  city: string;
   phone: string;
   email: string;
   website: string;
-  creationDate: string;
+  foundedAt: string;
   description: string;
   businnessAreas: number[];
   bankAccount?: string;
@@ -48,6 +49,7 @@ export interface NGO {
   tags: string[];
   status: keyof typeof NgoStatus;
   disabled: boolean;
+  reason?: string;
   confirmed: true;
   followedByUser: ID[];
 }
