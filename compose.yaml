@@ -43,7 +43,7 @@ services:
       - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
       - POSTGRES_DB=${KEYCLOAK_DB_NAME}
     volumes:
-      - keycloak-db1:/var/lib/postgresql/data
+      - keycloak-db:/var/lib/postgresql/data
 
   backend:
     build:
@@ -100,4 +100,4 @@ services:
       - backend
 volumes:
   postgres:
-  keycloak-db1:
+  keycloak-db:
