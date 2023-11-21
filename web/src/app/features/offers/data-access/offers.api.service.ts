@@ -9,6 +9,7 @@ import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.co
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
 import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface GetAllOffersParams {}
 
@@ -30,6 +31,7 @@ export interface AddOfferFormValue {
 export class OffersApiService extends HttpBaseService {
   private stateService = inject(OffersStateService);
   private ngoState = inject(NGOsStateService);
+  private snackBar = inject(MatSnackBar);
 
   constructor() {
     super('offers');
@@ -55,6 +57,9 @@ export class OffersApiService extends HttpBaseService {
       })
       .pipe(
         tap(user => {
+          this.snackBar.open(alreadyFollowed ? 'Przestałeś obserwować ofertę' : 'Obserwujesz ofertę!', '', {
+            duration: 2000,
+          });
           this.ngoState.setState({
             ...this.ngoState.$value(),
             profile: {

@@ -62,7 +62,7 @@ import { LegalStatusPipe } from './utils/legal-status.pipe';
           <td mat-cell *matCellDef="let element">
             <div
               class="rounded-full h-4 w-4 mx-auto"
-              [matTooltip]="'Skontaktuj się z miastem by dowiedzieć się o powodzie'"
+              [matTooltip]="'Powód: ' + element.reason"
               [matTooltipDisabled]="!element.disabled"
               [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
           </td>
@@ -79,7 +79,7 @@ import { LegalStatusPipe } from './utils/legal-status.pipe';
           </th>
           <td mat-cell *matCellDef="let element">
             @if (element.confirmed) {
-            <mat-icon>check</mat-icon>
+            <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
             } @else {
             <mat-icon>hourglass_empty</mat-icon>
             }
@@ -93,8 +93,12 @@ import { LegalStatusPipe } from './utils/legal-status.pipe';
               <button [matTooltip]="'Pokaż NGO'" (click)="showNgoOnList(element.id)">
                 <mat-icon>preview</mat-icon>
               </button>
-              <button [matTooltip]="'Zatwierdź NGO'" (click)="openConfirmationDialog(element)">
-                <mat-icon>check</mat-icon>
+              <button
+                [disabled]="element.confirmed"
+                [matTooltipDisabled]="element.confirmed"
+                [matTooltip]="'Zatwierdź NGO'"
+                (click)="openConfirmationDialog(element)">
+                <mat-icon [class.text-gray-300]="element.confirmed">check</mat-icon>
               </button>
               <button (click)="edit(element)"><mat-icon>edit</mat-icon></button>
               <!-- <button (click)="goToProjectForm(element)"><mat-icon>edit</mat-icon></button> -->
@@ -155,7 +159,7 @@ export default class ManageNGOsPageComponent implements OnInit {
   ];
 
   showNgoOnList(id: ID) {
-    this.router.navigateByUrl(`/ngos?ngoId=${id}`);
+    this.router.navigateByUrl(`/ngos/${id}`);
   }
 
   openConfirmationDialog(element: NGO) {

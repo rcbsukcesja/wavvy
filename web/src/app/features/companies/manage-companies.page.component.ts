@@ -51,7 +51,7 @@ import { NgoRegisterDialogComponent } from '../ngo/register/ui/ngo-register-dial
           <td mat-cell *matCellDef="let element">
             <div
               class="rounded-full h-4 w-4 mx-auto"
-              [matTooltip]="'Skontaktuj się z miastem by dowiedzieć się o powodzie'"
+              [matTooltip]="'Powód: ' + element.reason"
               [matTooltipDisabled]="!element.disabled"
               [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
           </td>
@@ -79,11 +79,15 @@ import { NgoRegisterDialogComponent } from '../ngo/register/ui/ngo-register-dial
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-4">
-              <button [matTooltip]="'Pokaż firmę'" (click)="showCompanyOnList(element.id)">
+              <button
+                [disabled]="element.confirmed"
+                [matTooltipDisabled]="element.confirmed"
+                [matTooltip]="'Pokaż firmę'"
+                (click)="showCompanyOnList(element.id)">
                 <mat-icon>preview</mat-icon>
               </button>
               <button [matTooltip]="'Zatwierdź firmę'" (click)="openConfirmationDialog(element)">
-                <mat-icon>check</mat-icon>
+                <mat-icon [class.text-gray-300]="element.confirmed">check</mat-icon>
               </button>
               <button (click)="edit(element)"><mat-icon>edit</mat-icon></button>
             </div>

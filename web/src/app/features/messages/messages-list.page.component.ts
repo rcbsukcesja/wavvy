@@ -22,7 +22,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
           <div class="mb-4"><strong>Treść: </strong>{{ message.message }}</div>
           <div class="mb-4"><strong>Nadawca: </strong>{{ message.name }}</div>
           <div class="mb-4"><strong>Kontakt: </strong>{{ message.contact }}</div>
-          <div><strong>Wysłano: </strong>{{ message.createdAt | date : 'long' }}</div>
+          <div><strong>Wysłano: </strong>{{ message.createdAt | date : 'short' }}</div>
         </ng-template>
       </app-list-shell>
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />

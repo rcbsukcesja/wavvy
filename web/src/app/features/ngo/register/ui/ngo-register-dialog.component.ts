@@ -25,7 +25,10 @@ import { MatInputModule } from '@angular/material/input';
       {{ dialogData.element.name }}
     </h1>
     <div mat-dialog-content>
-      <p>todo: dodac tekst</p>
+      <p>
+        Zatwierdzona organizacja będzie widoczna publicznie. Zawszę będziesz mógł ją tymczasowo zablokować korzystając z
+        tego samego panelu
+      </p>
 
       <!-- <form [formGroup]="form">
         <mat-form-field class="w-full">
