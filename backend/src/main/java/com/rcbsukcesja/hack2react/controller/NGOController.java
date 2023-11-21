@@ -5,9 +5,9 @@ import com.rcbsukcesja.hack2react.model.dto.save.OrganizationNGOSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOListView;
 import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOView;
 import com.rcbsukcesja.hack2react.service.OrganizationNGOService;
-import com.rcbsukcesja.hack2react.service.StorageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,10 +29,9 @@ import java.util.UUID;
 @RequestMapping("/ngos")
 public class NGOController {
     private final OrganizationNGOService organizationNGOService;
-    private final StorageService storageService;
 
     @GetMapping
-    public ResponseEntity<Page<OrganizationNGOListView>> getAllNGO(Pageable pageable) {
+    public ResponseEntity<Page<OrganizationNGOListView>> getAllNGO(@ParameterObject Pageable pageable) {
         return new ResponseEntity<>(organizationNGOService.getAllNGO(pageable), HttpStatus.OK);
     }
 

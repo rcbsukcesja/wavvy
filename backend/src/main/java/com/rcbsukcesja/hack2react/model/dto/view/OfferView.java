@@ -30,6 +30,7 @@ public class OfferView {
     private LocalDate endDate;
     private boolean closeDeadline;
     private OfferStatus status;
+    private boolean followedByUser;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

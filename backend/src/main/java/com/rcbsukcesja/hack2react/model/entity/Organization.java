@@ -46,9 +46,7 @@ public abstract class Organization {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "organization", fetch = FetchType.LAZY)
     private User owner;
     private Address address;
     private String phone;
