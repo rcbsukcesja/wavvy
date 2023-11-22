@@ -1,9 +1,8 @@
 ### STAGE 1: Build ###
-FROM node:20.5.1-bullseye AS build
+FROM node:20.9.0-bullseye AS build
 WORKDIR /usr/src/app
-COPY package.json package-lock.json ./
-RUN npm install
 COPY . .
+RUN npm install
 RUN npm run build
 
 ### STAGE 2: Run ###

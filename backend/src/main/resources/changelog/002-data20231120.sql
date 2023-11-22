@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset pgorski:20231120-01
 INSERT INTO wavvy.wavvy.organizations(id, organization_type, name, street, house_number, apartment_number,
                                       city, zip_code, country, phone, email, website, logo_path,
                                       created_at, updated_at, description, krs, nip, regon, legal_status, bank_account)
@@ -43,24 +46,26 @@ VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'NGO', 'Liga Morska i Rzeczna',
         '000757221', '234858111',
         '394262090', null, null);
 
+--changeset pgorski:20231120-02
 INSERT INTO wavvy.wavvy.app_users(id, username, first_Name, last_Name, email, user_type, deleted, created_timestamp,
                                   enabled, email_verified, organization_id)
-VALUES ('ccccf3b0-0d10-11ee-be56-0242ac120002', 'zbyszek@gmail.com', 'Zbigniew', 'Brzęczyszczykiewicz',
-        'zbyszek@gmail.com',
+VALUES ('ccccf3b0-0d10-11ee-be56-0242ac120002', 'miasto@gmail.com', 'Zbigniew', 'Brzęczyszczykiewicz',
+        'miasto@gmail.com',
         'CITY_HALL', false, 1700154735340, true, true, null),
-       ('2dc6b240-0d12-11ee-be56-0242a20002c1', 'romek@gmail.com', 'Roman', 'Rybak', 'romek@gmail.com',
+       ('2dc6b240-0d12-11ee-be56-0242a20002c1', 'ngo1@gmail.com', 'Roman', 'Rybak', 'ngo1@gmail.com',
         'NGO', false, 1700154735340, true, true, 'a9656db2-0d2e-11ee-be56-0242ac120002'),
-       ('353feec4-0d12-11ee-be56-0242ac120002', 'babel@gmail.com', 'Eustachy', 'Bąbel', 'babel@gmail.com',
+       ('353feec4-0d12-11ee-be56-0242ac120002', 'ngo2@gmail.com', 'Eustachy', 'Bąbel', 'ngo2@gmail.com',
         'NGO', false, 1700154735340, true, true, 'b544b8e0-0d2e-11ee-be56-0242ac120002'),
-       ('03c79bef-4282-4326-be74-8acb180d7f03', 'andrew@gmail.com', 'Andrzej', 'Przedsiębiorczy', 'andrew@gmail.com',
+       ('03c79bef-4282-4326-be74-8acb180d7f03', 'ngo3@gmail.com', 'Andrzej', 'Przedsiębiorczy', 'ngo3@gmail.com',
         'NGO', false, 1700154735340, true, true, 'c06f4f3c-0d2e-11ee-be56-0242ac120002'),
-       ('3ed0cf62-0d12-11ee-be56-0242ac120002', 'jesica@gmail.com', 'Jesica', 'Bąbelek', 'jesica@gmail.com',
+       ('3ed0cf62-0d12-11ee-be56-0242ac120002', 'msp1@gmail.com', 'Jesica', 'Bąbelek', 'msp1@gmail.com',
         'BUSINESS', false, 1700154735340, true, true, 'a2daa44a-0d2d-11ee-be56-0242ac120002'),
-       ('4f1b9b6c-0d12-11ee-be56-0242ac120002', 'zenon@gmail.com', 'Zenon', 'Bździoch', 'zenon@gmail.com',
+       ('4f1b9b6c-0d12-11ee-be56-0242ac120002', 'msp2@gmail.com', 'Zenon', 'Bździoch', 'msp2@gmail.com',
         'BUSINESS', false, 1700154735340, true, true, '9bab7cfc-0d2e-11ee-be56-0242ac120002'),
-       ('528f7db6-d46f-465b-a93a-6d67f9ab85c9', 'wieslaw@gmail.com', 'Wiesław', 'Dąbrowski', 'wieslaw@gmail.com',
+       ('528f7db6-d46f-465b-a93a-6d67f9ab85c9', 'msp3@gmail.com', 'Wiesław', 'Dąbrowski', 'msp3@gmail.com',
         'BUSINESS', false, 1700154735340, true, true, '4b0e9873-47f7-499a-8190-5aff4ac16dde');
 
+--changeset pgorski:20231120-03
 INSERT INTO wavvy.wavvy.business_areas(id, name)
 VALUES ('13857a2c-0d14-11ee-be56-0242ac120002', 'Sport i zdrowie'),
        ('ac0f9444-0d14-11ee-be56-0242ac120002', 'Kultura i sztuka'),
@@ -83,13 +88,16 @@ VALUES ('13857a2c-0d14-11ee-be56-0242ac120002', 'Sport i zdrowie'),
        ('02e3b87a-2a05-4087-a762-3e239bb1df53', 'Technologia'),
        ('13a11d72-4c97-4ee7-b2ed-5fbf86119edc', 'Medycyna');
 
+--changeset pgorski:20231120-04
 INSERT INTO wavvy.wavvy.conversations(id)
 VALUES ('54fb43a6-0d19-11ee-be56-0242ac120002');
 
+--changeset pgorski:20231120-05
 INSERT INTO wavvy.wavvy.conversation_users(conversation_id, user_id)
 VALUES ('54fb43a6-0d19-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002'),
        ('54fb43a6-0d19-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002');
 
+--changeset pgorski:20231120-06
 INSERT INTO wavvy.wavvy.messages(id, text, created_at, from_user_id, to_user_id, conversation_id)
 VALUES ('6601b652-0d15-11ee-be56-0242ac120002', 'text1', '2023-06-10T16:00:00.000000000',
         '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
@@ -107,6 +115,7 @@ VALUES ('6601b652-0d15-11ee-be56-0242ac120002', 'text1', '2023-06-10T16:00:00.00
         '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
         '54fb43a6-0d19-11ee-be56-0242ac120002');
 
+--changeset pgorski:20231120-07
 INSERT INTO wavvy.wavvy.offers(id, name, description, budget, funding_level, target_audience, link, start_date,
                                end_date, scope, created_at, updated_at)
 VALUES ('ff435fd6-0d2a-11ee-be56-0242ac120002', 'Grant na Rozwój Kultury Lokalnej',
@@ -125,6 +134,7 @@ VALUES ('ff435fd6-0d2a-11ee-be56-0242ac120002', 'Grant na Rozwój Kultury Lokaln
         'https://kolobrzeg-grants.com/granty-na-ochrone-srodowiska', '2023-10-10', '2023-10-25', 'PUBLIC',
         '2023-10-10T12:24:36', '2023-10-10T12:24:36');
 
+--changeset pgorski:20231120-08
 INSERT INTO wavvy.wavvy.organization_business_areas(organization_id, business_area_id)
 VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'd132b605-0f0c-4e5b-8c27-567e16e71551'),
        ('a9656db2-0d2e-11ee-be56-0242ac120002', 'bbfe6fcc-24c8-4a9e-8310-3370eef6a97c'),
@@ -139,6 +149,7 @@ VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'd132b605-0f0c-4e5b-8c27-567e16e
        ('4b0e9873-47f7-499a-8190-5aff4ac16dde', 'ac0f9444-0d14-11ee-be56-0242ac120002'),
        ('4b0e9873-47f7-499a-8190-5aff4ac16dde', '43ff85e5-1e07-4337-8e8c-9439f203642f');
 
+--changeset pgorski:20231120-09
 INSERT INTO wavvy.wavvy.projects(id, name, description, street, house_number, apartment_number, zip_code, city, country,
                                  image_link, start_Time, end_Time, budget,
                                  cooperation_Message, status, possible_Volunteer, organizer_id, created_at, updated_at)
@@ -162,6 +173,7 @@ VALUES ('9457f49a-15de-4a67-8870-6c7c5dd4746e', 'Zbiórka żywności',
         'Poszukujemy wolontariuszy do obsługi biegu.',
         7, 'true', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', '2022-03-10T16:00:00', '2022-03-10T16:00:00');
 
+--changeset pgorski:20231120-10
 INSERT INTO wavvy.wavvy.tags(id, project_id, tag)
 VALUES ('4a16e0e4-ca1b-4d82-bdd0-84011b9e9ad5', '9457f49a-15de-4a67-8870-6c7c5dd4746e', 'zbiórka żywności'),
        ('d8b99892-fca7-4e44-8a23-6a1ee82ddcdf', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6', 'edukacja'),
@@ -171,6 +183,7 @@ VALUES ('4a16e0e4-ca1b-4d82-bdd0-84011b9e9ad5', '9457f49a-15de-4a67-8870-6c7c5dd
        ('4f00069a-9385-465c-bb4b-90c065cadd1a', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'niepodległość'),
        ('419c1f74-6821-4aa6-a484-c2ba6614f1fa', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'promocja ruchu');
 
+--changeset pgorski:20231120-11
 INSERT INTO wavvy.wavvy.project_links(id, project_id, link)
 VALUES ('58f6a175-60e7-4efc-b78a-2d8d37fb5e45', '9457f49a-15de-4a67-8870-6c7c5dd4746e', 'https://www.onet.pl'),
        ('a9a8b864-9e82-4f38-9b0b-ec6c02e7d4d7', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6',
@@ -182,6 +195,7 @@ VALUES ('58f6a175-60e7-4efc-b78a-2d8d37fb5e45', '9457f49a-15de-4a67-8870-6c7c5dd
        ('cc301982-4a09-4aa1-8d09-1e3d5c6c853b', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'link4'),
        ('92fc68a0-3ef3-4c3e-9a1d-47f378e69b3d', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'link5');
 
+--changeset pgorski:20231120-12
 INSERT INTO wavvy.wavvy.social_links(id, organization_id, link)
 VALUES ('013701d1-6a46-449f-8e18-c78144aaeba9', 'a2daa44a-0d2d-11ee-be56-0242ac120002', 'https://www.facebook.com/tsk'),
        ('a3e9a851-fc2d-4293-b7cd-ee5f71b4b059', 'a2daa44a-0d2d-11ee-be56-0242ac120002', 'https://www.linkedin.com/tsk'),
@@ -193,6 +207,7 @@ VALUES ('013701d1-6a46-449f-8e18-c78144aaeba9', 'a2daa44a-0d2d-11ee-be56-0242ac1
        ('792aa665-a40d-4e64-b1e7-69ce591d2ed2', 'b544b8e0-0d2e-11ee-be56-0242ac120002', 'https://facebook.com/5'),
        ('85f025c1-1644-4248-b4c8-d08c45e4a6c8', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', 'https://facebook.com/6');
 
+--changeset pgorski:20231120-13
 INSERT INTO wavvy.wavvy.resources(id, organization_id, resource)
 VALUES ('b04ce852-4ab6-44fa-8887-153c1c838210', 'a2daa44a-0d2d-11ee-be56-0242ac120002', 'Brak danych'),
        ('25777134-17aa-4eb7-8254-a38783f577bb', '9bab7cfc-0d2e-11ee-be56-0242ac120002', 'Sala weselna'),
