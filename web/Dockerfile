@@ -9,4 +9,4 @@ RUN npm run build
 ### STAGE 2: Run ###
 FROM nginx:1.24.0-bullseye
 #COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /usr/src/app/dist/starter /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/starter/browser /usr/share/nginx/html
