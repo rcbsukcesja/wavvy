@@ -1,13 +1,9 @@
-wavvy:
-  keycloak:
-    realm: ${KEYCLOAK_REALM}
-    auth-server-url: ${KEYCLOAK_URL}
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}
+          issuer-uri: http://srv23.mikr.us:30134/realms/wavvy
           jwk-set-uri: ${KEYCLOAK_LOCAL_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
   mail:
     properties:

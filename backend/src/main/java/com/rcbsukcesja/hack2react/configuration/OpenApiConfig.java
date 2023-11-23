@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
         name = "OAuth2",
         flows = @OAuthFlows(
                 password = @OAuthFlow(
-                        tokenUrl = "http://localhost:8090/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token"
+                        tokenUrl = "http://srv23.mikr.us:30134/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token"
                 )
         )
 )
