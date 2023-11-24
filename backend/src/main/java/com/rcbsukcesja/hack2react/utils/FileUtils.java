@@ -10,13 +10,13 @@ import java.util.Objects;
 
 @UtilityClass
 public class FileUtils {
-    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir");
+    public static String UPLOAD_DIRECTORY = "/usr/share/wavvy/images";
 
     public String getPathAsString(String fileExtension, String id, String dir) {
         if (Objects.isNull(fileExtension)) {
             return null;
         }
-        return UPLOAD_DIRECTORY + "\\" + dir + "\\" + id + "." + fileExtension.toLowerCase();
+        return UPLOAD_DIRECTORY + "/" + dir + "/" + id + "." + fileExtension.toLowerCase();
     }
 
     public Path getPath(MultipartFile file, String id, String dir) {

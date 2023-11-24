@@ -37,6 +37,8 @@ public class ProjectController {
     private final ProjectService projectService;
     private final StorageService storageService;
 
+    private final String UPLOAD_DIRECTORY = "project";
+
     @GetMapping
     public ResponseEntity<Page<ProjectView>> getAllProjects(
             @RequestParam(required = false) List<ProjectStatus> statusList,
@@ -76,13 +78,13 @@ public class ProjectController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/{id}/image")
+    @PostMapping(value = "/{id}/image", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadLogo(
             @PathVariable UUID id,
             @RequestParam("file") MultipartFile file) {
-        storageService.store(file, id.toString(), "image");
+        storageService.store(file, id.toString(), UPLOAD_DIRECTORY);
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
-        projectService.updateImagePath(fileExtension, id);
+        projectService.updateImagePath(fileExtension, id, UPLOAD_DIRECTORY);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -96,7 +98,7 @@ public class ProjectController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/like/{projectId}")
+    @PatchMapping("/{projectId}/like")
     public ResponseEntity<ProjectView> updateProjectLike(
             @PathVariable UUID projectId,
             @RequestParam String clientId) {
