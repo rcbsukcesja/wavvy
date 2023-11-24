@@ -73,6 +73,8 @@ services:
       - KEYCLOAK_LOCAL_URL=${KEYCLOAK_LOCAL_URL}
       - SWAGGER_CLIENT_ID=${SWAGGER_CLIENT_ID}
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
+    volumes:
+      - /var/images:/usr/share/wavvy/images
 
   db:
     image: 'postgres:15.4-bullseye'
@@ -111,3 +113,5 @@ services:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+    volumes:
+      - /var/images:/usr/share/nginx/html/assets/images
