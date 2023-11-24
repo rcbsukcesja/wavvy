@@ -29,6 +29,7 @@ public class ErrorMessages {
 
     public static final String FILE_IS_EMPTY = "Failed to store empty file!";
     public static final String FILE_IS_NOT_IMAGE = "File is not an image!";
+    public static final String FILE_IS_TOO_LARGE = "File is too large! Maximum file size is %s";
 
     public static final String FILE_FAILED_TO_STORE = "Failed to store file!";
     public static final String FILE_FAILED_TO_REMOVE = "Failed to remove file!";

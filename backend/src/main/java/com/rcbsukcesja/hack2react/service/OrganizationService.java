@@ -7,6 +7,7 @@ import com.rcbsukcesja.hack2react.repositories.OrganizationRepository;
 import com.rcbsukcesja.hack2react.utils.FileUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +19,14 @@ public class OrganizationService {
 
     private final OrganizationRepository organizationRepository;
 
+    @Value("${wavvy.images.logo.url}")
+    private String logoUrl;
+
     @Transactional
-    public void updateLogoPath(String fileExtension, UUID id) {
+    public void updateLogoPath(String fileExtension, UUID id, String directory) {
         Organization organization = getOrganizationByIdOrThrowException(id);
-        organization.setLogoPath(FileUtils.getPathAsString(fileExtension, id.toString(), "logo"));
-        // TODO: change to getLogoUrl() when implemented
-        organization.setLogoUrl(FileUtils.getPathAsString(fileExtension, id.toString(), "logo"));
+        organization.setLogoPath(FileUtils.getPathAsString(fileExtension, id.toString(), directory));
+        organization.setLogoUrl(logoUrl + "/" + id + "." + fileExtension.toLowerCase());
         organization.setUpdatedAt(TimeUtils.nowInUTC());
         organizationRepository.save(organization);
     }

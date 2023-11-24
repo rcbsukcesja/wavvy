@@ -29,7 +29,9 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/offers", "/ngos", "/projects")
+                        .requestMatchers(HttpMethod.GET, "/offers", "/ngos", "/projects", "/companies")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/projects/**/like")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

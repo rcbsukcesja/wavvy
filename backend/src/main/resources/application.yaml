@@ -1,3 +1,9 @@
+wavvy:
+  images:
+    logo:
+      url: ${IMAGES_BASE_URL}/logo
+    project:
+      url: ${IMAGES_BASE_URL}/project
 spring:
   security:
     oauth2:
@@ -5,6 +11,9 @@ spring:
         jwt:
           issuer-uri: http://srv23.mikr.us:30134/realms/wavvy
           jwk-set-uri: ${KEYCLOAK_LOCAL_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
   mail:
     properties:
       mail:
