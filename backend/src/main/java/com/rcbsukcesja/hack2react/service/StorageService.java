@@ -4,6 +4,7 @@ import com.rcbsukcesja.hack2react.exceptions.io.StorageException;
 import com.rcbsukcesja.hack2react.utils.FileUtils;
 import com.rcbsukcesja.hack2react.validations.ImageFileValidation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,7 @@ import static com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages.FILE_
 import static com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages.FILE_FAILED_TO_STORE;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class StorageService {
     private final ImageFileValidation imageFileValidation;
@@ -24,6 +26,7 @@ public class StorageService {
         try {
             imageFileValidation.validateImageFile(file);
             Path fileNameAndPath = FileUtils.getPath(file, id, directory);
+            log.info(fileNameAndPath.toString());
             Files.write(fileNameAndPath, file.getBytes());
         } catch (IOException e) {
             throw new StorageException(FILE_FAILED_TO_STORE, e);
