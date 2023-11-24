@@ -23,13 +23,15 @@ public class OrganizationController {
     private final OrganizationService organizationService;
     private final StorageService storageService;
 
-    @PostMapping("/{id}/logo")
+    private final static String UPLOAD_DIRECTORY = "logo";
+
+    @PostMapping(value = "/{id}/logo", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadLogo(
             @PathVariable UUID id,
             @RequestParam("file") MultipartFile file) {
-        storageService.store(file, id.toString(), "logo");
+        storageService.store(file, id.toString(), UPLOAD_DIRECTORY);
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
-        organizationService.updateLogoPath(fileExtension, id);
+        organizationService.updateLogoPath(fileExtension, id, UPLOAD_DIRECTORY);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

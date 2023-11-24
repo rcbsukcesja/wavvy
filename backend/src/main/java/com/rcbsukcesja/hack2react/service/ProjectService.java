@@ -20,6 +20,7 @@ import com.rcbsukcesja.hack2react.utils.FileUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -41,6 +42,11 @@ public class ProjectService {
     private final OrganizationNGORepository organizationNGORepository;
     private final DateValidation dateValidation;
     private final AddressMapper addressMapper;
+
+    @Value("${wavvy.images.project.url}")
+    private String projectUrl;
+
+    private static final String UPLOAD_DIR = "project";
 
     public Page<ProjectView> getAllProjects(List<ProjectStatus> statusList, LocalDate startDate, LocalDate endDate, Pageable pageable) {
         dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
@@ -154,11 +160,10 @@ public class ProjectService {
     }
 
     @Transactional
-    public void updateImagePath(String fileExtension, UUID id) {
+    public void updateImagePath(String fileExtension, UUID id, String directory) {
         Project project = getProjectByIdOrThrowException(id);
-        project.setImagePath(FileUtils.getPathAsString(fileExtension, id.toString(), "project-image"));
-        // TODO: change to getImageLink() when implemented
-        project.setImageLink(FileUtils.getPathAsString(fileExtension, id.toString(), "project-image"));
+        project.setImagePath(FileUtils.getPathAsString(fileExtension, id.toString(), directory));
+        project.setImageLink(projectUrl + "/" + id + "." + fileExtension.toLowerCase());
         project.setUpdatedAt(TimeUtils.nowInUTC());
         projectRepository.saveAndFlush(project);
     }
