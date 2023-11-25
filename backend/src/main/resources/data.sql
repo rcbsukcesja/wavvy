@@ -1,6 +1,6 @@
 INSERT INTO wavvy.wavvy.organizations(id, organization_type, name, street,
                                       city, zip_code, country, phone, email, website, logo_path,
-                                      created_at, updated_at, description, krs, nip, regon, legal_status, bank_account, foundetAtDate)
+                                      created_at, updated_at, description, krs, nip, regon, legal_status, bank_account, foundet_at_date)
 VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'NGO', 'Liga Morska i Rzeczna',
         'Chodkiewicza 4/5', 'Kołobrzeg', '78-100', 'Polska', '693996135',
         'kontakt@lmir.kolobrzeg.pl', 'https://www.facebook.com/lmir.gdynia/?locale=pl_PL', null, '2023-06-20T00:00:00',
@@ -27,21 +27,21 @@ VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'NGO', 'Liga Morska i Rzeczna',
         'kontakt@tsk.pl', 'https://www.tsk.pl', null, '2023-06-20T00:00:00', '2023-06-20T00:00:00',
         'Jesteśmy innowacyjnym startupem technologicznym z Kołobrzegu, specjalizującym się w tworzeniu zaawansowanych rozwiązań dla sektora medycznego. Nasze produkty pomagają lekarzom i pacjentom w zarządzaniu informacjami o stanie zdrowia, a także umożliwiają zdalną komunikację i konsultacje. Wierzymy w moc technologii w przekształcaniu opieki zdrowotnej i dążymy do bycia na czele tej transformacji.',
         '000757530', '234858990',
-        '378955803', null, null),
+        '378955803', null, null, null),
        ('9bab7cfc-0d2e-11ee-be56-0242ac120002', 'COMPANY', 'Restauracja Przystań',
         'Portowa 4', 'Kołobrzeg', '78-100', 'Polska', '508158775',
         'kontakt@przystan.kolobrzeg.pl', 'https://www.przystan.kolobrzeg.pl', null, '2016-06-10T12:24:36',
         '2016-06-10T12:24:36',
         'Nasza restauracja oferuje najlepsze dania kuchni bałtyckiej, skupiając się na świeżych, lokalnych składnikach i autentycznych przepisach. Położona w sercu Kołobrzegu, z widokiem na morze, Restauracja Przystań jest idealnym miejscem na rodzinny obiad, romantyczną kolację czy spotkanie z przyjaciółmi. Pragniemy, by każdy posiłek u nas był nie tylko satysfakcjonującym doświadczeniem kulinarycznym, ale także niezapomnianym przeżyciem.',
         '000757550', '234858991',
-        '394262080', null, null),
+        '394262080', null, null, null),
        ('4b0e9873-47f7-499a-8190-5aff4ac16dde', 'COMPANY', 'Kołobrzeska Galeria Sztuki',
         'Sztuki 2/1', 'Kołobrzeg', '78-100', 'Polska', '123123123',
         'kontakt@galeria.kolobrzeg.pl', 'https://www.galeria.kolobrzeg.pl', null, '2016-06-10T12:24:36',
         '2016-06-10T12:24:36',
         'Promujemy lokalnych artystów i organizujemy wystawy sztuki współczesnej, które angażują społeczność Kołobrzegu i przyciągają zwiedzających z całego kraju. Nasza misja to rozwijanie kultury i sztuki w regionie, tworzenie przestrzeni do dyskusji i refleksji, a także edukowanie publiczności na temat wartości i znaczenia sztuki. Wierzymy, że sztuka ma moc inspirowania i łączenia ludzi, a nasza galeria jest miejscem, gdzie te spotkania mogą się zdarzyć.',
         '000757221', '234858111',
-        '394262090', null, null);
+        '394262090', null, null, null);
 
 INSERT INTO wavvy.wavvy.ngo_tags(id, organization_ngo_id, tag)
 VALUES ('1c8490ed-485e-4f8c-8caf-fbfdcdf37052', 'a9656db2-0d2e-11ee-be56-0242ac120002', 'świadomość morska'),

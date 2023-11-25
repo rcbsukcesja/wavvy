@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -19,4 +20,5 @@ public class OrganizationNGOListView extends OrganizationListView {
     private LegalStatus legalStatus;
     private String bankAccount;
     private Set<String> tags;
+    private LocalDate foundetAtDate;
 }

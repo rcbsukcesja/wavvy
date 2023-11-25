@@ -34,5 +34,5 @@ public class OrganizationNGO extends Organization {
     private Set<OrganizationNGOTag> tags;
 
     @Column(columnDefinition = "TIMESTAMP")
-    private LocalDate foundetAtDate ;
+    private LocalDate foundetAtDate;
 }
