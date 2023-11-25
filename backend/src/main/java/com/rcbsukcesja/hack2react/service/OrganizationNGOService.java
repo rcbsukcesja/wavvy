@@ -11,16 +11,19 @@ import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOVie
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
 import com.rcbsukcesja.hack2react.model.entity.Resource;
 import com.rcbsukcesja.hack2react.model.entity.SocialLink;
+import com.rcbsukcesja.hack2react.model.entity.User;
 import com.rcbsukcesja.hack2react.model.mappers.AddressMapper;
 import com.rcbsukcesja.hack2react.model.mappers.OrganizationNGOMapper;
 import com.rcbsukcesja.hack2react.repositories.BusinessAreaRepository;
 import com.rcbsukcesja.hack2react.repositories.OrganizationNGORepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
+import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -266,4 +269,10 @@ public class OrganizationNGOService {
         }
     }
 
+    public OrganizationNGOView getMyNGO() {
+        UUID userId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
+        User owner = userRepository.getReferenceById(userId);
+        OrganizationNGO organizationNGO = organizationNGORepository.getOrganizationNGOByOwner(owner);
+        return organizationNGOMapper.organizationNGOToOrganizationNGOView(organizationNGO);
+    }
 }

@@ -1,6 +1,7 @@
 package com.rcbsukcesja.hack2react.repositories;
 
 import com.rcbsukcesja.hack2react.model.entity.Company;
+import com.rcbsukcesja.hack2react.model.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -31,4 +32,6 @@ public interface CompanyRepository extends JpaRepository<Company, UUID> {
             "resources"
     })
     Optional<Company> getCompanyById(UUID id);
+
+    Company getCompanyByOwner(User owner);
 }
