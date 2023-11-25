@@ -58,7 +58,8 @@ public record CompanyPatchDto(
         String regon,
         @Size(max = RESOURCES_MAX_NUMBER, message = RESOURCES_MAX_NUMBER_VALIDATION_MESSAGE)
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> resources,
-        LegalStatus legalStatus
+        LegalStatus legalStatus,
+        Boolean confirmed
 ) {
 
 }

@@ -15,7 +15,6 @@ public record OrganizationAddressSaveDto(
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String street,
 
-
         @NotBlank
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String city,
