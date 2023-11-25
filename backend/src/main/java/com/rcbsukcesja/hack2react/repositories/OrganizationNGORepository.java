@@ -1,6 +1,7 @@
 package com.rcbsukcesja.hack2react.repositories;
 
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
+import com.rcbsukcesja.hack2react.model.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -32,4 +33,6 @@ public interface OrganizationNGORepository extends JpaRepository<OrganizationNGO
             "resources"
     })
     Optional<OrganizationNGO> getOrganizationNGOById(UUID id);
+
+    OrganizationNGO getOrganizationNGOByOwner(User owner);
 }
