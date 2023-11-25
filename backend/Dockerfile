@@ -5,6 +5,7 @@ RUN mvn -f /home/app/pom.xml clean package -DskipTests=true
 
 FROM openjdk:22-jdk-bullseye
 COPY --from=build /home/app/target/wavvy-backend-0.0.1-SNAPSHOT.jar /usr/local/lib/backend.jar
-RUN mkdir -p /usr/share/wavvy/images/logo
-RUN mkdir -p /usr/share/wavvy/images/project
+RUN mkdir -p /usr/share/wavvy/images/
+WORKDIR /usr/share/wavvy/images/
+RUN mkdir logo project
 ENTRYPOINT ["java", "-jar", "/usr/local/lib/backend.jar"]
