@@ -13,8 +13,6 @@ import lombok.Setter;
 @Builder
 public class AddressView {
     private String street;
-    private String houseNumber;
-    private String apartmentNumber;
     private String city;
     private String zipCode;
     private String country;

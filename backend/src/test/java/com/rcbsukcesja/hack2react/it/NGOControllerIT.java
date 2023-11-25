@@ -91,8 +91,6 @@ class NGOControllerIT extends AbstractContainerBaseTest {
                 .name("new NGO")
                 .description("description of new NGO")
                 .address(OrganizationAddressSaveDto.builder()
-                        .houseNumber("houseNumber")
-                        .apartmentNumber("apartmentNumber")
                         .country("country")
                         .city("city")
                         .street("street")

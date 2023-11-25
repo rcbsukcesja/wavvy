@@ -17,13 +17,6 @@ public record OrganizationAddressPatchDto(
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String street,
 
-        @Pattern(regexp = NOT_BLANK_PATTERN,
-                message = NOT_BLANK_VALIDATION_MESSAGE)
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String houseNumber,
-
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String apartmentNumber,
 
         @Pattern(regexp = NOT_BLANK_PATTERN,
                 message = NOT_BLANK_VALIDATION_MESSAGE)
