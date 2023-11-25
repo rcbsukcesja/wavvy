@@ -46,11 +46,13 @@ public class ProjectService {
     @Value("${wavvy.images.project.url}")
     private String projectUrl;
 
-    private static final String UPLOAD_DIR = "project";
-
-    public Page<ProjectView> getAllProjects(List<ProjectStatus> statusList, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+    public Page<ProjectView> getAllProjects(String search, List<ProjectStatus> statusList, LocalDate startDate,
+                                            LocalDate endDate, Pageable pageable) {
         dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
         Specification<Project> spec = ProjectSpecifications.notOutsideDateRange(startDate, endDate);
+        if (search != null && !search.isEmpty()) {
+            spec = spec.and(ProjectSpecifications.nameOrTagsContain(search));
+        }
         if (statusList != null && !statusList.isEmpty()) {
             spec = spec.and(ProjectSpecifications.statusInStatusList(statusList));
         }
@@ -66,7 +68,7 @@ public class ProjectService {
         Project project = new Project();
 
         setBasicProjectFields(dto, project);
-        project.setProjectTags(new HashSet<>());
+        project.setTags(new HashSet<>());
         project.setLinks(new HashSet<>());
 
         project = projectRepository.save(project);
@@ -80,7 +82,7 @@ public class ProjectService {
                 newProjectTag.setTag(tag);
                 projectTags.add(newProjectTag);
             }
-            project.setProjectTags(projectTags);
+            project.setTags(projectTags);
         }
 
         if (dto.links() != null && !dto.links().isEmpty()) {
@@ -195,21 +197,21 @@ public class ProjectService {
 
     private void updateTags(Project project, Set<String> tags) {
         if (tags != null) {
-            if(project.getProjectTags() == null) {
-                project.setProjectTags(new HashSet<>());
+            if(project.getTags() == null) {
+                project.setTags(new HashSet<>());
             }
             if (tags.isEmpty()) {
-                project.getProjectTags().clear();
+                project.getTags().clear();
             } else {
-                project.getProjectTags().removeIf(projectTag -> !tags.contains(projectTag.getTag()));
+                project.getTags().removeIf(projectTag -> !tags.contains(projectTag.getTag()));
 
                 for (String tag : tags) {
-                    if (project.getProjectTags().stream()
+                    if (project.getTags().stream()
                             .noneMatch(actualProjectTag -> actualProjectTag.getTag().equals(tag))) {
                         ProjectTag newProjectTag = new ProjectTag();
                         newProjectTag.setTag(tag);
                         newProjectTag.setProject(project);
-                        project.getProjectTags().add(newProjectTag);
+                        project.getTags().add(newProjectTag);
                     }
                 }
             }

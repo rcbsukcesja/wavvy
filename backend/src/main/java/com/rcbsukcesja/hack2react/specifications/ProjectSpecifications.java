@@ -1,8 +1,10 @@
 package com.rcbsukcesja.hack2react.specifications;
 
 import com.rcbsukcesja.hack2react.model.entity.Project;
+import com.rcbsukcesja.hack2react.model.entity.ProjectTag;
 import com.rcbsukcesja.hack2react.model.enums.ProjectStatus;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -54,6 +56,17 @@ public class ProjectSpecifications {
     public static Specification<Project> statusInStatusList(List<ProjectStatus> statusList) {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = root.get("status").in(statusList);
+            return query.where(predicate).getRestriction();
+        };
+    }
+
+    public static Specification<Project> nameOrTagsContain(final String search) {
+        return (root, query, criteriaBuilder) -> {
+            Join<Project, ProjectTag> tagsJoin = root.join("tags");
+            Predicate predicate = criteriaBuilder.or(
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + search.toLowerCase() + "%"),
+                    criteriaBuilder.like(criteriaBuilder.lower(tagsJoin.get("tag")), "%" + search.toLowerCase() + "%")
+            );
             return query.where(predicate).getRestriction();
         };
     }

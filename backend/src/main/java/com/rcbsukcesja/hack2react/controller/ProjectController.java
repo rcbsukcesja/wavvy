@@ -37,15 +37,16 @@ public class ProjectController {
     private final ProjectService projectService;
     private final StorageService storageService;
 
-    private final String UPLOAD_DIRECTORY = "project";
+    private static final String UPLOAD_DIRECTORY = "project";
 
     @GetMapping
     public ResponseEntity<Page<ProjectView>> getAllProjects(
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) List<ProjectStatus> statusList,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             @ParameterObject Pageable pageable) {
-        return new ResponseEntity<>(projectService.getAllProjects(statusList, startDate, endDate, pageable), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.getAllProjects(search, statusList, startDate, endDate, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{projectId}")
