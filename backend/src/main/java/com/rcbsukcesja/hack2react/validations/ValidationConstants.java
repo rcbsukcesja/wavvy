@@ -9,7 +9,7 @@ public interface ValidationConstants {
     int NGO_TAG_MIN = 3;
     int NGO_TAG_MAX = 12;
     int PROJECT_TAG_MIN = 1;
-    int PROJESCT_TAG_MAX =5;
+    int PROJECT_TAG_MAX =5;
     String PHONE_REGEX = "^\\d{9}$";
     String REGON_REGEX = "^(\\d{9}|\\d{14})$";
     String NIP_REGEX = "^\\d{10}$";
@@ -33,6 +33,6 @@ public interface ValidationConstants {
 
     String RESOURCES_MAX_NUMBER_VALIDATION_MESSAGE = "Resources number should be less than {max}";
 
-    String PROJECT_TAGS_VALIDATION_MESSAGE = "Project tags number should be between 1 and 5";
-    String NGO_TAGS_VALIDATION_MESSAGE = "NGO tags number should be between 3 and 12";
+    String PROJECT_TAGS_VALIDATION_MESSAGE = "Project tags number should be between {min} and {max}";
+    String NGO_TAGS_VALIDATION_MESSAGE = "NGO tags number should be between {min} and {max}";
 }

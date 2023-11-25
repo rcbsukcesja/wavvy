@@ -35,7 +35,7 @@ public record ProjectSaveDto(
         UUID organizerId, // TODO: remove from here and set it by system
         @NotNull
         ProjectStatus status,
-        @Size(min = PROJECT_TAG_MIN, max = PROJESCT_TAG_MAX, message = PROJECT_TAGS_VALIDATION_MESSAGE)
+        @Size(min = PROJECT_TAG_MIN, max = PROJECT_TAG_MAX, message = PROJECT_TAGS_VALIDATION_MESSAGE)
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
 
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> links,
