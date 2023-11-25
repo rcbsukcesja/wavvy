@@ -65,4 +65,9 @@ public class NGOController {
         organizationNGOService.deleteNGO(ngoId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<OrganizationNGOView> getMyNGO(){
+        return new ResponseEntity<>(organizationNGOService.getMyNGO(), HttpStatus.OK);
+    }
 }
