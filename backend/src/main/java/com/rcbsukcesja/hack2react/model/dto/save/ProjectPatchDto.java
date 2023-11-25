@@ -16,6 +16,7 @@ import static com.rcbsukcesja.hack2react.validations.ValidationConstants.NOT_BLA
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PROJECT_TAGS_VALIDATION_MESSAGE;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PROJECT_TAG_MAX;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PROJECT_TAG_MIN;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.REASON_MAX_LENGTH;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.STANDARD_TEXT_MAX_LENGTH;
 
 @Builder
@@ -41,7 +42,7 @@ public record ProjectPatchDto(
 
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> links,
         boolean possibleVolunteer,
-        @Size(max = DESCRIPTION_MAX_LENGTH)
+        @Size(max = REASON_MAX_LENGTH)
         String reason,
         boolean disabled
 ) {

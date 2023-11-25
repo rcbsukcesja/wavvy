@@ -48,7 +48,7 @@ public record OrganizationNGOPatchDto(
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
         LocalDate foundedAt,
         Boolean confirmed,
-        @Size(max = DESCRIPTION_MAX_LENGTH)
+        @Size(max = REASON_MAX_LENGTH)
         String reason,
         boolean disabled
 
