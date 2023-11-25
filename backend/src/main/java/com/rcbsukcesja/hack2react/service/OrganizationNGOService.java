@@ -206,6 +206,9 @@ public class OrganizationNGOService {
         if(dto.disabled() != actual.isDisabled()){
             actual.setDisabled(dto.disabled());
         }
+        if(dto.reason() != null && !dto.reason().equals(actual.getReason())){
+            actual.setReason(dto.reason());
+        }
         actual.setUpdatedAt(TimeUtils.nowInUTC());
         OrganizationNGO updated = organizationNGORepository.save(actual);
         return organizationNGOMapper.organizationNGOToOrganizationNGOView(updated);

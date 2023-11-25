@@ -151,6 +151,9 @@ public class ProjectService {
         if(!dto.disabled() != project.isDisabled()){
             project.setDisabled(dto.disabled());
         }
+        if(dto.reason() != null && ! dto.reason().equals(project.getReason())){
+            project.setReason(dto.reason());
+        }
 
         updateTags(project, dto.tags());
         updateLinks(project, dto.links());
