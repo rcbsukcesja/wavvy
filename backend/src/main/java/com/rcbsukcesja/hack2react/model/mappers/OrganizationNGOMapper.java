@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
         UserLightweightMapper.class,
         ResourceMapper.class,
         SocialLinkMapper.class,
+        OrganizationNGOTagMapper.class,
         AddressMapper.class
 })
 public interface OrganizationNGOMapper {

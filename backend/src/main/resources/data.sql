@@ -43,22 +43,30 @@ VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'NGO', 'Liga Morska i Rzeczna',
         '000757221', '234858111',
         '394262090', null, null);
 
+INSERT INTO wavvy.wavvy.ngo_tags(id, organization_ngo_id, tag)
+VALUES ('1c8490ed-485e-4f8c-8caf-fbfdcdf37052', 'a9656db2-0d2e-11ee-be56-0242ac120002', 'świadomość morska'),
+       ('f28cf3e8-b42b-46b5-9fa9-e01f3f3e0838', 'b544b8e0-0d2e-11ee-be56-0242ac120002', 'harcerstwo'),
+       ('defc0e24-f3db-4050-a309-6e0b2806072c', 'b544b8e0-0d2e-11ee-be56-0242ac120002', 'młodzież'),
+       ('896ef52e-6d0c-4085-952d-d44845abd12e', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', 'sztorm'),
+       ('4be963ed-67d0-4072-ad70-68ae33dc2aff', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', 'lekkoatletyka'),
+       ('a0adb809-16c2-478f-8ec4-b3fe75511c74', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', 'sport');
+
 INSERT INTO wavvy.wavvy.app_users(id, username, first_Name, last_Name, email, user_type, deleted, created_timestamp,
                                   enabled, email_verified, organization_id)
-VALUES ('ccccf3b0-0d10-11ee-be56-0242ac120002', 'zbyszek@gmail.com', 'Zbigniew', 'Brzęczyszczykiewicz',
-        'zbyszek@gmail.com',
+VALUES ('ccccf3b0-0d10-11ee-be56-0242ac120002', 'miasto@gmail.com', 'Zbigniew', 'Brzęczyszczykiewicz',
+        'miasto@gmail.com',
         'CITY_HALL', false, 1700154735340, true, true, null),
-       ('2dc6b240-0d12-11ee-be56-0242a20002c1', 'romek@gmail.com', 'Roman', 'Rybak', 'romek@gmail.com',
+       ('2dc6b240-0d12-11ee-be56-0242a20002c1', 'ngo1@gmail.com', 'Roman', 'Rybak', 'ngo1@gmail.com',
         'NGO', false, 1700154735340, true, true, 'a9656db2-0d2e-11ee-be56-0242ac120002'),
-       ('353feec4-0d12-11ee-be56-0242ac120002', 'babel@gmail.com', 'Eustachy', 'Bąbel', 'babel@gmail.com',
+       ('353feec4-0d12-11ee-be56-0242ac120002', 'ngo2@gmail.com', 'Eustachy', 'Bąbel', 'ngo2@gmail.com',
         'NGO', false, 1700154735340, true, true, 'b544b8e0-0d2e-11ee-be56-0242ac120002'),
-       ('03c79bef-4282-4326-be74-8acb180d7f03', 'andrew@gmail.com', 'Andrzej', 'Przedsiębiorczy', 'andrew@gmail.com',
+       ('03c79bef-4282-4326-be74-8acb180d7f03', 'ngo3@gmail.com', 'Andrzej', 'Przedsiębiorczy', 'ngo3@gmail.com',
         'NGO', false, 1700154735340, true, true, 'c06f4f3c-0d2e-11ee-be56-0242ac120002'),
-       ('3ed0cf62-0d12-11ee-be56-0242ac120002', 'jesica@gmail.com', 'Jesica', 'Bąbelek', 'jesica@gmail.com',
+       ('3ed0cf62-0d12-11ee-be56-0242ac120002', 'msp1@gmail.com', 'Jesica', 'Bąbelek', 'msp1@gmail.com',
         'BUSINESS', false, 1700154735340, true, true, 'a2daa44a-0d2d-11ee-be56-0242ac120002'),
-       ('4f1b9b6c-0d12-11ee-be56-0242ac120002', 'zenon@gmail.com', 'Zenon', 'Bździoch', 'zenon@gmail.com',
+       ('4f1b9b6c-0d12-11ee-be56-0242ac120002', 'msp2@gmail.com', 'Zenon', 'Bździoch', 'msp2@gmail.com',
         'BUSINESS', false, 1700154735340, true, true, '9bab7cfc-0d2e-11ee-be56-0242ac120002'),
-       ('528f7db6-d46f-465b-a93a-6d67f9ab85c9', 'wieslaw@gmail.com', 'Wiesław', 'Dąbrowski', 'wieslaw@gmail.com',
+       ('528f7db6-d46f-465b-a93a-6d67f9ab85c9', 'msp3@gmail.com', 'Wiesław', 'Dąbrowski', 'msp3@gmail.com',
         'BUSINESS', false, 1700154735340, true, true, '4b0e9873-47f7-499a-8190-5aff4ac16dde');
 
 INSERT INTO wavvy.wavvy.business_areas(id, name)
@@ -162,7 +170,7 @@ VALUES ('9457f49a-15de-4a67-8870-6c7c5dd4746e', 'Zbiórka żywności',
         'Poszukujemy wolontariuszy do obsługi biegu.',
         7, 'true', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', '2022-03-10T16:00:00', '2022-03-10T16:00:00');
 
-INSERT INTO wavvy.wavvy.tags(id, project_id, tag)
+INSERT INTO wavvy.wavvy.project_tags(id, project_id, tag)
 VALUES ('4a16e0e4-ca1b-4d82-bdd0-84011b9e9ad5', '9457f49a-15de-4a67-8870-6c7c5dd4746e', 'zbiórka żywności'),
        ('d8b99892-fca7-4e44-8a23-6a1ee82ddcdf', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6', 'edukacja'),
        ('3127f35f-1965-4661-80bb-83981f9520da', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6', 'młodzież'),
