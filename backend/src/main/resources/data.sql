@@ -1,7 +1,7 @@
 INSERT INTO wavvy.wavvy.organizations(id, organization_type, name, street,
                                       city, zip_code, country, phone, email, website, logo_path,
                                       created_at, updated_at, description, krs, nip, regon, legal_status, bank_account,
-                                      confirmed, foundet_at_date)
+                                      confirmed, founded_at)
 VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'NGO', 'Liga Morska i Rzeczna',
         'Chodkiewicza 4/5', 'Kołobrzeg', '78-100', 'Polska', '693996135',
         'kontakt@lmir.kolobrzeg.pl', 'https://www.facebook.com/lmir.gdynia/?locale=pl_PL', null, '2023-06-20T00:00:00',

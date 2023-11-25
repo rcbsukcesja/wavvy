@@ -20,5 +20,5 @@ public class OrganizationNGOListView extends OrganizationListView {
     private LegalStatus legalStatus;
     private String bankAccount;
     private Set<String> tags;
-    private LocalDate foundetAtDate;
+    private LocalDate foundedAt;
 }

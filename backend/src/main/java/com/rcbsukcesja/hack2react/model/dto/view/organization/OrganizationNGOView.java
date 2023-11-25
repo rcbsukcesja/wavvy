@@ -22,6 +22,5 @@ public class OrganizationNGOView extends OrganizationView {
     private String bankAccount;
     private Set<ProjectLightweightView> projects;
     private Set<String> tags;
-    private LocalDate foundetAtDate;
-
+    private LocalDate foundedAt;
 }

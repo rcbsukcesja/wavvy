@@ -176,9 +176,9 @@ public class OrganizationNGOService {
         if (dto.bankAccount() != null && !actual.getBankAccount().equals(dto.bankAccount())) {
             actual.setBankAccount(dto.bankAccount());
         }
-        if(dto.foundetAtDate() != null & !actual.getFoundetAtDate().equals(dto.foundetAtDate())){
-            dateValidation.isFoundetAtDateNotBeforeTodayDate(dto.foundetAtDate());
-            actual.setFoundetAtDate(dto.foundetAtDate());
+        if(dto.foundedAt() != null & !actual.getFoundedAt().equals(dto.foundedAt())){
+            dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
+            actual.setFoundedAt(dto.foundedAt());
         }
 
         updateSocialLinks(actual, dto.socialLinks());
@@ -302,7 +302,7 @@ public class OrganizationNGOService {
                         .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
                 .toList()));
         ngo.setBankAccount(dto.bankAccount());
-        ngo.setFoundetAtDate(dto.foundetAtDate());
+        ngo.setFoundedAt(dto.foundedAt());
     }
 
     private OrganizationNGO getNgoByIdOrThrowException(UUID id) {
@@ -316,7 +316,7 @@ public class OrganizationNGOService {
         organizationValidation.checkIfOrganizationKrsAlreadyExists(dto.krs());
         organizationValidation.checkIfOrganizationNipAlreadyExists(dto.nip());
         organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
-        dateValidation.isFoundetAtDateNotBeforeTodayDate(dto.foundetAtDate());
+        dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
     }
 
     private void validateUpdateNgo(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
@@ -332,8 +332,8 @@ public class OrganizationNGOService {
         if (!ngo.getRegon().equals(dto.regon())) {
             organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
         }
-        if(!ngo.getFoundetAtDate().equals(dto.foundetAtDate())){
-            dateValidation.isFoundetAtDateNotBeforeTodayDate(dto.foundetAtDate());
+        if(!ngo.getFoundedAt().equals(dto.foundedAt())){
+            dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
         }
     }
 

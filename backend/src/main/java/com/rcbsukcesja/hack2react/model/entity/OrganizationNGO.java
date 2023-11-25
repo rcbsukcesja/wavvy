@@ -1,7 +1,13 @@
 package com.rcbsukcesja.hack2react.model.entity;
 
 import com.rcbsukcesja.hack2react.model.enums.LegalStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Entity
@@ -33,6 +38,5 @@ public class OrganizationNGO extends Organization {
     @OneToMany(mappedBy = "organizationNgo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<OrganizationNGOTag> tags;
 
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDate foundetAtDate;
+    private LocalDate foundedAt;
 }
