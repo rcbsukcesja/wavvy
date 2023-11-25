@@ -39,4 +39,6 @@ public abstract class OrganizationView {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private boolean confirmed;
 }

@@ -60,7 +60,8 @@ public record CompanySaveDto(
         @Size(max = RESOURCES_MAX_NUMBER, message = RESOURCES_MAX_NUMBER_VALIDATION_MESSAGE)
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> resources,
         @NotNull
-        LegalStatus legalStatus
+        LegalStatus legalStatus,
+        Boolean confirmed
 ) {
 
 }

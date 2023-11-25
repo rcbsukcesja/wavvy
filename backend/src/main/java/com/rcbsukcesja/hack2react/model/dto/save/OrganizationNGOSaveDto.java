@@ -64,7 +64,10 @@ public record OrganizationNGOSaveDto(
         @Pattern(regexp = BANK_ACCOUNT, message = BANK_ACCOUNT_VALIDATION_MESSAGE)
         String bankAccount,
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
-        LocalDate foundetAtDate
+
+        LocalDate foundetAtDate,
+
+        Boolean confirmed
 
 ) {
 
