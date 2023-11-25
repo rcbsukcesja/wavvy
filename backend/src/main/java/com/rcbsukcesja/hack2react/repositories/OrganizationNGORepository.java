@@ -20,7 +20,8 @@ public interface OrganizationNGORepository extends JpaRepository<OrganizationNGO
             "owner",
             "socialLinks",
             "businessAreas",
-            "resources"
+            "resources",
+            "tags"
     })
     @NonNull
     Page<OrganizationNGO> findAll(@Nullable Pageable pageable);
@@ -30,7 +31,8 @@ public interface OrganizationNGORepository extends JpaRepository<OrganizationNGO
             "owner",
             "socialLinks",
             "businessAreas",
-            "resources"
+            "resources",
+            "tags"
     })
     Optional<OrganizationNGO> getOrganizationNGOById(UUID id);
 

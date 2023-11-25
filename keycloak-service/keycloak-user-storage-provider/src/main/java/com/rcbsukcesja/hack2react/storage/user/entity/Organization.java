@@ -53,6 +53,8 @@ public abstract class Organization {
     private String nip;
     private String regon;
 
+    private boolean confirmed;
+
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {

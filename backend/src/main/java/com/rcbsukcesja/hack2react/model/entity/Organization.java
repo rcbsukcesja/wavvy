@@ -79,6 +79,7 @@ public abstract class Organization {
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Resource> resources;
+    private boolean confirmed;
 
     @PrePersist
     public void prePersist() {

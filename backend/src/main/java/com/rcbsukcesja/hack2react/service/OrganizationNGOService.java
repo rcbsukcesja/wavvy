@@ -61,7 +61,11 @@ public class OrganizationNGOService {
         ngo.setProjects(new HashSet<>());
         ngo.setResources(new HashSet<>());
         ngo.setSocialLinks(new HashSet<>());
-
+        if (dto.confirmed() != null) {
+            ngo.setConfirmed(dto.confirmed());
+        } else {
+            ngo.setConfirmed(false);
+        }
         ngo = organizationNGORepository.save(ngo);
 
         if (dto.socialLinks() != null && !dto.socialLinks().isEmpty()) {
@@ -89,6 +93,17 @@ public class OrganizationNGOService {
             ngo.setResources(resources);
 
         }
+        if (dto.tags() != null && !dto.tags().isEmpty()) {
+            Set<OrganizationNGOTag> tags = new HashSet<>();
+            for (String tag : dto.tags()) {
+                OrganizationNGOTag newTag = new OrganizationNGOTag();
+                newTag.setId(UUID.randomUUID());
+                newTag.setTag(tag);
+                newTag.setOrganizationNgo(ngo);
+                tags.add(newTag);
+            }
+            ngo.setTags(tags);
+        }
 
         ngo.setCreatedAt(TimeUtils.nowInUTC());
         ngo.setUpdatedAt(ngo.getCreatedAt());
@@ -106,6 +121,11 @@ public class OrganizationNGOService {
         updateSocialLinks(ngo, dto.socialLinks());
         updateResources(ngo, dto.resources());
         updateTags(ngo, dto.tags());
+        if (dto.confirmed() != null) {
+            ngo.setConfirmed(dto.confirmed());
+        } else {
+            ngo.setConfirmed(false);
+        }
         ngo.setUpdatedAt(TimeUtils.nowInUTC());
 
         OrganizationNGO saved = organizationNGORepository.saveAndFlush(ngo);
@@ -158,6 +178,10 @@ public class OrganizationNGOService {
         updateSocialLinks(actual, dto.socialLinks());
         updateResources(actual, dto.resources());
         updateTags(actual, dto.tags());
+
+        if (dto.confirmed() != null && !(actual.isConfirmed() == dto.confirmed())) {
+            actual.setConfirmed(dto.confirmed());
+        }
 
         if (dto.description() != null && !actual.getDescription().equals(dto.description())) {
             actual.setDescription(dto.description());
