@@ -11,7 +11,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {
         ProjectLinkMapper.class,
-        TagMapper.class,
+        ProjectTagMapper.class,
         BusinessAreaMapper.class,
         OrganizationNGOLightweightMapper.class,
         AddressMapper.class

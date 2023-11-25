@@ -21,8 +21,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Table(name = "tags", schema = "wavvy")
-public class Tag {
+@Table(name = "project_tags", schema = "wavvy")
+public class ProjectTag {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

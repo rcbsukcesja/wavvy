@@ -4,6 +4,7 @@ public interface ValidationConstants {
 
     int STANDARD_TEXT_MAX_LENGTH = 255;
     int DESCRIPTION_MAX_LENGTH = 2000;
+    int RESOURCES_MAX_NUMBER = 20;
     String PHONE_REGEX = "^\\d{9}$";
     String REGON_REGEX = "^(\\d{9}|\\d{14})$";
     String NIP_REGEX = "^\\d{10}$";
@@ -24,4 +25,6 @@ public interface ValidationConstants {
     String BANK_ACCOUNT_VALIDATION_MESSAGE = "Bank account should have 26 digits";
 
     String ZIP_CODE_VALIDATION_MESSAGE = "Zip code should have 5 digits and be in format XX-XXX";
+
+    String RESOURCES_MAX_NUMBER_VALIDATION_MESSAGE = "Resources number should be less than {max}";
 }

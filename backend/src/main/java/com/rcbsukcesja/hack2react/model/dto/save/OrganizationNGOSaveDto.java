@@ -23,6 +23,8 @@ import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PHONE_P
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PHONE_REGEX;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.REGON_PATTERN_VALIDATION_MESSAGE;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.REGON_REGEX;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.RESOURCES_MAX_NUMBER;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.RESOURCES_MAX_NUMBER_VALIDATION_MESSAGE;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.STANDARD_TEXT_MAX_LENGTH;
 
 @Builder
@@ -53,11 +55,13 @@ public record OrganizationNGOSaveDto(
         String nip,
         @Pattern(regexp = REGON_REGEX, message = REGON_PATTERN_VALIDATION_MESSAGE)
         String regon,
+        @Size(max = RESOURCES_MAX_NUMBER, message = RESOURCES_MAX_NUMBER_VALIDATION_MESSAGE)
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> resources,
         @NotNull
         LegalStatus legalStatus,
         @Pattern(regexp = BANK_ACCOUNT, message = BANK_ACCOUNT_VALIDATION_MESSAGE)
-        String bankAccount
+        String bankAccount,
+        Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags
 ) {
 
 }
