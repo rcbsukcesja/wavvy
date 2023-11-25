@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -21,5 +22,5 @@ public class OrganizationNGOView extends OrganizationView {
     private String bankAccount;
     private Set<ProjectLightweightView> projects;
     private Set<String> tags;
-
+    private LocalDate foundedAt;
 }

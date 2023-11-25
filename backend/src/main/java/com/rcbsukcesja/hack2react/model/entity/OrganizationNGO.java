@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -36,4 +37,6 @@ public class OrganizationNGO extends Organization {
 
     @OneToMany(mappedBy = "organizationNgo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<OrganizationNGOTag> tags;
+
+    private LocalDate foundedAt;
 }

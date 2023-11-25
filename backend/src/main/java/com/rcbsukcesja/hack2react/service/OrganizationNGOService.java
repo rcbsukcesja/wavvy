@@ -20,6 +20,7 @@ import com.rcbsukcesja.hack2react.repositories.OrganizationNGORepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
+import com.rcbsukcesja.hack2react.validations.DateValidation;
 import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,7 @@ public class OrganizationNGOService {
     private final BusinessAreaRepository businessAreaRepository;
     private final OrganizationValidation organizationValidation;
     private final AddressMapper addressMapper;
+    private final DateValidation dateValidation;
 
     public Page<OrganizationNGOListView> getAllNGO(Pageable pageable) {
         return organizationNGORepository.findAll(pageable)
@@ -174,6 +176,10 @@ public class OrganizationNGOService {
         if (dto.bankAccount() != null && !actual.getBankAccount().equals(dto.bankAccount())) {
             actual.setBankAccount(dto.bankAccount());
         }
+        if(dto.foundedAt() != null & !actual.getFoundedAt().equals(dto.foundedAt())){
+            dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
+            actual.setFoundedAt(dto.foundedAt());
+        }
 
         updateSocialLinks(actual, dto.socialLinks());
         updateResources(actual, dto.resources());
@@ -296,6 +302,7 @@ public class OrganizationNGOService {
                         .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
                 .toList()));
         ngo.setBankAccount(dto.bankAccount());
+        ngo.setFoundedAt(dto.foundedAt());
     }
 
     private OrganizationNGO getNgoByIdOrThrowException(UUID id) {
@@ -309,6 +316,7 @@ public class OrganizationNGOService {
         organizationValidation.checkIfOrganizationKrsAlreadyExists(dto.krs());
         organizationValidation.checkIfOrganizationNipAlreadyExists(dto.nip());
         organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
+        dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
     }
 
     private void validateUpdateNgo(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
@@ -323,6 +331,9 @@ public class OrganizationNGOService {
         }
         if (!ngo.getRegon().equals(dto.regon())) {
             organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
+        }
+        if(!ngo.getFoundedAt().equals(dto.foundedAt())){
+            dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
         }
     }
 

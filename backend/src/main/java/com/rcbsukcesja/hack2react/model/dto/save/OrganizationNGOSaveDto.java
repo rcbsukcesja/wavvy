@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
@@ -62,7 +63,9 @@ public record OrganizationNGOSaveDto(
         @Pattern(regexp = BANK_ACCOUNT, message = BANK_ACCOUNT_VALIDATION_MESSAGE)
         String bankAccount,
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
+        LocalDate foundedAt,
         Boolean confirmed
+
 ) {
 
 }
