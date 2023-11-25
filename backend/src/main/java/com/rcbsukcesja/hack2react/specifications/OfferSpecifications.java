@@ -109,7 +109,7 @@ public class OfferSpecifications {
     }
 
     private static Subquery<Offer> getFollowedOffersSubquery(UUID userId, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-        Subquery<Offer> followedOffersSubquery = getFollowedOffersSubquery(userId, query, criteriaBuilder);
+        Subquery<Offer> followedOffersSubquery = query.subquery(Offer.class);
         Root<Offer> followedOffersRoot = followedOffersSubquery.from(Offer.class);
         SetJoin<Offer, User> followedUsers = followedOffersRoot.joinSet("followingUsers");
         followedOffersSubquery.select(followedOffersRoot);
