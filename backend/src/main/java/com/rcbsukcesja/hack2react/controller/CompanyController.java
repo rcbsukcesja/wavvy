@@ -32,13 +32,12 @@ public class CompanyController {
     private final CompanyService organizationCompanyService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_NGO')")
     public ResponseEntity<Page<CompanyListView>> getAllCompanies(@ParameterObject Pageable pageable) {
         return new ResponseEntity<>(organizationCompanyService.getAllCompany(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{companyId}")
-    @PreAuthorize("hasRole('ROLE_NGO')")
+    @PreAuthorize("hasAnyRole('ROLE_NGO', 'ROLE_COMPANY', 'ROLE_CITY_HALL')")
     public ResponseEntity<?> getCompanyById(@PathVariable UUID companyId) {
         return new ResponseEntity<>(organizationCompanyService.getCompanyById(companyId), HttpStatus.OK);
     }
