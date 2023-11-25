@@ -10,10 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.DESCRIPTION_MAX_LENGTH;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.NOT_BLANK_PATTERN;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.NOT_BLANK_VALIDATION_MESSAGE;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.STANDARD_TEXT_MAX_LENGTH;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.*;
 
 @Builder
 public record ProjectPatchDto(
@@ -33,6 +30,7 @@ public record ProjectPatchDto(
         String cooperationMessage,
         UUID organizerId,
         ProjectStatus status,
+        @Size(min = PROJECT_TAG_MIN, max = PROJECT_TAG_MAX, message = PROJECT_TAGS_VALIDATION_MESSAGE)
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
 
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> links,

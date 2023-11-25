@@ -12,21 +12,7 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.BANK_ACCOUNT;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.BANK_ACCOUNT_VALIDATION_MESSAGE;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.DESCRIPTION_MAX_LENGTH;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.KRS_PATTERN_VALIDATION_MESSAGE;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.KRS_REGEX;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.NGO_BUSINESS_AREAS_NOT_EMPTY_VALIDATION_MESSAGE;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.NIP_PATTERN_VALIDATION_MESSAGE;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.NIP_REGEX;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PHONE_PATTERN_VALIDATION_MESSAGE;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PHONE_REGEX;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.REGON_PATTERN_VALIDATION_MESSAGE;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.REGON_REGEX;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.RESOURCES_MAX_NUMBER;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.RESOURCES_MAX_NUMBER_VALIDATION_MESSAGE;
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.STANDARD_TEXT_MAX_LENGTH;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.*;
 
 @Builder
 public record OrganizationNGOSaveDto(
@@ -62,6 +48,7 @@ public record OrganizationNGOSaveDto(
         LegalStatus legalStatus,
         @Pattern(regexp = BANK_ACCOUNT, message = BANK_ACCOUNT_VALIDATION_MESSAGE)
         String bankAccount,
+        @Size(min = NGO_TAG_MIN, max = NGO_TAG_MAX, message = NGO_TAGS_VALIDATION_MESSAGE)
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
         LocalDate foundedAt,
         Boolean confirmed
