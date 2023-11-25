@@ -42,4 +42,6 @@ public class ErrorMessages {
     public static final String INVALID_ENUM_NAME = "Could not find enum: %s";
 
     public static final String INVALID_OFFER_SCOPE = "Requested offer scopes are not allowed for this user";
+
+    public static final String FOUNDET_AT_DATE_VALIDATION_MESSAGE = "Foundet at date cannot be after today date";
 }

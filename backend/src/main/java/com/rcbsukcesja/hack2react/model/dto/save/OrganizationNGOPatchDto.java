@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -59,7 +61,8 @@ public record OrganizationNGOPatchDto(
         LegalStatus legalStatus,
         @Pattern(regexp = BANK_ACCOUNT, message = BANK_ACCOUNT_VALIDATION_MESSAGE)
         String bankAccount,
-        Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags
+        Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
+        LocalDate foundetAtDate
 ) {
 
 }
