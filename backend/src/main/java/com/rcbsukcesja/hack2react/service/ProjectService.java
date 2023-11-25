@@ -109,7 +109,6 @@ public class ProjectService {
 
         updateTags(project, dto.tags());
         updateLinks(project, dto.links());
-        project.setDisabled(false);
 
         project.setUpdatedAt(TimeUtils.nowInUTC());
 

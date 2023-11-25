@@ -130,7 +130,6 @@ public class OrganizationNGOService {
             ngo.setConfirmed(false);
         }
         ngo.setUpdatedAt(TimeUtils.nowInUTC());
-        ngo.setDisabled(false);
 
         OrganizationNGO saved = organizationNGORepository.saveAndFlush(ngo);
         return organizationNGOMapper.organizationNGOToOrganizationNGOView(saved);
