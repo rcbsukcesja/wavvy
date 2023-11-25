@@ -131,12 +131,15 @@ public class OfferService {
     public void followOffer(UUID offerId, UUID userId) {
         Offer offer = getOfferByIdOrThrowException(offerId);
         User user = geUserByIdOrThrowException(userId);
-        if (offer.getFollowingUsers().contains(user)) {
+        if (user.getFollowedOffers().contains(offer)) {
             offer.getFollowingUsers().remove(user);
+            user.getFollowedOffers().remove(offer);
         } else {
             offer.getFollowingUsers().add(user);
+            user.getFollowedOffers().add(offer);
         }
         offerRepository.saveAndFlush(offer);
+        userRepository.saveAndFlush(user);
     }
 
     private void setBasicOfferFields(OfferSaveDto offerSaveDto, Offer offer) {
