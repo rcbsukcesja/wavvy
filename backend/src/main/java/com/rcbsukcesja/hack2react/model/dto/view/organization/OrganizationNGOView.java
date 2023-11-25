@@ -20,5 +20,6 @@ public class OrganizationNGOView extends OrganizationView {
     private LegalStatus legalStatus;
     private String bankAccount;
     private Set<ProjectLightweightView> projects;
+    private Set<String> tags;
 
 }

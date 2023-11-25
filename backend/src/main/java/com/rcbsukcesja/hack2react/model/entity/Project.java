@@ -59,7 +59,7 @@ public class Project {
     private ProjectStatus status;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Tag> tags;
+    private Set<ProjectTag> projectTags;
 
     private boolean possibleVolunteer;
 

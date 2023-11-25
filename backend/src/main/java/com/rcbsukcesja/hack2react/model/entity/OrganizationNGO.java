@@ -33,4 +33,7 @@ public class OrganizationNGO extends Organization {
 
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Project> projects;
+
+    @OneToMany(mappedBy = "organizationNgo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<OrganizationNGOTag> tags;
 }

@@ -9,7 +9,7 @@ import com.rcbsukcesja.hack2react.model.dto.view.ProjectView;
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
 import com.rcbsukcesja.hack2react.model.entity.Project;
 import com.rcbsukcesja.hack2react.model.entity.ProjectLink;
-import com.rcbsukcesja.hack2react.model.entity.Tag;
+import com.rcbsukcesja.hack2react.model.entity.ProjectTag;
 import com.rcbsukcesja.hack2react.model.enums.ProjectStatus;
 import com.rcbsukcesja.hack2react.model.mappers.AddressMapper;
 import com.rcbsukcesja.hack2react.model.mappers.ProjectMapper;
@@ -66,21 +66,21 @@ public class ProjectService {
         Project project = new Project();
 
         setBasicProjectFields(dto, project);
-        project.setTags(new HashSet<>());
+        project.setProjectTags(new HashSet<>());
         project.setLinks(new HashSet<>());
 
         project = projectRepository.save(project);
 
         if (dto.tags() != null && !dto.tags().isEmpty()) {
-            Set<Tag> tags = new HashSet<>();
+            Set<ProjectTag> projectTags = new HashSet<>();
             for (String tag : dto.tags()) {
-                Tag newTag = new Tag();
-                newTag.setId(UUID.randomUUID());
-                newTag.setProject(project);
-                newTag.setTag(tag);
-                tags.add(newTag);
+                ProjectTag newProjectTag = new ProjectTag();
+                newProjectTag.setId(UUID.randomUUID());
+                newProjectTag.setProject(project);
+                newProjectTag.setTag(tag);
+                projectTags.add(newProjectTag);
             }
-            project.setTags(tags);
+            project.setProjectTags(projectTags);
         }
 
         if (dto.links() != null && !dto.links().isEmpty()) {
@@ -195,18 +195,21 @@ public class ProjectService {
 
     private void updateTags(Project project, Set<String> tags) {
         if (tags != null) {
+            if(project.getProjectTags() == null) {
+                project.setProjectTags(new HashSet<>());
+            }
             if (tags.isEmpty()) {
-                project.getTags().clear();
+                project.getProjectTags().clear();
             } else {
-                project.getTags().removeIf(tag -> !tags.contains(tag.getTag()));
+                project.getProjectTags().removeIf(projectTag -> !tags.contains(projectTag.getTag()));
 
                 for (String tag : tags) {
-                    if (project.getTags().stream()
-                            .noneMatch(actualTag -> actualTag.getTag().equals(tag))) {
-                        Tag newTag = new Tag();
-                        newTag.setTag(tag);
-                        newTag.setProject(project);
-                        project.getTags().add(newTag);
+                    if (project.getProjectTags().stream()
+                            .noneMatch(actualProjectTag -> actualProjectTag.getTag().equals(tag))) {
+                        ProjectTag newProjectTag = new ProjectTag();
+                        newProjectTag.setTag(tag);
+                        newProjectTag.setProject(project);
+                        project.getProjectTags().add(newProjectTag);
                     }
                 }
             }
@@ -215,6 +218,9 @@ public class ProjectService {
 
     private void updateLinks(Project project, Set<String> links) {
         if (links != null) {
+            if(project.getLinks() == null) {
+                project.setLinks(new HashSet<>());
+            }
             if (links.isEmpty()) {
                 project.getLinks().clear();
             } else {

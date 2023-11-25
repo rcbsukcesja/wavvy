@@ -9,6 +9,7 @@ import com.rcbsukcesja.hack2react.model.dto.save.OrganizationNGOSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOListView;
 import com.rcbsukcesja.hack2react.model.dto.view.organization.OrganizationNGOView;
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
+import com.rcbsukcesja.hack2react.model.entity.OrganizationNGOTag;
 import com.rcbsukcesja.hack2react.model.entity.Resource;
 import com.rcbsukcesja.hack2react.model.entity.SocialLink;
 import com.rcbsukcesja.hack2react.model.mappers.AddressMapper;
@@ -93,26 +94,6 @@ public class OrganizationNGOService {
         return organizationNGOMapper.organizationNGOToOrganizationNGOView(ngo);
     }
 
-    private void setBasicNGOFields(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
-        ngo.setName(dto.name());
-        ngo.setKrs(dto.krs());
-        ngo.setNip(dto.nip());
-        ngo.setRegon(dto.regon());
-        ngo.setOwner(userRepository.getUserById(dto.ownerId())
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
-        ngo.setAddress(addressMapper.organizationAddressSaveDtoToAddress(dto.address()));
-        ngo.setPhone(dto.phone());
-        ngo.setEmail(dto.email());
-        ngo.setWebsite(dto.website());
-        ngo.setDescription(dto.description());
-        ngo.setLegalStatus(dto.legalStatus());
-        ngo.setBusinessAreas(new HashSet<>(dto.businessAreaIds().stream()
-                .map(id -> businessAreaRepository.getBusinessAreaById(id)
-                        .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
-                .toList()));
-        ngo.setBankAccount(dto.bankAccount());
-    }
-
     @Transactional
     public OrganizationNGOView putUpdateNGO(UUID organizationNGOId, OrganizationNGOSaveDto dto) {
         OrganizationNGO ngo = getNgoByIdOrThrowException(organizationNGOId);
@@ -121,6 +102,7 @@ public class OrganizationNGOService {
         setBasicNGOFields(dto, ngo);
         updateSocialLinks(ngo, dto.socialLinks());
         updateResources(ngo, dto.resources());
+        updateTags(ngo, dto.tags());
         ngo.setUpdatedAt(TimeUtils.nowInUTC());
 
         OrganizationNGO saved = organizationNGORepository.saveAndFlush(ngo);
@@ -172,6 +154,7 @@ public class OrganizationNGOService {
 
         updateSocialLinks(actual, dto.socialLinks());
         updateResources(actual, dto.resources());
+        updateTags(actual, dto.tags());
 
         if (dto.description() != null && !actual.getDescription().equals(dto.description())) {
             actual.setDescription(dto.description());
@@ -197,8 +180,35 @@ public class OrganizationNGOService {
         organizationNGORepository.delete(ngo);
     }
 
+    private void updateTags(OrganizationNGO ngo, Set<String> tags) {
+        if (tags != null) {
+            if (ngo.getTags() == null) {
+                ngo.setTags(new HashSet<>());
+            }
+            if (tags.isEmpty()) {
+                ngo.getTags().clear();
+            } else {
+                ngo.getTags().removeIf(resource -> !tags.contains(resource.getTag()));
+
+                for (String tag : tags) {
+                    if (ngo.getTags().stream()
+                            .noneMatch(actualResource -> actualResource.getTag().equals(tag))) {
+                        OrganizationNGOTag newTag = new OrganizationNGOTag();
+                        newTag.setId(UUID.randomUUID());
+                        newTag.setTag(tag);
+                        newTag.setOrganizationNgo(ngo);
+                        ngo.getTags().add(newTag);
+                    }
+                }
+            }
+        }
+    }
+
     private void updateResources(OrganizationNGO ngo, Set<String> resources) {
         if (resources != null) {
+            if (ngo.getResources() == null) {
+                ngo.setResources(new HashSet<>());
+            }
             if (resources.isEmpty()) {
                 ngo.getResources().clear();
             } else {
@@ -220,6 +230,9 @@ public class OrganizationNGOService {
 
     private void updateSocialLinks(OrganizationNGO ngo, Set<String> socialLinks) {
         if (socialLinks != null) {
+            if (ngo.getSocialLinks() == null) {
+                ngo.setSocialLinks(new HashSet<>());
+            }
             if (socialLinks.isEmpty()) {
                 ngo.getSocialLinks().clear();
             } else {
@@ -236,6 +249,26 @@ public class OrganizationNGOService {
                 }
             }
         }
+    }
+
+    private void setBasicNGOFields(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
+        ngo.setName(dto.name());
+        ngo.setKrs(dto.krs());
+        ngo.setNip(dto.nip());
+        ngo.setRegon(dto.regon());
+        ngo.setOwner(userRepository.getUserById(dto.ownerId())
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
+        ngo.setAddress(addressMapper.organizationAddressSaveDtoToAddress(dto.address()));
+        ngo.setPhone(dto.phone());
+        ngo.setEmail(dto.email());
+        ngo.setWebsite(dto.website());
+        ngo.setDescription(dto.description());
+        ngo.setLegalStatus(dto.legalStatus());
+        ngo.setBusinessAreas(new HashSet<>(dto.businessAreaIds().stream()
+                .map(id -> businessAreaRepository.getBusinessAreaById(id)
+                        .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
+                .toList()));
+        ngo.setBankAccount(dto.bankAccount());
     }
 
     private OrganizationNGO getNgoByIdOrThrowException(UUID id) {
