@@ -15,8 +15,6 @@ import lombok.Setter;
 @Embeddable
 public class Address {
     private String street;
-    private String houseNumber;
-    private String apartmentNumber;
     private String city;
     private String zipCode;
     private String country;

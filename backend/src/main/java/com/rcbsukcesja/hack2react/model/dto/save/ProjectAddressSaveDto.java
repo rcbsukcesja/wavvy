@@ -15,12 +15,6 @@ public record ProjectAddressSaveDto(
         String street,
 
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String houseNumber,
-
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
-        String apartmentNumber,
-
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String city,
 
         @Pattern(regexp = ZIP_CODE_REGEX, message = ZIP_CODE_VALIDATION_MESSAGE)
