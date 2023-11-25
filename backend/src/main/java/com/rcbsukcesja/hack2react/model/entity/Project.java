@@ -68,6 +68,9 @@ public class Project {
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime updatedAt;
     private Set<String> likes ;
+    @Column(length = 2000)
+    private String reason;
+    private boolean disabled;
 
     @PrePersist
     public void prePersist() {

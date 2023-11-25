@@ -4,6 +4,7 @@ public interface ValidationConstants {
 
     int STANDARD_TEXT_MAX_LENGTH = 255;
     int DESCRIPTION_MAX_LENGTH = 2000;
+    int REASON_MAX_LENGTH =2000;
     int RESOURCES_MAX_NUMBER = 20;
 
     int NGO_TAG_MIN = 3;

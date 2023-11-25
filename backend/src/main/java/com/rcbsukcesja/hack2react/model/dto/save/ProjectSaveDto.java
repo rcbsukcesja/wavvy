@@ -40,6 +40,8 @@ public record ProjectSaveDto(
 
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> links,
         @NotNull
-        boolean possibleVolunteer
+        boolean possibleVolunteer,
+        @Size(max = DESCRIPTION_MAX_LENGTH)
+        String reason
 ) {
 }

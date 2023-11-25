@@ -109,6 +109,7 @@ public class OrganizationNGOService {
 
         ngo.setCreatedAt(TimeUtils.nowInUTC());
         ngo.setUpdatedAt(ngo.getCreatedAt());
+        ngo.setDisabled(false);
         ngo = organizationNGORepository.saveAndFlush(ngo);
 
         return organizationNGOMapper.organizationNGOToOrganizationNGOView(ngo);
@@ -129,6 +130,7 @@ public class OrganizationNGOService {
             ngo.setConfirmed(false);
         }
         ngo.setUpdatedAt(TimeUtils.nowInUTC());
+        ngo.setDisabled(false);
 
         OrganizationNGO saved = organizationNGORepository.saveAndFlush(ngo);
         return organizationNGOMapper.organizationNGOToOrganizationNGOView(saved);
@@ -201,6 +203,9 @@ public class OrganizationNGOService {
 
         if (dto.legalStatus() != null && !actual.getLegalStatus().equals(dto.legalStatus())) {
             actual.setLegalStatus(dto.legalStatus());
+        }
+        if(dto.disabled() != actual.isDisabled()){
+            actual.setDisabled(dto.disabled());
         }
         actual.setUpdatedAt(TimeUtils.nowInUTC());
         OrganizationNGO updated = organizationNGORepository.save(actual);
@@ -303,6 +308,7 @@ public class OrganizationNGOService {
                 .toList()));
         ngo.setBankAccount(dto.bankAccount());
         ngo.setFoundedAt(dto.foundedAt());
+        ngo.setReason(dto.reason());
     }
 
     private OrganizationNGO getNgoByIdOrThrowException(UUID id) {

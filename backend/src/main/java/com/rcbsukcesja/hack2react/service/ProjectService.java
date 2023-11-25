@@ -95,6 +95,7 @@ public class ProjectService {
                 links.add(newLink);
             }
             project.setLinks(links);
+            project.setDisabled(false);
         }
 
         return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
@@ -108,6 +109,7 @@ public class ProjectService {
 
         updateTags(project, dto.tags());
         updateLinks(project, dto.links());
+        project.setDisabled(false);
 
         project.setUpdatedAt(TimeUtils.nowInUTC());
 
@@ -147,6 +149,10 @@ public class ProjectService {
         if (dto.possibleVolunteer() != project.isPossibleVolunteer()) {
             project.setPossibleVolunteer(dto.possibleVolunteer());
         }
+        if(!dto.disabled() != project.isDisabled()){
+            project.setDisabled(dto.disabled());
+        }
+
         updateTags(project, dto.tags());
         updateLinks(project, dto.links());
 
@@ -193,6 +199,7 @@ public class ProjectService {
         project.setPossibleVolunteer(dto.possibleVolunteer());
         project.setStatus(dto.status());
         project.setOrganizer(getNgoByIdOrThrowException(dto.organizerId()));
+        project.setReason(dto.reason());
     }
 
     private void updateTags(Project project, Set<String> tags) {
