@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -47,15 +46,15 @@ public class ProjectService {
     @Value("${wavvy.images.project.url}")
     private String projectUrl;
 
-    public Page<ProjectView> getAllProjects(String search, List<ProjectStatus> statusList, LocalDate startDate,
+    public Page<ProjectView> getAllProjects(String search, Set<ProjectStatus> statuses, LocalDate startDate,
                                             LocalDate endDate, Pageable pageable) {
         dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
         Specification<Project> spec = ProjectSpecifications.notOutsideDateRange(startDate, endDate);
         if (search != null && !search.isEmpty()) {
             spec = spec.and(ProjectSpecifications.nameOrTagsContain(search));
         }
-        if (statusList != null && !statusList.isEmpty()) {
-            spec = spec.and(ProjectSpecifications.statusInStatusList(statusList));
+        if (statuses != null && !statuses.isEmpty()) {
+            spec = spec.and(ProjectSpecifications.statusInStatusList(statuses));
         }
         return projectRepository.findAll(spec, pageable).map(projectMapper::projectToProjectView);
     }
@@ -116,7 +115,7 @@ public class ProjectService {
             }
             project.setDisabled(dto.disabled());
         }
-        if(dto.reason() != null && !dto.reason().equals(project.getReason())){
+        if (dto.reason() != null && !dto.reason().equals(project.getReason())) {
             project.setReason(dto.reason());
         }
 
@@ -169,7 +168,7 @@ public class ProjectService {
             }
             project.setDisabled(dto.disabled());
         }
-        if(dto.reason() != null && !dto.reason().equals(project.getReason())){
+        if (dto.reason() != null && !dto.reason().equals(project.getReason())) {
             project.setReason(dto.reason());
         }
 
@@ -223,7 +222,7 @@ public class ProjectService {
 
     private void updateTags(Project project, Set<String> tags) {
         if (tags != null) {
-            if(project.getTags() == null) {
+            if (project.getTags() == null) {
                 project.setTags(new HashSet<>());
             }
             if (tags.isEmpty()) {
@@ -246,7 +245,7 @@ public class ProjectService {
 
     private void updateLinks(Project project, Set<String> links) {
         if (links != null) {
-            if(project.getLinks() == null) {
+            if (project.getLinks() == null) {
                 project.setLinks(new HashSet<>());
             }
             if (links.isEmpty()) {
