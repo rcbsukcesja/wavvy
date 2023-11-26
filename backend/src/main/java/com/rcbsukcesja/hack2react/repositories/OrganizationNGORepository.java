@@ -4,6 +4,7 @@ import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
 import com.rcbsukcesja.hack2react.model.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
@@ -24,7 +25,7 @@ public interface OrganizationNGORepository extends JpaRepository<OrganizationNGO
             "tags"
     })
     @NonNull
-    Page<OrganizationNGO> findAll(@Nullable Pageable pageable);
+    Page<OrganizationNGO> findAll(@Nullable Specification<OrganizationNGO> spec, @Nullable Pageable pageable);
 
     @EntityGraph(attributePaths = {
             "projects",

@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.service;
 
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferScopeException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OfferNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.UserNotFoundException;
@@ -14,19 +15,24 @@ import com.rcbsukcesja.hack2react.model.mappers.OfferMapper;
 import com.rcbsukcesja.hack2react.repositories.OfferRepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.specifications.OfferSpecifications;
+import com.rcbsukcesja.hack2react.utils.AuthenticationUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
+import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
 import com.rcbsukcesja.hack2react.validations.OfferValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +46,12 @@ public class OfferService {
 
     public Page<OfferView> getAllOffers(LocalDate startDate, LocalDate endDate, Set<OfferStatus> offerStatuses,
                                         Set<OfferScope> offerScopes, Boolean closeDeadlineOnly, Boolean followedByUser,
-                                        UUID userId, Pageable pageable) {
+                                        Pageable pageable, Authentication authentication) {
+        UUID userId = TokenUtils.getUserId(authentication);
+
+        offerScopes = setOfferScopes(offerScopes, authentication);
+        checkOfferScopes(offerScopes, authentication);
+
         dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
         Specification<Offer> spec = OfferSpecifications.notOutsideDateRange(startDate, endDate);
         if (offerStatuses != null && !offerStatuses.isEmpty()) {
@@ -171,6 +182,39 @@ public class OfferService {
         return userRepository.getUserById(id)
                 .orElseThrow(() -> new UserNotFoundException(
                         ErrorMessages.USER_NOT_FOUND, id));
+    }
+
+    private static Set<OfferScope> setOfferScopes(Set<OfferScope> offerScopes, Authentication authentication) {
+        if (offerScopes == null || offerScopes.isEmpty()) {
+            if (authentication == null) {
+                offerScopes = OfferScope.getAllowedOfferScopes(OfferScope.offerScopesNotPublic());
+            } else if (AuthenticationUtils.hasRole(authentication, "ROLE_NGO")) {
+                offerScopes = OfferScope.getAllowedOfferScopes(OfferScope.offerScopesNotForNgo());
+            } else if (AuthenticationUtils.hasRole(authentication, "ROLE_COMPANY")) {
+                offerScopes = OfferScope.getAllowedOfferScopes(OfferScope.offerScopesNotForCompany());
+            } else if (AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
+                offerScopes = Arrays.stream(OfferScope.values()).collect(Collectors.toSet());
+            }
+        }
+        return offerScopes;
+    }
+
+    private static void checkOfferScopes(Set<OfferScope> offerScopes, Authentication authentication) {
+        if (authentication == null) {
+            if (OfferScope.isOfferScopeNotAllowed(offerScopes, OfferScope.offerScopesNotPublic())) {
+                throw new InvalidOfferScopeException(ErrorMessages.INVALID_OFFER_SCOPE);
+            } else {
+                return;
+            }
+        }
+
+        if (AuthenticationUtils.hasRole(authentication, "ROLE_NGO")
+                && OfferScope.isOfferScopeNotAllowed(offerScopes, OfferScope.offerScopesNotForNgo())
+                || AuthenticationUtils.hasRole(authentication, "ROLE_COMPANY")
+                && OfferScope.isOfferScopeNotAllowed(offerScopes, OfferScope.offerScopesNotForCompany())
+        ) {
+            throw new InvalidOfferScopeException(ErrorMessages.INVALID_OFFER_SCOPE);
+        }
     }
 
 }

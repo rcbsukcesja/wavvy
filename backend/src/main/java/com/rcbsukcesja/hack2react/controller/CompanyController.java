@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -32,8 +34,10 @@ public class CompanyController {
     private final CompanyService organizationCompanyService;
 
     @GetMapping
-    public ResponseEntity<Page<CompanyListView>> getAllCompanies(@ParameterObject Pageable pageable) {
-        return new ResponseEntity<>(organizationCompanyService.getAllCompany(pageable), HttpStatus.OK);
+    public ResponseEntity<Page<CompanyListView>> getAllCompanies(@RequestParam(required = false) String search,
+                                                                 @ParameterObject Pageable pageable,
+                                                                 Authentication authentication) {
+        return new ResponseEntity<>(organizationCompanyService.getAllCompany(search, pageable, authentication), HttpStatus.OK);
     }
 
     @GetMapping("/{companyId}")
@@ -69,7 +73,7 @@ public class CompanyController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<CompanyView> getMyCompany(){
+    public ResponseEntity<CompanyView> getMyCompany() {
         return new ResponseEntity<>(organizationCompanyService.getMyCopmany(), HttpStatus.OK);
     }
 

@@ -19,6 +19,8 @@ import com.rcbsukcesja.hack2react.model.mappers.OrganizationNGOMapper;
 import com.rcbsukcesja.hack2react.repositories.BusinessAreaRepository;
 import com.rcbsukcesja.hack2react.repositories.OrganizationNGORepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
+import com.rcbsukcesja.hack2react.specifications.OrganizationNGOSpecifications;
+import com.rcbsukcesja.hack2react.utils.AuthenticationUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
@@ -26,6 +28,8 @@ import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,8 +50,18 @@ public class OrganizationNGOService {
     private final AddressMapper addressMapper;
     private final DateValidation dateValidation;
 
-    public Page<OrganizationNGOListView> getAllNGO(Pageable pageable) {
-        return organizationNGORepository.findAll(pageable)
+    public Page<OrganizationNGOListView> getAllNGO(String search, Pageable pageable, Authentication authentication) {
+        Specification<OrganizationNGO> spec = Specification.where(null);
+
+        if (authentication == null || !AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
+            spec = OrganizationNGOSpecifications.isNotDisabledAndConfirmed();
+        }
+
+        if (search != null && !search.isEmpty()) {
+            spec = spec.and(OrganizationNGOSpecifications.nameOrTagsOrResourcesContain(search));
+        }
+
+        return organizationNGORepository.findAll(spec, pageable)
                 .map(organizationNGOMapper::organizationNGOToOrganizationNGOListView);
     }
 
@@ -130,7 +144,7 @@ public class OrganizationNGOService {
             }
             ngo.setDisabled(dto.disabled());
         }
-        if(dto.reason() != null && !dto.reason().equals(ngo.getReason())){
+        if (dto.reason() != null && !dto.reason().equals(ngo.getReason())) {
             ngo.setReason(dto.reason());
         }
         updateSocialLinks(ngo, dto.socialLinks());
@@ -189,7 +203,7 @@ public class OrganizationNGOService {
         if (dto.bankAccount() != null && !actual.getBankAccount().equals(dto.bankAccount())) {
             actual.setBankAccount(dto.bankAccount());
         }
-        if(dto.foundedAt() != null & !actual.getFoundedAt().equals(dto.foundedAt())){
+        if (dto.foundedAt() != null & !actual.getFoundedAt().equals(dto.foundedAt())) {
             dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
             actual.setFoundedAt(dto.foundedAt());
         }
@@ -223,7 +237,7 @@ public class OrganizationNGOService {
             }
             actual.setDisabled(dto.disabled());
         }
-        if(dto.reason() != null && !dto.reason().equals(actual.getReason())){
+        if (dto.reason() != null && !dto.reason().equals(actual.getReason())) {
             actual.setReason(dto.reason());
         }
         actual.setUpdatedAt(TimeUtils.nowInUTC());
@@ -356,7 +370,7 @@ public class OrganizationNGOService {
         if (!ngo.getRegon().equals(dto.regon())) {
             organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
         }
-        if(!ngo.getFoundedAt().equals(dto.foundedAt())){
+        if (!ngo.getFoundedAt().equals(dto.foundedAt())) {
             dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
         }
     }
