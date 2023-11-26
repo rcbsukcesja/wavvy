@@ -53,7 +53,8 @@ public record OrganizationNGOSaveDto(
         LocalDate foundedAt,
         Boolean confirmed,
         @Size(max = REASON_MAX_LENGTH)
-        String reason
+        String reason,
+        Boolean disabled
 
 ) {
 

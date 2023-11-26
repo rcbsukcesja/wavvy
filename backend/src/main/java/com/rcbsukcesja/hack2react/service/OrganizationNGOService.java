@@ -121,6 +121,18 @@ public class OrganizationNGOService {
         validateUpdateNgo(dto, ngo);
 
         setBasicNGOFields(dto, ngo);
+
+        if (dto.disabled() != null) {
+            if (dto.disabled()) {
+                if (dto.reason() == null) {
+                    throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
+                }
+            }
+            ngo.setDisabled(dto.disabled());
+        }
+        if(dto.reason() != null && !dto.reason().equals(ngo.getReason())){
+            ngo.setReason(dto.reason());
+        }
         updateSocialLinks(ngo, dto.socialLinks());
         updateResources(ngo, dto.resources());
         updateTags(ngo, dto.tags());

@@ -19,6 +19,7 @@ import static com.rcbsukcesja.hack2react.validations.ValidationConstants.NIP_PAT
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.NIP_REGEX;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PHONE_PATTERN_VALIDATION_MESSAGE;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PHONE_REGEX;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.REASON_MAX_LENGTH;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.REGON_PATTERN_VALIDATION_MESSAGE;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.REGON_REGEX;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.RESOURCES_MAX_NUMBER;
@@ -61,7 +62,10 @@ public record CompanySaveDto(
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> resources,
         @NotNull
         LegalStatus legalStatus,
-        Boolean confirmed
+        Boolean confirmed,
+        @Size(max = REASON_MAX_LENGTH)
+        String reason,
+        Boolean disabled
 ) {
 
 }

@@ -47,6 +47,7 @@ public record ProjectSaveDto(
         @NotNull
         boolean possibleVolunteer,
         @Size(max = REASON_MAX_LENGTH)
-        String reason
+        String reason,
+        Boolean disabled
 ) {
 }

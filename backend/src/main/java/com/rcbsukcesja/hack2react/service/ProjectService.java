@@ -108,6 +108,18 @@ public class ProjectService {
 
         setBasicProjectFields(dto, project);
 
+        if (dto.disabled() != null) {
+            if (dto.disabled()) {
+                if (dto.reason() == null) {
+                    throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
+                }
+            }
+            project.setDisabled(dto.disabled());
+        }
+        if(dto.reason() != null && !dto.reason().equals(project.getReason())){
+            project.setReason(dto.reason());
+        }
+
         updateTags(project, dto.tags());
         updateLinks(project, dto.links());
 

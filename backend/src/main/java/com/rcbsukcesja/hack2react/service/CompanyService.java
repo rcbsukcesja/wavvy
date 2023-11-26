@@ -100,6 +100,18 @@ public class CompanyService {
 
         setCompanyBasicFields(dto, company);
 
+        if (dto.disabled() != null) {
+            if (dto.disabled()) {
+                if (dto.reason() == null) {
+                    throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
+                }
+            }
+            company.setDisabled(dto.disabled());
+        }
+        if(dto.reason() != null && !dto.reason().equals(company.getReason())){
+            company.setReason(dto.reason());
+        }
+
         updateSocialLinks(company, dto.socialLinks());
         updateResources(company, dto.resources());
 
