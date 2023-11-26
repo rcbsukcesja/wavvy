@@ -31,6 +31,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
 import { CustomValidators } from 'src/app/shared/custom.validator';
+import { MatNativeDateModule } from '@angular/material/core';
 
 export type NgoProfileFormModel = FormGroup<{
   name: FormControl<string>;
@@ -66,6 +67,7 @@ export type NgoProfileFormModel = FormGroup<{
     CommonModule,
     MatDividerModule,
     MatDatepickerModule,
+    MatNativeDateModule,
   ],
   styles: [``],
   template: `
@@ -140,7 +142,12 @@ export type NgoProfileFormModel = FormGroup<{
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
             <mat-label>Data utworzenia</mat-label>
-            <input matInput formControlName="foundedAt" [matDatepicker]="picker" placeholder="Wybierz datę" />
+            <input
+              matInput
+              formControlName="foundedAt"
+              [matDatepicker]="picker"
+              placeholder="Wybierz datę"
+              [matDatepickerFilter]="filterFutureDates" />
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
@@ -290,23 +297,11 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
     }
 
     this.form = this.builder.group({
-      name: this.builder.control({ value: this.profile.name, disabled: true }, [
-        Validators.required,
-        CustomValidators.maxLength,
-      ]),
+      name: this.builder.control({ value: this.profile.name, disabled: true }),
       logo: this.builder.control<File | null>(null),
-      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }, [
-        Validators.required,
-        CustomValidators.maxLength,
-      ]),
-      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }, [
-        Validators.required,
-        CustomValidators.maxLength,
-      ]),
-      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }, [
-        Validators.required,
-        CustomValidators.maxLength,
-      ]),
+      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }),
+      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }),
+      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }),
       bankAccount: this.builder.control(this.profile.bankAccount || '', [
         Validators.minLength(26),
         Validators.maxLength(26),
@@ -378,6 +373,16 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       }
     });
   }
+
+  filterFutureDates = (d: Date | null) => {
+    if (!d) {
+      return true;
+    }
+
+    console.log(d);
+
+    return d.getTime() < new Date().getTime();
+  };
 
   onSubmit() {
     this.form.markAllAsTouched();

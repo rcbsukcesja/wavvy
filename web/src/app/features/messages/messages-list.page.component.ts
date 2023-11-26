@@ -8,6 +8,7 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { BehaviorSubject } from 'rxjs';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 
 @Component({
   selector: 'app-messages.page',
@@ -40,7 +41,7 @@ export default class MessagesListPageComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters & { id?: string }>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: INITIAL_PAGINATION_STATE.size,
     search: '',
     sort: 'desc',
   });

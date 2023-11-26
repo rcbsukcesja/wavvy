@@ -15,6 +15,7 @@ import { OffersStateService } from './data-access/offers.state.service';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
+import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 
 @Component({
   selector: 'app-manage-offers-page',
@@ -101,7 +102,7 @@ import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-
 export default class ManageOffersPageComponent implements OnInit {
   private filters$$ = new BehaviorSubject<PaginationFilters & CommonFilters>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: INITIAL_PAGINATION_STATE.size,
     search: '',
     sort: 'desc',
   });

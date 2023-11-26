@@ -9,6 +9,7 @@ import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Va
 import { MatButtonModule } from '@angular/material/button';
 import { AddOfferFormValue } from '../data-access/offers.api.service';
 import { CustomValidators } from 'src/app/shared/custom.validator';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-add-offer-form',
@@ -22,6 +23,7 @@ import { CustomValidators } from 'src/app/shared/custom.validator';
     MatSelectModule,
     MatButtonModule,
     CommonModule,
+    MatNativeDateModule,
   ],
   template: `
     <form [formGroup]="form" (ngSubmit)="addOffer()" class="flex flex-col">
@@ -45,7 +47,11 @@ import { CustomValidators } from 'src/app/shared/custom.validator';
       <br />
       <mat-form-field>
         <mat-label>Data rozpoczęcia naboru</mat-label>
-        <input matInput formControlName="startDate" [matDatepicker]="datepicker" />
+        <input
+          [matDatepickerFilter]="blockAfterEndDate"
+          matInput
+          formControlName="startDate"
+          [matDatepicker]="datepicker" />
         <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
         <mat-datepicker #datepicker> </mat-datepicker>
@@ -53,7 +59,11 @@ import { CustomValidators } from 'src/app/shared/custom.validator';
       <br />
       <mat-form-field>
         <mat-label>Data zakończenia naboru</mat-label>
-        <input matInput formControlName="endDate" [matDatepicker]="datepicker2" />
+        <input
+          [matDatepickerFilter]="blockBeforeStartDate"
+          matInput
+          formControlName="endDate"
+          [matDatepicker]="datepicker2" />
         <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
         <mat-datepicker #datepicker2> </mat-datepicker>
@@ -124,4 +134,26 @@ export class AddOfferFormComponent implements OnInit {
       link: this.builder.control(this.formValue?.link || '', [Validators.required, CustomValidators.maxLength]),
     });
   }
+
+  blockAfterEndDate = (d: Date | null) => {
+    if (!d || !this.form.controls.endDate.value) {
+      return true;
+    }
+
+    const endTime = new Date(this.form.controls.endDate.value).getTime();
+    const current = d.getTime();
+
+    return current < endTime;
+  };
+
+  blockBeforeStartDate = (d: Date | null) => {
+    if (!d || !this.form.controls.startDate.value) {
+      return true;
+    }
+
+    const startTime = new Date(this.form.controls.startDate.value).getTime();
+    const current = d.getTime();
+
+    return current > startTime;
+  };
 }

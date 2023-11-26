@@ -19,6 +19,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
+import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 
 @Component({
   selector: 'app-offers.page',
@@ -106,7 +107,7 @@ export default class OffersListPageComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: INITIAL_PAGINATION_STATE.size,
     search: '',
     sort: 'desc',
   });

@@ -15,6 +15,7 @@ import { ID } from 'src/app/core/types/id.type';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { RouterLink } from '@angular/router';
 import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
+import { ProjectCardComponent } from './ui/project-card.component';
 
 @Component({
   standalone: true,
@@ -27,7 +28,7 @@ import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
     </div>
   `,
 })
-class DescriptionDialogComponent {
+export class DescriptionDialogComponent {
   data = inject(MAT_DIALOG_DATA);
 }
 

@@ -9,6 +9,7 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
 import { CommonFilters } from 'src/app/shared/ui/common-filters.component';
 import { USER_ROLES } from 'src/app/core/user-roles.enum';
+import { INITIAL_PAGINATION_STATE } from '../../projects/data-access/projects.state.service';
 
 export interface GetAllNGOsParams {}
 
@@ -80,7 +81,13 @@ export class NGOsApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: PaginationFilters & { search: string } & { id?: string } = { pageIndex: 0, pageSize: 5, search: '' }) {
+  getAll(
+    params: PaginationFilters & { search: string } & { id?: string } = {
+      pageIndex: 0,
+      pageSize: INITIAL_PAGINATION_STATE.size,
+      search: '',
+    }
+  ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const url = new URL(this.url);

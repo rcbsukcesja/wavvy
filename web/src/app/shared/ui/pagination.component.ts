@@ -68,7 +68,7 @@ export default class PaginationComponent {
 
   pageSize = INITIAL_PAGINATION_STATE.size;
   pageIndex = INITIAL_PAGINATION_STATE.number;
-  pageSizeOptions = [5, 10, 25];
+  pageSizeOptions = [6, 12, 24];
 
   showPageSizeOptions = true;
   showFirstLastButtons = true;

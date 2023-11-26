@@ -35,7 +35,7 @@ export interface Project {
   address: string;
   endTime: string;
   ngo: string;
-  ngoid: ID;
+  ngoId: ID;
   budget: number;
   status: ProjectStatus;
   tags: string[];
