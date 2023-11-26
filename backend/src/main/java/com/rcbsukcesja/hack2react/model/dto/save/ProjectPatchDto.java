@@ -44,6 +44,6 @@ public record ProjectPatchDto(
         boolean possibleVolunteer,
         @Size(max = REASON_MAX_LENGTH)
         String reason,
-        boolean disabled
+        Boolean disabled
 ) {
 }

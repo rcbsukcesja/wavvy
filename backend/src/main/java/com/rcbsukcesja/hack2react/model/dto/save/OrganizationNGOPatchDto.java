@@ -50,7 +50,7 @@ public record OrganizationNGOPatchDto(
         Boolean confirmed,
         @Size(max = REASON_MAX_LENGTH)
         String reason,
-        boolean disabled
+        Boolean disabled
 
 ) {
 
