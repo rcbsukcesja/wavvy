@@ -1,5 +1,7 @@
 package com.rcbsukcesja.hack2react.controller;
 
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidProjectStatusException;
+import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.model.dto.save.ProjectPatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.ProjectSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.ProjectView;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,8 +30,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,10 +47,13 @@ public class ProjectController {
     @GetMapping
     public ResponseEntity<Page<ProjectView>> getAllProjects(
             @RequestParam(required = false) String search,
-            @RequestParam(required = false) List<ProjectStatus> statusList,
+            @RequestParam(required = false) Set<ProjectStatus> statusList,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            @ParameterObject Pageable pageable) {
+            @ParameterObject Pageable pageable,
+            Authentication authentication) {
+        statusList = setProjectStatuses(statusList, authentication);
+        checkProjectStatuses(statusList, authentication);
         return new ResponseEntity<>(projectService.getAllProjects(search, statusList, startDate, endDate, pageable), HttpStatus.OK);
     }
 
@@ -104,6 +112,25 @@ public class ProjectController {
             @PathVariable UUID projectId,
             @RequestParam String clientId) {
         return new ResponseEntity<>(projectService.updateProjectLike(projectId, clientId), HttpStatus.OK);
+    }
+
+    private static Set<ProjectStatus> setProjectStatuses(Set<ProjectStatus> projectStatuses, Authentication authentication) {
+        if (projectStatuses == null || projectStatuses.isEmpty()) {
+            if (authentication == null) {
+                projectStatuses = ProjectStatus.getAllowedProjectStatuses(ProjectStatus.projectStatusesNotPublic());
+            } else {
+                projectStatuses = Arrays.stream(ProjectStatus.values()).collect(Collectors.toSet());
+            }
+        }
+        return projectStatuses;
+    }
+
+    private static void checkProjectStatuses(Set<ProjectStatus> projectStatuses, Authentication authentication) {
+        if (authentication == null) {
+            if (ProjectStatus.isProjectStatusNotAllowed(projectStatuses, ProjectStatus.projectStatusesNotPublic())) {
+                throw new InvalidProjectStatusException(ErrorMessages.INVALID_PROJECT_STATUS);
+            }
+        }
     }
 
 }

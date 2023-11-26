@@ -12,6 +12,7 @@ import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidDateRangeExceptio
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidEnumParameterException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidFileException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferScopeException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidProjectStatusException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.CompanyNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.MessageNotFoundException;
@@ -59,7 +60,8 @@ public class ApiExceptionHandler {
             InvalidDateRangeException.class,
             OrganizationsAlreadyAttachedToBusinessAreaException.class,
             InvalidEnumParameterException.class,
-            InvalidOfferScopeException.class
+            InvalidOfferScopeException.class,
+            InvalidProjectStatusException.class
     })
     public ResponseEntity<Object> handleBadRequestTypeException(ApiRequestException e) {
 
