@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.service;
 
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidProjectStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
@@ -17,6 +18,7 @@ import com.rcbsukcesja.hack2react.model.mappers.ProjectMapper;
 import com.rcbsukcesja.hack2react.repositories.OrganizationNGORepository;
 import com.rcbsukcesja.hack2react.repositories.ProjectRepository;
 import com.rcbsukcesja.hack2react.specifications.ProjectSpecifications;
+import com.rcbsukcesja.hack2react.utils.AuthenticationUtils;
 import com.rcbsukcesja.hack2react.utils.FileUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
@@ -25,13 +27,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,9 +52,17 @@ public class ProjectService {
     private String projectUrl;
 
     public Page<ProjectView> getAllProjects(String search, Set<ProjectStatus> statuses, LocalDate startDate,
-                                            LocalDate endDate, Pageable pageable) {
+                                            LocalDate endDate, Pageable pageable, Authentication authentication) {
+        statuses = setProjectStatuses(statuses, authentication);
+        checkProjectStatuses(statuses, authentication);
+
         dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
         Specification<Project> spec = ProjectSpecifications.notOutsideDateRange(startDate, endDate);
+
+        if (authentication == null || !AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
+            spec = spec.and(ProjectSpecifications.isNotDisabled());
+        }
+
         if (search != null && !search.isEmpty()) {
             spec = spec.and(ProjectSpecifications.nameOrTagsContain(search));
         }
@@ -295,6 +308,25 @@ public class ProjectService {
         }
 
         return projectMapper.projectToProjectView(projectRepository.saveAndFlush(project));
+    }
+
+    private static Set<ProjectStatus> setProjectStatuses(Set<ProjectStatus> projectStatuses, Authentication authentication) {
+        if (projectStatuses == null || projectStatuses.isEmpty()) {
+            if (authentication == null) {
+                projectStatuses = ProjectStatus.getAllowedProjectStatuses(ProjectStatus.projectStatusesNotPublic());
+            } else {
+                projectStatuses = Arrays.stream(ProjectStatus.values()).collect(Collectors.toSet());
+            }
+        }
+        return projectStatuses;
+    }
+
+    private static void checkProjectStatuses(Set<ProjectStatus> projectStatuses, Authentication authentication) {
+        if (authentication == null) {
+            if (ProjectStatus.isProjectStatusNotAllowed(projectStatuses, ProjectStatus.projectStatusesNotPublic())) {
+                throw new InvalidProjectStatusException(ErrorMessages.INVALID_PROJECT_STATUS);
+            }
+        }
     }
 
 }

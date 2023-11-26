@@ -71,4 +71,11 @@ public class ProjectSpecifications {
             return query.where(predicate).getRestriction();
         };
     }
+
+    public static Specification<Project> isNotDisabled() {
+        return (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.isFalse(root.get("disabled"));
+            return query.where(predicate).getRestriction();
+        };
+    }
 }

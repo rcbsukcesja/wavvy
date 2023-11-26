@@ -18,12 +18,16 @@ import com.rcbsukcesja.hack2react.model.mappers.CompanyMapper;
 import com.rcbsukcesja.hack2react.repositories.BusinessAreaRepository;
 import com.rcbsukcesja.hack2react.repositories.CompanyRepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
+import com.rcbsukcesja.hack2react.specifications.CompanySpecifications;
+import com.rcbsukcesja.hack2react.utils.AuthenticationUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +48,18 @@ public class CompanyService {
     private final AddressMapper addressMapper;
 
 
-    public Page<CompanyListView> getAllCompany(Pageable pageable) {
-        return companyRepository.findAll(pageable)
+    public Page<CompanyListView> getAllCompany(String search, Pageable pageable, Authentication authentication) {
+        Specification<Company> spec = Specification.where(null);
+
+        if (authentication == null || !AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
+            spec = CompanySpecifications.isNotDisabledAndConfirmed();
+        }
+
+        if (search != null && !search.isEmpty()) {
+            spec = spec.and(CompanySpecifications.nameOrResourcesContain(search));
+        }
+
+        return companyRepository.findAll(spec, pageable)
                 .map(companyMapper::companyToCompanyListView);
     }
 
@@ -108,7 +122,7 @@ public class CompanyService {
             }
             company.setDisabled(dto.disabled());
         }
-        if(dto.reason() != null && !dto.reason().equals(company.getReason())){
+        if (dto.reason() != null && !dto.reason().equals(company.getReason())) {
             company.setReason(dto.reason());
         }
 
@@ -177,7 +191,7 @@ public class CompanyService {
             }
             actual.setDisabled(dto.disabled());
         }
-        if(dto.reason() != null && !dto.reason().equals(actual.getReason())){
+        if (dto.reason() != null && !dto.reason().equals(actual.getReason())) {
             actual.setReason(dto.reason());
         }
         updateSocialLinks(actual, dto.socialLinks());

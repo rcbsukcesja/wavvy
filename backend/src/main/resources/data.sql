@@ -15,7 +15,7 @@ VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'NGO', 'Liga Morska i Rzeczna',
         '2020-06-10T12:24:36', '2020-06-10T12:24:36',
         '1) stwarzanie warunków do wszechstronnego, inetelektualnego, społecznego, duchowego, emocjonalnego i fizycznego rozwoju człowieka; 2) nieskrępowane kształtowanie osobowości człowieka odpowiedzialnego, przy poszanowaniu jego prawa do wolności i godności, w tym wolności od wszelkich nałogów; 3) upowszechnianie i umacnianie w społeczeństwie przywiązania do wartości: wolności, prawdy, sprawiedliwości, demokracji, samorządności, równouprawnienia, tolerancji i przyjaźni; 4) stwarzanie warunków do nawiązywania i utrwalania silnych więzi międzyludzkich ponad podziałami rasowymi, narodowościowymi i wyznaniowymi.',
         '000757520', '234858993',
-        '192076468', 'ASSOCIATION', '22102051389741970611730870', true, '2000-06-20', 'Bardzo lubimy działać', false),
+        '192076468', 'ASSOCIATION', '22102051389741970611730870', true, '2000-06-20', 'Bardzo lubimy działać', true),
        ('c06f4f3c-0d2e-11ee-be56-0242ac120002', 'NGO', 'Kołobrzeski Międzyszkolny Klub Lekkoatletyczny "Sztorm"',
         'Bogusława X 1', 'Kołobrzeg', '78-100', 'Polska', '792367411',
         'osemkakolobrzeg@wp.pl', 'https://powiat.kolobrzeg.pl/opis-289-uczniowski_klub_sportowy_osemka.html', null,
@@ -39,7 +39,7 @@ VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'NGO', 'Liga Morska i Rzeczna',
         'kontakt@galeria.kolobrzeg.pl', 'https://www.galeria.kolobrzeg.pl', null, '2016-06-10T12:24:36',
         '2016-06-10T12:24:36',
         'Promujemy lokalnych artystów i organizujemy wystawy sztuki współczesnej, które angażują społeczność Kołobrzegu i przyciągają zwiedzających z całego kraju. Nasza misja to rozwijanie kultury i sztuki w regionie, tworzenie przestrzeni do dyskusji i refleksji, a także edukowanie publiczności na temat wartości i znaczenia sztuki. Wierzymy, że sztuka ma moc inspirowania i łączenia ludzi, a nasza galeria jest miejscem, gdzie te spotkania mogą się zdarzyć.',
-        '000757221', '234858111', '394262090', null, null, false, null, null, false);
+        '000757221', '234858111', '394262090', null, null, false, null, 'Treści niezgodne z polityką', true);
 
 
 INSERT INTO wavvy.wavvy.ngo_tags(id, organization_ngo_id, tag)
@@ -170,7 +170,7 @@ VALUES ('9457f49a-15de-4a67-8870-6c7c5dd4746e', 'Zbiórka żywności',
         '2022-11-11T10:00:00', '2022-11-11T13:00:00', '30000.00',
         'Poszukujemy wolontariuszy do obsługi biegu.',
         7, 'true', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', '2022-03-10T16:00:00', '2022-03-10T16:00:00', 'reason3',
-        false);
+        true);
 
 INSERT INTO wavvy.wavvy.project_tags(id, project_id, tag)
 VALUES ('4a16e0e4-ca1b-4d82-bdd0-84011b9e9ad5', '9457f49a-15de-4a67-8870-6c7c5dd4746e', 'zbiórka żywności'),
