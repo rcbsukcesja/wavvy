@@ -51,7 +51,10 @@ public record OrganizationNGOSaveDto(
         @Size(min = NGO_TAG_MIN, max = NGO_TAG_MAX, message = NGO_TAGS_VALIDATION_MESSAGE)
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> tags,
         LocalDate foundedAt,
-        Boolean confirmed
+        Boolean confirmed,
+        @Size(max = REASON_MAX_LENGTH)
+        String reason,
+        Boolean disabled
 
 ) {
 

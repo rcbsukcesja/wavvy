@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.service;
 
+import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
@@ -68,6 +69,7 @@ public class OrganizationNGOService {
         } else {
             ngo.setConfirmed(false);
         }
+        ngo.setDisabled(false);
         ngo = organizationNGORepository.save(ngo);
 
         if (dto.socialLinks() != null && !dto.socialLinks().isEmpty()) {
@@ -106,7 +108,6 @@ public class OrganizationNGOService {
             }
             ngo.setTags(tags);
         }
-
         ngo.setCreatedAt(TimeUtils.nowInUTC());
         ngo.setUpdatedAt(ngo.getCreatedAt());
         ngo = organizationNGORepository.saveAndFlush(ngo);
@@ -120,6 +121,18 @@ public class OrganizationNGOService {
         validateUpdateNgo(dto, ngo);
 
         setBasicNGOFields(dto, ngo);
+
+        if (dto.disabled() != null) {
+            if (dto.disabled()) {
+                if (dto.reason() == null) {
+                    throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
+                }
+            }
+            ngo.setDisabled(dto.disabled());
+        }
+        if(dto.reason() != null && !dto.reason().equals(ngo.getReason())){
+            ngo.setReason(dto.reason());
+        }
         updateSocialLinks(ngo, dto.socialLinks());
         updateResources(ngo, dto.resources());
         updateTags(ngo, dto.tags());
@@ -201,6 +214,17 @@ public class OrganizationNGOService {
 
         if (dto.legalStatus() != null && !actual.getLegalStatus().equals(dto.legalStatus())) {
             actual.setLegalStatus(dto.legalStatus());
+        }
+        if (dto.disabled() != null) {
+            if (dto.disabled()) {
+                if (dto.reason() == null) {
+                    throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
+                }
+            }
+            actual.setDisabled(dto.disabled());
+        }
+        if(dto.reason() != null && !dto.reason().equals(actual.getReason())){
+            actual.setReason(dto.reason());
         }
         actual.setUpdatedAt(TimeUtils.nowInUTC());
         OrganizationNGO updated = organizationNGORepository.save(actual);

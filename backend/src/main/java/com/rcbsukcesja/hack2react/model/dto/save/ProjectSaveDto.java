@@ -11,7 +11,12 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.rcbsukcesja.hack2react.validations.ValidationConstants.*;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.DESCRIPTION_MAX_LENGTH;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PROJECT_TAGS_VALIDATION_MESSAGE;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PROJECT_TAG_MAX;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PROJECT_TAG_MIN;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.REASON_MAX_LENGTH;
+import static com.rcbsukcesja.hack2react.validations.ValidationConstants.STANDARD_TEXT_MAX_LENGTH;
 
 @Builder
 public record ProjectSaveDto(
@@ -40,6 +45,9 @@ public record ProjectSaveDto(
 
         Set<@Size(max = STANDARD_TEXT_MAX_LENGTH) String> links,
         @NotNull
-        boolean possibleVolunteer
+        boolean possibleVolunteer,
+        @Size(max = REASON_MAX_LENGTH)
+        String reason,
+        Boolean disabled
 ) {
 }

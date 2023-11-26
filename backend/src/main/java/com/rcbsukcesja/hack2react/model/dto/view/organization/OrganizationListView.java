@@ -41,4 +41,5 @@ public abstract class OrganizationListView {
     private LocalDateTime updatedAt;
 
     private boolean confirmed;
+    private boolean disabled;
 }

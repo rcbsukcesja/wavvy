@@ -36,4 +36,6 @@ public class ProjectView {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Set<String> likes;
+    private String reason;
+    private boolean disabled;
 }

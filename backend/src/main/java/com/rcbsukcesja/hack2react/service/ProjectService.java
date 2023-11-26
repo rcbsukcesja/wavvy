@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.service;
 
+import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.ProjectNotFoundException;
@@ -70,6 +71,7 @@ public class ProjectService {
         setBasicProjectFields(dto, project);
         project.setTags(new HashSet<>());
         project.setLinks(new HashSet<>());
+        project.setDisabled(false);
 
         project = projectRepository.save(project);
 
@@ -105,6 +107,18 @@ public class ProjectService {
         Project project = getProjectByIdOrThrowException(projectId);
 
         setBasicProjectFields(dto, project);
+
+        if (dto.disabled() != null) {
+            if (dto.disabled()) {
+                if (dto.reason() == null) {
+                    throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
+                }
+            }
+            project.setDisabled(dto.disabled());
+        }
+        if(dto.reason() != null && !dto.reason().equals(project.getReason())){
+            project.setReason(dto.reason());
+        }
 
         updateTags(project, dto.tags());
         updateLinks(project, dto.links());
@@ -147,6 +161,18 @@ public class ProjectService {
         if (dto.possibleVolunteer() != project.isPossibleVolunteer()) {
             project.setPossibleVolunteer(dto.possibleVolunteer());
         }
+        if (dto.disabled() != null) {
+            if (dto.disabled()) {
+                if (dto.reason() == null) {
+                    throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
+                }
+            }
+            project.setDisabled(dto.disabled());
+        }
+        if(dto.reason() != null && !dto.reason().equals(project.getReason())){
+            project.setReason(dto.reason());
+        }
+
         updateTags(project, dto.tags());
         updateLinks(project, dto.links());
 

@@ -44,4 +44,6 @@ public class ErrorMessages {
     public static final String INVALID_OFFER_SCOPE = "Requested offer scopes are not allowed for this user";
 
     public static final String FOUNDED_AT_DATE_VALIDATION_MESSAGE = "Founded at date must be in the past";
+
+    public static final String REASON_MUST_NOT_BE_NULL = "Reason must not be null when disabling NGO";
 }

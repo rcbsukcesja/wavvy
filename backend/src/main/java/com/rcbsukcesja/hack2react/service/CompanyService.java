@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.service;
 
+import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.CompanyNotFoundException;
@@ -62,6 +63,7 @@ public class CompanyService {
 
         company.setResources(new HashSet<>());
         company.setSocialLinks(new HashSet<>());
+        company.setDisabled(false);
 
         company = companyRepository.save(company);
 
@@ -97,6 +99,18 @@ public class CompanyService {
         validateUpdateCompany(dto, company);
 
         setCompanyBasicFields(dto, company);
+
+        if (dto.disabled() != null) {
+            if (dto.disabled()) {
+                if (dto.reason() == null) {
+                    throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
+                }
+            }
+            company.setDisabled(dto.disabled());
+        }
+        if(dto.reason() != null && !dto.reason().equals(company.getReason())){
+            company.setReason(dto.reason());
+        }
 
         updateSocialLinks(company, dto.socialLinks());
         updateResources(company, dto.resources());
@@ -154,6 +168,17 @@ public class CompanyService {
                     .map(id -> businessAreaRepository.getBusinessAreaById(id)
                             .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
                     .toList()));
+        }
+        if (dto.disabled() != null) {
+            if (dto.disabled()) {
+                if (dto.reason() == null) {
+                    throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
+                }
+            }
+            actual.setDisabled(dto.disabled());
+        }
+        if(dto.reason() != null && !dto.reason().equals(actual.getReason())){
+            actual.setReason(dto.reason());
         }
         updateSocialLinks(actual, dto.socialLinks());
         updateResources(actual, dto.resources());
