@@ -13,6 +13,7 @@ import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidEnumParameterExce
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidFileException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferScopeException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidProjectStatusException;
+import com.rcbsukcesja.hack2react.exceptions.forbidden.ForbiddenAccessDeniedException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.CompanyNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.MessageNotFoundException;
@@ -49,6 +50,18 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ForbiddenAccessDeniedException.class)
+    public ResponseEntity<Object> handleForbiddenTypeException(ApiRequestException e) {
+
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                HttpStatus.FORBIDDEN,
+                TimeUtils.nowInZone()
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.FORBIDDEN);
+    }
+
 
     @ExceptionHandler(value = {
             EmailAlreadyExistsException.class,

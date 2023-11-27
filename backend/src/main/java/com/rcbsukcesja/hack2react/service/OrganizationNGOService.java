@@ -2,6 +2,7 @@ package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
+import com.rcbsukcesja.hack2react.exceptions.messages.ForbiddenErrorMessageResources;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.UserNotFoundException;
@@ -78,11 +79,7 @@ public class OrganizationNGOService {
         ngo.setProjects(new HashSet<>());
         ngo.setResources(new HashSet<>());
         ngo.setSocialLinks(new HashSet<>());
-        if (dto.confirmed() != null) {
-            ngo.setConfirmed(dto.confirmed());
-        } else {
-            ngo.setConfirmed(false);
-        }
+        ngo.setConfirmed(false);
         ngo.setDisabled(false);
         ngo = organizationNGORepository.save(ngo);
 
@@ -137,6 +134,8 @@ public class OrganizationNGOService {
         setBasicNGOFields(dto, ngo);
 
         if (dto.disabled() != null) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.DISABLED);
             if (dto.disabled()) {
                 if (dto.reason() == null) {
                     throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
@@ -145,12 +144,16 @@ public class OrganizationNGOService {
             ngo.setDisabled(dto.disabled());
         }
         if (dto.reason() != null && !dto.reason().equals(ngo.getReason())) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.REASON);
             ngo.setReason(dto.reason());
         }
         updateSocialLinks(ngo, dto.socialLinks());
         updateResources(ngo, dto.resources());
         updateTags(ngo, dto.tags());
         if (dto.confirmed() != null) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.CONFIRMED);
             ngo.setConfirmed(dto.confirmed());
         } else {
             ngo.setConfirmed(false);
@@ -213,6 +216,8 @@ public class OrganizationNGOService {
         updateTags(actual, dto.tags());
 
         if (dto.confirmed() != null && !(actual.isConfirmed() == dto.confirmed())) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.CONFIRMED);
             actual.setConfirmed(dto.confirmed());
         }
 
@@ -230,6 +235,8 @@ public class OrganizationNGOService {
             actual.setLegalStatus(dto.legalStatus());
         }
         if (dto.disabled() != null) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.DISABLED);
             if (dto.disabled()) {
                 if (dto.reason() == null) {
                     throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
@@ -238,6 +245,8 @@ public class OrganizationNGOService {
             actual.setDisabled(dto.disabled());
         }
         if (dto.reason() != null && !dto.reason().equals(actual.getReason())) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.REASON);
             actual.setReason(dto.reason());
         }
         actual.setUpdatedAt(TimeUtils.nowInUTC());
