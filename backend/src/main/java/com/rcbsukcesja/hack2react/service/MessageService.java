@@ -2,14 +2,14 @@ package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.MessageNotFoundException;
-import com.rcbsukcesja.hack2react.model.dto.save.MessageDto;
+import com.rcbsukcesja.hack2react.model.dto.save.MessagePathDto;
+import com.rcbsukcesja.hack2react.model.dto.save.MessageSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
 import com.rcbsukcesja.hack2react.model.entity.Message;
 import com.rcbsukcesja.hack2react.model.entity.User;
 import com.rcbsukcesja.hack2react.model.enums.UserType;
 import com.rcbsukcesja.hack2react.model.mappers.MessageMapper;
 import com.rcbsukcesja.hack2react.repositories.MessageRepository;
-import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,37 +27,62 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final UserService userService;
-    private final UserRepository userRepository;
+
+    private final String UMK = "Urząd Miasta Kołobrzeg";
 
     @Transactional
-    public MessageView createMessage(MessageDto messageDto) {
+    public MessageView createMessage(MessageSaveDto messageSaveDto) {
 
         Message message = new Message();
-        setBasicMessageFields(message, messageDto);
+        setBasicMessageFields(message, messageSaveDto);
 
         User senders = getLogedUser();
         message.setSender(senders);
-        User receiver = userService.getUserByIdOrThrowException(messageDto.receiverId());
+        User receiver = userService.getUserByIdOrThrowException(messageSaveDto.receiverId());
         message.setReceiver(receiver);
         message.setCreatedAt(TimeUtils.nowInUTC());
+        message.setName(createName(senders, messageSaveDto.name()));
 
-        if (senders.getUserType().equals(UserType.CITY_HALL)) {
-            message.setName("urząd miasta kołobrzeg " + messageDto.name());
-        } else if (senders.getUserType().equals(UserType.BUSINESS)) {
-            message.setName(senders.getOrganization().getName() + " " + messageDto.name());
-        } else if (senders.getUserType().equals(UserType.NGO)) {
-            message.setName(senders.getOrganization().getName() + " " + messageDto.name());
-        }
         messageRepository.save(message);
-
         return messageMapper.messageToMessageView(message);
     }
 
+    private String createName(User user, String tempName) {
 
-    private void setBasicMessageFields(Message message, MessageDto messageDto) {
-        message.setMessage(messageDto.message());
-        message.setTitle(messageDto.title());
-        message.setContact(messageDto.contact());
+        StringBuilder sB = new StringBuilder();
+
+        if (user.getUserType().equals(UserType.CITY_HALL)) {
+            sB.append(tempName).append(" ").append(UMK);
+        } else {
+            sB.append(tempName).append(" ").append(user.getOrganization().getName());
+        }
+        return sB.toString();
+    }
+
+
+    private void setBasicMessageFields(Message message, MessageSaveDto messageSaveDto) {
+        message.setMessage(messageSaveDto.message());
+        message.setTitle(messageSaveDto.title());
+        message.setContact(messageSaveDto.contact());
+    }
+
+    public MessageView patchUpdateMessage(UUID messageId, MessagePathDto dto) {
+
+        Message actual = getMessageOrThrowException(messageId);
+
+        if (dto.contact() != null && !actual.getContact().equals(dto.contact())) {
+            actual.setContact(dto.contact());
+        }
+        if (dto.message() != null && !actual.getMessage().equals(dto.message())) {
+            actual.setMessage(dto.message());
+        }
+        if (dto.contact() != null && !actual.getName().equals(dto.name())) {
+            actual.setMessage(dto.message());
+        }
+        if (dto.name() != null && !actual.getName().equals(dto.name().split(" ")[0])) {
+            actual.setName(createName(actual.getSender(), dto.name()));
+        }
+        return messageMapper.messageToMessageView(actual);
     }
 
     public void deleteMessage(UUID id) {
@@ -77,14 +102,14 @@ public class MessageService {
         return messageMapper.messageListToMessageViewList(messages);
     }
 
-    public Message getMessageOrThrowException(UUID id) {
-        return messageRepository.getMessageById(id)
-                .orElseThrow(() -> new MessageNotFoundException(ErrorMessages.MESSAGE_NOT_FOUND, id));
+    private Message getMessageOrThrowException(UUID id) {
+        return messageRepository.getMessageById(id).orElseThrow(() -> new MessageNotFoundException(ErrorMessages.MESSAGE_NOT_FOUND, id));
     }
 
     private User getLogedUser() {
         UUID userId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
         return userService.getUserByIdOrThrowException(userId);
     }
+
 
 }
