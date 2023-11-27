@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,11 +26,16 @@ public class MessageController {
     private final MessageService messageService;
 
 
-    @GetMapping("/{id}")
-    public ResponseEntity<MessageView> getMessageById(@PathVariable("id") UUID id) {
-        return new ResponseEntity<>(
-                messageService.getMessageById(id), HttpStatus.OK);
-    }
+//    @GetMapping("/send")
+//    public ResponseEntity<MessageView> getSendMessage() {
+//        return new ResponseEntity<>(
+//                messageService.getSendMessage(), HttpStatus.OK);
+//    }
+//    @GetMapping("/send")
+//    public ResponseEntity<MessageView> getReceivedMessage() {
+//        return new ResponseEntity<>(
+//                messageService.getReceivedMessage(), HttpStatus.OK);
+//    }
 
     @PostMapping
     public ResponseEntity<MessageView> createMessage(@RequestBody MessageDto messageDto) {
@@ -37,13 +43,25 @@ public class MessageController {
                 , HttpStatus.CREATED);
     }
 
-    @PutMapping("/{messageId}")
-    public ResponseEntity<MessageView> updateMessage(
-            @PathVariable UUID messageId,
-            @RequestBody MessageDto messageDto) {
+    @GetMapping("/send")
+    public ResponseEntity <List<MessageView>>  getSendMessage() {
         return new ResponseEntity<>(
-                messageService.updateMessage(messageId, messageDto), HttpStatus.OK);
+                messageService.getSendMessages(), HttpStatus.OK);
     }
+    @GetMapping("/received")
+    public ResponseEntity<List<MessageView>> getReceivedMessage() {
+        return new ResponseEntity<>(
+                messageService.getReceivedMessages(), HttpStatus.OK);
+    }
+
+
+//    @PutMapping("/{messageId}")
+//    public ResponseEntity<MessageView> updateMessage(
+//            @PathVariable UUID messageId,
+//            @RequestBody MessageDto messageDto) {
+//        return new ResponseEntity<>(
+//                messageService.updateMessage(messageId, messageDto), HttpStatus.OK);
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMessage(@PathVariable("id") UUID id) {

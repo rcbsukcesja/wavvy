@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -7,7 +8,10 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -15,6 +19,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+//    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+//    public String issuerUri;
 
     @Bean
     public AuthorityConverter authorityConverter() {
@@ -29,10 +36,12 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/offers", "/ngos", "/projects", "/companies")
+                        .requestMatchers(HttpMethod.POST, "/messages")
                         .permitAll()
-                        .requestMatchers(HttpMethod.PATCH, "/projects/**/like")
-                        .permitAll()
+                        //.requestMatchers(HttpMethod.GET, "/offers", "/ngos", "/projects", "/companies")
+                        //.permitAll()
+                        //.requestMatchers(HttpMethod.PATCH, "/projects/**/like")
+                        //.permitAll()
                         .anyRequest()
                         .authenticated())
                 .cors(Customizer.withDefaults())
@@ -48,4 +57,10 @@ public class SecurityConfig {
         jwtConverter.setJwtGrantedAuthoritiesConverter(authorityConverter());
         return jwtConverter;
     }
+
+//    @Bean
+//    public JwtDecoder jwtDecoder(){
+//        return JwtDecoders.fromIssuerLocation(issuerUri);
+//    }
+
 }

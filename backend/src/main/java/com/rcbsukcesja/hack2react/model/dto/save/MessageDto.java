@@ -6,10 +6,12 @@ import java.util.UUID;
 
 @Builder
 public record MessageDto(
-        UUID conversationId,
-        UUID fromUserId,
-        UUID toUserId,
-        String text
+
+        UUID receiverId,
+        String message,
+        String name,
+        String contact,
+        String title
 ) {
 
 }
