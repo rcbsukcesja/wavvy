@@ -76,42 +76,6 @@ public class MessageService {
         return messageMapper.messageListToMessageViewList(messages);
     }
 
-//    public MessageView getMessageById(UUID id) {
-//        return messageMapper.messageToMessageView(getMessageOrThrowException(id));
-//    }
-
-//    @Transactional
-//    public MessageView createMessage(MessageDto messageDto) {
-//        Message message = messageMapper.messageDtoToMessage(messageDto);
-//        User fromUser = userService.getUserByIdOrThrowException(messageDto.fromUserId());
-//        User toUser = userService.getUserByIdOrThrowException(messageDto.toUserId());
-//        message.setFromUser(fromUser);
-//        message.setToUser(toUser);
-//        message.setConversation(conversationService
-//                .getConversationByIdOrThrowException(messageDto.conversationId()));
-//        message.setCreatedAt(TimeUtils.nowInUTC());
-//        Message saved = messageRepository.save(message);
-//        return messageMapper.messageToMessageView(saved);
-//
-//    }
-//
-//    @Transactional
-//    public MessageView updateMessage(UUID messageId, MessageDto messageDto) {
-//        Message actual = getMessageOrThrowException(messageId);
-//        actual.setConversation(conversationService
-//                .getConversationByIdOrThrowException(messageDto.conversationId()));
-//        actual.setText(messageDto.text());
-//
-//        Message saved = messageRepository.save(actual);
-//        return messageMapper.messageToMessageView(saved);
-//    }
-//
-//    @Transactional
-//    public void deleteMessage(UUID id) {
-//        Message message = getMessageOrThrowException(id);
-//        messageRepository.delete(message);
-//    }
-//
     public Message getMessageOrThrowException(UUID id) {
         return messageRepository.getMessageById(id)
                 .orElseThrow(() -> new MessageNotFoundException(ErrorMessages.MESSAGE_NOT_FOUND, id));

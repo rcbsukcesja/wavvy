@@ -25,18 +25,6 @@ public class MessageController {
 
     private final MessageService messageService;
 
-
-//    @GetMapping("/send")
-//    public ResponseEntity<MessageView> getSendMessage() {
-//        return new ResponseEntity<>(
-//                messageService.getSendMessage(), HttpStatus.OK);
-//    }
-//    @GetMapping("/send")
-//    public ResponseEntity<MessageView> getReceivedMessage() {
-//        return new ResponseEntity<>(
-//                messageService.getReceivedMessage(), HttpStatus.OK);
-//    }
-
     @PostMapping
     public ResponseEntity<MessageView> createMessage(@RequestBody MessageDto messageDto) {
         return new ResponseEntity<>(messageService.createMessage(messageDto)
@@ -53,15 +41,6 @@ public class MessageController {
         return new ResponseEntity<>(
                 messageService.getReceivedMessages(), HttpStatus.OK);
     }
-
-
-//    @PutMapping("/{messageId}")
-//    public ResponseEntity<MessageView> updateMessage(
-//            @PathVariable UUID messageId,
-//            @RequestBody MessageDto messageDto) {
-//        return new ResponseEntity<>(
-//                messageService.updateMessage(messageId, messageDto), HttpStatus.OK);
-//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMessage(@PathVariable("id") UUID id) {

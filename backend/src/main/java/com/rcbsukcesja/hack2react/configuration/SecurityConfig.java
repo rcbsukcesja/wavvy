@@ -20,8 +20,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-//    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-//    public String issuerUri;
 
     @Bean
     public AuthorityConverter authorityConverter() {
@@ -36,12 +34,10 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html")
                         .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/messages")
+                        .requestMatchers(HttpMethod.GET, "/offers", "/ngos", "/projects", "/companies")
                         .permitAll()
-                        //.requestMatchers(HttpMethod.GET, "/offers", "/ngos", "/projects", "/companies")
-                        //.permitAll()
-                        //.requestMatchers(HttpMethod.PATCH, "/projects/**/like")
-                        //.permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/projects/**/like")
+                        .permitAll()
                         .anyRequest()
                         .authenticated())
                 .cors(Customizer.withDefaults())
@@ -58,9 +54,5 @@ public class SecurityConfig {
         return jwtConverter;
     }
 
-//    @Bean
-//    public JwtDecoder jwtDecoder(){
-//        return JwtDecoders.fromIssuerLocation(issuerUri);
-//    }
 
 }
