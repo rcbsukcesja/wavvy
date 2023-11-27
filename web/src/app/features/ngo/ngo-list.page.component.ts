@@ -22,6 +22,8 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BusinessArea } from './model/ngo.model';
+import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 
 @Component({
   selector: 'app-ngo-list-page',
@@ -117,6 +119,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class NgoListPageComponent implements OnInit {
+  @Input({ required: true }) bussinessAreas!: BusinessArea[];
   @Input() ngoId?: string;
 
   snackbar = inject(MatSnackBar);
@@ -142,7 +145,7 @@ export default class NgoListPageComponent implements OnInit {
 
   private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters & { id?: string }>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: INITIAL_PAGINATION_STATE.size,
     search: '',
     sort: 'desc',
   });
@@ -202,11 +205,11 @@ export default class NgoListPageComponent implements OnInit {
     });
   }
 
-  openCategoriessModal(items: { id: ID; name: string }[]) {
+  openCategoriessModal(items: ID[]) {
     this.dialog.open(ListDialogComponent, {
       width: '450px',
       data: {
-        items: items.map(item => item.name),
+        items: items.map(id => this.bussinessAreas.find(ba => ba.id === id)?.name),
         title: 'Obszary działania',
       },
     });

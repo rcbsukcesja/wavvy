@@ -1,5 +1,5 @@
 import { DatePipe, JsonPipe, NgClass, NgIf } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, computed, inject, Input, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
@@ -9,7 +9,7 @@ import { map, filter, BehaviorSubject, switchMap, take } from 'rxjs';
 import { RemoveDialogComponent } from 'src/app/shared/ui/common-remove-dialog.component';
 import { ProjectsApiService } from './data-access/projects.api.service';
 import { Project } from './model/project.model';
-import { ProjectsStateService } from './data-access/projects.state.service';
+import { INITIAL_PAGINATION_STATE, ProjectsStateService } from './data-access/projects.state.service';
 import { Router } from '@angular/router';
 import { ProjectStatusPipe } from './utils/project-status.pipe';
 import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
@@ -24,6 +24,8 @@ import {
 } from '../ngo/ui/change-ngo-status.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ID } from 'src/app/core/types/id.type';
+import { PlaceholderDialogComponent } from 'src/app/shared/ui/dialogs/placeholder-dialog.component';
+import { ProjectCardComponent } from './ui/project-card.component';
 
 @Component({
   selector: 'app-manage-projects-page',
@@ -108,7 +110,7 @@ import { ID } from 'src/app/core/types/id.type';
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-4">
-              <button [matTooltip]="'Pokaż projekt'" (click)="showProjectOnList(element.id)">
+              <button [matTooltip]="'Pokaż projekt'" (click)="showProjectOnList(element)">
                 <mat-icon>preview</mat-icon>
               </button>
               <button *ngIf="role !== ADMIN_ROLE" [matTooltip]="'Edytuj projekt'" (click)="goToProjectForm(element)">
@@ -145,11 +147,15 @@ import { ID } from 'src/app/core/types/id.type';
 export default class ManageProjectsPageComponent implements OnInit {
   @Input() role?: UserRoles;
 
+  private profileState = inject(NGOsStateService).$value;
+
+  $ngoId = computed(() => this.profileState().profile?.id);
+
   ADMIN_ROLE = USER_ROLES.ADMIN;
 
   private filters$$ = new BehaviorSubject<PaginationFilters & CommonFilters>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: INITIAL_PAGINATION_STATE.size,
     search: '',
     sort: 'desc',
   });
@@ -165,8 +171,20 @@ export default class ManageProjectsPageComponent implements OnInit {
     this.service.uploadProjectImage(input.files[0], projectId);
   }
 
-  showProjectOnList(id: ID) {
-    this.router.navigateByUrl(`/projects?projectId=${id}`);
+  showProjectOnList(project: Project) {
+    this.dialog.open(PlaceholderDialogComponent, {
+      width: '500px',
+      data: {
+        component: ProjectCardComponent,
+        inputs: {
+          project,
+          showBudget: true,
+          currentUserId: this.$ngoId(),
+          canSendMessage: false,
+        },
+      },
+    });
+    // this.router.navigateByUrl(`/projects?projectId=${id}`);
   }
 
   changeStatus(project: Project) {

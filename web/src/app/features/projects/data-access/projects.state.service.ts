@@ -9,7 +9,7 @@ export const INITIAL_PAGINATION_STATE: Pagination = {
   last: false,
   number: 0,
   numberOfElements: 0,
-  size: 5,
+  size: 6,
   totalElements: 0,
   totalPages: 0,
 };

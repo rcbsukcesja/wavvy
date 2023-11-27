@@ -13,6 +13,7 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ProjectSpecifications {
 
@@ -53,9 +54,9 @@ public class ProjectSpecifications {
         };
     }
 
-    public static Specification<Project> statusInStatusList(List<ProjectStatus> statusList) {
+    public static Specification<Project> statusInStatusList(Set<ProjectStatus> statuses) {
         return (root, query, criteriaBuilder) -> {
-            Predicate predicate = root.get("status").in(statusList);
+            Predicate predicate = root.get("status").in(statuses);
             return query.where(predicate).getRestriction();
         };
     }
@@ -67,6 +68,13 @@ public class ProjectSpecifications {
                     criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + search.toLowerCase() + "%"),
                     criteriaBuilder.like(criteriaBuilder.lower(tagsJoin.get("tag")), "%" + search.toLowerCase() + "%")
             );
+            return query.where(predicate).getRestriction();
+        };
+    }
+
+    public static Specification<Project> isNotDisabled() {
+        return (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.isFalse(root.get("disabled"));
             return query.where(predicate).getRestriction();
         };
     }

@@ -8,6 +8,7 @@ import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 import { MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
+import { INITIAL_PAGINATION_STATE } from '../../projects/data-access/projects.state.service';
 
 export interface GetAllMessagesParams {}
 
@@ -48,7 +49,14 @@ export class MessagesApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: CommonFilters & PaginationFilters = { sort: DEFAULT_SORT, search: '', pageIndex: 0, pageSize: 5 }) {
+  getAll(
+    params: CommonFilters & PaginationFilters = {
+      sort: DEFAULT_SORT,
+      search: '',
+      pageIndex: 0,
+      pageSize: INITIAL_PAGINATION_STATE.size,
+    }
+  ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const url = new URL(this.url);

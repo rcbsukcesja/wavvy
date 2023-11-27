@@ -10,6 +10,7 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
 import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { INITIAL_PAGINATION_STATE } from '../../projects/data-access/projects.state.service';
 
 export interface GetAllOffersParams {}
 
@@ -105,7 +106,14 @@ export class OffersApiService extends HttpBaseService {
       .subscribe();
   }
 
-  getAll(params: CommonFilters & PaginationFilters = { sort: DEFAULT_SORT, search: '', pageIndex: 0, pageSize: 5 }) {
+  getAll(
+    params: CommonFilters & PaginationFilters = {
+      sort: DEFAULT_SORT,
+      search: '',
+      pageIndex: 0,
+      pageSize: INITIAL_PAGINATION_STATE.size,
+    }
+  ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const url = new URL(this.url);

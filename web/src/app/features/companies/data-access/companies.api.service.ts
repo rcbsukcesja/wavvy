@@ -7,6 +7,7 @@ import { ID } from 'src/app/core/types/id.type';
 import { NgoStatus } from '../../ngo/model/ngo.model';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
+import { INITIAL_PAGINATION_STATE } from '../../projects/data-access/projects.state.service';
 
 export interface GetAllCompaniesParams {}
 
@@ -45,7 +46,13 @@ export class CompaniesApiService extends HttpBaseService {
     return this.http.delete(`${this.url}/${id}`);
   }
 
-  getAll(params: PaginationFilters & { search: string } & { id?: string } = { pageIndex: 0, pageSize: 5, search: '' }) {
+  getAll(
+    params: PaginationFilters & { search: string } & { id?: string } = {
+      pageIndex: 0,
+      pageSize: INITIAL_PAGINATION_STATE.size,
+      search: '',
+    }
+  ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     const url = new URL(this.url);

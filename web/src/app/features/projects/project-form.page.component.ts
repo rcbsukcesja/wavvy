@@ -22,7 +22,7 @@ import { ID } from 'src/app/core/types/id.type';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipEditedEvent, MatChipsModule } from '@angular/material/chips';
 import { BehaviorSubject } from 'rxjs';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -56,6 +56,7 @@ export type ProjectForm = FormGroup<{
     CommonModule,
     MatChipsModule,
     MatTooltipModule,
+    MatNativeDateModule,
   ],
   styles: [
     `
@@ -116,7 +117,11 @@ export type ProjectForm = FormGroup<{
       <br />
       <mat-form-field>
         <mat-label>Data rozpoczęcia </mat-label>
-        <input matInput formControlName="startTime" [matDatepicker]="datepicker" />
+        <input
+          matInput
+          formControlName="startTime"
+          [matDatepicker]="datepicker"
+          [matDatepickerFilter]="blockAfterEndDate" />
         <mat-hint>Format daty: dd/mm/yyyy z</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
         <mat-datepicker #datepicker> </mat-datepicker>
@@ -124,7 +129,11 @@ export type ProjectForm = FormGroup<{
       <br />
       <mat-form-field>
         <mat-label>Data zakończenia </mat-label>
-        <input matInput formControlName="endTime" [matDatepicker]="datepicker2" />
+        <input
+          matInput
+          formControlName="endTime"
+          [matDatepicker]="datepicker2"
+          [matDatepickerFilter]="blockBeforeStartDate" />
         <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
         <mat-datepicker #datepicker2> </mat-datepicker>
@@ -248,6 +257,28 @@ export default class ProjectFormPageComponent implements OnInit {
       this.tags[index] = value;
     }
   }
+
+  blockAfterEndDate = (d: Date | null) => {
+    if (!d || !this.form.controls.endTime.value) {
+      return true;
+    }
+
+    const endTime = new Date(this.form.controls.endTime.value).getTime();
+    const current = d.getTime();
+
+    return current < endTime;
+  };
+
+  blockBeforeStartDate = (d: Date | null) => {
+    if (!d || !this.form.controls.startTime.value) {
+      return true;
+    }
+
+    const startTime = new Date(this.form.controls.startTime.value).getTime();
+    const current = d.getTime();
+
+    return current > startTime;
+  };
 
   @ViewChild('logoInput') logoInput!: ElementRef<HTMLInputElement>;
 

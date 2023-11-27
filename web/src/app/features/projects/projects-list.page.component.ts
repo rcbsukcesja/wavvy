@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectsApiService } from './data-access/projects.api.service';
-import { ProjectsStateService } from './data-access/projects.state.service';
+import { INITIAL_PAGINATION_STATE, ProjectsStateService } from './data-access/projects.state.service';
 import ProjectsListComponent from './projects-list.component';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
 import { BehaviorSubject } from 'rxjs';
@@ -30,7 +30,7 @@ export default class ProjectsListPageComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private filters$$ = new BehaviorSubject<CommonFilters & PaginationFilters & { id?: string }>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: INITIAL_PAGINATION_STATE.size,
     search: '',
     sort: 'desc',
   });

@@ -20,6 +20,9 @@ import { Company } from './model/company.model';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ID } from 'src/app/core/types/id.type';
 import { NgoRegisterDialogComponent } from '../ngo/register/ui/ngo-register-dialog.component';
+import { PlaceholderDialogComponent } from 'src/app/shared/ui/dialogs/placeholder-dialog.component';
+import { CompanyCardComponent } from './ui/company-card.component';
+import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 
 @Component({
   selector: 'app-manage-companies-page',
@@ -79,11 +82,7 @@ import { NgoRegisterDialogComponent } from '../ngo/register/ui/ngo-register-dial
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
             <div class="flex gap-4">
-              <button
-                [disabled]="element.confirmed"
-                [matTooltipDisabled]="element.confirmed"
-                [matTooltip]="'Pokaż firmę'"
-                (click)="showCompanyOnList(element.id)">
+              <button [matTooltip]="'Pokaż firmę'" (click)="showCompanyOnList(element)">
                 <mat-icon>preview</mat-icon>
               </button>
               <button [matTooltip]="'Zatwierdź firmę'" (click)="openConfirmationDialog(element)">
@@ -118,7 +117,7 @@ import { NgoRegisterDialogComponent } from '../ngo/register/ui/ngo-register-dial
 export default class ManageCompaniesPageComponent implements OnInit {
   private filters$$ = new BehaviorSubject<PaginationFilters & CommonFilters>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: INITIAL_PAGINATION_STATE.size,
     search: '',
     sort: 'desc',
   });
@@ -161,8 +160,18 @@ export default class ManageCompaniesPageComponent implements OnInit {
       });
   }
 
-  showCompanyOnList(id: ID) {
-    this.router.navigateByUrl(`/companies?companyId=${id}`);
+  showCompanyOnList(company: Company) {
+    this.dialog.open(PlaceholderDialogComponent, {
+      width: '500px',
+      data: {
+        component: CompanyCardComponent,
+        inputs: {
+          company,
+          canSendMessage: false,
+        },
+      },
+    });
+    // this.router.navigateByUrl(`/companies?companyId=${id}`);
   }
 
   edit(company: Company) {

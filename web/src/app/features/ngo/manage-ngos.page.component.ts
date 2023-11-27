@@ -26,6 +26,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ID } from 'src/app/core/types/id.type';
 import { NgoRegisterDialogComponent } from './register/ui/ngo-register-dialog.component';
 import { LegalStatusPipe } from './utils/legal-status.pipe';
+import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 
 @Component({
   selector: 'app-manage-ngos-page',
@@ -133,7 +134,7 @@ import { LegalStatusPipe } from './utils/legal-status.pipe';
 export default class ManageNGOsPageComponent implements OnInit {
   private filters$$ = new BehaviorSubject<PaginationFilters & CommonFilters>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: INITIAL_PAGINATION_STATE.size,
     search: '',
     sort: 'desc',
   });

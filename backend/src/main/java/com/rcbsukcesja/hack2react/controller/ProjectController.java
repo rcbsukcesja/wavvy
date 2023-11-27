@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -42,11 +43,13 @@ public class ProjectController {
     @GetMapping
     public ResponseEntity<Page<ProjectView>> getAllProjects(
             @RequestParam(required = false) String search,
-            @RequestParam(required = false) List<ProjectStatus> statusList,
+            @RequestParam(required = false) Set<ProjectStatus> statusList,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            @ParameterObject Pageable pageable) {
-        return new ResponseEntity<>(projectService.getAllProjects(search, statusList, startDate, endDate, pageable), HttpStatus.OK);
+            @ParameterObject Pageable pageable,
+            Authentication authentication) {
+        return new ResponseEntity<>(projectService.getAllProjects(
+                search, statusList, startDate, endDate, pageable, authentication), HttpStatus.OK);
     }
 
     @GetMapping("/{projectId}")

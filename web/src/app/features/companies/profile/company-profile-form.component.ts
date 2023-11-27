@@ -259,11 +259,11 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
     }
 
     this.form = this.builder.group({
-      name: this.builder.control({ value: this.profile.name, disabled: true }, [Validators.required]),
+      name: this.builder.control({ value: this.profile.name, disabled: true }),
       logo: this.builder.control<File | null>(null),
-      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }, [Validators.required]),
-      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }, [Validators.required]),
-      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }, [Validators.required]),
+      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }),
+      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }),
+      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }),
       // bankAccount: this.builder.control(this.profile.bankAccount || ''),
       description: this.builder.control(this.profile.description || '', [Validators.required]),
       street: this.builder.control(this.profile.street || '', [Validators.required]),

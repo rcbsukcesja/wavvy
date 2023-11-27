@@ -80,6 +80,11 @@ export const routes: Routes = [
             path: 'ngos',
             canMatch: [NgoProfileCompletedGuard],
             loadComponent: () => import('./features/ngo/ngo-list.page.component'),
+            resolve: {
+              bussinessAreas: () => {
+                return inject(BusinessAreaApiService).getAll();
+              },
+            },
           },
           {
             path: 'manage/ngos',

@@ -1,6 +1,6 @@
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Injectable, inject } from '@angular/core';
-import { ProjectsStateService } from './projects.state.service';
+import { INITIAL_PAGINATION_STATE, ProjectsStateService } from './projects.state.service';
 import { map, tap } from 'rxjs';
 import { Project } from '../model/project.model';
 import { Router } from '@angular/router';
@@ -43,6 +43,12 @@ export class ProjectsApiService extends HttpBaseService {
   }
 
   add(payload: AddProjectFormValue) {
+    const ngo = this.ngoState().profile;
+
+    if (ngo) {
+      payload = { ...payload, ngoId: ngo.id } as AddProjectFormValue;
+    }
+
     this.http
       .post<Project>(`${this.url}`, payload)
       .pipe(
@@ -103,7 +109,7 @@ export class ProjectsApiService extends HttpBaseService {
       sort: DEFAULT_SORT,
       search: '',
       pageIndex: 0,
-      pageSize: 5,
+      pageSize: INITIAL_PAGINATION_STATE.size,
     }
   ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
@@ -160,7 +166,7 @@ export class ProjectsApiService extends HttpBaseService {
       sort: DEFAULT_SORT,
       search: '',
       pageIndex: 0,
-      pageSize: 5,
+      pageSize: INITIAL_PAGINATION_STATE.size,
     }
   ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });

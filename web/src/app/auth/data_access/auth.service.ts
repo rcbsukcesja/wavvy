@@ -91,7 +91,7 @@ export class AuthService extends HttpBaseService {
     this.router.navigateByUrl('/');
     localStorage.removeItem('token');
 
-    this.snack.open('wylogowano', '', {
+    this.snack.open('Wylogowano', '', {
       duration: 2000,
     });
   }
