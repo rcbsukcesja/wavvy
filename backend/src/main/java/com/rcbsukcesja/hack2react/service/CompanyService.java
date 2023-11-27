@@ -296,8 +296,13 @@ public class CompanyService {
 
     public CompanyView getMyCopmany() {
         UUID userId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
-        User owner = userRepository.getReferenceById(userId);
+        User owner = getUserByIdOrThrowException(userId);
         Company company = companyRepository.getCompanyByOwner(owner);
         return companyMapper.companyToCompanyView(company);
+    }
+
+    private User getUserByIdOrThrowException(UUID id) {
+        return userRepository.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, id));
     }
 }

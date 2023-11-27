@@ -27,7 +27,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final UserService userService;
-    private  final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public MessageView createMessage(MessageDto messageDto) {
@@ -37,16 +37,16 @@ public class MessageService {
 
         User senders = getLogedUser();
         message.setSender(senders);
-        User receiver = userRepository.getReferenceById(messageDto.receiverId());
+        User receiver = userService.getUserByIdOrThrowException(messageDto.receiverId());
         message.setReceiver(receiver);
         message.setCreatedAt(TimeUtils.nowInUTC());
 
-        if (senders.getUserType().equals(UserType.CITY_HALL)){
-            message.setName("urząd miasta kołobrzeg "+ messageDto.name());
-        }else if(senders.getUserType().equals(UserType.BUSINESS)){
-            message.setName(senders.getOrganization().getName()+" "+messageDto.name());
-        }else if (senders.getUserType().equals(UserType.NGO)){
-            message.setName(senders.getOrganization().getName()+ " "+messageDto.name());
+        if (senders.getUserType().equals(UserType.CITY_HALL)) {
+            message.setName("urząd miasta kołobrzeg " + messageDto.name());
+        } else if (senders.getUserType().equals(UserType.BUSINESS)) {
+            message.setName(senders.getOrganization().getName() + " " + messageDto.name());
+        } else if (senders.getUserType().equals(UserType.NGO)) {
+            message.setName(senders.getOrganization().getName() + " " + messageDto.name());
         }
         messageRepository.save(message);
 
@@ -54,16 +54,17 @@ public class MessageService {
     }
 
 
-    private void setBasicMessageFields(Message message, MessageDto messageDto){
-        message.setMessage(message.getMessage());
-        message.setTitle(message.getTitle());
-        message.setContact(message.getContact());
+    private void setBasicMessageFields(Message message, MessageDto messageDto) {
+        message.setMessage(messageDto.message());
+        message.setTitle(messageDto.title());
+        message.setContact(messageDto.contact());
     }
 
     public void deleteMessage(UUID id) {
         Message message = getMessageOrThrowException(id);
         messageRepository.delete(message);
     }
+
     public List<MessageView> getSendMessages() {
         User sender = getLogedUser();
         List<Message> messages = messageRepository.getMessageBySender(sender);
@@ -81,9 +82,9 @@ public class MessageService {
                 .orElseThrow(() -> new MessageNotFoundException(ErrorMessages.MESSAGE_NOT_FOUND, id));
     }
 
-    private User getLogedUser(){
+    private User getLogedUser() {
         UUID userId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
-        return userRepository.getReferenceById(userId);
+        return userService.getUserByIdOrThrowException(userId);
     }
 
 }
