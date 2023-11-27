@@ -74,7 +74,7 @@ public class CompanyController {
 
     @GetMapping("/my")
     public ResponseEntity<CompanyView> getMyCompany() {
-        return new ResponseEntity<>(organizationCompanyService.getMyCopmany(), HttpStatus.OK);
+        return new ResponseEntity<>(organizationCompanyService.getMyCompany(), HttpStatus.OK);
     }
 
 }
