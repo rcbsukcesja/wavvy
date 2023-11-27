@@ -79,7 +79,7 @@ public class MessageService {
         if (dto.contact() != null && !actual.getName().equals(dto.name())) {
             actual.setMessage(dto.message());
         }
-        if (dto.name() != null && !actual.getName().equals(dto.name().split(" ")[0])) {
+        if (dto.name() != null && !actual.getName().split(" ")[0].equals(dto.name())) {
             actual.setName(createName(actual.getSender(), dto.name()));
         }
         return messageMapper.messageToMessageView(actual);
