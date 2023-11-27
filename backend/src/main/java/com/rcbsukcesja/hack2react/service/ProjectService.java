@@ -3,6 +3,7 @@ package com.rcbsukcesja.hack2react.service;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidProjectStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
+import com.rcbsukcesja.hack2react.exceptions.messages.ForbiddenErrorMessageResources;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.ProjectNotFoundException;
 import com.rcbsukcesja.hack2react.model.dto.save.ProjectPatchDto;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,6 +123,8 @@ public class ProjectService {
         setBasicProjectFields(dto, project);
 
         if (dto.disabled() != null) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.DISABLED);
             if (dto.disabled()) {
                 if (dto.reason() == null) {
                     throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
@@ -129,6 +133,8 @@ public class ProjectService {
             project.setDisabled(dto.disabled());
         }
         if (dto.reason() != null && !dto.reason().equals(project.getReason())) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.REASON);
             project.setReason(dto.reason());
         }
 
@@ -174,6 +180,8 @@ public class ProjectService {
             project.setPossibleVolunteer(dto.possibleVolunteer());
         }
         if (dto.disabled() != null) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.DISABLED);
             if (dto.disabled()) {
                 if (dto.reason() == null) {
                     throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
@@ -182,6 +190,8 @@ public class ProjectService {
             project.setDisabled(dto.disabled());
         }
         if (dto.reason() != null && !dto.reason().equals(project.getReason())) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.REASON);
             project.setReason(dto.reason());
         }
 

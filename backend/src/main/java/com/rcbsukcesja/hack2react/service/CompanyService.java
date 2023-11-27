@@ -2,6 +2,7 @@ package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
+import com.rcbsukcesja.hack2react.exceptions.messages.ForbiddenErrorMessageResources;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.CompanyNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.UserNotFoundException;
@@ -77,6 +78,7 @@ public class CompanyService {
 
         company.setResources(new HashSet<>());
         company.setSocialLinks(new HashSet<>());
+        company.setConfirmed(false);
         company.setDisabled(false);
 
         company = companyRepository.save(company);
@@ -113,8 +115,16 @@ public class CompanyService {
         validateUpdateCompany(dto, company);
 
         setCompanyBasicFields(dto, company);
-
+        if (dto.confirmed() != null){
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.CONFIRMED);
+            company.setConfirmed(dto.confirmed());
+        } else {
+            company.setConfirmed(false);
+        }
         if (dto.disabled() != null) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.DISABLED);
             if (dto.disabled()) {
                 if (dto.reason() == null) {
                     throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
@@ -123,6 +133,8 @@ public class CompanyService {
             company.setDisabled(dto.disabled());
         }
         if (dto.reason() != null && !dto.reason().equals(company.getReason())) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.REASON);
             company.setReason(dto.reason());
         }
 
@@ -183,7 +195,14 @@ public class CompanyService {
                             .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
                     .toList()));
         }
+        if (dto.confirmed() != null && !(actual.isConfirmed() == dto.confirmed())) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.CONFIRMED);
+            actual.setConfirmed(dto.confirmed());
+        }
         if (dto.disabled() != null) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.DISABLED);
             if (dto.disabled()) {
                 if (dto.reason() == null) {
                     throw new ReasonValueException(ErrorMessages.REASON_MUST_NOT_BE_NULL);
@@ -192,6 +211,8 @@ public class CompanyService {
             actual.setDisabled(dto.disabled());
         }
         if (dto.reason() != null && !dto.reason().equals(actual.getReason())) {
+            AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
+                    ForbiddenErrorMessageResources.REASON);
             actual.setReason(dto.reason());
         }
         updateSocialLinks(actual, dto.socialLinks());
@@ -294,7 +315,7 @@ public class CompanyService {
         }
     }
 
-    public CompanyView getMyCopmany() {
+    public CompanyView getMyCompany() {
         UUID userId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
         User owner = userRepository.getReferenceById(userId);
         Company company = companyRepository.getCompanyByOwner(owner);
