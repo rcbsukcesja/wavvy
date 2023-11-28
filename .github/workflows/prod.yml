@@ -22,7 +22,7 @@ jobs:
         docker save -o wavvy.tar wavvy_keycloak wavvy_backend wavvy_frontend
 
     - name: Copy Docker Images to Server
-      uses: appleboy/scp-action@master
+      uses: appleboy/scp-action@v0.1.4
       with:
         host: ${{ secrets.SERVER_HOST }}
         port: ${{ secrets.PORT }}
@@ -40,5 +40,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           docker-compose down
-          docker load -i /home/rcbsukcesja/myapp.tar
+          docker load -i /home/rcbsukcesja/wavvy.tar
           docker-compose -f /home/rcbsukcesja/wavvy/docker-compose.yaml up -d
