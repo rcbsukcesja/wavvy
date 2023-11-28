@@ -386,8 +386,13 @@ public class OrganizationNGOService {
 
     public OrganizationNGOView getMyNGO() {
         UUID userId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
-        User owner = userRepository.getReferenceById(userId);
+        User owner = getUserByIdOrThrowException(userId);
         OrganizationNGO organizationNGO = organizationNGORepository.getOrganizationNGOByOwner(owner);
         return organizationNGOMapper.organizationNGOToOrganizationNGOView(organizationNGO);
+    }
+
+    private User getUserByIdOrThrowException(UUID id) {
+        return userRepository.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, id));
     }
 }

@@ -6,6 +6,7 @@ public interface ValidationConstants {
     int DESCRIPTION_MAX_LENGTH = 2000;
     int REASON_MAX_LENGTH =2000;
     int RESOURCES_MAX_NUMBER = 20;
+    int MESSAGE_MAX_LENGTH =2000;
 
     int NGO_TAG_MIN = 3;
     int NGO_TAG_MAX = 12;

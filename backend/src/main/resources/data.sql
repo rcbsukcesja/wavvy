@@ -90,29 +90,24 @@ VALUES ('13857a2c-0d14-11ee-be56-0242ac120002', 'Sport i zdrowie'),
        ('02e3b87a-2a05-4087-a762-3e239bb1df53', 'Technologia'),
        ('13a11d72-4c97-4ee7-b2ed-5fbf86119edc', 'Medycyna');
 
-INSERT INTO wavvy.wavvy.conversations(id)
-VALUES ('54fb43a6-0d19-11ee-be56-0242ac120002');
 
-INSERT INTO wavvy.wavvy.conversation_users(conversation_id, user_id)
-VALUES ('54fb43a6-0d19-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002'),
-       ('54fb43a6-0d19-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002');
 
-INSERT INTO wavvy.wavvy.messages(id, text, created_at, from_user_id, to_user_id, conversation_id)
-VALUES ('6601b652-0d15-11ee-be56-0242ac120002', 'text1', '2023-06-10T16:00:00.000000000',
-        '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
-        '54fb43a6-0d19-11ee-be56-0242ac120002'),
-       ('71de5b92-0d15-11ee-be56-0242ac120002', 'text2', '2023-06-10T16:01:00.000000000',
-        '3ed0cf62-0d12-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002',
-        '54fb43a6-0d19-11ee-be56-0242ac120002'),
-       ('7cd1b620-0d15-11ee-be56-0242ac120002', 'text3', '2023-06-10T16:02:00.000000000',
-        '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
-        '54fb43a6-0d19-11ee-be56-0242ac120002'),
-       ('88119a32-0d15-11ee-be56-0242ac120002', 'text4', '2023-06-10T16:03:00.000000000',
-        '3ed0cf62-0d12-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002',
-        '54fb43a6-0d19-11ee-be56-0242ac120002'),
-       ('90b1d38c-0d15-11ee-be56-0242ac120002', 'text5', '2023-06-10T16:04:00.000000000',
-        '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
-        '54fb43a6-0d19-11ee-be56-0242ac120002');
+--INSERT INTO wavvy.wavvy.messages(id, text, created_at, from_user_id, to_user_id, conversation_id)
+--VALUES ('6601b652-0d15-11ee-be56-0242ac120002', 'text1', '2023-06-10T16:00:00.000000000',
+--        '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
+--        '54fb43a6-0d19-11ee-be56-0242ac120002'),
+--       ('71de5b92-0d15-11ee-be56-0242ac120002', 'text2', '2023-06-10T16:01:00.000000000',
+--        '3ed0cf62-0d12-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002',
+--        '54fb43a6-0d19-11ee-be56-0242ac120002'),
+--       ('7cd1b620-0d15-11ee-be56-0242ac120002', 'text3', '2023-06-10T16:02:00.000000000',
+--        '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
+--        '54fb43a6-0d19-11ee-be56-0242ac120002'),
+--       ('88119a32-0d15-11ee-be56-0242ac120002', 'text4', '2023-06-10T16:03:00.000000000',
+--        '3ed0cf62-0d12-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002',
+--        '54fb43a6-0d19-11ee-be56-0242ac120002'),
+--       ('90b1d38c-0d15-11ee-be56-0242ac120002', 'text5', '2023-06-10T16:04:00.000000000',
+--        '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
+--        '54fb43a6-0d19-11ee-be56-0242ac120002');
 
 INSERT INTO wavvy.wavvy.offers(id, name, description, budget, funding_level, target_audience, link, start_date,
                                end_date, scope, created_at, updated_at)

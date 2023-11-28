@@ -1,6 +1,6 @@
 package com.rcbsukcesja.hack2react.model.mappers;
 
-import com.rcbsukcesja.hack2react.model.dto.save.MessageDto;
+import com.rcbsukcesja.hack2react.model.dto.save.MessageSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
 import com.rcbsukcesja.hack2react.model.entity.Message;
 import org.mapstruct.Mapper;
@@ -12,8 +12,6 @@ import java.util.List;
 public interface MessageMapper {
 
     Message messageViewToMessage(MessageView messageView);
-
-    @Mapping(source = "conversation.id", target = "conversationId")
     MessageView messageToMessageView(Message message);
 
     List<Message> messageViewListToMessageList(List<MessageView> messageViews);
@@ -21,8 +19,6 @@ public interface MessageMapper {
     List<MessageView> messageListToMessageViewList(List<Message> messages);
 
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "fromUser", ignore = true)
-    @Mapping(target = "toUser", ignore = true)
     @Mapping(target = "id", ignore = true)
-    Message messageDtoToMessage(MessageDto messageDto);
+    Message messageDtoToMessage(MessageSaveDto messageSaveDto);
 }
