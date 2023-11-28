@@ -19,7 +19,7 @@ jobs:
     - name: Build and Export Docker Images
       run: |
         docker-compose build
-        docker save -o wavvy.tar wavvy_keycloak wavvy-backend wavvy-frontend
+        docker save -o wavvy.tar wavvy_keycloak wavvy_backend wavvy_frontend
 
     - name: Copy Docker Images to Server
       uses: appleboy/scp-action@master
