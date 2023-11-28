@@ -29,7 +29,9 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/offers", "/ngos", "/projects", "/companies")
+                        .requestMatchers(HttpMethod.GET, "/offers", "/ngos", "/projects",
+                                "/ngos/{id:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}",
+                                "/projects/{id:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}")
                         .permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/projects/**/like")
                         .permitAll()
