@@ -1,7 +1,7 @@
 package com.rcbsukcesja.hack2react.controller;
 
 import com.rcbsukcesja.hack2react.model.dto.save.MessageSaveDto;
-import com.rcbsukcesja.hack2react.model.dto.save.MessagePathDto;
+import com.rcbsukcesja.hack2react.model.dto.save.MessagePatchDto;
 import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
 import com.rcbsukcesja.hack2react.service.MessageService;
 import jakarta.validation.Valid;
@@ -36,18 +36,18 @@ public class MessageController {
     @PatchMapping("/{messageId}")
     public ResponseEntity<MessageView> patchUpdateMessage(
             @PathVariable UUID messageId,
-            @RequestBody @Valid MessagePathDto dto) {
+            @RequestBody @Valid MessagePatchDto dto) {
         return new ResponseEntity<>(messageService.patchUpdateMessage(messageId, dto), HttpStatus.OK);
     }
 
-    @GetMapping("/send")
-    public ResponseEntity<List<MessageView>> getSendMessage() {
+    @GetMapping("/sent")
+    public ResponseEntity<List<MessageView>> getSendMessages() {
         return new ResponseEntity<>(
-                messageService.getSendMessages(), HttpStatus.OK);
+                messageService.getSentMessages(), HttpStatus.OK);
     }
 
     @GetMapping("/received")
-    public ResponseEntity<List<MessageView>> getReceivedMessage() {
+    public ResponseEntity<List<MessageView>> getReceivedMessages() {
         return new ResponseEntity<>(
                 messageService.getReceivedMessages(), HttpStatus.OK);
     }

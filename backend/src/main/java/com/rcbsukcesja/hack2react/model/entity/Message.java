@@ -32,16 +32,15 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column()
     private String title;
     @Column(length = 2000)
     private String message;
-    @Column()
     private String contact;
-    @Column()
     private String name;
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime createdAt;
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
+    private ZonedDateTime updatedAt;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH, CascadeType.DETACH})

@@ -16,7 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-
     @Bean
     public AuthorityConverter authorityConverter() {
         return new AuthorityConverter();
@@ -49,6 +48,4 @@ public class SecurityConfig {
         jwtConverter.setJwtGrantedAuthoritiesConverter(authorityConverter());
         return jwtConverter;
     }
-
-
 }

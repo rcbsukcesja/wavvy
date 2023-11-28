@@ -24,4 +24,5 @@ public class MessageView {
     private String message;
     private String title;
     private String name;
+    private ZonedDateTime updatedAt;
 }
