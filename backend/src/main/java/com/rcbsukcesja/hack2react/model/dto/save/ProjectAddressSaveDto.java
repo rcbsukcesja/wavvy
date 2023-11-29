@@ -18,7 +18,6 @@ public record ProjectAddressSaveDto(
         String city,
 
         @Pattern(regexp = ZIP_CODE_REGEX, message = ZIP_CODE_VALIDATION_MESSAGE)
-        @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String zipCode,
 
         @Size(max = STANDARD_TEXT_MAX_LENGTH)

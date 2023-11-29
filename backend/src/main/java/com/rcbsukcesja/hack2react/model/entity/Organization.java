@@ -45,6 +45,7 @@ public abstract class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(nullable = false)
     private String name;
     @OneToOne(mappedBy = "organization", fetch = FetchType.LAZY)
     private User owner;

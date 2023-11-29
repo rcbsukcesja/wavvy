@@ -32,10 +32,13 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     private String title;
-    @Column(length = 2000)
+    @Column(nullable = false, length = 2000)
     private String message;
+    @Column(nullable = false)
     private String contact;
+    @Column(nullable = false)
     private String name;
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime createdAt;

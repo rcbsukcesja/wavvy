@@ -107,7 +107,6 @@ class NGOControllerIT extends AbstractContainerBaseTest {
                 .businessAreaIds(Set.of(UUID.fromString("ac0f9444-0d14-11ee-be56-0242ac120002"),
                         UUID.fromString("bd47cb32-0d14-11ee-be56-0242ac120002")))
                 .legalStatus(LegalStatus.FOUNDATION)
-                .ownerId(UUID.fromString("353feec4-0d12-11ee-be56-0242ac120002"))
                 .build();
 
         // when
