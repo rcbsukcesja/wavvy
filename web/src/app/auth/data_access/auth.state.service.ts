@@ -31,13 +31,9 @@ export class AuthStateService {
     user: null,
   });
 
-  get $value() {
-    return this.$state.asReadonly();
-  }
+  $value = this.$state.asReadonly();
 
-  get value$() {
-    return toObservable(this.$state);
-  }
+  value$ = toObservable(this.$state);
 
   setState(value: AuthStateValue) {
     this.$state.update(state => ({ ...state, ...value }));

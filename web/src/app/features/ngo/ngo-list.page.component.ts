@@ -24,6 +24,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BusinessArea } from './model/ngo.model';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
+import { API_URL } from 'src/app/core/API-URL.token';
 
 @Component({
   selector: 'app-ngo-list-page',
@@ -117,6 +118,13 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    NGOsApiService,
+    {
+      provide: API_URL,
+      useValue: 'http://localhost:8080',
+    },
+  ],
 })
 export default class NgoListPageComponent implements OnInit {
   @Input({ required: true }) bussinessAreas!: BusinessArea[];

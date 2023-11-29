@@ -43,7 +43,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
     keycloak
       .init({
         config: {
-          url: `${environment.KEYCLOAK_URL}/auth`,
+          url: `${environment.KEYCLOAK_URL}`,
           realm: environment.KEYCLOAK_REALM,
           clientId: environment.KEYCLOAK_CLIENT_ID,
         },

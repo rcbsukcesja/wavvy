@@ -16,6 +16,7 @@ import { AuthStateService } from '../auth/data_access/auth.state.service';
 import { ShellService } from './shell.service';
 import { NGOsStateService } from '../features/ngo/data-access/ngos.state.service';
 import { CompaniesStateService } from '../features/companies/data-access/companies.state.service';
+import { KeycloakService } from 'keycloak-angular';
 
 export interface MenuItem {
   link: string;
@@ -152,6 +153,7 @@ export default class ShellComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private shellService = inject(ShellService);
+  private keycloak = inject(KeycloakService);
 
   private $authState = inject(AuthStateService).$value;
   public $isAuth = computed(() => this.$authState().status === 'AUTHENTICATED');
@@ -165,7 +167,10 @@ export default class ShellComponent {
   }
 
   login() {
-    this.router.navigateByUrl('/auth');
+    this.keycloak.login().then(() => {
+      console.log('wtf?');
+    });
+    // this.router.navigateByUrl('http://localhost:8090');
   }
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(

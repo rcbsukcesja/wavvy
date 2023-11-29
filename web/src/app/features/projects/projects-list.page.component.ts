@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
+import { API_URL } from 'src/app/core/API-URL.token';
 
 @Component({
   selector: 'app-projects.page',
@@ -22,6 +23,13 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    ProjectsApiService,
+    {
+      provide: API_URL,
+      useValue: 'http://localhost:8080',
+    },
+  ],
   imports: [CommonModule, ProjectsListComponent, CommonFiltersComponent, PaginationComponent],
 })
 export default class ProjectsListPageComponent implements OnInit {

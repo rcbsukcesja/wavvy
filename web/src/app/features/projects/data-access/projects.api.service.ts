@@ -9,6 +9,8 @@ import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
+import { HttpParams } from '@angular/common/http';
+import { createListHttpParams } from 'src/app/core/list-http-params.factory';
 
 export interface GetAllProjectsParams {}
 
@@ -171,42 +173,11 @@ export class ProjectsApiService extends HttpBaseService {
   ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
-    // todo: mock before backend
-    // const ngo = this.ngoState().profile;
-
-    const url = new URL(this.url);
-    const sp = new URLSearchParams({
-      _sort: 'startTime',
-      _order: params.sort,
-      q: params.search,
-      // _page: params.pageIndex.toString(),
-      _start: (params.pageIndex * params.pageSize).toString(),
-      _limit: params.pageSize.toString(),
-      id_like: params.id || '',
-    });
-
-    // if (ngo) {
-    //   sp.append('ngoId', ngo.id.toString());
-    // }
-
-    url.search = sp.toString();
-
     this.http
-      .get<Project[]>(url.href, { observe: 'response' })
+      .get<ListApiResponse<Project>>(this.url, {
+        params: createListHttpParams(params, params.sort),
+      })
       .pipe(
-        map(response => {
-          const totalCount = response.headers.get('X-Total-Count');
-
-          return {
-            content: response.body,
-            empty: response.body?.length === 0,
-            last: false,
-            number: params.pageIndex,
-            numberOfElements: response.body?.length,
-            totalElements: totalCount ? +totalCount : 0,
-            totalPages: totalCount ? Math.ceil(+totalCount / params.pageSize) : 0,
-          } as ListApiResponse<Project>;
-        }),
         tap(response => {
           this.stateService.setState({
             loadListCallState: 'LOADED',

@@ -16,6 +16,7 @@ import { ProjectsStateService } from '../projects/data-access/projects.state.ser
 import ProjectsListComponent from '../projects/projects-list.component';
 import { ID } from 'src/app/core/types/id.type';
 import { BusinessArea } from './model/ngo.model';
+import { API_URL } from 'src/app/core/API-URL.token';
 
 @Component({
   selector: 'app-ngo-details-page',
@@ -131,6 +132,13 @@ import { BusinessArea } from './model/ngo.model';
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    NGOsApiService,
+    {
+      provide: API_URL,
+      useValue: 'http://localhost:8080',
+    },
+  ],
 })
 export default class NgoDetailsPageComponent implements OnInit {
   @Input({ required: true }) bussinessAreas!: BusinessArea[];
