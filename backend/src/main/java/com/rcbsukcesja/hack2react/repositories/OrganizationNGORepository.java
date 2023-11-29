@@ -38,4 +38,6 @@ public interface OrganizationNGORepository extends JpaRepository<OrganizationNGO
     Optional<OrganizationNGO> getOrganizationNGOById(UUID id);
 
     OrganizationNGO getOrganizationNGOByOwner(User owner);
+
+    Optional<OrganizationNGO> getOrganizationNGOByOwner_Id(UUID ownerId);
 }

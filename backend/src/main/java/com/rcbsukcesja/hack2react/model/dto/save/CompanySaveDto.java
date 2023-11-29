@@ -31,8 +31,6 @@ public record CompanySaveDto(
         @NotBlank
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String name,
-        @NotNull
-        UUID ownerId,//TODO: remove from here and set it by system
 
         @NotNull
         OrganizationAddressSaveDto address,
@@ -52,10 +50,9 @@ public record CompanySaveDto(
         @Pattern(regexp = KRS_REGEX, message = KRS_PATTERN_VALIDATION_MESSAGE)
         String krs,
 
-        @NotBlank
         @Pattern(regexp = NIP_REGEX, message = NIP_PATTERN_VALIDATION_MESSAGE)
         String nip,
-        @NotBlank
+
         @Pattern(regexp = REGON_REGEX, message = REGON_PATTERN_VALIDATION_MESSAGE)
         String regon,
         @Size(max = RESOURCES_MAX_NUMBER, message = RESOURCES_MAX_NUMBER_VALIDATION_MESSAGE)

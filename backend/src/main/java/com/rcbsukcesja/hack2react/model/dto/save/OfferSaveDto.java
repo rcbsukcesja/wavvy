@@ -22,16 +22,13 @@ public record OfferSaveDto(
         @NotBlank
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String name,
-        @NotBlank
         @Size(max = DESCRIPTION_MAX_LENGTH)
         String description,
         @DecimalMin("0.00")
         @Digits(integer = 15, fraction = 2)
-        @NotNull
         BigDecimal budget,
         @Min(0)
         @Max(100)
-        @NotNull
         Integer fundingLevel,
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String targetAudience,

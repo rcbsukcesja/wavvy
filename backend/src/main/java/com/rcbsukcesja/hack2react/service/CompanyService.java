@@ -170,10 +170,6 @@ public class CompanyService {
             organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
             actual.setRegon(dto.regon());
         }
-        if (dto.ownerId() != null && !actual.getOwner().getId().equals(dto.ownerId())) {
-            actual.setOwner(userRepository.getUserById(dto.ownerId())
-                    .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
-        }
         if (dto.address() != null && !actual.getAddress().equals(addressMapper.organizationAddressPatchDtoToAddress(dto.address()))) {
             actual.setAddress(addressMapper.organizationAddressPatchDtoToAddress(dto.address()));
         }
@@ -235,8 +231,7 @@ public class CompanyService {
         company.setKrs(dto.krs());
         company.setNip(dto.nip());
         company.setRegon(dto.regon());
-        company.setOwner(userRepository.getUserById(dto.ownerId())
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
+        company.setOwner(getUserByIdOrThrowException(TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication())));
         company.setAddress(addressMapper.organizationAddressSaveDtoToAddress(dto.address()));
         company.setPhone(dto.phone());
         company.setEmail(dto.email());
@@ -317,8 +312,13 @@ public class CompanyService {
 
     public CompanyView getMyCompany() {
         UUID userId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
-        User owner = userRepository.getReferenceById(userId);
+        User owner = getUserByIdOrThrowException(userId);
         Company company = companyRepository.getCompanyByOwner(owner);
         return companyMapper.companyToCompanyView(company);
+    }
+
+    private User getUserByIdOrThrowException(UUID id) {
+        return userRepository.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, id));
     }
 }

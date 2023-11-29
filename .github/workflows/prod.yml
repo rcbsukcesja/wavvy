@@ -1,0 +1,44 @@
+name: Build and Deploy Docker Compose Application Backend and Frontend
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build and Export Docker Images
+      run: |
+        docker-compose build
+        docker save -o wavvy.tar wavvy_keycloak wavvy_backend wavvy_frontend
+
+    - name: Copy Docker Images to Server
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        port: ${{ secrets.PORT }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "wavvy.tar"
+        target: "/home/rcbsukcesja"
+
+    - name: Load and Run Docker Images on Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        port: ${{ secrets.PORT }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          docker-compose down
+          docker load -i /home/rcbsukcesja/wavvy.tar
+          docker-compose -f /home/rcbsukcesja/wavvy/docker-compose.yaml up -d

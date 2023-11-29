@@ -9,7 +9,6 @@ import lombok.Builder;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Set;
-import java.util.UUID;
 
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.DESCRIPTION_MAX_LENGTH;
 import static com.rcbsukcesja.hack2react.validations.ValidationConstants.PROJECT_TAGS_VALIDATION_MESSAGE;
@@ -23,7 +22,6 @@ public record ProjectSaveDto(
         @NotBlank
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String name,
-        @NotBlank
         @Size(max = DESCRIPTION_MAX_LENGTH)
         String description,
         ProjectAddressSaveDto address,
@@ -36,8 +34,6 @@ public record ProjectSaveDto(
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String cooperationMessage,
 
-        @NotNull
-        UUID organizerId, // TODO: remove from here and set it by system
         @NotNull
         ProjectStatus status,
         @Size(min = PROJECT_TAG_MIN, max = PROJECT_TAG_MAX, message = PROJECT_TAGS_VALIDATION_MESSAGE)

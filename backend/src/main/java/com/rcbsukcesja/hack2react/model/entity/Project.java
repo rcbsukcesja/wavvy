@@ -35,7 +35,7 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    @Column(nullable = false)
     private String name;
     @Column(length = 2000)
     private String description;
@@ -67,7 +67,7 @@ public class Project {
     private ZonedDateTime createdAt;
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime updatedAt;
-    private Set<String> likes ;
+    private Set<String> likes;
     @Column(length = 2000)
     private String reason;
     private boolean disabled;

@@ -1,14 +1,15 @@
 package com.rcbsukcesja.hack2react.model.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
 @Table(name = "messages", schema = "wavvy")
 public class Message {
@@ -30,20 +32,25 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String text;
-
+    @Column(nullable = false)
+    private String title;
+    @Column(nullable = false, length = 2000)
+    private String message;
+    @Column(nullable = false)
+    private String contact;
+    @Column(nullable = false)
+    private String name;
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime createdAt;
+    @Column(columnDefinition = "TIMESTAMP", nullable = false)
+    private ZonedDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
-    private User fromUser;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.DETACH})
+    private User receiver;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.DETACH})
+    private User sender;
 
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
-    private User toUser;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "conversation_id", referencedColumnName = "id")
-    private Conversation conversation;
 }

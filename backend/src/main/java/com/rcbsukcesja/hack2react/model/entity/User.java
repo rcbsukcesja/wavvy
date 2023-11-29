@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -41,17 +42,18 @@ public class User {
 
     @Column(nullable = false)
     private String username;
-
+    @Column(nullable = false)
     private String firstName;
-
+    @Column(nullable = false)
     private String lastName;
-
+    @Column(unique = true, nullable = false)
     private String email;
-
+    @Column(nullable = false)
     private String phone;
 
     private boolean deleted;
 
+    @Column(nullable = false)
     private Long createdTimestamp;
 
     private boolean enabled;
@@ -67,15 +69,11 @@ public class User {
     @JoinColumn(name = "organization_id", referencedColumnName = "id")
     private Organization organization;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.REFRESH, CascadeType.DETACH})
-    @JoinTable(
-            name = "conversation_users",
-            schema = "wavvy",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "conversation_id")}
-    )
-    private List<Conversation> conversations;
+    @OneToMany(mappedBy = "receiver",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.LAZY)
+    private List<Message> receivedMessages;
+
+    @OneToMany(mappedBy = "sender",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.LAZY)
+    private List<Message> sentMessages;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.LAZY)
