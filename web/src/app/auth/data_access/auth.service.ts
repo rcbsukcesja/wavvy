@@ -1,13 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { AuthStateService, User } from './auth.state.service';
-import { Observable, combineLatest, map, of, switchMap, tap, throwError } from 'rxjs';
+import { Observable, map, of, switchMap, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { API_URL } from 'src/app/core/API-URL.token';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NGOsApiService } from 'src/app/features/ngo/data-access/ngos.api.service';
 import { ID } from 'src/app/core/types/id.type';
 import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
+import { KeycloakService } from 'keycloak-angular';
 
 export type RegisterFormValue = {
   fullName: string;
@@ -39,15 +40,19 @@ export class AuthService extends HttpBaseService {
   authStateService = inject(AuthStateService);
   apiURL = inject(API_URL);
 
+  private kc = inject(KeycloakService);
+
   private snack = inject(MatSnackBar);
 
   private ngoService = inject(NGOsApiService);
 
   constructor() {
     super('users');
+
+    this.kc.init();
   }
 
-  handleFirstLogin(payload: FirstLoginFormValue, id: ID) {
+  handleFirstLogin(payload: FirstLoginFormValue, id: string) {
     return this.http.patch<User>(`${this.url}/${id}`, { firstLogin: false }).pipe(
       switchMap(user => {
         return user ? of(user) : throwError(() => new Error('Coś poszło nie tak'));
@@ -83,16 +88,21 @@ export class AuthService extends HttpBaseService {
   }
 
   checkToken(token: Token) {
-    return this.http.get<User[]>(`${this.url}?id=${token}`).pipe(map(([user]) => user));
+    console.log('adad', this.kc.isLoggedIn());
+
+    return of(this.kc.isLoggedIn());
   }
 
   logout(callback?: VoidFunction) {
-    this.authStateService.setState({ status: 'NON_AUTHENTICATED', user: null });
-    this.router.navigateByUrl('/');
-    localStorage.removeItem('token');
+    this.kc.logout().then(() => {
+      console.log('wylogowano!');
 
-    this.snack.open('Wylogowano', '', {
-      duration: 2000,
+      this.authStateService.setState({ status: 'NON_AUTHENTICATED', user: null });
+      this.router.navigateByUrl('/');
+
+      this.snack.open('Wylogowano', '', {
+        duration: 2000,
+      });
     });
   }
 

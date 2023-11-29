@@ -42,14 +42,14 @@ export class NGOsApiService extends HttpBaseService {
     return this.http.post<NGO>(`${this.url}`, payload);
   }
 
-  updateLogo(logo: File) {
+  updateLogo(logo: File, id: string) {
     const formData: FormData = new FormData();
     formData.append('file', logo);
 
-    this.http.post(`${this.url}/my`, formData).subscribe();
+    this.http.post(`${this.url.replace('ngos', 'organizations')}/${id}/logo`, formData).subscribe();
   }
 
-  updateProfile(payload: UpdateNGOProfileFormValue, id: ID) {
+  updateProfile(payload: UpdateNGOProfileFormValue, id: string) {
     this.stateService.setState({ updateProfileCallState: 'LOADING' });
 
     return this.http.patch(`${this.url}/${id}`, payload).pipe(
@@ -62,7 +62,7 @@ export class NGOsApiService extends HttpBaseService {
 
   getProfile() {
     this.stateService.setState({ loadProfileCallState: 'LOADING' });
-
+    console.log('test', this.url);
     const user = this.authState.$value().user;
 
     if (!user) {
@@ -70,11 +70,9 @@ export class NGOsApiService extends HttpBaseService {
     }
 
     this.http
-      .get<NGO[]>(
-        `${user.role === USER_ROLES.NGO_USER ? this.url : 'http://localhost:3000/companies'}/?owner.id=${user.id}`
-      )
+      .get<NGO>(`${user.role === USER_ROLES.NGO_USER ? this.url : this.url.replace('ngos', 'companies')}/my`)
       .pipe(
-        tap(([ngo]) => {
+        tap(ngo => {
           this.stateService.setState({ loadProfileCallState: 'LOADED', profile: ngo });
         })
       )
