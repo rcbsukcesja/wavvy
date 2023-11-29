@@ -187,10 +187,6 @@ public class OrganizationNGOService {
             organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
             actual.setRegon(dto.regon());
         }
-        if (dto.ownerId() != null && !actual.getOwner().getId().equals(dto.ownerId())) {
-            actual.setOwner(userRepository.getUserById(dto.ownerId())
-                    .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
-        }
         if (dto.address() != null && !actual.getAddress().equals(addressMapper.organizationAddressPatchDtoToAddress(dto.address()))) {
             actual.setAddress(addressMapper.organizationAddressPatchDtoToAddress(dto.address()));
         }
@@ -336,8 +332,7 @@ public class OrganizationNGOService {
         ngo.setKrs(dto.krs());
         ngo.setNip(dto.nip());
         ngo.setRegon(dto.regon());
-        ngo.setOwner(userRepository.getUserById(dto.ownerId())
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, dto.ownerId())));
+        ngo.setOwner(getUserByIdOrThrowException(TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication())));
         ngo.setAddress(addressMapper.organizationAddressSaveDtoToAddress(dto.address()));
         ngo.setPhone(dto.phone());
         ngo.setEmail(dto.email());

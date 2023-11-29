@@ -51,22 +51,22 @@ VALUES ('1c8490ed-485e-4f8c-8caf-fbfdcdf37052', 'a9656db2-0d2e-11ee-be56-0242ac1
        ('a0adb809-16c2-478f-8ec4-b3fe75511c74', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', 'sport');
 
 INSERT INTO wavvy.wavvy.app_users(id, username, first_Name, last_Name, email, user_type, deleted, created_timestamp,
-                                  enabled, email_verified, organization_id)
+                                  enabled, email_verified, organization_id, phone)
 VALUES ('ccccf3b0-0d10-11ee-be56-0242ac120002', 'miasto@gmail.com', 'Zbigniew', 'Brzęczyszczykiewicz',
         'miasto@gmail.com',
-        'CITY_HALL', false, 1700154735340, true, true, null),
+        'CITY_HALL', false, 1700154735340, true, true, null, '123123123'),
        ('2dc6b240-0d12-11ee-be56-0242a20002c1', 'ngo1@gmail.com', 'Roman', 'Rybak', 'ngo1@gmail.com',
-        'NGO', false, 1700154735340, true, true, 'a9656db2-0d2e-11ee-be56-0242ac120002'),
+        'NGO', false, 1700154735340, true, true, 'a9656db2-0d2e-11ee-be56-0242ac120002', '321321321'),
        ('353feec4-0d12-11ee-be56-0242ac120002', 'ngo2@gmail.com', 'Eustachy', 'Bąbel', 'ngo2@gmail.com',
-        'NGO', false, 1700154735340, true, true, 'b544b8e0-0d2e-11ee-be56-0242ac120002'),
+        'NGO', false, 1700154735340, true, true, 'b544b8e0-0d2e-11ee-be56-0242ac120002', '123456789'),
        ('03c79bef-4282-4326-be74-8acb180d7f03', 'ngo3@gmail.com', 'Andrzej', 'Przedsiębiorczy', 'ngo3@gmail.com',
-        'NGO', false, 1700154735340, true, true, 'c06f4f3c-0d2e-11ee-be56-0242ac120002'),
+        'NGO', false, 1700154735340, true, true, 'c06f4f3c-0d2e-11ee-be56-0242ac120002', '987654321'),
        ('3ed0cf62-0d12-11ee-be56-0242ac120002', 'msp1@gmail.com', 'Jesica', 'Bąbelek', 'msp1@gmail.com',
-        'BUSINESS', false, 1700154735340, true, true, 'a2daa44a-0d2d-11ee-be56-0242ac120002'),
+        'BUSINESS', false, 1700154735340, true, true, 'a2daa44a-0d2d-11ee-be56-0242ac120002', '999999999'),
        ('4f1b9b6c-0d12-11ee-be56-0242ac120002', 'msp2@gmail.com', 'Zenon', 'Bździoch', 'msp2@gmail.com',
-        'BUSINESS', false, 1700154735340, true, true, '9bab7cfc-0d2e-11ee-be56-0242ac120002'),
+        'BUSINESS', false, 1700154735340, true, true, '9bab7cfc-0d2e-11ee-be56-0242ac120002', '888888888'),
        ('528f7db6-d46f-465b-a93a-6d67f9ab85c9', 'msp3@gmail.com', 'Wiesław', 'Dąbrowski', 'msp3@gmail.com',
-        'BUSINESS', false, 1700154735340, true, true, '4b0e9873-47f7-499a-8190-5aff4ac16dde');
+        'BUSINESS', false, 1700154735340, true, true, '4b0e9873-47f7-499a-8190-5aff4ac16dde', '777777777');
 
 INSERT INTO wavvy.wavvy.business_areas(id, name)
 VALUES ('13857a2c-0d14-11ee-be56-0242ac120002', 'Sport i zdrowie'),
