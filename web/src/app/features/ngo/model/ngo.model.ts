@@ -26,7 +26,7 @@ export const NgoStatus = {
 } as const;
 
 export interface NGO {
-  id: ID;
+  id: string;
   name: string;
   logoUrl: string;
   owner: UserData;
@@ -38,7 +38,7 @@ export interface NGO {
   website: string;
   foundedAt: string;
   description: string;
-  businnessAreas: number[];
+  businnessAreas: string[];
   bankAccount?: string;
   KRS: string;
   NIP: string;

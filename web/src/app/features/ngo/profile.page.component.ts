@@ -44,7 +44,7 @@ import { CompanyProfileFirstCompletionComponent } from '../companies/profile/com
       <app-ngo-profile-form
         *ngIf="state.loadProfileCallState === 'LOADED'"
         (save)="save($event, state.profile!.id)"
-        (saveLogo)="saveLogo($event)"
+        (saveLogo)="saveLogo($event, state.profile!.id)"
         [bussinessAreas]="bussinessAreas"
         [firstCompletion]="!!$firstCompletion()"
         [profile]="state.profile!" />
@@ -52,7 +52,7 @@ import { CompanyProfileFirstCompletionComponent } from '../companies/profile/com
       <app-company-profile-form
         *ngIf="state.loadProfileCallState === 'LOADED'"
         (save)="saveCompany($event, state.profile!.id)"
-        (saveLogo)="saveLogo($event)"
+        (saveLogo)="saveLogo($event, state.profile!.id)"
         [bussinessAreas]="bussinessAreas"
         [firstCompletion]="!!$firstCompletion()"
         [profile]="state.profile!" />
@@ -80,8 +80,8 @@ export default class OrganizationProfilePageComponent implements OnInit {
     }
   }
 
-  saveLogo(logo: File) {
-    this.service.updateLogo(logo);
+  saveLogo(logo: File, id: string) {
+    this.service.updateLogo(logo, id);
   }
 
   save(
@@ -101,7 +101,7 @@ export default class OrganizationProfilePageComponent implements OnInit {
       businnessAreas: { id: ID; name: string }[];
       resources: string[];
     },
-    id: ID
+    id: string
   ) {
     this.service
       .updateProfile(
@@ -129,7 +129,7 @@ export default class OrganizationProfilePageComponent implements OnInit {
       businnessAreas: { id: ID; name: string }[];
       resources: string[];
     },
-    id: ID
+    id: string
   ) {
     this.service
       .updateProfile(

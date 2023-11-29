@@ -26,7 +26,7 @@ export class MessagesApiService extends HttpBaseService {
 
   sendToCity(messageValue: MessageDialogFormValue) {
     // todo: provide city user id
-    this.send({ ...messageValue, receiverId: 321 });
+    this.send({ ...messageValue, receiverId: '321' });
   }
 
   send(payload: MessagePayload) {

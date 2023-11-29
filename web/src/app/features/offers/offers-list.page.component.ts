@@ -146,7 +146,7 @@ export default class OffersListPageComponent implements OnInit {
     });
   }
 
-  toggleFav(offerId: number) {
+  toggleFav(offerId: string) {
     this.service.toggleFav(this.authState().user!, offerId);
   }
 

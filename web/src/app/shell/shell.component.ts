@@ -151,7 +151,6 @@ export default class ShellComponent {
 
   private breakpointObserver = inject(BreakpointObserver);
   private authService = inject(AuthService);
-  private router = inject(Router);
   private shellService = inject(ShellService);
   private keycloak = inject(KeycloakService);
 
@@ -167,10 +166,7 @@ export default class ShellComponent {
   }
 
   login() {
-    this.keycloak.login().then(() => {
-      console.log('wtf?');
-    });
-    // this.router.navigateByUrl('http://localhost:8090');
+    this.keycloak.login();
   }
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
