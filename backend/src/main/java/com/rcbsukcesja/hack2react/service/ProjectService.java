@@ -75,6 +75,27 @@ public class ProjectService {
         return projectRepository.findAll(spec, pageable).map(projectMapper::projectToProjectView);
     }
 
+    public Page<ProjectView> getMyProjects(String search, Set<ProjectStatus> statuses, LocalDate startDate,
+                                            LocalDate endDate, Pageable pageable, Authentication authentication) {
+
+        OrganizationNGO ngo = getNgoByOwnerIdOrThrowException(TokenUtils.getUserId(authentication));
+        statuses = setProjectStatuses(statuses, authentication);
+        checkProjectStatuses(statuses, authentication);
+
+        dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
+        Specification<Project> spec = ProjectSpecifications.notOutsideDateRange(startDate, endDate);
+
+        spec = spec.and(ProjectSpecifications.isOrganizedBy(ngo));
+
+        if (search != null && !search.isEmpty()) {
+            spec = spec.and(ProjectSpecifications.nameOrTagsContain(search));
+        }
+        if (statuses != null && !statuses.isEmpty()) {
+            spec = spec.and(ProjectSpecifications.statusInStatusList(statuses));
+        }
+        return projectRepository.findAll(spec, pageable).map(projectMapper::projectToProjectView);
+    }
+
     public ProjectView getProjectById(UUID projectId) {
         return projectMapper.projectToProjectView(getProjectByIdOrThrowException(projectId));
     }

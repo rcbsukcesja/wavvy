@@ -7,38 +7,88 @@ on:
 
 jobs:
   build-and-deploy:
+    environment: mikrus
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Build and Export Docker Images
-      run: |
-        docker-compose build
-        docker save -o wavvy.tar wavvy_keycloak wavvy_backend wavvy_frontend
+      - name: Create .env file
+        run: |
+          echo "API_URL=${{ vars.API_URL }}" >> .env
+          echo "KEYCLOAK_CLIENT_ID=${{ vars.KEYCLOAK_CLIENT_ID }}" >> .env
+          echo "KEYCLOAK_VERSION=${{ vars.KEYCLOAK_VERSION }}" >> .env
+          echo "KEYCLOAK_REALM=${{ vars.KEYCLOAK_REALM }}" >> .env
+          echo "KEYCLOAK_URL=${{ vars.KEYCLOAK_URL }}" >> .env
+          echo "KEYCLOAK_LOCAL_URL=${{ vars.KEYCLOAK_LOCAL_URL }}" >> .env
+          echo "KEYCLOAK_ADMIN_USERNAME=${{ vars.KEYCLOAK_ADMIN_USERNAME }}" >> .env
+          echo "KEYCLOAK_ADMIN_PASSWORD=${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}" >> .env
+          
+          echo "KEYCLOAK_DB_USERNAME=${{ vars.KEYCLOAK_DB_USERNAME }}" >> .env
+          echo "KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD }}" >> .env
+          echo "KEYCLOAK_DB_HOST=${{ vars.KEYCLOAK_DB_HOST }}" >> .env
+          echo "KEYCLOAK_DB_PORT=${{ vars.KEYCLOAK_DB_PORT }}" >> .env
+          echo "KEYCLOAK_DB_NAME=${{ vars.KEYCLOAK_DB_NAME }}" >> .env
+          
+          echo "EMAIL_SMTP_HOST=${{ vars.EMAIL_SMTP_HOST }}" >> .env
+          echo "EMAIL_SMTP_PORT=${{ vars.EMAIL_SMTP_PORT }}" >> .env
+          echo "EMAIL=${{ vars.EMAIL }}" >> .env
+          echo "EMAIL_USERNAME=${{ vars.EMAIL_USERNAME }}" >> .env
+          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
+          
+          echo "DATABASE_URL=${{ vars.DATABASE_URL }}" >> .env
+          echo "DATABASE_LOCAL_URL=${{ vars.DATABASE_LOCAL_URL }}" >> .env
+          echo "DATABASE_NAME=${{ vars.DATABASE_NAME }}" >> .env
+          echo "DATABASE_USERNAME=${{ vars.DATABASE_USERNAME }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          
+          echo "SWAGGER_CLIENT_ID=${{ vars.SWAGGER_CLIENT_ID }}" >> .env
+          echo "SWAGGER_CLIENT_SECRET=${{ secrets.SWAGGER_CLIENT_SECRET }}" >> .env
+          
+          echo "PGADMIN_DEFAULT_EMAIL=${{ vars.PGADMIN_DEFAULT_EMAIL }}" >> .env
+          echo "PGADMIN_DEFAULT_PASSWORD=${{ secrets.PGADMIN_DEFAULT_PASSWORD }}" >> .env
+          
+          echo "IMAGES_BASE_URL=${{ vars.IMAGES_BASE_URL }}" >> .env
 
-    - name: Copy Docker Images to Server
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        port: ${{ secrets.PORT }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "wavvy.tar"
-        target: "/home/rcbsukcesja"
+      - name: Build and Export Docker Images
+        run: |
+          docker-compose build
+          docker save -o wavvy.tar wavvy_keycloak wavvy_backend wavvy_frontend
 
-    - name: Load and Run Docker Images on Server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        port: ${{ secrets.PORT }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          docker-compose down
-          docker load -i /home/rcbsukcesja/wavvy.tar
-          docker-compose -f /home/rcbsukcesja/wavvy/docker-compose.yaml up -d
+      - name: Copy Docker Images to Server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "wavvy.tar"
+          target: "/home/rcbsukcesja/wavvy/"
+
+      - name: Copy .env file to Server
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: .env
+          remote: /home/rcbsukcesja/wavvy/.env
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.SERVER_USER }}
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Load and Run Docker Images on Server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/rcbsukcesja/wavvy
+            git pull
+            docker-compose down
+            docker load -i /home/rcbsukcesja/wavvy/wavvy.tar
+            docker-compose up -d
