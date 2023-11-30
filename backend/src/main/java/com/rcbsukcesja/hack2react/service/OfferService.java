@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -81,6 +82,7 @@ public class OfferService {
     public OfferView createOffer(OfferSaveDto offerSaveDto) {
         Offer offer = new Offer();
         setBasicOfferFields(offerSaveDto, offer);
+        offer.setFollowingUsers(new HashSet<>());
         Offer saved = offerRepository.saveAndFlush(offer);
         return offerMapper.offerToOfferView(saved);
     }
