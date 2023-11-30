@@ -23,9 +23,9 @@ export type ProjectForm = FormGroup<{
   status: FormControl<ProjectStatus>;
   name: FormControl<string>;
   description: FormControl<string>;
-  startTime: FormControl<string>;
+  startTime: FormControl<Date>;
   startTimeHour: FormControl<string>;
-  endTime: FormControl<string>;
+  endTime: FormControl<Date>;
   endTimeHour: FormControl<string>;
   budget: FormControl<number>;
   tags: FormControl<string[]>;
@@ -65,9 +65,9 @@ export type ProjectForm = FormGroup<{
   template: `
     <h2>{{ project ? 'Edytowanie projektu' : 'Dodawanie projektu' }}</h2>
     @if (project?.imageLink; as link) {
-    <section class="flex w-1/4 mb-4">
-      <img [src]="link" />
-    </section>
+      <section class="flex w-1/4 mb-4">
+        <img [src]="link" />
+      </section>
     }
 
     <form [formGroup]="form" (ngSubmit)="addProject()" class="flex flex-col">
@@ -126,7 +126,7 @@ export type ProjectForm = FormGroup<{
         </mat-form-field>
         <mat-form-field class="flex-1">
           <mat-label>Godzina rozpoczęcia </mat-label>
-          <input placeholder="" matInput type="time" />
+          <input formControlName="startTimeHour" placeholder="" matInput type="time" />
           <mat-hint>Podaj godzinę rozpoczęcia</mat-hint>
         </mat-form-field>
       </div>
@@ -146,14 +146,35 @@ export type ProjectForm = FormGroup<{
         </mat-form-field>
         <mat-form-field class="flex-1">
           <mat-label>Godzina zakończenia </mat-label>
-          <input placeholder="" matInput type="time" />
+          <input formControlName="endTimeHour" matInput type="time" />
           <mat-hint>Podaj godzinę zakończenia</mat-hint>
+        </mat-form-field>
+      </div>
+      <br />
+      <p>Adres wydarzenia (opcjonalne):</p>
+      <div class="flex gap-4">
+        <mat-form-field class="flex-grow">
+          <mat-label>Ulica</mat-label>
+          <input formControlName="street" matInput />
+          <mat-hint></mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Miejscowość</mat-label>
+          <input formControlName="city" matInput />
+          <mat-hint></mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Kod pocztowy</mat-label>
+          <input formControlName="zipCode" matInput />
+          <mat-hint></mat-hint>
         </mat-form-field>
       </div>
 
       <br />
       <mat-form-field>
-        <mat-label>Status</mat-label>
+        <mat-label>Etap</mat-label>
         <mat-select formControlName="status">
           <mat-option *ngFor="let status of projectStatuses" [value]="status.value">{{ status.label }}</mat-option>
         </mat-select>
@@ -304,79 +325,72 @@ export default class ProjectFormPageComponent implements OnInit {
       });
     }
 
+    let startTimeHour = '';
+    let endTimeHour = '';
+
+    if (this.project) {
+      const hours = new Date(this.project.startTime).getHours();
+      const minutes = new Date(this.project.startTime).getMinutes();
+
+      startTimeHour = `${hours > 9 ? hours : '0' + hours}:${minutes > 9 ? minutes : '0' + minutes}`;
+
+      const h = new Date(this.project.endTime).getHours();
+      const m = new Date(this.project.endTime).getMinutes();
+
+      endTimeHour = `${h > 9 ? h : '0' + h}:${m > 9 ? m : '0' + m}`;
+    }
+
     this.tags = this.project?.tags || [];
 
     this.form = this.builder.group({
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || '', [Validators.required, CustomValidators.maxLength]),
-      description: this.builder.control(this.project?.description || ''),
-      endTime: this.builder.control(this.project?.endTime || ''),
-      endTimeHour: this.builder.control(this.project?.endTime || ''),
-      startTime: this.builder.control(this.project?.startTime || ''),
-      startTimeHour: this.builder.control(this.project?.startTime || ''),
+      description: this.builder.control(this.project?.description || '', [Validators.required]),
+      endTime: this.builder.control(this.project ? new Date(this.project.endTime) : new Date(), [Validators.required]),
+      endTimeHour: this.builder.control(endTimeHour || '', [Validators.required]),
+      startTime: this.builder.control(this.project ? new Date(this.project.startTime) : new Date(), [
+        Validators.required,
+      ]),
+      startTimeHour: this.builder.control(startTimeHour || '18:00', [Validators.required]),
       link: this.builder.control(this.project?.links[0] || ''),
       possibleVolunteer: this.builder.control(this.project?.possibleVolunteer || false),
       budget: this.builder.control(this.project?.budget || 0),
-      city: this.builder.control(this.project?.address?.city || '', [Validators.required, CustomValidators.maxLength]),
-      street: this.builder.control(this.project?.address?.street || '', [
-        Validators.required,
-        CustomValidators.maxLength,
-      ]),
-      zipCode: this.builder.control(this.project?.address?.zipCode || '', [
-        Validators.required,
-        CustomValidators.maxLength,
-      ]),
+      city: this.builder.control(this.project?.address?.city || '', [CustomValidators.maxLength]),
+      street: this.builder.control(this.project?.address?.street || '', [CustomValidators.maxLength]),
+      zipCode: this.builder.control(this.project?.address?.zipCode || '', [CustomValidators.maxLength]),
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
+  }
 
-    // this.form.controls.image.valueChanges.subscribe(() => {
-    //   const logoFile = this.logoInput.nativeElement.files?.[0];
+  private prepareDates(formValue: ReturnType<typeof this.form.getRawValue>) {
+    const startTime = formValue.startTime as unknown as Date;
+    const [startH, startM] = formValue.startTimeHour.split(':');
+    startTime.setHours(+startH, +startM);
 
-    //   if (logoFile) {
-    //     const validTypes = ['image/png', 'image/jpeg'];
-    //     if (!validTypes.includes(logoFile.type)) {
-    //       this.logo$.next({
-    //         url: this.logo$.value.url,
-    //         file: null,
-    //         error: true,
-    //       });
-    //       return;
-    //     }
+    const endTime = formValue.endTime as unknown as Date;
+    const [endH, endM] = formValue.endTimeHour.split(':');
+    endTime.setHours(+endH, +endM);
 
-    //     // Check file size (1MB = 1 * 1024 * 1024 bytes)
-    //     if (logoFile.size > 1 * 1024 * 1024) {
-    //       this.logo$.next({
-    //         url: this.logo$.value.url,
-    //         file: null,
-    //         error: true,
-    //       });
-    //       return;
-    //     }
-
-    //     // Prepare the link
-    //     this.logo$.next({
-    //       url: URL.createObjectURL(logoFile),
-    //       file: logoFile,
-    //       error: false,
-    //     });
-    //   }
-    // });
+    return { startTime, endTime };
   }
 
   addProject() {
     this.form.markAllAsTouched();
 
+    const formValue = this.form.getRawValue();
+
     if (this.form.invalid) {
       return;
     }
-    const formValue = this.form.getRawValue();
+
+    const { endTime, startTime } = this.prepareDates(formValue);
 
     console.log(formValue.startTime);
     const payload = {
       description: formValue.description,
-      endTime: formValue.endTime + '.000Z',
-      startTime: formValue.startTime + '.000Z',
+      endTime: formatDateToUTC(endTime),
+      startTime: formatDateToUTC(startTime),
       links: [formValue.link],
       name: formValue.name,
       possibleVolunteer: formValue.possibleVolunteer,
@@ -396,4 +410,17 @@ export default class ProjectFormPageComponent implements OnInit {
       this.service.add(payload);
     }
   }
+}
+
+function formatDateToUTC(date: Date) {
+  const pad = (num: number) => (num < 10 ? '0' + num : num);
+
+  const year = date.getUTCFullYear();
+  const month = pad(date.getUTCMonth() + 1); // getUTCMonth() zwraca miesiące od 0 do 11
+  const day = pad(date.getUTCDate());
+  const hours = pad(date.getUTCHours());
+  const minutes = pad(date.getUTCMinutes());
+  const seconds = pad(date.getUTCSeconds());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000Z`;
 }

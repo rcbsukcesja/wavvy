@@ -14,7 +14,12 @@ export type ErrorDialogData = {
 @Component({
   template: `
     <h1 mat-dialog-title>Błąd</h1>
-    <div mat-dialog-content>{{ dialogData | json }}</div>
+    <div mat-dialog-content>
+      <p>Status: {{ dialogData.error.status }}</p>
+      <p></p>
+      <p>Status: {{ dialogData.error.message }}</p>
+      <p></p>
+    </div>
 
     <div mat-dialog-actions>
       <button mat-button [mat-dialog-close]="false">Zamknij</button>

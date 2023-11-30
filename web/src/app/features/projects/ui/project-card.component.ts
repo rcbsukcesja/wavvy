@@ -7,7 +7,7 @@ import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.
 import { ListDialogComponent } from 'src/app/shared/ui/common-list-dialog.component';
 import { tap, take } from 'rxjs';
 import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
-import { DescriptionDialogComponent } from '../projects-list.component';
+import { DescriptionDialogComponent, IsOwnProjectPipe } from '../projects-list.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
@@ -18,26 +18,15 @@ import { Project } from '../model/project.model';
   selector: 'app-project-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatIconModule,
-    MatDividerModule,
-    MatDialogModule,
-    MatTooltipModule,
-    RouterLink,
-    DatePipe,
-    ProjectStatusPipe,
-    NgIf,
-    NgFor,
-  ],
   template: `
     <div>
       <div
         class="relative h-80 bg-cover"
         [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
-        @if (project.disabled && currentUserId === project.ngoId) {
-        <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
-          <mat-icon>warning</mat-icon>
-        </div>
+        @if (project.disabled && currentUserId === project.organizer.id) {
+          <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
+            <mat-icon>warning</mat-icon>
+          </div>
         }
         <div class="absolute bg-black text-white right-0  text-xs px-1 py-2 flex items-center">
           <mat-icon class="mr-2">schedule</mat-icon> <span>{{ project.startTime | date }}</span>
@@ -45,7 +34,7 @@ import { Project } from '../model/project.model';
         </div>
       </div>
       <div class="bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
-        <a [routerLink]="'/ngos/' + project.ngoId">{{ project.ngo }}</a>
+        <a [routerLink]="'/ngos/' + project.organizer.id">{{ project.organizer.name }}</a>
       </div>
       <div class="rounded-md w-fit px-2 mt-4 mb-2 bg-green-400 text-green-900">
         {{ project.status | projectStatus }}
@@ -79,12 +68,29 @@ import { Project } from '../model/project.model';
         <div *ngIf="project.cooperationMessage" class="flex flex-col">
           <mat-icon [matTooltip]="project.cooperationMessage">spatial_audio_off</mat-icon>
         </div>
-        <div class="flex flex-col" (click)="openMessageModal(project.name)">
-          <mat-icon>forward_to_inbox</mat-icon>
+        <div class="flex flex-col" (click)="openMessageModal(project.organizer.id, project.name)">
+          <mat-icon
+            matTooltip="To twój własny projekt, nie ma co wysyłać wiadomości do siebie 😉"
+            [matTooltipDisabled]="!(project.organizer.id | isOwnProject)"
+            [class.text-gray-400]="project.organizer.id | isOwnProject"
+            >forward_to_inbox</mat-icon
+          >
         </div>
       </div>
     </div>
   `,
+  imports: [
+    MatIconModule,
+    MatDividerModule,
+    MatDialogModule,
+    MatTooltipModule,
+    RouterLink,
+    DatePipe,
+    ProjectStatusPipe,
+    NgIf,
+    NgFor,
+    IsOwnProjectPipe,
+  ],
 })
 export class ProjectCardComponent {
   dialog = inject(MatDialog);
@@ -94,6 +100,8 @@ export class ProjectCardComponent {
   @Input() currentUserId?: ID;
   @Input() showBudget = false;
   @Output() message = new EventEmitter<MessageDialogFormValue>();
+
+  private pipe = new IsOwnProjectPipe();
 
   ngOnInit() {
     console.log(this);
@@ -105,7 +113,11 @@ export class ProjectCardComponent {
     });
   }
 
-  openMessageModal(name: string) {
+  openMessageModal(organizerId: string, name: string) {
+    if (this.pipe.transform(organizerId)) {
+      return;
+    }
+
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',

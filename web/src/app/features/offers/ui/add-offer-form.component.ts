@@ -48,12 +48,10 @@ import { MatNativeDateModule } from '@angular/material/core';
       <mat-form-field>
         <mat-label>Data rozpoczęcia naboru</mat-label>
         <input
-          
           matInput
           formControlName="startDate"
-          [matDatepicker]="datepicker" 
-          [matDatepickerFilter]="blockAfterEndDate"
-          />
+          [matDatepicker]="datepicker"
+          [matDatepickerFilter]="blockAfterEndDate" />
         <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
         <mat-datepicker #datepicker> </mat-datepicker>
@@ -62,12 +60,10 @@ import { MatNativeDateModule } from '@angular/material/core';
       <mat-form-field>
         <mat-label>Data zakończenia naboru</mat-label>
         <input
-        
           matInput
           formControlName="endDate"
           [matDatepicker]="datepicker2"
-          [matDatepickerFilter]="blockBeforeStartDate"
-          />
+          [matDatepickerFilter]="blockBeforeStartDate" />
         <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
         <mat-datepicker #datepicker2> </mat-datepicker>
@@ -117,9 +113,7 @@ export class AddOfferFormComponent implements OnInit {
   }>;
 
   addOffer() {
-
-    console.log((this.form.getRawValue().startDate as any).utc().format())
-
+    console.log((this.form.getRawValue().startDate as any).utc().format());
 
     this.add.emit({
       ...this.form.getRawValue(),
@@ -162,7 +156,6 @@ export class AddOfferFormComponent implements OnInit {
     if (!d || !this.form.controls.startDate.value) {
       return true;
     }
-
 
     const startTime = new Date(this.form.controls.startDate.value).getTime();
     const current = d.valueOf();

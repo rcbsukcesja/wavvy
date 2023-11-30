@@ -6,7 +6,7 @@ export interface Message {
   id: ID;
   title: string;
   message: string;
-  receiverId: ID;
+  receiverId: string;
   // organization: string; // nazwa organizacji nadawcy
   name: string;
   contact: string; // email | phone number

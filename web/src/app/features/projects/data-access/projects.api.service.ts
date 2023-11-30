@@ -54,16 +54,13 @@ export class ProjectsApiService extends HttpBaseService {
   }
 
   add(payload: AddProjectFormValue) {
-    const ngo = this.ngoState().profile;
-
-    if (ngo) {
-      payload = { ...payload, ngoId: ngo.id } as AddProjectFormValue;
-    }
-
     this.http
       .post<Project>(`${this.url}`, {
         ...payload,
-        country: 'Polska',
+        address: {
+          ...payload.address,
+          country: 'Polska',
+        },
       })
       .pipe(
         tap(() => {
@@ -82,7 +79,10 @@ export class ProjectsApiService extends HttpBaseService {
     this.http
       .patch<Project>(`${this.url}/${id}`, {
         ...payload,
-        country: 'Polska',
+        address: {
+          ...payload.address,
+          country: 'Polska',
+        },
       })
       .pipe(
         tap(() => {
@@ -98,7 +98,7 @@ export class ProjectsApiService extends HttpBaseService {
       .delete(`${this.url}/${id}`)
       .pipe(
         tap(() => {
-          this.getAll();
+          this.getAllMine();
         })
       )
       .subscribe();

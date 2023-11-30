@@ -18,8 +18,6 @@ export interface GetAllMessagesParams {}
 })
 export class MessagesApiService extends HttpBaseService {
   private stateService = inject(MessagesStateService);
-  private authStateService = inject(AuthStateService);
-  private ngoStateService = inject(NGOsStateService);
 
   constructor() {
     super('messages');
@@ -33,13 +31,13 @@ export class MessagesApiService extends HttpBaseService {
   send(payload: MessagePayload) {
     this.stateService.setState({ sendCallState: 'LOADING' });
 
-    const id = this.authStateService.$value().user?.id;
+    // const id = this.authStateService.$value().user?.id;
 
     this.http
       .post(`${this.url}`, {
         ...payload,
-        senderId: id,
-        createdAt: Date.now(),
+        // senderId: id,
+        // createdAt: Date.now(),
         receiverId: payload.receiverId,
       })
       .pipe(

@@ -343,7 +343,7 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       });
     }
 
-    this.form.controls.logo.valueChanges.subscribe(val => {
+    this.form.controls.logo.valueChanges.subscribe(() => {
       const logoFile = this.logoInput.nativeElement.files?.[0];
 
       if (logoFile) {
@@ -391,10 +391,10 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) {
-      this.logo$.next({
-        ...this.logo$.value,
-        error: !Boolean(this.logo$.value.url),
-      });
+      // this.logo$.next({
+      //   ...this.logo$.value,
+      //   error: !Boolean(this.logo$.value.url),
+      // });
 
       return;
     }

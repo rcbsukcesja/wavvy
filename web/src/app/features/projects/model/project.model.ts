@@ -33,8 +33,6 @@ export interface Project {
   description: string;
   startTime: string;
   endTime: string;
-  ngo: string;
-  ngoId: ID;
   budget: number;
   status: ProjectStatus;
   tags: string[];
