@@ -54,6 +54,7 @@ public abstract class Organization {
     private String regon;
 
     private boolean confirmed;
+    private boolean disabled;
 
     @PrePersist
     public void prePersist() {
