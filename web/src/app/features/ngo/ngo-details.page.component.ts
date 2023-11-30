@@ -159,11 +159,11 @@ export default class NgoDetailsPageComponent implements OnInit {
     this.projectsService.getByNGOId(id);
   }
 
-  getBusinessArea(id: number) {
+  getBusinessArea(id: string) {
     return this.bussinessAreas.find(ba => ba.id === id)?.name;
   }
 
-  openMessageModal(id: ID, name: string) {
+  openMessageModal(id: string, name: string) {
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',

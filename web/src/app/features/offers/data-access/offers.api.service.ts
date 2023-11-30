@@ -38,7 +38,7 @@ export class OffersApiService extends HttpBaseService {
     super('offers');
   }
 
-  toggleFav(user: User, offerId: number) {
+  toggleFav(user: User, offerId: string) {
     const ngo = this.ngoState.$value().profile;
 
     if (!ngo) {

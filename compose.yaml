@@ -33,7 +33,7 @@ services:
       - db
 
   keycloak-db:
-    image: 'postgres:15.4-bullseye'
+    image: "postgres:15.4-bullseye"
     container_name: keycloak-db
     command: postgres -c max_prepared_transactions=200
     ports:
@@ -75,7 +75,7 @@ services:
       - IMAGES_BASE_URL=${IMAGES_BASE_URL}
 
   db:
-    image: 'postgres:15.4-bullseye'
+    image: "postgres:15.4-bullseye"
     container_name: db
     ports:
       - 5432:5432
@@ -90,15 +90,16 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
+      args:
+        - API_URL=${API_URL}
+        - KEYCLOAK_URL=${KEYCLOAK_URL}
+        - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+        - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
     container_name: wavvy-frontend
     ports:
       - 4200:80
     expose:
       - 4200
-    environment:
-      - API_URL=http://localhost:8080
-    depends_on:
-      - backend
 volumes:
   postgres:
   keycloak-db:

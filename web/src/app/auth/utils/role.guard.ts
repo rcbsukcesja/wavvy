@@ -2,13 +2,14 @@ import { CanMatchFn, Route, Router } from '@angular/router';
 import { AuthStateService } from '../data_access/auth.state.service';
 import { inject } from '@angular/core';
 import { UserRoles } from 'src/app/core/user-roles.enum';
+import { KeycloakService } from 'keycloak-angular';
 
 export const roleGuard: CanMatchFn = (route: Route) => {
   const user = inject(AuthStateService).$value().user;
-  const router = inject(Router);
+  const keycloak = inject(KeycloakService);
 
   if (!user) {
-    router.navigateByUrl('/auth');
+    keycloak.login();
     return false;
   }
 
@@ -18,6 +19,6 @@ export const roleGuard: CanMatchFn = (route: Route) => {
     return true;
   }
 
-  router.navigateByUrl('/auth');
+  keycloak.login();
   return false;
 };

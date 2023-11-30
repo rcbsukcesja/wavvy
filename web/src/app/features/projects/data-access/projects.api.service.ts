@@ -97,7 +97,7 @@ export class ProjectsApiService extends HttpBaseService {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     this.http
-      .get<Project[]>(`${this.url}/?ngoId=${id}`)
+      .get<Project[]>(`${this.url}/my`)
       .pipe(
         tap(projects => {
           this.stateService.setState({ loadListCallState: 'LOADED', list: projects });
@@ -119,7 +119,7 @@ export class ProjectsApiService extends HttpBaseService {
     // todo: mock before backend
     const ngo = this.ngoState().profile;
 
-    const url = new URL(this.url);
+    const url = new URL(this.url + '/my');
     const sp = new URLSearchParams({
       _sort: 'startTime',
       _order: params.sort,
@@ -137,21 +137,21 @@ export class ProjectsApiService extends HttpBaseService {
     url.search = sp.toString();
 
     this.http
-      .get<Project[]>(url.href, { observe: 'response' })
+      .get<ListApiResponse<Project>>(this.url + '/my')
       .pipe(
-        map(response => {
-          const totalCount = response.headers.get('X-Total-Count');
+        // map(response => {
+        //   const totalCount = response.headers.get('X-Total-Count');
 
-          return {
-            content: response.body,
-            empty: response.body?.length === 0,
-            last: false,
-            number: params.pageIndex,
-            numberOfElements: response.body?.length,
-            totalElements: totalCount ? +totalCount : 0,
-            totalPages: totalCount ? Math.ceil(+totalCount / params.pageSize) : 0,
-          } as ListApiResponse<Project>;
-        }),
+        //   return {
+        //     content: response.body,
+        //     empty: response.body?.length === 0,
+        //     last: false,
+        //     number: params.pageIndex,
+        //     numberOfElements: response.body?.length,
+        //     totalElements: totalCount ? +totalCount : 0,
+        //     totalPages: totalCount ? Math.ceil(+totalCount / params.pageSize) : 0,
+        //   } as ListApiResponse<Project>;
+        // }),
         tap(response => {
           this.stateService.setState({
             loadListCallState: 'LOADED',

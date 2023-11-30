@@ -3,7 +3,6 @@ import { authGuard } from './auth/utils/auth.guard';
 import { inject } from '@angular/core';
 import { ProjectsApiService } from './features/projects/data-access/projects.api.service';
 import { BusinessAreaApiService } from './shared/bussiness-area.api.service';
-import { tap } from 'rxjs';
 import { AuthStateService } from './auth/data_access/auth.state.service';
 import { roleGuard } from './auth/utils/role.guard';
 import { USER_ROLES, UserRoles } from './core/user-roles.enum';
@@ -54,10 +53,10 @@ export const routes: Routes = [
   {
     path: '',
     children: [
-      {
-        path: 'auth',
-        loadChildren: () => import('./auth/auth.routes'),
-      },
+      // {
+      //   path: 'auth',
+      //   loadChildren: () => import('./auth/auth.routes'),
+      // },
       {
         path: '',
         // canMatch: [NonFirstLoginGuard],

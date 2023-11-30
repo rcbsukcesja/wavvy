@@ -15,10 +15,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { environment } from 'src/environment';
+import { USER_ROLES } from './core/user-roles.enum';
 
 registerLocaleData(localePl);
 
-function checkTokenFactory(authService: AuthService) {
+function checkTokenFactory(authService: AuthService, keycloak: KeycloakService) {
   return () => {
     const userToken = localStorage.getItem('token');
 
@@ -27,18 +28,27 @@ function checkTokenFactory(authService: AuthService) {
     }
 
     return authService.checkToken(userToken).pipe(
-      tap(user => {
-        if (!user) {
+      tap(isLoggedIn => {
+        if (!isLoggedIn) {
           return;
         }
 
-        authService.setAuthenticatedUser(user);
+        keycloak.loadUserProfile().then(user => {
+          authService.setAuthenticatedUser({
+            firstLogin: false,
+            id: user.id!,
+            login: user.username!,
+            offersFollowed: [],
+            profileCompleted: false,
+            role: USER_ROLES.NGO_USER,
+          });
+        });
       })
     );
   };
 }
 
-function initializeKeycloak(keycloak: KeycloakService) {
+function initializeKeycloak(keycloak: KeycloakService, auth: AuthService) {
   return () =>
     keycloak
       .init({
@@ -47,9 +57,29 @@ function initializeKeycloak(keycloak: KeycloakService) {
           realm: environment.KEYCLOAK_REALM,
           clientId: environment.KEYCLOAK_CLIENT_ID,
         },
+        initOptions: {
+          onLoad: 'check-sso', // allowed values 'login-required', 'check-sso';
+          flow: 'standard', // allowed values 'standard', 'implicit', 'hybrid';
+        },
+      })
+      .then(x => {
+        if (!x) {
+          return;
+        }
+        keycloak.getToken().then(console.log);
+        keycloak.loadUserProfile().then(user => {
+          auth.setAuthenticatedUser({
+            firstLogin: false,
+            id: user.id!,
+            login: user.username!,
+            offersFollowed: [],
+            profileCompleted: false,
+            role: USER_ROLES.NGO_USER,
+          });
+        });
       })
       .catch(e => {
-        console.log('%cKeycloak nie działa 💥', 'font-size: 60px');
+        console.log('%cKeycloak nie działa 💥' + e, 'font-size: 60px');
       });
 }
 
@@ -60,12 +90,12 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,
       multi: true,
-      deps: [KeycloakService],
+      deps: [KeycloakService, AuthService],
     },
     {
       provide: APP_INITIALIZER,
       useFactory: checkTokenFactory,
-      deps: [AuthService],
+      deps: [AuthService, KeycloakService],
       multi: true,
     },
     importProvidersFrom(KeycloakAngularModule),
