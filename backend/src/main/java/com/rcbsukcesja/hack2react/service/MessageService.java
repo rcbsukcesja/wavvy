@@ -2,6 +2,7 @@ package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.MessageNotFoundException;
+import com.rcbsukcesja.hack2react.model.dto.save.MessageByProjectSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.save.MessagePatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.MessageSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
@@ -27,6 +28,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final UserService userService;
+    private final ProjectService projectService;
 
     private static final String CITY_NAME_ADDITION = "Urząd Miasta Kołobrzeg";
 
@@ -39,6 +41,26 @@ public class MessageService {
         User sender = getLoggedUser();
         message.setSender(sender);
         User receiver = userService.getUserByIdOrThrowException(messageSaveDto.receiverId());
+        message.setReceiver(receiver);
+        message.setCreatedAt(TimeUtils.nowInUTC());
+        message.setUpdatedAt(message.getCreatedAt());
+        message.setName(createName(sender, messageSaveDto.name()));
+
+        messageRepository.save(message);
+        return messageMapper.messageToMessageView(message);
+    }
+
+    @Transactional
+    public MessageView createMessageByProjectSaveDto(MessageByProjectSaveDto messageSaveDto) {
+
+        Message message = new Message();
+        message.setMessage(messageSaveDto.message());
+        message.setTitle(messageSaveDto.title());
+        message.setContact(messageSaveDto.contact());
+
+        User sender = getLoggedUser();
+        message.setSender(sender);
+        User receiver = projectService.getProjectByIdOrThrowException(messageSaveDto.projectId()).getOrganizer().getOwner();
         message.setReceiver(receiver);
         message.setCreatedAt(TimeUtils.nowInUTC());
         message.setUpdatedAt(message.getCreatedAt());
@@ -113,4 +135,6 @@ public class MessageService {
         }
         return sB.toString();
     }
+
+
 }
