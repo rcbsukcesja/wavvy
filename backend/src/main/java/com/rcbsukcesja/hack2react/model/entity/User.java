@@ -40,15 +40,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
     private String username;
-    @Column(nullable = false)
+
     private String firstName;
-    @Column(nullable = false)
+
     private String lastName;
-    @Column(unique = true, nullable = false)
+
     private String email;
-    @Column(nullable = false)
+
     private String phone;
 
     private boolean deleted;

@@ -1,0 +1,13 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="pgorski" id="20231129-1">
+        <dropNotNullConstraint columnDataType="VARCHAR(255)" columnName="first_name" tableName="app_users" schemaName="wavvy"/>
+        <dropNotNullConstraint columnDataType="VARCHAR(255)" columnName="last_name" tableName="app_users" schemaName="wavvy"/>
+        <dropNotNullConstraint columnDataType="VARCHAR(255)" columnName="phone" tableName="app_users" schemaName="wavvy"/>
+        <dropNotNullConstraint columnDataType="VARCHAR(255)" columnName="username" tableName="app_users" schemaName="wavvy"/>
+        <dropNotNullConstraint columnDataType="VARCHAR(255)" columnName="email" tableName="app_users" schemaName="wavvy"/>
+    </changeSet>
+</databaseChangeLog>
