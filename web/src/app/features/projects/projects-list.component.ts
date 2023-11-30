@@ -11,11 +11,9 @@ import { MessagesApiService } from '../messages/data-access/messages.api.service
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProjectStatusPipe } from './utils/project-status.pipe';
 import { Project } from './model/project.model';
-import { ID } from 'src/app/core/types/id.type';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { RouterLink } from '@angular/router';
 import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
-import { ProjectCardComponent } from './ui/project-card.component';
 
 @Pipe({
   standalone: true,
@@ -81,7 +79,7 @@ export class DescriptionDialogComponent {
               }
             </div>
           </div>
-          <div class="bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
+          <div class="bottom-0 left-0 w-full h-10 p-4 bg-material-blue text-white flex items-center">
             <a [routerLink]="'/ngos/' + project.organizer.id">{{ project.organizer.name }}</a>
           </div>
           <div class="rounded-md w-fit px-2 mt-4 mb-2 bg-green-400 text-green-900">

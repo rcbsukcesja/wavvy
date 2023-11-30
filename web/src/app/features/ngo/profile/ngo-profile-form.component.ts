@@ -296,12 +296,17 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       });
     }
 
+    this.profile.confirmed;
+
     this.form = this.builder.group({
-      name: this.builder.control({ value: this.profile.name, disabled: true }),
+      name: this.builder.control({ value: this.profile.name, disabled: this.profile.confirmed }, [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
       logo: this.builder.control<File | null>(null),
-      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }),
-      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }),
-      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }),
+      KRS: this.builder.control({ value: this.profile.KRS, disabled: this.profile.confirmed }),
+      NIP: this.builder.control({ value: this.profile.NIP, disabled: this.profile.confirmed }),
+      REGON: this.builder.control({ value: this.profile.REGON, disabled: this.profile.confirmed }),
       bankAccount: this.builder.control(this.profile.bankAccount || '', [
         Validators.minLength(26),
         Validators.maxLength(26),

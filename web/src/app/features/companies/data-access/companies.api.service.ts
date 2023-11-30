@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Company } from '../model/company.model';
 import { CompaniesStateService } from './companies.state.service';
-import { map, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
 import { NgoStatus } from '../../ngo/model/ngo.model';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
@@ -33,7 +33,32 @@ export class CompaniesApiService extends HttpBaseService {
     super('companies');
   }
 
-  confirm(id: ID) {}
+  confirm(id: string) {
+    this.stateService.setState({ loadListCallState: 'LOADING' });
+
+    this.http
+      .patch(`${this.url}/${id}`, {
+        confirmed: true,
+      })
+      .pipe(
+        tap(() => {
+          this.stateService.setState({
+            loadListCallState: 'LOADED',
+            list: this.stateService.$value().list.map(c => {
+              if (c.id === id) {
+                return {
+                  ...c,
+                  confirmed: true,
+                };
+              }
+
+              return c;
+            }),
+          });
+        })
+      )
+      .subscribe();
+  }
 
   add(payload: AddCompanyFormValue) {
     return this.http.post<Company>(`${this.url}`, payload);

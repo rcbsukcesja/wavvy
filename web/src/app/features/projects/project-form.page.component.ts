@@ -402,6 +402,7 @@ export default class ProjectFormPageComponent implements OnInit {
         city: formValue.city,
         street: formValue.street,
         zipCode: formValue.zipCode,
+        country: 'Polska',
       },
     };
     if (this.project) {

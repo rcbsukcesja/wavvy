@@ -37,30 +37,36 @@ import { USER_ROLES } from 'src/app/core/user-roles.enum';
   ],
   template: `
     <ng-container *ngIf="state() as state">
-      @switch (state.loadProfileCallState) { @case ('LOADING') {
-      <p>
-        <mat-spinner [diameter]="16" />
-      </p>
-      } @case ('LOADED') { @if (!state.profile?.confirmed) {
-      <div class="bg-red-300 px-4 py-2 rounded-md w-fit relative mb-4">
-        <mat-icon class="absolute -top-2 -left-2">warning</mat-icon>
-        <p class="!m-0">Twoja organizacja nie jest jeszcze zatwierdzona</p>
-      </div>
-      } @if($authState().user?.role === USER_ROLES.NGO_USER) {
-      <app-ngo-profile-form
-        (save)="save($event, state.profile!.id)"
-        (saveLogo)="saveLogo($event, state.profile!.id)"
-        [bussinessAreas]="bussinessAreas"
-        [firstCompletion]="!!$firstCompletion()"
-        [profile]="state.profile!" />
-      } @else {
-      <app-company-profile-form
-        (save)="saveCompany($event, state.profile!.id)"
-        (saveLogo)="saveLogo($event, state.profile!.id)"
-        [bussinessAreas]="bussinessAreas"
-        [firstCompletion]="!!$firstCompletion()"
-        [profile]="state.profile!" />
-      } } }
+      @switch (state.loadProfileCallState) {
+        @case ('LOADING') {
+          <p>
+            <mat-spinner [diameter]="16" />
+          </p>
+        }
+        @case ('LOADED') {
+          @if (!state.profile?.confirmed) {
+            <div class="bg-red-300 px-4 py-2 rounded-md w-fit relative mb-4">
+              <mat-icon class="absolute -top-2 -left-2">warning</mat-icon>
+              <p class="!m-0">Twoja organizacja nie jest jeszcze zatwierdzona</p>
+            </div>
+          }
+          @if ($authState().user?.role === USER_ROLES.NGO_USER) {
+            <app-ngo-profile-form
+              (save)="save($event, state.profile!.id)"
+              (saveLogo)="saveLogo($event, state.profile!.id)"
+              [bussinessAreas]="bussinessAreas"
+              [firstCompletion]="!!$firstCompletion()"
+              [profile]="state.profile!" />
+          } @else {
+            <app-company-profile-form
+              (save)="saveCompany($event, state.profile!.id)"
+              (saveLogo)="saveLogo($event, state.profile!.id)"
+              [bussinessAreas]="bussinessAreas"
+              [firstCompletion]="!!$firstCompletion()"
+              [profile]="state.profile!" />
+          }
+        }
+      }
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

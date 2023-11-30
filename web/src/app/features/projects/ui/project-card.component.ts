@@ -33,7 +33,7 @@ import { Project } from '../model/project.model';
           <span *ngIf="project.startTime !== project.endTime" class="pl-1">- {{ project.endTime | date }}</span>
         </div>
       </div>
-      <div class="bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
+      <div class="bottom-0 left-0 w-full h-10 p-4 bg-material-blue text-white flex items-center">
         <a [routerLink]="'/ngos/' + project.organizer.id">{{ project.organizer.name }}</a>
       </div>
       <div class="rounded-md w-fit px-2 mt-4 mb-2 bg-green-400 text-green-900">

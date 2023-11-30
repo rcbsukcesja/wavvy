@@ -55,7 +55,7 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
             </div>
             <p class="font-semibold text-lg">{{ offer.name }}</p>
             <p>{{ offer.description }}</p>
-            <mat-divider />
+            <mat-divider class="!border-material-blue border-2" />
             <div class="flex flex-col gap-4 my-3">
               <div>
                 <strong class="block">Rozpoczęcie naboru wniosków: </strong>

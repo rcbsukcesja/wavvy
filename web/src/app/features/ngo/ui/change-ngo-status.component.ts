@@ -14,7 +14,10 @@ export type ChangeStatusDialogData = {
 
 type DisableFormModel = FormGroup<{ reason: FormControl<string>; shouldDisable: FormControl<boolean> }>;
 
-export type DisableFormValue = ReturnType<DisableFormModel['getRawValue']>;
+export type DisableFormValue = {
+  reason: string;
+  disabled: boolean;
+};
 
 @Component({
   template: `
@@ -35,7 +38,7 @@ export type DisableFormValue = ReturnType<DisableFormModel['getRawValue']>;
     </form>
 
     <div mat-dialog-actions>
-      <button mat-button [mat-dialog-close]="false">Zamknij</button>
+      <button mat-button (click)="dialogRef.close()">Zamknij</button>
       <button
         [disabled]="dialogData.disabled === form.controls.shouldDisable.value"
         mat-button
@@ -71,7 +74,9 @@ export class ChangeStatusDialogComponent implements OnInit {
         if (value) {
           reasonCtrl.enable();
           reasonCtrl.addValidators([Validators.required, Validators.minLength(10), CustomValidators.maxLength()]);
-          this.form.updateValueAndValidity();
+          reasonCtrl.updateValueAndValidity();
+
+          console.log(reasonCtrl.valid);
         } else {
           reasonCtrl.disable();
           reasonCtrl.patchValue('');
@@ -82,6 +87,16 @@ export class ChangeStatusDialogComponent implements OnInit {
   }
 
   changeStatus() {
-    this.dialogRef.close(this.form.getRawValue());
+    console.log(this.form.invalid);
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid) {
+      return;
+    }
+
+    this.dialogRef.close({
+      disabled: this.form.getRawValue().shouldDisable,
+      reason: this.form.getRawValue().reason,
+    });
   }
 }

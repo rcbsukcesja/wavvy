@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { HasRolePipe } from '../auth/utils/has-role.pipe';
 import { USER_ROLES, UserRoles } from '../core/user-roles.enum';
 import { AuthService } from '../auth/data_access/auth.service';
@@ -17,7 +17,7 @@ import { ShellService } from './shell.service';
 import { NGOsStateService } from '../features/ngo/data-access/ngos.state.service';
 import { CompaniesStateService } from '../features/companies/data-access/companies.state.service';
 import { KeycloakService } from 'keycloak-angular';
-import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export interface MenuItem {
   link: string;
@@ -53,18 +53,27 @@ export interface MenuItem {
               </ng-container>
             </span>
             <br />
-            <span
-              *ngIf="role !== USER_ROLES.ADMIN"
-              class="text-xs absolute bottom-0 rounded-md px-2 py-1"
-              [matTooltipDisabled]="!ngoState().profile?.disabled"
-              [matTooltip]="ngoState().profile?.reason || ''"
-              [ngClass]="{
-                'bg-red-500 text-white': ngoState().profile?.disabled,
-                'bg-green-700 text-white': !ngoState().profile?.disabled,
 
-              }">
-              {{ ngoState().profile?.status === 'DISABLED' ? 'Zablokowany' : 'Aktywny' }}
-            </span>
+            <ng-container *ngIf="role !== USER_ROLES.ADMIN">
+              @if (ngoState().profile?.confirmed) {
+                <span
+                  class="text-xs absolute bottom-0 rounded-md px-2 py-1"
+                  [matTooltipDisabled]="!ngoState().profile?.disabled"
+                  [matTooltip]="ngoState().profile?.reason || ''"
+                  [ngClass]="{
+                    'bg-red-500 text-white': ngoState().profile?.disabled,
+                    'bg-green-700 text-white': !ngoState().profile?.disabled
+                  }">
+                  {{ ngoState().profile?.disabled ? 'Zablokowany' : 'Aktywny' }}
+                </span>
+              } @else {
+                <span
+                  class="text-xs absolute bottom-0 rounded-md px-2 py-1 bg-slate-500"
+                  matTooltip="Musisz najpierw uzupełnić swój profil i zostać zatwierdzony przez miasto">
+                  Konto Niezatwierdzone
+                </span>
+              }
+            </ng-container>
           </div>
         </mat-toolbar>
         <mat-nav-list>
@@ -96,7 +105,7 @@ export interface MenuItem {
             </div>
 
             <div class="flex justify-between items-start">
-              <a *ngIf="$isAuth()" routerLink="/messages" class="block"
+              <a *ngIf="$isAuth() && ngoState().profile?.confirmed" routerLink="/messages" class="block"
                 ><mat-icon class="!w-9 !h-9 text-3xl"> local_post_office</mat-icon>
               </a>
               <button *ngIf="$isAuth()" class="ml-4" mat-button (click)="logout()">Wyloguj</button>

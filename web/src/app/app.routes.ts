@@ -21,7 +21,7 @@ export const NgoProfileCompletedGuard: CanMatchFn = () => {
   if (user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.MANAGER) {
     return true;
   }
-
+  console.log(user, ngo, ngo?.confirmed);
   if (user && ngo && !ngo.confirmed) {
     router.navigateByUrl('/manage/my-profile');
 
@@ -52,10 +52,10 @@ export const routes: Routes = [
   {
     path: '',
     children: [
-      {
-        path: 'auth',
-        loadChildren: () => import('./auth/auth.routes'),
-      },
+      // {
+      //   path: 'auth',
+      //   loadChildren: () => import('./auth/auth.routes'),
+      // },
       {
         path: '',
         // canMatch: [NonFirstLoginGuard],

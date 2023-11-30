@@ -17,7 +17,7 @@ export interface GetAllNGOsParams {}
 export interface AddNGOFormValue {}
 
 export type UpdateNGOProfileFormValue = Partial<
-  Pick<NGO, 'address' | 'description' | 'email' | 'phone' | 'tags'> & {
+  Pick<NGO, 'address' | 'description' | 'email' | 'phone' | 'tags' | 'foundedAt'> & {
     disabled?: boolean;
     reason?: string;
     businessAreaIds: string[];
@@ -38,7 +38,7 @@ export class NGOsApiService extends HttpBaseService {
   }
 
   confirm(id: string) {
-    this.stateService.setState({ updateProfileCallState: 'LOADING' });
+    this.stateService.setState({ loadListCallState: 'LOADING' });
 
     return this.http
       .patch(`${this.url}/${id}`, {
@@ -46,11 +46,22 @@ export class NGOsApiService extends HttpBaseService {
       })
       .pipe(
         tap(() => {
-          this.stateService.setState({ updateProfileCallState: 'LOADED' });
+          this.stateService.setState({
+            loadListCallState: 'LOADED',
+            list: this.stateService.$value().list.map(n => {
+              if (n.id === id) {
+                return {
+                  ...n,
+                  confirmed: true,
+                };
+              }
 
-          // this.getProfile();
+              return n;
+            }),
+          });
         })
-      );
+      )
+      .subscribe();
   }
 
   add(payload: AddNGOFormValue) {

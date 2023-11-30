@@ -79,10 +79,6 @@ export class ProjectsApiService extends HttpBaseService {
     this.http
       .patch<Project>(`${this.url}/${id}`, {
         ...payload,
-        address: {
-          ...payload.address,
-          country: 'Polska',
-        },
       })
       .pipe(
         tap(() => {

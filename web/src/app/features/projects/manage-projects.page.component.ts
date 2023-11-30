@@ -199,13 +199,13 @@ export default class ManageProjectsPageComponent implements OnInit {
         } as ChangeStatusDialogData,
       })
       .afterClosed()
-      .pipe(take(1))
+      .pipe(take(1), filter(Boolean))
       .subscribe((state: DisableFormValue) => {
         if (state === undefined) {
           return;
         }
 
-        this.service.update(project.id, { disabled: state.shouldDisable, reason: state.reason }, this.filters$$.value);
+        this.service.update(project.id, { disabled: state.disabled, reason: state.reason }, this.filters$$.value);
       });
   }
 

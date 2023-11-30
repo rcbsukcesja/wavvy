@@ -9,7 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MessagesApiService } from '../messages/data-access/messages.api.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
-import { BehaviorSubject, map, take, tap } from 'rxjs';
+import { BehaviorSubject, take, tap } from 'rxjs';
 import { ListDialogComponent } from 'src/app/shared/ui/common-list-dialog.component';
 import { LegalStatusPipe } from './utils/legal-status.pipe';
 import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.component';
@@ -44,11 +44,11 @@ import { LoadingComponent } from '../../shared/ui/loading.component';
           <div
             class="mb-4 relative h-80 bg-cover"
             [style.background-image]="'url(' + (ngo.logoUrl || '/assets/images/placeholder.jpg') + ')'"></div>
-          <div class="bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
+          <div class="bottom-0 left-0 w-full h-10 p-4 bg-material-blue text-white flex items-center">
             {{ ngo.legalStatus | legalStatus }}
           </div>
           <div class="mb-4">
-            <p>{{ (ngo.description | slice : 0 : 160) + '...' }}</p>
+            <p>{{ (ngo.description | slice: 0 : 160) + '...' }}</p>
             <div class="flex justify-end">
               <button
                 (click)="goTo(ngo.id)"
@@ -59,38 +59,38 @@ import { LoadingComponent } from '../../shared/ui/loading.component';
           </div>
           <div class="mb-2">
             @for (tag of ngo.tags; track tag) {
-            <span>#{{ tag }} </span>
+              <span>#{{ tag }} </span>
             }
           </div>
           <mat-divider />
           <div class="flex justify-between mt-4">
             @if ($isAuth()) {
-            <div
-              matTooltip="Wyślij wiadomość do organizacji"
-              class="cursor-pointer"
-              (click)="openMessageModal(ngo.id, ngo.name)">
-              <mat-icon>forward_to_inbox</mat-icon>
-            </div>
+              <div
+                matTooltip="Wyślij wiadomość do organizacji"
+                class="cursor-pointer"
+                (click)="openMessageModal(ngo.id, ngo.name)">
+                <mat-icon>forward_to_inbox</mat-icon>
+              </div>
             }
             <!--  -->
             @if (ngo.resources?.length) {
-            <div
-              matTooltip="Wyświetl zasoby organizacji"
-              class="cursor-pointer"
-              (click)="openResourcesModal(ngo.resources)">
-              <mat-icon [ngClass]="{ ' bg-yellow-400 rounded-full': resourcesContainsSearchTerm(ngo.resources) }"
-                >build</mat-icon
-              >
-            </div>
+              <div
+                matTooltip="Wyświetl zasoby organizacji"
+                class="cursor-pointer"
+                (click)="openResourcesModal(ngo.resources)">
+                <mat-icon [ngClass]="{ ' bg-yellow-400 rounded-full': resourcesContainsSearchTerm(ngo.resources) }"
+                  >build</mat-icon
+                >
+              </div>
             }
             <!--  -->
             @if (ngo.businnessAreas?.length) {
-            <div
-              matTooltip="Wyświetl obszary działań organizacji"
-              class="cursor-pointer"
-              (click)="openCategoriessModal(ngo.businnessAreas)">
-              <mat-icon>assignment</mat-icon>
-            </div>
+              <div
+                matTooltip="Wyświetl obszary działań organizacji"
+                class="cursor-pointer"
+                (click)="openCategoriessModal(ngo.businnessAreas)">
+                <mat-icon>assignment</mat-icon>
+              </div>
             }
             <div
               matTooltip="Wyświetl kontakt do organizacji"
