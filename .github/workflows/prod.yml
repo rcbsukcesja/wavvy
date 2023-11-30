@@ -19,6 +19,8 @@ jobs:
 
       - name: Create .env file
         run: |
+          echo "API_URL=${{ vars.API_URL }}" >> .env
+          echo "KEYCLOAK_CLIENT_ID=${{ vars.KEYCLOAK_CLIENT_ID }}" >> .en
           echo "KEYCLOAK_VERSION=${{ vars.KEYCLOAK_VERSION }}" >> .env
           echo "KEYCLOAK_REALM=${{ vars.KEYCLOAK_REALM }}" >> .env
           echo "KEYCLOAK_URL=${{ vars.KEYCLOAK_URL }}" >> .env
