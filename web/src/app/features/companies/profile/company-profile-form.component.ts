@@ -264,23 +264,18 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
       KRS: this.builder.control({ value: this.profile.KRS, disabled: true }),
       NIP: this.builder.control({ value: this.profile.NIP, disabled: true }),
       REGON: this.builder.control({ value: this.profile.REGON, disabled: true }),
-      // bankAccount: this.builder.control(this.profile.bankAccount || ''),
       description: this.builder.control(this.profile.description || '', [Validators.required]),
-      street: this.builder.control(this.profile.street || '', [Validators.required]),
-      city: this.builder.control(this.profile.city || '', [Validators.required]),
-      zipcode: this.builder.control(this.profile.zipcode || '', [Validators.required]),
+      street: this.builder.control(this.profile.address?.street || '', [Validators.required]),
+      city: this.builder.control(this.profile.address?.city || '', [Validators.required]),
+      zipcode: this.builder.control(this.profile.address?.zipCode || '', [Validators.required]),
       email: this.builder.control(this.profile.email || '', [Validators.required]),
       website: this.builder.control(this.profile.website || '', [Validators.required]),
       phone: this.builder.control(this.profile.phone || '', [Validators.required]),
-      // tags: this.builder.control(this.profile.tags || [], [Validators.required, Validators.minLength(3)]),
-      // creationDate: this.builder.control(this.profile.creationDate || '', [Validators.required]),
       businnessAreas: this.builder.control<{ id: ID; name: string }[]>(
         this.bussinessAreas.filter(area => this.profile.businnessAreas?.includes(area.id) || [])
       ),
       resources: this.builder.array<FormControl<string>>([]),
     });
-
-    // this.tags = this.form.controls.tags.value;
 
     if (this.profile.resources?.length) {
       this.profile.resources.forEach(resource => {

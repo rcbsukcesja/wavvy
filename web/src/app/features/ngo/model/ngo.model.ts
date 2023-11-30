@@ -1,4 +1,4 @@
-import { Project } from '../../projects/model/project.model';
+import { Address, Project } from '../../projects/model/project.model';
 import { UserData } from 'src/app/auth/models/user.model';
 import { ID } from 'src/app/core/types/id.type';
 
@@ -30,9 +30,7 @@ export interface NGO {
   name: string;
   logoUrl: string;
   owner: UserData;
-  street: string;
-  zipcode: string;
-  city: string;
+  address: Address | null;
   phone: string;
   email: string;
   website: string;
@@ -51,5 +49,4 @@ export interface NGO {
   disabled: boolean;
   reason?: string;
   confirmed: true;
-  followedByUser: ID[];
 }

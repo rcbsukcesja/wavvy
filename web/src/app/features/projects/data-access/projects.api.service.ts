@@ -2,7 +2,7 @@ import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Injectable, inject } from '@angular/core';
 import { INITIAL_PAGINATION_STATE, ProjectsStateService } from './projects.state.service';
 import { map, tap } from 'rxjs';
-import { Project } from '../model/project.model';
+import { Project, ProjectStatus } from '../model/project.model';
 import { Router } from '@angular/router';
 import { ID } from 'src/app/core/types/id.type';
 import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
@@ -17,11 +17,20 @@ export interface GetAllProjectsParams {}
 export interface AddProjectFormValue {
   name: string;
   description: string;
-  startDate: string;
-  endDate: string;
-  link: string;
-  categories: { id: ID; name: string }[];
-  reason?: string;
+  startTime: string;
+  endTime: string;
+  links: string[];
+  possibleVolunteer: boolean;
+  tags: string[];
+  cooperationMessage: string;
+  status: ProjectStatus;
+  budget: number;
+  address: {
+    city: string;
+    zipCode: string;
+    street: string;
+  };
+  // categories: { id: ID; name: string }[];
 }
 
 @Injectable({
@@ -52,7 +61,10 @@ export class ProjectsApiService extends HttpBaseService {
     }
 
     this.http
-      .post<Project>(`${this.url}`, payload)
+      .post<Project>(`${this.url}`, {
+        ...payload,
+        country: 'Polska',
+      })
       .pipe(
         tap(() => {
           this.getAll();
@@ -64,11 +76,14 @@ export class ProjectsApiService extends HttpBaseService {
 
   update(
     id: ID,
-    payload: Partial<AddProjectFormValue & { disabled: boolean }>,
+    payload: Partial<AddProjectFormValue & { disabled: boolean; reason: string }>,
     filters?: CommonFilters & PaginationFilters
   ) {
     this.http
-      .patch<Project>(`${this.url}/${id}`, payload)
+      .patch<Project>(`${this.url}/${id}`, {
+        ...payload,
+        country: 'Polska',
+      })
       .pipe(
         tap(() => {
           this.getAll(filters);

@@ -99,8 +99,8 @@ import { API_URL } from 'src/app/core/API-URL.token';
             <ul class="flex gap-6 mt-4">
               <div>
                 <li class="flex items-center gap-2 mb-4">
-                  <mat-icon> place</mat-icon> <strong>Adres: </strong>{{ state.details.street }},
-                  {{ state.details.zipcode }} {{ state.details.city }}
+                  <mat-icon> place</mat-icon> <strong>Adres: </strong>{{ state.details.address?.street }},
+                  {{ state.details.address?.zipCode }} {{ state.details.address?.city }}
                 </li>
                 <li class="flex items-center gap-2">
                   <mat-icon> phone</mat-icon> <strong>Telefon: </strong>{{ state.details.phone }}

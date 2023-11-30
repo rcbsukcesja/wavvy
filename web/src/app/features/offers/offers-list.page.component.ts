@@ -118,8 +118,6 @@ export default class OffersListPageComponent implements OnInit {
 
   ngoState = inject(NGOsStateService).$value;
 
-  followed = computed(() => this.ngoState().profile?.followedByUser);
-
   get showFav() {
     return this.authState().user?.role === USER_ROLES.NGO_USER;
   }

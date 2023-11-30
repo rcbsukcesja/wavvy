@@ -32,7 +32,6 @@ export interface Project {
   name: string;
   description: string;
   startTime: string;
-  address: string;
   endTime: string;
   ngo: string;
   ngoId: ID;
@@ -40,13 +39,28 @@ export interface Project {
   status: ProjectStatus;
   tags: string[];
   imageLink: string;
-  link: string;
+  links: string[];
   cooperationMessage?: string;
   possibleVolunteer: boolean;
-  categories: BusinessArea[];
+  address: Address | null;
   disabled: boolean;
   reason?: string;
+  organizer: {
+    address: Address;
+    bankAccount: string;
+    email: string;
+    id: string;
+    name: string;
+    phone: string;
+  };
 }
+
+export type Address = {
+  street: string;
+  zipCode: string;
+  country: string;
+  city: string;
+};
 
 export interface NGOProject extends Project {
   ngoid: ID;

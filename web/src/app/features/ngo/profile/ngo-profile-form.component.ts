@@ -310,13 +310,16 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
         Validators.required,
         CustomValidators.longMaxLength,
       ]),
-      street: this.builder.control(this.profile.street || '', [Validators.required, CustomValidators.maxLength]),
-      zipcode: this.builder.control(this.profile.zipcode || '78-100', [
+      street: this.builder.control(this.profile.address?.street || '', [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
+      zipcode: this.builder.control(this.profile.address?.zipCode || '78-100', [
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(6),
       ]),
-      city: this.builder.control(this.profile.city || '', [Validators.required, CustomValidators.maxLength]),
+      city: this.builder.control(this.profile.address?.city || '', [Validators.required, CustomValidators.maxLength]),
       email: this.builder.control(this.profile.email || '', [Validators.required, CustomValidators.maxLength]),
       website: this.builder.control(this.profile.website || '', [Validators.required, CustomValidators.maxLength]),
       phone: this.builder.control(this.profile.phone || '', [

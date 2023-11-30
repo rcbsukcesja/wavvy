@@ -17,12 +17,10 @@ export interface GetAllNGOsParams {}
 export interface AddNGOFormValue {}
 
 export type UpdateNGOProfileFormValue = Partial<
-  Pick<
-    NGO,
-    'street' | 'city' | 'zipcode' | 'description' | 'email' | 'phone' | 'tags' | 'businnessAreas' | 'logoUrl'
-  > & {
+  Pick<NGO, 'address' | 'description' | 'email' | 'phone' | 'tags'> & {
     disabled?: boolean;
     reason?: string;
+    businessAreaIds: string[];
   }
 >;
 

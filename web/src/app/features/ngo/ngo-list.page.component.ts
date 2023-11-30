@@ -9,7 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MessagesApiService } from '../messages/data-access/messages.api.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
-import { BehaviorSubject, take, tap } from 'rxjs';
+import { BehaviorSubject, map, take, tap } from 'rxjs';
 import { ListDialogComponent } from 'src/app/shared/ui/common-list-dialog.component';
 import { LegalStatusPipe } from './utils/legal-status.pipe';
 import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.component';
@@ -20,7 +20,7 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BusinessArea } from './model/ngo.model';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
@@ -92,7 +92,9 @@ import { API_URL } from 'src/app/core/API-URL.token';
               matTooltip="Wyświetl zasoby organizacji"
               class="cursor-pointer"
               (click)="openResourcesModal(ngo.resources)">
-              <mat-icon>build</mat-icon>
+              <mat-icon [ngClass]="{ ' bg-yellow-400 rounded-full': resourcesContainsSearchTerm(ngo.resources) }"
+                >build</mat-icon
+              >
             </div>
             }
             <!--  -->
@@ -150,6 +152,14 @@ export default class NgoListPageComponent implements OnInit {
     search: '',
     sort: 'desc',
   });
+
+  resourcesContainsSearchTerm(resources: string[]) {
+    const searchTerm = this.filters$$.value.search.toLowerCase();
+
+    if (!searchTerm) return false;
+
+    return resources.some(resource => resource.toLowerCase().includes(searchTerm));
+  }
 
   onFiltersChanged(filters: CommonFilters) {
     this.filters$$.next({

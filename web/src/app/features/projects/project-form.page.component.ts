@@ -1,13 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { PROJECT_STATUS, Project, ProjectStatus, projectStatusMap } from './model/project.model';
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,27 +11,30 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProjectsApiService } from './data-access/projects.api.service';
-import { ID } from 'src/app/core/types/id.type';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipEditedEvent, MatChipsModule } from '@angular/material/chips';
 import { BehaviorSubject } from 'rxjs';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
-import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CustomValidators } from 'src/app/shared/custom.validator';
 
 export type ProjectForm = FormGroup<{
-  image: FormControl<File | null>;
+  // image: FormControl<File | null>;
   status: FormControl<ProjectStatus>;
   name: FormControl<string>;
   description: FormControl<string>;
   startTime: FormControl<string>;
+  startTimeHour: FormControl<string>;
   endTime: FormControl<string>;
+  endTimeHour: FormControl<string>;
   budget: FormControl<number>;
-  tags: FormArray<FormControl<string>>;
+  tags: FormControl<string[]>;
   link: FormControl<string>;
   cooperationMessage: FormControl<string>;
   possibleVolunteer: FormControl<boolean>;
-  categories: FormControl<BusinessArea[]>;
+  city: FormControl<string>;
+  zipCode: FormControl<string>;
+  street: FormControl<string>;
 }>;
 
 @Component({
@@ -115,29 +111,46 @@ export type ProjectForm = FormGroup<{
         >
       </mat-form-field>
       <br />
-      <mat-form-field>
-        <mat-label>Data rozpoczęcia </mat-label>
-        <input
-          matInput
-          formControlName="startTime"
-          [matDatepicker]="datepicker"
-          [matDatepickerFilter]="blockAfterEndDate" />
-        <mat-hint>Format daty: dd/mm/yyyy z</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
-        <mat-datepicker #datepicker> </mat-datepicker>
-      </mat-form-field>
+      <p>Ustaw terminy projektu:</p>
+      <div class="flex gap-4">
+        <mat-form-field class="flex-1">
+          <mat-label>Data rozpoczęcia </mat-label>
+          <input
+            matInput
+            formControlName="startTime"
+            [matDatepicker]="datepicker"
+            [matDatepickerFilter]="blockAfterEndDate" />
+          <mat-hint>Format daty: dd/mm/yyyy z</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker> </mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="flex-1">
+          <mat-label>Godzina rozpoczęcia </mat-label>
+          <input placeholder="" matInput type="time" />
+          <mat-hint>Podaj godzinę rozpoczęcia</mat-hint>
+        </mat-form-field>
+      </div>
+
       <br />
-      <mat-form-field>
-        <mat-label>Data zakończenia </mat-label>
-        <input
-          matInput
-          formControlName="endTime"
-          [matDatepicker]="datepicker2"
-          [matDatepickerFilter]="blockBeforeStartDate" />
-        <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
-        <mat-datepicker #datepicker2> </mat-datepicker>
-      </mat-form-field>
+      <div class="flex gap-4">
+        <mat-form-field class="flex-1">
+          <mat-label>Data zakończenia </mat-label>
+          <input
+            matInput
+            formControlName="endTime"
+            [matDatepicker]="datepicker2"
+            [matDatepickerFilter]="blockBeforeStartDate" />
+          <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker2> </mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="flex-1">
+          <mat-label>Godzina zakończenia </mat-label>
+          <input placeholder="" matInput type="time" />
+          <mat-hint>Podaj godzinę zakończenia</mat-hint>
+        </mat-form-field>
+      </div>
+
       <br />
       <mat-form-field>
         <mat-label>Status</mat-label>
@@ -180,7 +193,7 @@ export type ProjectForm = FormGroup<{
         >
       </mat-form-field>
       <br />
-      <mat-form-field>
+      <!-- <mat-form-field>
         <mat-label>Kategorie</mat-label>
         <mat-select formControlName="categories" multiple>
           <mat-select-trigger>
@@ -193,7 +206,7 @@ export type ProjectForm = FormGroup<{
           <mat-option *ngFor="let area of bussinessAreas" [value]="area">{{ area.name }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <br />
+      <br /> -->
 
       <button mat-raised-button color="primary">Zapisz</button>
     </form>
@@ -221,7 +234,7 @@ export default class ProjectFormPageComponent implements OnInit {
 
   builder = inject(NonNullableFormBuilder);
 
-  form!: any;
+  form!: ProjectForm;
 
   separatorKeysCodes = [ENTER, COMMA] as const;
   tags: string[] = [];
@@ -291,28 +304,29 @@ export default class ProjectFormPageComponent implements OnInit {
       });
     }
 
-    const preselectedAreas = this.project?.categories.map(cat => cat.id);
-
     this.tags = this.project?.tags || [];
 
     this.form = this.builder.group({
-      // image: this.builder.control<File | null>(null),
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
-      name: this.builder.control(this.project?.name || ''),
+      name: this.builder.control(this.project?.name || '', [Validators.required, CustomValidators.maxLength]),
       description: this.builder.control(this.project?.description || ''),
       endTime: this.builder.control(this.project?.endTime || ''),
+      endTimeHour: this.builder.control(this.project?.endTime || ''),
       startTime: this.builder.control(this.project?.startTime || ''),
-      link: this.builder.control(this.project?.link || ''),
+      startTimeHour: this.builder.control(this.project?.startTime || ''),
+      link: this.builder.control(this.project?.links[0] || ''),
       possibleVolunteer: this.builder.control(this.project?.possibleVolunteer || false),
       budget: this.builder.control(this.project?.budget || 0),
-      categories: this.builder.control<{ id: ID; name: string }[]>(
-        preselectedAreas?.length
-          ? this.bussinessAreas.filter(area => {
-              return preselectedAreas.includes(area.id);
-            })
-          : []
-      ),
+      city: this.builder.control(this.project?.address?.city || '', [Validators.required, CustomValidators.maxLength]),
+      street: this.builder.control(this.project?.address?.street || '', [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
+      zipCode: this.builder.control(this.project?.address?.zipCode || '', [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
 
@@ -356,11 +370,30 @@ export default class ProjectFormPageComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
+    const formValue = this.form.getRawValue();
 
+    console.log(formValue.startTime);
+    const payload = {
+      description: formValue.description,
+      endTime: formValue.endTime + '.000Z',
+      startTime: formValue.startTime + '.000Z',
+      links: [formValue.link],
+      name: formValue.name,
+      possibleVolunteer: formValue.possibleVolunteer,
+      tags: formValue.tags,
+      cooperationMessage: formValue.cooperationMessage,
+      status: formValue.status,
+      budget: formValue.budget,
+      address: {
+        city: formValue.city,
+        street: formValue.street,
+        zipCode: formValue.zipCode,
+      },
+    };
     if (this.project) {
-      this.service.update(this.project.id, this.form.getRawValue());
+      this.service.update(this.project.id, payload);
     } else {
-      this.service.add(this.form.getRawValue());
+      this.service.add(payload);
     }
   }
 }

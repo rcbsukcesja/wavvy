@@ -37,13 +37,17 @@ import { USER_ROLES } from 'src/app/core/user-roles.enum';
   ],
   template: `
     <ng-container *ngIf="state() as state">
-      <p *ngIf="state.loadProfileCallState === 'LOADING'">
+      @switch (state.loadProfileCallState) { @case ('LOADING') {
+      <p>
         <mat-spinner [diameter]="16" />
       </p>
-
-      @if($authState().user?.role === USER_ROLES.NGO_USER) {
+      } @case ('LOADED') { @if (!state.profile?.confirmed) {
+      <div class="bg-red-300 px-4 py-2 rounded-md w-fit relative mb-4">
+        <mat-icon class="absolute -top-2 -left-2">warning</mat-icon>
+        <p class="!m-0">Twoja organizacja nie jest jeszcze zatwierdzona</p>
+      </div>
+      } @if($authState().user?.role === USER_ROLES.NGO_USER) {
       <app-ngo-profile-form
-        *ngIf="state.loadProfileCallState === 'LOADED'"
         (save)="save($event, state.profile!.id)"
         (saveLogo)="saveLogo($event, state.profile!.id)"
         [bussinessAreas]="bussinessAreas"
@@ -51,13 +55,12 @@ import { USER_ROLES } from 'src/app/core/user-roles.enum';
         [profile]="state.profile!" />
       } @else {
       <app-company-profile-form
-        *ngIf="state.loadProfileCallState === 'LOADED'"
         (save)="saveCompany($event, state.profile!.id)"
         (saveLogo)="saveLogo($event, state.profile!.id)"
         [bussinessAreas]="bussinessAreas"
         [firstCompletion]="!!$firstCompletion()"
         [profile]="state.profile!" />
-      }
+      } } }
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,14 +106,23 @@ export default class OrganizationProfilePageComponent implements OnInit {
       foundedAt: string;
       businnessAreas: { id: ID; name: string }[];
       resources: string[];
+      logo: File | null;
     },
     id: string
   ) {
+    const { logo, street, city, zipcode, businnessAreas, ...payload } = formValue;
+
     this.service
       .updateProfile(
         {
-          ...formValue,
-          businnessAreas: formValue.businnessAreas.map(area => area.id),
+          ...payload,
+          address: {
+            street,
+            city,
+            zipCode: zipcode,
+            country: 'Polska',
+          },
+          businessAreaIds: formValue.businnessAreas.map(area => area.id),
         },
         id
       )
@@ -138,7 +150,7 @@ export default class OrganizationProfilePageComponent implements OnInit {
       .updateProfile(
         {
           ...formValue,
-          businnessAreas: formValue.businnessAreas.map(area => area.id),
+          businessAreaIds: formValue.businnessAreas.map(area => area.id),
         },
         id
       )

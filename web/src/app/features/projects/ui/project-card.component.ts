@@ -57,9 +57,9 @@ import { Project } from '../model/project.model';
         class="ml-auto block -mt-1 mb-2 bg-black text-white px-2 py-1 rounded-md hover:bg-opacity-70 transition">
         Pełny opis
       </button>
-      <p *ngIf="project.link">
+      <p *ngIf="project.links[0]">
         <span class="font-semibold">Więcej informacji: </span>
-        <a class="underline" [href]="project.link" target="_blank">{{ project.link }}</a>
+        <a class="underline" [href]="project.links[0]" target="_blank">{{ project.links[0] }}</a>
       </p>
       <div class="mb-2">
         <span *ngFor="let tag of project.tags; let last = last">#{{ tag }} </span>
