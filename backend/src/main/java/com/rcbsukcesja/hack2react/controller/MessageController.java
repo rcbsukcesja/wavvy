@@ -34,7 +34,7 @@ public class MessageController {
                 , HttpStatus.CREATED);
     }
 
-    @PostMapping
+    @PostMapping("/project")
     public ResponseEntity<MessageView> createMessageByProject(@RequestBody MessageByProjectSaveDto messageSaveDto) {
         return new ResponseEntity<>(messageService.createMessageByProjectSaveDto(messageSaveDto)
                 , HttpStatus.CREATED);
