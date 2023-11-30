@@ -1,0 +1,337 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="gorsk" id="1701289688836-0">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS wavvy;
+        </sql>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-1">
+        <createTable tableName="app_users" schemaName="wavvy">
+            <column name="deleted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email_verified" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_timestamp" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="app_users_pkey"/>
+            </column>
+            <column name="organization_id" type="UUID"/>
+            <column name="disabled_reason" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_type" type="VARCHAR(255)"/>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-2">
+        <createTable tableName="offers" schemaName="wavvy">
+            <column name="budget" type="numeric(38, 2)"/>
+            <column name="end_date" type="date"/>
+            <column name="funding_level" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="date"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="offers_pkey"/>
+            </column>
+            <column name="description" type="VARCHAR(2000)"/>
+            <column name="link" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scope" type="VARCHAR(255)"/>
+            <column name="target_audience" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-3">
+        <createTable tableName="organizations" schemaName="wavvy">
+            <column name="confirmed" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="disabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="founded_at" type="date"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="organizations_pkey"/>
+            </column>
+            <column name="organization_type" type="VARCHAR(31)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(2000)"/>
+            <column name="reason" type="VARCHAR(2000)"/>
+            <column name="bank_account" type="VARCHAR(255)"/>
+            <column name="city" type="VARCHAR(255)"/>
+            <column name="country" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="krs" type="VARCHAR(255)"/>
+            <column name="legal_status" type="VARCHAR(255)"/>
+            <column name="logo_path" type="VARCHAR(255)"/>
+            <column name="logo_url" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nip" type="VARCHAR(255)"/>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="regon" type="VARCHAR(255)"/>
+            <column name="street" type="VARCHAR(255)"/>
+            <column name="website" type="VARCHAR(255)"/>
+            <column name="zip_code" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-4">
+        <addUniqueConstraint columnNames="email" constraintName="app_users_email_key" tableName="app_users" schemaName="wavvy"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-5">
+        <addUniqueConstraint columnNames="organization_id" constraintName="app_users_organization_id_key" tableName="app_users" schemaName="wavvy"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-6">
+        <createTable tableName="business_areas" schemaName="wavvy">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="business_areas_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-7">
+        <createTable tableName="followed_offers" schemaName="wavvy">
+            <column name="offer_id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="followed_offers_pkey"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="followed_offers_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-8">
+        <createTable tableName="messages" schemaName="wavvy">
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="messages_pkey"/>
+            </column>
+            <column name="receiver_id" type="UUID"/>
+            <column name="sender_id" type="UUID"/>
+            <column name="message" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contact" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-9">
+        <createTable tableName="ngo_tags" schemaName="wavvy">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ngo_tags_pkey"/>
+            </column>
+            <column name="organization_ngo_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-10">
+        <createTable tableName="organization_business_areas" schemaName="wavvy">
+            <column name="business_area_id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="organization_business_areas_pkey"/>
+            </column>
+            <column name="organization_id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="organization_business_areas_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-11">
+        <createTable tableName="project_links" schemaName="wavvy">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="project_links_pkey"/>
+            </column>
+            <column name="project_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="link" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-12">
+        <createTable tableName="project_tags" schemaName="wavvy">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="project_tags_pkey"/>
+            </column>
+            <column name="project_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-13">
+        <createTable tableName="projects" schemaName="wavvy">
+            <column name="budget" type="numeric(38, 2)"/>
+            <column name="disabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="possible_volunteer" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INTEGER"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="projects_pkey"/>
+            </column>
+            <column name="organizer_id" type="UUID"/>
+            <column name="description" type="VARCHAR(2000)"/>
+            <column name="reason" type="VARCHAR(2000)"/>
+            <column name="city" type="VARCHAR(255)"/>
+            <column name="cooperation_message" type="VARCHAR(255)"/>
+            <column name="country" type="VARCHAR(255)"/>
+            <column name="image_link" type="VARCHAR(255)"/>
+            <column name="image_path" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="street" type="VARCHAR(255)"/>
+            <column name="zip_code" type="VARCHAR(255)"/>
+            <column name="likes" type="VARCHAR[]"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-14">
+        <createTable tableName="resources" schemaName="wavvy">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="resources_pkey"/>
+            </column>
+            <column name="organization_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resource" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-15">
+        <createTable tableName="social_links" schemaName="wavvy">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="social_links_pkey"/>
+            </column>
+            <column name="organization_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="link" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-16">
+        <createTable tableName="tags" schemaName="wavvy">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tags_pkey"/>
+            </column>
+            <column name="project_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-17">
+        <addForeignKeyConstraint baseColumnNames="organization_id" baseTableName="resources" baseTableSchemaName="wavvy" constraintName="fk167y0wafmigf2hnfr01ly6l5b" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organizations" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-18">
+        <addForeignKeyConstraint baseColumnNames="organization_id" baseTableName="social_links" baseTableSchemaName="wavvy" constraintName="fk1nqu4wj05awpjchhgq70w3e06" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organizations" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-19">
+        <addForeignKeyConstraint baseColumnNames="organization_id" baseTableName="organization_business_areas" baseTableSchemaName="wavvy" constraintName="fk56abp0r4iad47w5bh0whkdw3s" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organizations" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-20">
+        <addForeignKeyConstraint baseColumnNames="organization_ngo_id" baseTableName="ngo_tags" baseTableSchemaName="wavvy" constraintName="fk9pdk71m21cfe29rgkxqf38tn2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organizations" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-21">
+        <addForeignKeyConstraint baseColumnNames="organization_id" baseTableName="app_users" baseTableSchemaName="wavvy" constraintName="fkcoxpfr66jfdhdp3ncsb5do1ui" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organizations" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-22">
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="followed_offers" baseTableSchemaName="wavvy" constraintName="fkg0ub0wxn5mwm64wro7f7cc2i7" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="offers" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-23">
+        <addForeignKeyConstraint baseColumnNames="sender_id" baseTableName="messages" baseTableSchemaName="wavvy" constraintName="fkiwmjso15wbkeq7hkvg6noqh5v" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="app_users" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-24">
+        <addForeignKeyConstraint baseColumnNames="receiver_id" baseTableName="messages" baseTableSchemaName="wavvy" constraintName="fklqju06qv1bobbfi3rs2dcdh5m" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="app_users" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-25">
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableName="project_links" baseTableSchemaName="wavvy" constraintName="fkmo4lq56vrdc8rw945qp25u0dh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="projects" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-26">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="followed_offers" baseTableSchemaName="wavvy" constraintName="fkn8nig4qjk8bxobu6s627hroy9" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="app_users" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-27">
+        <addForeignKeyConstraint baseColumnNames="organizer_id" baseTableName="projects" baseTableSchemaName="wavvy" constraintName="fkqurtdr8vqyo6x7jvjlmec4wdq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organizations" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-28">
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableName="project_tags" baseTableSchemaName="wavvy" constraintName="fkra1vi3p19o2pqtm3c1geaose9" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="projects" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+    <changeSet author="gorsk (generated)" id="1701289688836-29">
+        <addForeignKeyConstraint baseColumnNames="business_area_id" baseTableName="organization_business_areas" baseTableSchemaName="wavvy" constraintName="fktoyeqpy1jktjfkisxd40xe10w" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="business_areas" referencedTableSchemaName="wavvy" validate="true"/>
+    </changeSet>
+</databaseChangeLog>
