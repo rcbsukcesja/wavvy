@@ -88,7 +88,7 @@ function initializeKeycloak(keycloak: KeycloakService, auth: AuthService) {
         });
       })
       .catch(e => {
-        console.log('%cKeycloak nie działa 💥' + e.toString(), 'font-size: 60px');
+        console.log('%cKeycloak nie działa 💥' + JSON.stringify(e), 'font-size: 60px');
       });
 }
 

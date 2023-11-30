@@ -20,29 +20,15 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BusinessArea } from './model/ngo.model';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
-import { API_URL } from 'src/app/core/API-URL.token';
+import { LoadingComponent } from '../../shared/ui/loading.component';
 
 @Component({
   selector: 'app-ngo-list-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    ListShellComponent,
-    MatDividerModule,
-    MatIconModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    SlicePipe,
-    LegalStatusPipe,
-    MatButtonModule,
-    CommonFiltersComponent,
-    PaginationComponent,
-    MatTooltipModule,
-  ],
   template: `
     <ng-container *ngIf="state() as state">
       <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
@@ -115,11 +101,26 @@ import { API_URL } from 'src/app/core/API-URL.token';
           </div>
         </ng-template>
       </app-list-shell>
-      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
+      <app-loader *ngIf="state.loadListCallState === 'LOADING'" text="Ładowanie NGOs..."></app-loader>
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    ListShellComponent,
+    MatDividerModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    SlicePipe,
+    LegalStatusPipe,
+    MatButtonModule,
+    CommonFiltersComponent,
+    PaginationComponent,
+    MatTooltipModule,
+    LoadingComponent,
+  ],
 })
 export default class NgoListPageComponent implements OnInit {
   @Input({ required: true }) bussinessAreas!: BusinessArea[];

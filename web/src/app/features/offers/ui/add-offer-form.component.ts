@@ -117,7 +117,15 @@ export class AddOfferFormComponent implements OnInit {
   }>;
 
   addOffer() {
-    this.add.emit(this.form.getRawValue());
+
+    console.log((this.form.getRawValue().startDate as any).utc().format())
+
+
+    this.add.emit({
+      ...this.form.getRawValue(),
+      startDate: (this.form.getRawValue().startDate as any).utc().format(),
+      endDate: (this.form.getRawValue().endDate as any).utc().format(),
+    });
   }
 
   ngOnInit() {
