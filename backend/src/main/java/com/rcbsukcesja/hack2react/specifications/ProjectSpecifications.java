@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.specifications;
 
+import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
 import com.rcbsukcesja.hack2react.model.entity.Project;
 import com.rcbsukcesja.hack2react.model.entity.ProjectTag;
 import com.rcbsukcesja.hack2react.model.enums.ProjectStatus;
@@ -75,6 +76,13 @@ public class ProjectSpecifications {
     public static Specification<Project> isNotDisabled() {
         return (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.isFalse(root.get("disabled"));
+            return query.where(predicate).getRestriction();
+        };
+    }
+
+    public static Specification<Project> isOrganizedBy(OrganizationNGO ngo) {
+        return (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.equal(root.get("organizer"), ngo);
             return query.where(predicate).getRestriction();
         };
     }
