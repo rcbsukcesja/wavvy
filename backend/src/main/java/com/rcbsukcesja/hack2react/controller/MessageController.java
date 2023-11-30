@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.controller;
 
+import com.rcbsukcesja.hack2react.model.dto.save.MessageByProjectSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.save.MessageSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.save.MessagePatchDto;
 import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
@@ -30,6 +31,12 @@ public class MessageController {
     @PostMapping
     public ResponseEntity<MessageView> createMessage(@RequestBody MessageSaveDto messageSaveDto) {
         return new ResponseEntity<>(messageService.createMessage(messageSaveDto)
+                , HttpStatus.CREATED);
+    }
+
+    @PostMapping
+    public ResponseEntity<MessageView> createMessageByProject(@RequestBody MessageByProjectSaveDto messageSaveDto) {
+        return new ResponseEntity<>(messageService.createMessageByProjectSaveDto(messageSaveDto)
                 , HttpStatus.CREATED);
     }
 
