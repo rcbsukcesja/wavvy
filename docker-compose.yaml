@@ -106,9 +106,9 @@ services:
     container_name: wavvy-frontend
     restart: always
     ports:
-      - 4200:80
+      - 40433:80
     expose:
-      - 4200
+      - 40433
     environment:
       - API_URL=${API_URL}
       - KEYCLOAK_URL=${KEYCLOAK_URL}
