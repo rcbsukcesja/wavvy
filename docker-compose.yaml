@@ -4,6 +4,7 @@ services:
       context: ./keycloak-service
       dockerfile: Dockerfile
     container_name: keycloak
+    restart: always
     environment:
       - KC_DB=postgres
       - KC_DB_URL=jdbc:postgresql://${KEYCLOAK_DB_HOST}/${KEYCLOAK_DB_NAME}
@@ -24,36 +25,36 @@ services:
       - DEBUG=true
       - DEBUG_PORT=*:5005
     ports:
-      - 8090:8080
+      - 30134:8080
       - 5005:5005
     expose:
-      - 8090
+      - 30134
     depends_on:
       - keycloak-db
       - db
 
   keycloak-db:
-    image: "postgres:15.4-bullseye"
+    image: 'postgres:15.4-bullseye'
     container_name: keycloak-db
+    restart: always
     command: postgres -c max_prepared_transactions=200
-    ports:
-      - 5433:5432
     environment:
       - POSTGRES_USER=${KEYCLOAK_DB_USERNAME}
       - POSTGRES_PASSWORD=${KEYCLOAK_DB_PASSWORD}
       - POSTGRES_DB=${KEYCLOAK_DB_NAME}
     volumes:
-      - keycloak-db:/var/lib/postgresql/data
+      - /var/keycloak/data:/var/lib/postgresql/data
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: wavvy-backend
+    restart: always
     ports:
-      - 8080:8080
+      - 20134:8080
     expose:
-      - 8080
+      - 20134
     depends_on:
       - db
     environment:
@@ -73,33 +74,45 @@ services:
       - SWAGGER_CLIENT_ID=${SWAGGER_CLIENT_ID}
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
       - IMAGES_BASE_URL=${IMAGES_BASE_URL}
+    volumes:
+      - /var/images:/usr/share/wavvy/images
 
   db:
-    image: "postgres:15.4-bullseye"
+    image: 'postgres:15.4-bullseye'
     container_name: db
-    ports:
-      - 5432:5432
+    restart: always
     environment:
       - POSTGRES_USER=${DATABASE_USERNAME}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_DB=${DATABASE_NAME}
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - /var/postgres/data:/var/lib/postgresql/data
 
+  pg-admin:
+    image: 'dpage/pgadmin4:7.8'
+    container_name: pg-admin
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - 40432:80
+    expose:
+      - 40432
   frontend:
     build:
       context: ./web
       dockerfile: Dockerfile
-      args:
-        - API_URL=${API_URL}
-        - KEYCLOAK_URL=${KEYCLOAK_URL}
-        - KEYCLOAK_REALM=${KEYCLOAK_REALM}
-        - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
     container_name: wavvy-frontend
+    restart: always
     ports:
-      - 4200:80
+      - 40433:80
     expose:
-      - 4200
-volumes:
-  postgres:
-  keycloak-db:
+      - 40433
+    environment:
+      - API_URL=${API_URL}
+      - KEYCLOAK_URL=${KEYCLOAK_URL}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+    volumes:
+      - /var/images:/usr/share/nginx/html/assets/images

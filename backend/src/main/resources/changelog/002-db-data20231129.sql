@@ -1,4 +1,7 @@
-INSERT INTO wavvy.wavvy.organizations(id, organization_type, name, street,
+--liquibase formatted sql
+
+--changeset pgorski:20231129-01
+INSERT INTO wavvy.organizations(id, organization_type, name, street,
                                       city, zip_code, country, phone, email, website, logo_path,
                                       created_at, updated_at, description, krs, nip, regon, legal_status, bank_account,
                                       confirmed, founded_at, reason, disabled)
@@ -41,8 +44,8 @@ VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'NGO', 'Liga Morska i Rzeczna',
         'Promujemy lokalnych artystów i organizujemy wystawy sztuki współczesnej, które angażują społeczność Kołobrzegu i przyciągają zwiedzających z całego kraju. Nasza misja to rozwijanie kultury i sztuki w regionie, tworzenie przestrzeni do dyskusji i refleksji, a także edukowanie publiczności na temat wartości i znaczenia sztuki. Wierzymy, że sztuka ma moc inspirowania i łączenia ludzi, a nasza galeria jest miejscem, gdzie te spotkania mogą się zdarzyć.',
         '000757221', '234858111', '394262090', null, null, false, null, 'Treści niezgodne z polityką', true);
 
-
-INSERT INTO wavvy.wavvy.ngo_tags(id, organization_ngo_id, tag)
+--changeset pgorski:20231129-02
+INSERT INTO wavvy.ngo_tags(id, organization_ngo_id, tag)
 VALUES ('1c8490ed-485e-4f8c-8caf-fbfdcdf37052', 'a9656db2-0d2e-11ee-be56-0242ac120002', 'świadomość morska'),
        ('f28cf3e8-b42b-46b5-9fa9-e01f3f3e0838', 'b544b8e0-0d2e-11ee-be56-0242ac120002', 'harcerstwo'),
        ('defc0e24-f3db-4050-a309-6e0b2806072c', 'b544b8e0-0d2e-11ee-be56-0242ac120002', 'młodzież'),
@@ -50,7 +53,8 @@ VALUES ('1c8490ed-485e-4f8c-8caf-fbfdcdf37052', 'a9656db2-0d2e-11ee-be56-0242ac1
        ('4be963ed-67d0-4072-ad70-68ae33dc2aff', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', 'lekkoatletyka'),
        ('a0adb809-16c2-478f-8ec4-b3fe75511c74', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', 'sport');
 
-INSERT INTO wavvy.wavvy.app_users(id, username, first_Name, last_Name, email, user_type, deleted, created_timestamp,
+--changeset pgorski:20231129-03
+INSERT INTO wavvy.app_users(id, username, first_Name, last_Name, email, user_type, deleted, created_timestamp,
                                   enabled, email_verified, organization_id, phone)
 VALUES ('ccccf3b0-0d10-11ee-be56-0242ac120002', 'miasto@gmail.com', 'Zbigniew', 'Brzęczyszczykiewicz',
         'miasto@gmail.com',
@@ -68,7 +72,8 @@ VALUES ('ccccf3b0-0d10-11ee-be56-0242ac120002', 'miasto@gmail.com', 'Zbigniew', 
        ('528f7db6-d46f-465b-a93a-6d67f9ab85c9', 'msp3@gmail.com', 'Wiesław', 'Dąbrowski', 'msp3@gmail.com',
         'BUSINESS', false, 1700154735340, true, true, '4b0e9873-47f7-499a-8190-5aff4ac16dde', '777777777');
 
-INSERT INTO wavvy.wavvy.business_areas(id, name)
+--changeset pgorski:20231129-04
+INSERT INTO wavvy.business_areas(id, name)
 VALUES ('13857a2c-0d14-11ee-be56-0242ac120002', 'Sport i zdrowie'),
        ('ac0f9444-0d14-11ee-be56-0242ac120002', 'Kultura i sztuka'),
        ('bd47cb32-0d14-11ee-be56-0242ac120002', 'Edukacja i rozwój młodzieży'),
@@ -90,26 +95,8 @@ VALUES ('13857a2c-0d14-11ee-be56-0242ac120002', 'Sport i zdrowie'),
        ('02e3b87a-2a05-4087-a762-3e239bb1df53', 'Technologia'),
        ('13a11d72-4c97-4ee7-b2ed-5fbf86119edc', 'Medycyna');
 
-
-
---INSERT INTO wavvy.wavvy.messages(id, text, created_at, from_user_id, to_user_id, conversation_id)
---VALUES ('6601b652-0d15-11ee-be56-0242ac120002', 'text1', '2023-06-10T16:00:00.000000000',
---        '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
---        '54fb43a6-0d19-11ee-be56-0242ac120002'),
---       ('71de5b92-0d15-11ee-be56-0242ac120002', 'text2', '2023-06-10T16:01:00.000000000',
---        '3ed0cf62-0d12-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002',
---        '54fb43a6-0d19-11ee-be56-0242ac120002'),
---       ('7cd1b620-0d15-11ee-be56-0242ac120002', 'text3', '2023-06-10T16:02:00.000000000',
---        '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
---        '54fb43a6-0d19-11ee-be56-0242ac120002'),
---       ('88119a32-0d15-11ee-be56-0242ac120002', 'text4', '2023-06-10T16:03:00.000000000',
---        '3ed0cf62-0d12-11ee-be56-0242ac120002', '353feec4-0d12-11ee-be56-0242ac120002',
---        '54fb43a6-0d19-11ee-be56-0242ac120002'),
---       ('90b1d38c-0d15-11ee-be56-0242ac120002', 'text5', '2023-06-10T16:04:00.000000000',
---        '353feec4-0d12-11ee-be56-0242ac120002', '3ed0cf62-0d12-11ee-be56-0242ac120002',
---        '54fb43a6-0d19-11ee-be56-0242ac120002');
-
-INSERT INTO wavvy.wavvy.offers(id, name, description, budget, funding_level, target_audience, link, start_date,
+--changeset pgorski:20231129-05
+INSERT INTO wavvy.offers(id, name, description, budget, funding_level, target_audience, link, start_date,
                                end_date, scope, created_at, updated_at)
 VALUES ('ff435fd6-0d2a-11ee-be56-0242ac120002', 'Grant na Rozwój Kultury Lokalnej',
         'Ten grant jest przeznaczony dla artystów, muzeów i innych instytucji kultury w Kołobrzegu, które pracują nad promowaniem i zachowaniem lokalnej kultury i dziedzictwa.',
@@ -127,7 +114,8 @@ VALUES ('ff435fd6-0d2a-11ee-be56-0242ac120002', 'Grant na Rozwój Kultury Lokaln
         'https://kolobrzeg-grants.com/granty-na-ochrone-srodowiska', '2023-10-10', '2023-10-25', 'PUBLIC',
         '2023-10-10T12:24:36', '2023-10-10T12:24:36');
 
-INSERT INTO wavvy.wavvy.organization_business_areas(organization_id, business_area_id)
+--changeset pgorski:20231129-06
+INSERT INTO wavvy.organization_business_areas(organization_id, business_area_id)
 VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'd132b605-0f0c-4e5b-8c27-567e16e71551'),
        ('a9656db2-0d2e-11ee-be56-0242ac120002', 'bbfe6fcc-24c8-4a9e-8310-3370eef6a97c'),
        ('a9656db2-0d2e-11ee-be56-0242ac120002', 'aad63583-035a-4e59-bee8-8509cdd48c2c'),
@@ -141,7 +129,8 @@ VALUES ('a9656db2-0d2e-11ee-be56-0242ac120002', 'd132b605-0f0c-4e5b-8c27-567e16e
        ('4b0e9873-47f7-499a-8190-5aff4ac16dde', 'ac0f9444-0d14-11ee-be56-0242ac120002'),
        ('4b0e9873-47f7-499a-8190-5aff4ac16dde', '43ff85e5-1e07-4337-8e8c-9439f203642f');
 
-INSERT INTO wavvy.wavvy.projects(id, name, description, street, zip_code, city, country,
+--changeset pgorski:20231129-07
+INSERT INTO wavvy.projects(id, name, description, street, zip_code, city, country,
                                  image_link, start_Time, end_Time, budget,
                                  cooperation_Message, status, possible_Volunteer, organizer_id, created_at, updated_at,
                                  reason, disabled)
@@ -167,7 +156,8 @@ VALUES ('9457f49a-15de-4a67-8870-6c7c5dd4746e', 'Zbiórka żywności',
         7, 'true', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', '2022-03-10T16:00:00', '2022-03-10T16:00:00', 'reason3',
         true);
 
-INSERT INTO wavvy.wavvy.project_tags(id, project_id, tag)
+--changeset pgorski:20231129-08
+INSERT INTO wavvy.project_tags(id, project_id, tag)
 VALUES ('4a16e0e4-ca1b-4d82-bdd0-84011b9e9ad5', '9457f49a-15de-4a67-8870-6c7c5dd4746e', 'zbiórka żywności'),
        ('d8b99892-fca7-4e44-8a23-6a1ee82ddcdf', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6', 'edukacja'),
        ('3127f35f-1965-4661-80bb-83981f9520da', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6', 'młodzież'),
@@ -176,7 +166,8 @@ VALUES ('4a16e0e4-ca1b-4d82-bdd0-84011b9e9ad5', '9457f49a-15de-4a67-8870-6c7c5dd
        ('4f00069a-9385-465c-bb4b-90c065cadd1a', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'niepodległość'),
        ('419c1f74-6821-4aa6-a484-c2ba6614f1fa', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'promocja ruchu');
 
-INSERT INTO wavvy.wavvy.project_links(id, project_id, link)
+--changeset pgorski:20231129-09
+INSERT INTO wavvy.project_links(id, project_id, link)
 VALUES ('58f6a175-60e7-4efc-b78a-2d8d37fb5e45', '9457f49a-15de-4a67-8870-6c7c5dd4746e', 'https://www.onet.pl'),
        ('a9a8b864-9e82-4f38-9b0b-ec6c02e7d4d7', '6e17f538-7280-4251-bbe7-5d44bc8b1bf6',
         'https://www.facebook.com/lmir.gdynia/?locale=pl_PL'),
@@ -187,7 +178,8 @@ VALUES ('58f6a175-60e7-4efc-b78a-2d8d37fb5e45', '9457f49a-15de-4a67-8870-6c7c5dd
        ('cc301982-4a09-4aa1-8d09-1e3d5c6c853b', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'link4'),
        ('92fc68a0-3ef3-4c3e-9a1d-47f378e69b3d', '44135c4c-6b9a-405e-a18c-6354b5eb06f7', 'link5');
 
-INSERT INTO wavvy.wavvy.social_links(id, organization_id, link)
+--changeset pgorski:20231129-10
+INSERT INTO wavvy.social_links(id, organization_id, link)
 VALUES ('013701d1-6a46-449f-8e18-c78144aaeba9', 'a2daa44a-0d2d-11ee-be56-0242ac120002', 'https://www.facebook.com/tsk'),
        ('a3e9a851-fc2d-4293-b7cd-ee5f71b4b059', 'a2daa44a-0d2d-11ee-be56-0242ac120002', 'https://www.linkedin.com/tsk'),
        ('da2a8e51-3742-4110-b616-738758cb4a23', '9bab7cfc-0d2e-11ee-be56-0242ac120002',
@@ -198,7 +190,8 @@ VALUES ('013701d1-6a46-449f-8e18-c78144aaeba9', 'a2daa44a-0d2d-11ee-be56-0242ac1
        ('792aa665-a40d-4e64-b1e7-69ce591d2ed2', 'b544b8e0-0d2e-11ee-be56-0242ac120002', 'https://facebook.com/5'),
        ('85f025c1-1644-4248-b4c8-d08c45e4a6c8', 'c06f4f3c-0d2e-11ee-be56-0242ac120002', 'https://facebook.com/6');
 
-INSERT INTO wavvy.wavvy.resources(id, organization_id, resource)
+--changeset pgorski:20231129-11
+INSERT INTO wavvy.resources(id, organization_id, resource)
 VALUES ('b04ce852-4ab6-44fa-8887-153c1c838210', 'a2daa44a-0d2d-11ee-be56-0242ac120002', 'Brak danych'),
        ('25777134-17aa-4eb7-8254-a38783f577bb', '9bab7cfc-0d2e-11ee-be56-0242ac120002', 'Sala weselna'),
        ('9d9422c0-26ad-44ff-9b09-b9dffd4fafd4', '4b0e9873-47f7-499a-8190-5aff4ac16dde', 'Brak danych'),
