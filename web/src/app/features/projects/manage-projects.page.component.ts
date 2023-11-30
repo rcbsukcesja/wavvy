@@ -54,6 +54,9 @@ import { ProjectCardComponent } from './ui/project-card.component';
     <br />
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
     <ng-container *ngIf="dataSource() as data">
+      @if (data.loadListCallState === 'LOADING') {
+      <p>Ładowanie...</p>
+      } @else {
       <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
@@ -141,6 +144,7 @@ import { ProjectCardComponent } from './ui/project-card.component';
       </table>
       <br />
       <app-pagination [totalElements]="data.totalElements" (paginationChange)="handlePageEvent($event)" />
+      }
     </ng-container>
   `,
 })
@@ -184,7 +188,6 @@ export default class ManageProjectsPageComponent implements OnInit {
         },
       },
     });
-    // this.router.navigateByUrl(`/projects?projectId=${id}`);
   }
 
   changeStatus(project: Project) {
@@ -224,8 +227,10 @@ export default class ManageProjectsPageComponent implements OnInit {
 
   dataSource = toSignal(
     this.stateService.value$.pipe(
-      map(({ list, totalElements }) => {
+      map(({ list, totalElements, loadListCallState }) => {
+        console.log({ loadListCallState });
         return {
+          loadListCallState,
           list: list.map((offer, index) => ({
             position: index + 1,
             ...offer,
@@ -253,7 +258,7 @@ export default class ManageProjectsPageComponent implements OnInit {
 
   ngOnInit() {
     this.filters$$.subscribe(filters => {
-      if (this.role === 'ADMIN') {
+      if (this.role === USER_ROLES.ADMIN) {
         this.service.getAll(filters);
       } else {
         this.service.getAllMine(filters);

@@ -132,13 +132,6 @@ import { API_URL } from 'src/app/core/API-URL.token';
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    NGOsApiService,
-    {
-      provide: API_URL,
-      useValue: 'http://localhost:8080',
-    },
-  ],
 })
 export default class NgoDetailsPageComponent implements OnInit {
   @Input({ required: true }) bussinessAreas!: BusinessArea[];
@@ -156,7 +149,7 @@ export default class NgoDetailsPageComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
     this.service.getById(id);
-    this.projectsService.getByNGOId(id);
+    // this.projectsService.getByNGOId(id);
   }
 
   getBusinessArea(id: string) {

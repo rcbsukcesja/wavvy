@@ -15,7 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { environment } from 'src/environment';
-import { USER_ROLES } from './core/user-roles.enum';
+import { UserRoles } from './core/user-roles.enum';
 
 registerLocaleData(localePl);
 
@@ -34,13 +34,15 @@ function checkTokenFactory(authService: AuthService, keycloak: KeycloakService) 
         }
 
         keycloak.loadUserProfile().then(user => {
+          const keycloakRoles = keycloak.getUserRoles();
+
           authService.setAuthenticatedUser({
             firstLogin: false,
             id: user.id!,
             login: user.username!,
             offersFollowed: [],
             profileCompleted: false,
-            role: USER_ROLES.NGO_USER,
+            role: keycloakRoles[0] as UserRoles,
           });
         });
       })
@@ -62,24 +64,31 @@ function initializeKeycloak(keycloak: KeycloakService, auth: AuthService) {
           flow: 'standard', // allowed values 'standard', 'implicit', 'hybrid';
         },
       })
-      .then(x => {
-        if (!x) {
+      .then(isAuth => {
+        if (!isAuth) {
           return;
         }
-        keycloak.getToken().then(console.log);
-        keycloak.loadUserProfile().then(user => {
-          auth.setAuthenticatedUser({
-            firstLogin: false,
-            id: user.id!,
-            login: user.username!,
-            offersFollowed: [],
-            profileCompleted: false,
-            role: USER_ROLES.NGO_USER,
-          });
+
+        return keycloak.loadUserProfile();
+      })
+      .then(user => {
+        if (!user) {
+          return;
+        }
+        const keycloakRoles = keycloak.getUserRoles();
+
+        console.log({ user });
+        auth.setAuthenticatedUser({
+          firstLogin: false,
+          id: user.id!,
+          login: user.username!,
+          offersFollowed: [],
+          profileCompleted: false,
+          role: keycloakRoles[0] as UserRoles,
         });
       })
       .catch(e => {
-        console.log('%cKeycloak nie działa 💥' + e, 'font-size: 60px');
+        console.log('%cKeycloak nie działa 💥' + e.toString(), 'font-size: 60px');
       });
 }
 

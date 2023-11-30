@@ -23,13 +23,6 @@ import { API_URL } from 'src/app/core/API-URL.token';
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    ProjectsApiService,
-    {
-      provide: API_URL,
-      useValue: 'http://localhost:8080',
-    },
-  ],
   imports: [CommonModule, ProjectsListComponent, CommonFiltersComponent, PaginationComponent],
 })
 export default class ProjectsListPageComponent implements OnInit {

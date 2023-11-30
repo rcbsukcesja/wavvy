@@ -118,13 +118,6 @@ import { API_URL } from 'src/app/core/API-URL.token';
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    NGOsApiService,
-    {
-      provide: API_URL,
-      useValue: 'http://localhost:8080',
-    },
-  ],
 })
 export default class NgoListPageComponent implements OnInit {
   @Input({ required: true }) bussinessAreas!: BusinessArea[];

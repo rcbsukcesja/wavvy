@@ -10,13 +10,14 @@ import { map, shareReplay } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { HasRolePipe } from '../auth/utils/has-role.pipe';
-import { UserRoles } from '../core/user-roles.enum';
+import { USER_ROLES, UserRoles } from '../core/user-roles.enum';
 import { AuthService } from '../auth/data_access/auth.service';
 import { AuthStateService } from '../auth/data_access/auth.state.service';
 import { ShellService } from './shell.service';
 import { NGOsStateService } from '../features/ngo/data-access/ngos.state.service';
 import { CompaniesStateService } from '../features/companies/data-access/companies.state.service';
 import { KeycloakService } from 'keycloak-angular';
+import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 
 export interface MenuItem {
   link: string;
@@ -40,24 +41,26 @@ export interface MenuItem {
           <div *ngIf="$isAuth()" class="flex flex-col relative">
             <span class="text-xs">
               <span class="font-semibold whitespace-pre-wrap">Zalogowano jako:</span>
-              <ng-container *ngIf="role === 'ADMIN'"> Miasto Kołobrzeg </ng-container>
+              <ng-container *ngIf="role === USER_ROLES.ADMIN"> Miasto Kołobrzeg </ng-container>
 
-              <ng-container *ngIf="role === 'NGO_USER'">
+              <ng-container *ngIf="role === USER_ROLES.NGO_USER">
                 {{ ngoState().profile?.name }}
               </ng-container>
 
-              <ng-container *ngIf="role === 'COMPANY_USER'">
+              <ng-container *ngIf="role === USER_ROLES.COMPANY_USER">
                 <!-- TODO SET SERVICE -->
                 {{ ngoState().profile?.name }}
               </ng-container>
             </span>
             <br />
             <span
-              *ngIf="role !== 'ADMIN'"
+              *ngIf="role !== USER_ROLES.ADMIN"
               class="text-xs absolute bottom-0 rounded-md px-2 py-1"
+              [matTooltipDisabled]="!ngoState().profile?.disabled"
+              [matTooltip]="ngoState().profile?.reason || ''"
               [ngClass]="{
-                'bg-red-500 text-white': ngoState().profile?.status === 'DISABLED',
-                'bg-green-700 text-white': ngoState().profile?.status !== 'DISABLED',
+                'bg-red-500 text-white': ngoState().profile?.disabled,
+                'bg-green-700 text-white': !ngoState().profile?.disabled,
 
               }">
               {{ ngoState().profile?.status === 'DISABLED' ? 'Zablokowany' : 'Aktywny' }}
@@ -144,6 +147,7 @@ export interface MenuItem {
     HasRolePipe,
     RouterModule,
     MatIconModule,
+    MatTooltipModule,
   ],
 })
 export default class ShellComponent {
@@ -160,6 +164,8 @@ export default class ShellComponent {
   public companyState = inject(CompaniesStateService).$value;
 
   public $menuItems = this.shellService.$menu;
+
+  public USER_ROLES = USER_ROLES;
 
   logout() {
     this.authService.logout();

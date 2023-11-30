@@ -107,7 +107,8 @@ export class AuthService extends HttpBaseService {
   }
 
   setAuthenticatedUser(user: User) {
-    localStorage.setItem('token', user.id + '');
+    // localStorage.setItem('token', user.id + '');
+    console.warn({ user });
     this.authStateService.setState({ status: 'AUTHENTICATED', user });
 
     const rolesWithOrganisationProfile: UserRoles[] = [USER_ROLES.COMPANY_USER, USER_ROLES.NGO_USER];
@@ -117,7 +118,7 @@ export class AuthService extends HttpBaseService {
     }
   }
 
-  register(payload: RegisterFormValue): Observable<void> {
-    return this.http.post<void>(`${this.apiURL}/register`, payload);
-  }
+  // register(payload: RegisterFormValue): Observable<void> {
+  //   return this.http.post<void>(`${this.apiURL}/register`, payload);
+  // }
 }

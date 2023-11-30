@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CallState } from 'src/app/core/call-state.enum';
 import { StateService } from 'src/app/core/state.service';
 import { Project } from '../model/project.model';

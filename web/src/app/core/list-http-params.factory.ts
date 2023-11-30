@@ -3,7 +3,8 @@ import { PaginationFilters } from './types/pagination.type';
 
 export function createListHttpParams(
   params: { search: string } & PaginationFilters,
-  sort?: 'asc' | 'desc'
+  sort?: 'asc' | 'desc',
+  sortField?: string
 ): HttpParams {
   let sp = new HttpParams({
     fromObject: {
@@ -14,7 +15,7 @@ export function createListHttpParams(
   });
 
   if (sort) {
-    sp = sp.append('sort', `startTime,${sort}`);
+    sp = sp.append('sort', `${sortField || 'startTime'},${sort}`);
   }
 
   return sp;

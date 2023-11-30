@@ -16,6 +16,7 @@ import { NgoProfileFirstCompletionComponent } from './profile/ngo-profile-form.c
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ID } from 'src/app/core/types/id.type';
 import { CompanyProfileFirstCompletionComponent } from '../companies/profile/company-profile-form.component';
+import { USER_ROLES } from 'src/app/core/user-roles.enum';
 
 @Component({
   selector: 'app-organization-profile-page',
@@ -40,7 +41,7 @@ import { CompanyProfileFirstCompletionComponent } from '../companies/profile/com
         <mat-spinner [diameter]="16" />
       </p>
 
-      @if($authState().user?.role === 'NGO_USER') {
+      @if($authState().user?.role === USER_ROLES.NGO_USER) {
       <app-ngo-profile-form
         *ngIf="state.loadProfileCallState === 'LOADED'"
         (save)="save($event, state.profile!.id)"
@@ -65,6 +66,8 @@ export default class OrganizationProfilePageComponent implements OnInit {
   @Input() bussinessAreas!: BusinessArea[];
   private service = inject(NGOsApiService);
   public $authState = inject(AuthStateService).$value;
+
+  USER_ROLES = USER_ROLES;
 
   $firstCompletion = computed(() => {
     const user = this.$authState().user;

@@ -13,7 +13,6 @@ import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/u
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MessagesApiService } from '../messages/data-access/messages.api.service';
-import { ID } from 'src/app/core/types/id.type';
 import { tap, take, BehaviorSubject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
@@ -46,8 +45,8 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
                 <mat-icon class="mr-2">warning</mat-icon> <span>Wniosek zamyka się wkrótce</span>
               </div>
 
-              <button *ngIf="showFav" class=" ml-auto" (click)="toggleFav(offer.id)">
-                <mat-icon [ngClass]="followed()?.includes(offer.id) ? 'text-red-600' : 'text-black'">favorite</mat-icon>
+              <button *ngIf="showFav" class=" ml-auto" (click)="toggleFav(offer.id, offer.followedByUser)">
+                <mat-icon [ngClass]="offer.followedByUser ? 'text-red-600' : 'text-black'">favorite</mat-icon>
               </button>
             </div>
 
@@ -87,7 +86,7 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
                 <mat-icon>forward_to_inbox</mat-icon>
               </button>
 
-              <a class="font-bold" [href]="offer.link" target="_blank"> BIP </a>
+              <a class="font-bold" [href]="offer.link" target="_blank"> Szczegóły </a>
             </div>
           </div>
         </ng-template>
@@ -146,8 +145,8 @@ export default class OffersListPageComponent implements OnInit {
     });
   }
 
-  toggleFav(offerId: string) {
-    this.service.toggleFav(this.authState().user!, offerId);
+  toggleFav(offerId: string, following: boolean) {
+    this.service.toggleFav(offerId, following);
   }
 
   openMessageModal(name: string) {

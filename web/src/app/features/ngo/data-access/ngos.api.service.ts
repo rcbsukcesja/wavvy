@@ -2,14 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { NGO } from '../model/ngo.model';
 import { NGOsStateService } from './ngos.state.service';
-import { tap } from 'rxjs';
+import { combineLatest, switchMap, tap } from 'rxjs';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { ID } from 'src/app/core/types/id.type';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
 import { USER_ROLES } from 'src/app/core/user-roles.enum';
-import { INITIAL_PAGINATION_STATE } from '../../projects/data-access/projects.state.service';
+import { INITIAL_PAGINATION_STATE, ProjectsStateService } from '../../projects/data-access/projects.state.service';
 import { createListHttpParams } from 'src/app/core/list-http-params.factory';
+import { ProjectsApiService } from '../../projects/data-access/projects.api.service';
 
 export interface GetAllNGOsParams {}
 
@@ -30,6 +31,8 @@ export type UpdateNGOProfileFormValue = Partial<
 })
 export class NGOsApiService extends HttpBaseService {
   private stateService = inject(NGOsStateService);
+  private projectsStateService = inject(ProjectsStateService);
+  private projectsService = inject(ProjectsApiService);
   private authState = inject(AuthStateService);
 
   constructor() {
@@ -73,6 +76,7 @@ export class NGOsApiService extends HttpBaseService {
       .get<NGO>(`${user.role === USER_ROLES.NGO_USER ? this.url : this.url.replace('ngos', 'companies')}/my`)
       .pipe(
         tap(ngo => {
+          console.log({ ngo });
           this.stateService.setState({ loadProfileCallState: 'LOADED', profile: ngo });
         })
       )
@@ -105,12 +109,20 @@ export class NGOsApiService extends HttpBaseService {
 
   getById(id: ID) {
     this.stateService.setState({ loadByIdCallState: 'LOADING' });
-
+    console.log();
     this.http
       .get<NGO>(`${this.url}/${id}`)
       .pipe(
         tap(ngo => {
           this.stateService.setState({ loadByIdCallState: 'LOADED', details: ngo });
+        }),
+        switchMap(ngo => {
+          return combineLatest(ngo.projects.slice(0, 3).map(project => this.projectsService.getById(project.id)));
+        }),
+        tap(projects => {
+          this.projectsStateService.setState({ loadListCallState: 'LOADING' });
+
+          this.projectsStateService.setState({ loadListCallState: 'LOADED', list: projects });
         })
       )
       .subscribe();

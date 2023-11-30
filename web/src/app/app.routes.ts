@@ -10,7 +10,7 @@ import { NGOsStateService } from './features/ngo/data-access/ngos.state.service'
 
 export const resolveUserRole: ResolveFn<UserRoles | undefined> = () => {
   const user = inject(AuthStateService).$value().user;
-
+  console.log(user?.role);
   return user?.role;
 };
 

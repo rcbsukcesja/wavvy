@@ -4,7 +4,7 @@ import { ID } from 'src/app/core/types/id.type';
 
 export interface BusinessArea {
   name: string;
-  id: ID;
+  id: string;
 }
 
 export type LegalStatusNGO = 'FOUNDATION' | 'ASSOCIATION' | 'SOCIAL_COOPERATIVE' | 'PUBLIC_BENEFIT_ORGANIZATION';
