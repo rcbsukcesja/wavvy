@@ -8,6 +8,8 @@ import { BehaviorSubject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
+import { API_URL } from 'src/app/core/API-URL.token';
+import { LoadingComponent } from 'src/app/shared/ui/loading.component';
 
 @Component({
   selector: 'app-projects.page',
@@ -15,14 +17,14 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
   template: `
     <ng-container *ngIf="state() as state">
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
+      <app-loader *ngIf="state.loadListCallState === 'LOADING'" text="Ładowanie projektów..."></app-loader>
       <app-projects-list *ngIf="state.loadListCallState === 'LOADED'" [projects]="state.list" />
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
-      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
     </ng-container>
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProjectsListComponent, CommonFiltersComponent, PaginationComponent],
+  imports: [CommonModule, ProjectsListComponent, CommonFiltersComponent, PaginationComponent, LoadingComponent],
 })
 export default class ProjectsListPageComponent implements OnInit {
   @Input() projectId?: string;

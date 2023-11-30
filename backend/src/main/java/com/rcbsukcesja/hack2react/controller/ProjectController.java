@@ -52,6 +52,18 @@ public class ProjectController {
                 search, statusList, startDate, endDate, pageable, authentication), HttpStatus.OK);
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<Page<ProjectView>> getMyProjects(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Set<ProjectStatus> statusList,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @ParameterObject Pageable pageable,
+            Authentication authentication) {
+        return new ResponseEntity<>(projectService.getMyProjects(
+                search, statusList, startDate, endDate, pageable, authentication), HttpStatus.OK);
+    }
+
     @GetMapping("/{projectId}")
     public ResponseEntity<ProjectView> getProjectById(@PathVariable UUID projectId) {
         return new ResponseEntity<>(projectService.getProjectById(projectId), HttpStatus.OK);

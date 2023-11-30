@@ -32,7 +32,6 @@ public record CompanyPatchDto(
                 message = NOT_BLANK_VALIDATION_MESSAGE)
         @Size(max = STANDARD_TEXT_MAX_LENGTH)
         String name,
-        UUID ownerId,
         OrganizationAddressPatchDto address,
         @Pattern(regexp = PHONE_REGEX,
                 message = PHONE_PATTERN_VALIDATION_MESSAGE)
@@ -49,12 +48,9 @@ public record CompanyPatchDto(
         Set<UUID> businessAreaIds,
         @Pattern(regexp = KRS_REGEX, message = KRS_PATTERN_VALIDATION_MESSAGE)
         String krs,
-        @Pattern(regexp = NOT_BLANK_PATTERN,
-                message = NOT_BLANK_VALIDATION_MESSAGE)
+
         @Pattern(regexp = NIP_REGEX, message = NIP_PATTERN_VALIDATION_MESSAGE)
         String nip,
-        @Pattern(regexp = NOT_BLANK_PATTERN,
-                message = NOT_BLANK_VALIDATION_MESSAGE)
         @Pattern(regexp = REGON_REGEX, message = REGON_PATTERN_VALIDATION_MESSAGE)
         String regon,
         @Size(max = RESOURCES_MAX_NUMBER, message = RESOURCES_MAX_NUMBER_VALIDATION_MESSAGE)

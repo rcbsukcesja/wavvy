@@ -24,24 +24,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BusinessArea } from './model/ngo.model';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
+import { LoadingComponent } from '../../shared/ui/loading.component';
 
 @Component({
   selector: 'app-ngo-list-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    ListShellComponent,
-    MatDividerModule,
-    MatIconModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    SlicePipe,
-    LegalStatusPipe,
-    MatButtonModule,
-    CommonFiltersComponent,
-    PaginationComponent,
-    MatTooltipModule,
-  ],
   template: `
     <ng-container *ngIf="state() as state">
       <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
@@ -57,11 +44,11 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           <div
             class="mb-4 relative h-80 bg-cover"
             [style.background-image]="'url(' + (ngo.logoUrl || '/assets/images/placeholder.jpg') + ')'"></div>
-          <div class="bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
+          <div class="bottom-0 left-0 w-full h-10 p-4 bg-material-blue text-white flex items-center">
             {{ ngo.legalStatus | legalStatus }}
           </div>
           <div class="mb-4">
-            <p>{{ (ngo.description | slice : 0 : 160) + '...' }}</p>
+            <p>{{ (ngo.description | slice: 0 : 160) + '...' }}</p>
             <div class="flex justify-end">
               <button
                 (click)="goTo(ngo.id)"
@@ -72,36 +59,38 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           </div>
           <div class="mb-2">
             @for (tag of ngo.tags; track tag) {
-            <span>#{{ tag }} </span>
+              <span>#{{ tag }} </span>
             }
           </div>
           <mat-divider />
           <div class="flex justify-between mt-4">
             @if ($isAuth()) {
-            <div
-              matTooltip="Wyślij wiadomość do organizacji"
-              class="cursor-pointer"
-              (click)="openMessageModal(ngo.id, ngo.name)">
-              <mat-icon>forward_to_inbox</mat-icon>
-            </div>
+              <div
+                matTooltip="Wyślij wiadomość do organizacji"
+                class="cursor-pointer"
+                (click)="openMessageModal(ngo.id, ngo.name)">
+                <mat-icon>forward_to_inbox</mat-icon>
+              </div>
             }
             <!--  -->
             @if (ngo.resources?.length) {
-            <div
-              matTooltip="Wyświetl zasoby organizacji"
-              class="cursor-pointer"
-              (click)="openResourcesModal(ngo.resources)">
-              <mat-icon>build</mat-icon>
-            </div>
+              <div
+                matTooltip="Wyświetl zasoby organizacji"
+                class="cursor-pointer"
+                (click)="openResourcesModal(ngo.resources)">
+                <mat-icon [ngClass]="{ ' bg-yellow-400 rounded-full': resourcesContainsSearchTerm(ngo.resources) }"
+                  >build</mat-icon
+                >
+              </div>
             }
             <!--  -->
             @if (ngo.businnessAreas?.length) {
-            <div
-              matTooltip="Wyświetl obszary działań organizacji"
-              class="cursor-pointer"
-              (click)="openCategoriessModal(ngo.businnessAreas)">
-              <mat-icon>assignment</mat-icon>
-            </div>
+              <div
+                matTooltip="Wyświetl obszary działań organizacji"
+                class="cursor-pointer"
+                (click)="openCategoriessModal(ngo.businnessAreas)">
+                <mat-icon>assignment</mat-icon>
+              </div>
             }
             <div
               matTooltip="Wyświetl kontakt do organizacji"
@@ -112,11 +101,26 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           </div>
         </ng-template>
       </app-list-shell>
-      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
+      <app-loader *ngIf="state.loadListCallState === 'LOADING'" text="Ładowanie NGOs..."></app-loader>
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    ListShellComponent,
+    MatDividerModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    SlicePipe,
+    LegalStatusPipe,
+    MatButtonModule,
+    CommonFiltersComponent,
+    PaginationComponent,
+    MatTooltipModule,
+    LoadingComponent,
+  ],
 })
 export default class NgoListPageComponent implements OnInit {
   @Input({ required: true }) bussinessAreas!: BusinessArea[];
@@ -149,6 +153,14 @@ export default class NgoListPageComponent implements OnInit {
     search: '',
     sort: 'desc',
   });
+
+  resourcesContainsSearchTerm(resources: string[]) {
+    const searchTerm = this.filters$$.value.search.toLowerCase();
+
+    if (!searchTerm) return false;
+
+    return resources.some(resource => resource.toLowerCase().includes(searchTerm));
+  }
 
   onFiltersChanged(filters: CommonFilters) {
     this.filters$$.next({

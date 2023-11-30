@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Input, Pipe, PipeTransform } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ListShellComponent } from 'src/app/shared/ui/list-shell.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,11 +11,22 @@ import { MessagesApiService } from '../messages/data-access/messages.api.service
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProjectStatusPipe } from './utils/project-status.pipe';
 import { Project } from './model/project.model';
-import { ID } from 'src/app/core/types/id.type';
 import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { RouterLink } from '@angular/router';
 import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
-import { ProjectCardComponent } from './ui/project-card.component';
+
+@Pipe({
+  standalone: true,
+  name: 'isOwnProject',
+})
+export class IsOwnProjectPipe implements PipeTransform {
+  private authState = inject(NGOsStateService).$value;
+
+  transform(projectOwnerId: string) {
+    console.log(projectOwnerId, this.authState().profile?.id);
+    return projectOwnerId === this.authState().profile?.id;
+  }
+}
 
 @Component({
   standalone: true,
@@ -47,6 +58,7 @@ export class DescriptionDialogComponent {
     ProjectStatusPipe,
     RouterLink,
     MatIconModule,
+    IsOwnProjectPipe,
   ],
   template: `
     <app-list-shell listName="Projekty" [list]="projects">
@@ -56,17 +68,19 @@ export class DescriptionDialogComponent {
             class="relative h-80 bg-cover"
             [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
             @if (project.disabled && $ngoId() === project.ngoId) {
-            <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
-              <mat-icon>warning</mat-icon>
-            </div>
+              <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
+                <mat-icon>warning</mat-icon>
+              </div>
             }
             <div class="absolute bg-black text-white right-0  text-xs px-1 py-2 flex items-center">
               <mat-icon class="mr-2">schedule</mat-icon> <span>{{ project.startTime | date }}</span>
-              <span *ngIf="project.startTime !== project.endTime" class="pl-1">- {{ project.endTime | date }}</span>
+              @if (project.startTime !== project.endTime) {
+                <span class="pl-1">- {{ project.endTime | date }}</span>
+              }
             </div>
           </div>
-          <div class="bottom-0 left-0 w-full h-10 p-4 bg-green-500 text-white flex items-center">
-            <a [routerLink]="'/ngos/' + project.ngoId">{{ project.ngo }}</a>
+          <div class="bottom-0 left-0 w-full h-10 p-4 bg-material-blue text-white flex items-center">
+            <a [routerLink]="'/ngos/' + project.organizer.id">{{ project.organizer.name }}</a>
           </div>
           <div class="rounded-md w-fit px-2 mt-4 mb-2 bg-green-400 text-green-900">
             {{ project.status | projectStatus }}
@@ -100,8 +114,13 @@ export class DescriptionDialogComponent {
             <div *ngIf="project.cooperationMessage" class="flex flex-col">
               <mat-icon [matTooltip]="project.cooperationMessage">spatial_audio_off</mat-icon>
             </div>
-            <div class="flex flex-col" (click)="openMessageModal(project.ngoId, project.name)">
-              <mat-icon>forward_to_inbox</mat-icon>
+            <div class="flex flex-col" (click)="openMessageModal(project.organizer.id, project.name)">
+              <mat-icon
+                matTooltip="To twój własny projekt, nie ma co wysyłać wiadomości do siebie 😉"
+                [matTooltipDisabled]="!(project.organizer.id | isOwnProject)"
+                [class.text-gray-400]="project.organizer.id | isOwnProject"
+                >forward_to_inbox</mat-icon
+              >
             </div>
           </div>
         </div>
@@ -114,6 +133,7 @@ export class DescriptionDialogComponent {
 export default class ProjectsListComponent {
   private authState = inject(AuthStateService).$value;
   private profileState = inject(NGOsStateService).$value;
+  private pipe = new IsOwnProjectPipe();
 
   $ngoId = computed(() => this.profileState().profile?.id);
 
@@ -130,7 +150,11 @@ export default class ProjectsListComponent {
     });
   }
 
-  openMessageModal(id: ID, name: string) {
+  openMessageModal(id: string, name: string) {
+    if (this.pipe.transform(id)) {
+      return;
+    }
+
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',

@@ -296,12 +296,17 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       });
     }
 
+    this.profile.confirmed;
+
     this.form = this.builder.group({
-      name: this.builder.control({ value: this.profile.name, disabled: true }),
+      name: this.builder.control({ value: this.profile.name, disabled: this.profile.confirmed }, [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
       logo: this.builder.control<File | null>(null),
-      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }),
-      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }),
-      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }),
+      KRS: this.builder.control({ value: this.profile.KRS, disabled: this.profile.confirmed }),
+      NIP: this.builder.control({ value: this.profile.NIP, disabled: this.profile.confirmed }),
+      REGON: this.builder.control({ value: this.profile.REGON, disabled: this.profile.confirmed }),
       bankAccount: this.builder.control(this.profile.bankAccount || '', [
         Validators.minLength(26),
         Validators.maxLength(26),
@@ -310,13 +315,16 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
         Validators.required,
         CustomValidators.longMaxLength,
       ]),
-      street: this.builder.control(this.profile.street || '', [Validators.required, CustomValidators.maxLength]),
-      zipcode: this.builder.control(this.profile.zipcode || '78-100', [
+      street: this.builder.control(this.profile.address?.street || '', [
+        Validators.required,
+        CustomValidators.maxLength,
+      ]),
+      zipcode: this.builder.control(this.profile.address?.zipCode || '78-100', [
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(6),
       ]),
-      city: this.builder.control(this.profile.city || '', [Validators.required, CustomValidators.maxLength]),
+      city: this.builder.control(this.profile.address?.city || '', [Validators.required, CustomValidators.maxLength]),
       email: this.builder.control(this.profile.email || '', [Validators.required, CustomValidators.maxLength]),
       website: this.builder.control(this.profile.website || '', [Validators.required, CustomValidators.maxLength]),
       phone: this.builder.control(this.profile.phone || '', [
@@ -340,7 +348,7 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       });
     }
 
-    this.form.controls.logo.valueChanges.subscribe(val => {
+    this.form.controls.logo.valueChanges.subscribe(() => {
       const logoFile = this.logoInput.nativeElement.files?.[0];
 
       if (logoFile) {
@@ -388,10 +396,10 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) {
-      this.logo$.next({
-        ...this.logo$.value,
-        error: !Boolean(this.logo$.value.url),
-      });
+      // this.logo$.next({
+      //   ...this.logo$.value,
+      //   error: !Boolean(this.logo$.value.url),
+      // });
 
       return;
     }

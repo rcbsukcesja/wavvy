@@ -40,6 +40,7 @@ public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(nullable = false)
     private String name;
     @Column(length = 2000)
     private String description;

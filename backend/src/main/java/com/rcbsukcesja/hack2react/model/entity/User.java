@@ -40,7 +40,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
     private String username;
 
     private String firstName;
@@ -53,6 +52,7 @@ public class User {
 
     private boolean deleted;
 
+    @Column(nullable = false)
     private Long createdTimestamp;
 
     private boolean enabled;

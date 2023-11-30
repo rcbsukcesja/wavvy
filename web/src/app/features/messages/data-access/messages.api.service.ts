@@ -9,6 +9,7 @@ import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.co
 import { MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { INITIAL_PAGINATION_STATE } from '../../projects/data-access/projects.state.service';
+import { createListHttpParams } from 'src/app/core/list-http-params.factory';
 
 export interface GetAllMessagesParams {}
 
@@ -17,8 +18,6 @@ export interface GetAllMessagesParams {}
 })
 export class MessagesApiService extends HttpBaseService {
   private stateService = inject(MessagesStateService);
-  private authStateService = inject(AuthStateService);
-  private ngoStateService = inject(NGOsStateService);
 
   constructor() {
     super('messages');
@@ -26,19 +25,19 @@ export class MessagesApiService extends HttpBaseService {
 
   sendToCity(messageValue: MessageDialogFormValue) {
     // todo: provide city user id
-    this.send({ ...messageValue, receiverId: 321 });
+    this.send({ ...messageValue, receiverId: '321' });
   }
 
   send(payload: MessagePayload) {
     this.stateService.setState({ sendCallState: 'LOADING' });
 
-    const id = this.authStateService.$value().user?.id;
+    // const id = this.authStateService.$value().user?.id;
 
     this.http
       .post(`${this.url}`, {
         ...payload,
-        senderId: id,
-        createdAt: Date.now(),
+        // senderId: id,
+        // createdAt: Date.now(),
         receiverId: payload.receiverId,
       })
       .pipe(
@@ -59,20 +58,18 @@ export class MessagesApiService extends HttpBaseService {
   ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
-    const url = new URL(this.url);
-    const sp = new URLSearchParams({
-      _sort: 'createdAt',
-      _order: params.sort,
-      _start: (params.pageIndex * params.pageSize).toString(),
-      _limit: params.pageSize.toString(),
-      receiverId: this.ngoStateService.$value().profile?.id.toString() || '',
-      q: params.search,
-    });
-
-    url.search = sp.toString();
+    // const url = new URL(this.url + '/received');
+    // const sp = new URLSearchParams({
+    //   _sort: 'createdAt',
+    //   _order: params.sort,
+    //   _start: (params.pageIndex * params.pageSize).toString(),
+    //   _limit: params.pageSize.toString(),
+    //   receiverId: this.ngoStateService.$value().profile?.id.toString() || '',
+    //   q: params.search,
+    // });
 
     this.http
-      .get<Message[]>(url.href)
+      .get<Message[]>(this.url + '/received', { params: createListHttpParams(params, params.sort) })
       .pipe(
         tap(messages => {
           this.stateService.setState({ loadListCallState: 'LOADED', list: messages });

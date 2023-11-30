@@ -16,6 +16,7 @@ import { ProjectsStateService } from '../projects/data-access/projects.state.ser
 import ProjectsListComponent from '../projects/projects-list.component';
 import { ID } from 'src/app/core/types/id.type';
 import { BusinessArea } from './model/ngo.model';
+import { API_URL } from 'src/app/core/API-URL.token';
 
 @Component({
   selector: 'app-ngo-details-page',
@@ -98,8 +99,8 @@ import { BusinessArea } from './model/ngo.model';
             <ul class="flex gap-6 mt-4">
               <div>
                 <li class="flex items-center gap-2 mb-4">
-                  <mat-icon> place</mat-icon> <strong>Adres: </strong>{{ state.details.street }},
-                  {{ state.details.zipcode }} {{ state.details.city }}
+                  <mat-icon> place</mat-icon> <strong>Adres: </strong>{{ state.details.address?.street }},
+                  {{ state.details.address?.zipCode }} {{ state.details.address?.city }}
                 </li>
                 <li class="flex items-center gap-2">
                   <mat-icon> phone</mat-icon> <strong>Telefon: </strong>{{ state.details.phone }}
@@ -148,14 +149,14 @@ export default class NgoDetailsPageComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
     this.service.getById(id);
-    this.projectsService.getByNGOId(id);
+    // this.projectsService.getByNGOId(id);
   }
 
-  getBusinessArea(id: number) {
+  getBusinessArea(id: string) {
     return this.bussinessAreas.find(ba => ba.id === id)?.name;
   }
 
-  openMessageModal(id: ID, name: string) {
+  openMessageModal(id: string, name: string) {
     this.dialog
       .open(MessageDialogComponent, {
         width: '500px',

@@ -18,7 +18,6 @@ import { CompaniesApiService } from './data-access/companies.api.service';
 import { CompaniesStateService } from './data-access/companies.state.service';
 import { Company } from './model/company.model';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ID } from 'src/app/core/types/id.type';
 import { NgoRegisterDialogComponent } from '../ngo/register/ui/ngo-register-dialog.component';
 import { PlaceholderDialogComponent } from 'src/app/shared/ui/dialogs/placeholder-dialog.component';
 import { CompanyCardComponent } from './ui/company-card.component';
@@ -71,9 +70,9 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           </th>
           <td mat-cell *matCellDef="let element">
             @if (element.confirmed) {
-            <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
+              <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
             } @else {
-            <mat-icon>hourglass_empty</mat-icon>
+              <mat-icon>hourglass_empty</mat-icon>
             }
           </td>
         </ng-container>
@@ -152,6 +151,7 @@ export default class ManageCompaniesPageComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((confirmed: boolean) => {
+        console.log({ confirmed });
         if (!confirmed) {
           return;
         }
@@ -185,8 +185,9 @@ export default class ManageCompaniesPageComponent implements OnInit {
       .afterClosed()
       .pipe(
         take(1),
+        filter(Boolean),
         switchMap(status => {
-          return this.service.update(company.id, { disabled: status });
+          return this.service.update(company.id, status);
         })
       )
       .subscribe(() => {

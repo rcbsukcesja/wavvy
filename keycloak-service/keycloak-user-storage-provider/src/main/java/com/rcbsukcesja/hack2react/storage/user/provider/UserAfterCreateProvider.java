@@ -52,6 +52,7 @@ public class UserAfterCreateProvider implements EventListenerProvider {
             organization.setNip(nip);
             organization.setRegon(regon);
             organization.setConfirmed(false);
+            organization.setDisabled(false);
 
             userAdapter.setOrganization(organization);
 

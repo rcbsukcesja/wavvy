@@ -80,9 +80,9 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           </th>
           <td mat-cell *matCellDef="let element">
             @if (element.confirmed) {
-            <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
+              <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
             } @else {
-            <mat-icon>hourglass_empty</mat-icon>
+              <mat-icon>hourglass_empty</mat-icon>
             }
           </td>
         </ng-container>
@@ -192,12 +192,13 @@ export default class ManageNGOsPageComponent implements OnInit {
       .afterClosed()
       .pipe(
         take(1),
+        filter(Boolean),
         switchMap((state: DisableFormValue) => {
           if (!state) {
             return EMPTY;
           }
 
-          return this.service.updateProfile({ disabled: state.shouldDisable, reason: state.reason }, ngo.id);
+          return this.service.updateProfile({ disabled: state.disabled, reason: state.reason }, ngo.id);
         })
       )
       .subscribe(() => {

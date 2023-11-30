@@ -3,6 +3,7 @@ import { MenuItem } from './shell.component';
 import { AuthStateService } from '../auth/data_access/auth.state.service';
 import { USER_ROLES, UserRoles } from '../core/user-roles.enum';
 import { NGOsStateService } from '../features/ngo/data-access/ngos.state.service';
+import { KeycloakService } from 'keycloak-angular';
 
 @Injectable({ providedIn: 'root' })
 export class ShellService {

@@ -110,27 +110,25 @@ export default class JoinPageComponent {
   });
 
   register() {
-    this.form.markAllAsTouched();
-
-    if (this.form.invalid) {
-      return;
-    }
-
-    this.loading = true;
-    this.authService
-      .register(this.form.getRawValue())
-      .pipe(delay(1500))
-      .subscribe({
-        next: () => {
-          this.formRegistered = true;
-          this.loading = false;
-        },
-        error: () => {
-          this.loading = false;
-          this.snack.open('Błąd', '', {
-            duration: 2000,
-          });
-        },
-      });
+    // this.form.markAllAsTouched();
+    // if (this.form.invalid) {
+    //   return;
+    // }
+    // this.loading = true;
+    // this.authService
+    //   .register(this.form.getRawValue())
+    //   .pipe(delay(1500))
+    //   .subscribe({
+    //     next: () => {
+    //       this.formRegistered = true;
+    //       this.loading = false;
+    //     },
+    //     error: () => {
+    //       this.loading = false;
+    //       this.snack.open('Błąd', '', {
+    //         duration: 2000,
+    //       });
+    //     },
+    //   });
   }
 }

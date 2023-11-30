@@ -48,10 +48,10 @@ import { MatNativeDateModule } from '@angular/material/core';
       <mat-form-field>
         <mat-label>Data rozpoczęcia naboru</mat-label>
         <input
-          [matDatepickerFilter]="blockAfterEndDate"
           matInput
           formControlName="startDate"
-          [matDatepicker]="datepicker" />
+          [matDatepicker]="datepicker"
+          [matDatepickerFilter]="blockAfterEndDate" />
         <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
         <mat-datepicker #datepicker> </mat-datepicker>
@@ -60,10 +60,10 @@ import { MatNativeDateModule } from '@angular/material/core';
       <mat-form-field>
         <mat-label>Data zakończenia naboru</mat-label>
         <input
-          [matDatepickerFilter]="blockBeforeStartDate"
           matInput
           formControlName="endDate"
-          [matDatepicker]="datepicker2" />
+          [matDatepicker]="datepicker2"
+          [matDatepickerFilter]="blockBeforeStartDate" />
         <mat-hint>Format daty: dd/mm/yyyy</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
         <mat-datepicker #datepicker2> </mat-datepicker>
@@ -113,7 +113,13 @@ export class AddOfferFormComponent implements OnInit {
   }>;
 
   addOffer() {
-    this.add.emit(this.form.getRawValue());
+    console.log((this.form.getRawValue().startDate as any).utc().format());
+
+    this.add.emit({
+      ...this.form.getRawValue(),
+      startDate: (this.form.getRawValue().startDate as any).utc().format(),
+      endDate: (this.form.getRawValue().endDate as any).utc().format(),
+    });
   }
 
   ngOnInit() {
@@ -135,24 +141,24 @@ export class AddOfferFormComponent implements OnInit {
     });
   }
 
-  blockAfterEndDate = (d: Date | null) => {
+  blockAfterEndDate = (d: any | null) => {
     if (!d || !this.form.controls.endDate.value) {
       return true;
     }
 
     const endTime = new Date(this.form.controls.endDate.value).getTime();
-    const current = d.getTime();
+    const current = d.valueOf();
 
     return current < endTime;
   };
 
-  blockBeforeStartDate = (d: Date | null) => {
+  blockBeforeStartDate = (d: any | null) => {
     if (!d || !this.form.controls.startDate.value) {
       return true;
     }
 
     const startTime = new Date(this.form.controls.startDate.value).getTime();
-    const current = d.getTime();
+    const current = d.valueOf();
 
     return current > startTime;
   };

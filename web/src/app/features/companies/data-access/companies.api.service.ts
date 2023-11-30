@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Company } from '../model/company.model';
 import { CompaniesStateService } from './companies.state.service';
-import { map, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
 import { NgoStatus } from '../../ngo/model/ngo.model';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
 import { INITIAL_PAGINATION_STATE } from '../../projects/data-access/projects.state.service';
+import { createListHttpParams } from 'src/app/core/list-http-params.factory';
 
 export interface GetAllCompaniesParams {}
 
@@ -32,7 +33,32 @@ export class CompaniesApiService extends HttpBaseService {
     super('companies');
   }
 
-  confirm(id: ID) {}
+  confirm(id: string) {
+    this.stateService.setState({ loadListCallState: 'LOADING' });
+
+    this.http
+      .patch(`${this.url}/${id}`, {
+        confirmed: true,
+      })
+      .pipe(
+        tap(() => {
+          this.stateService.setState({
+            loadListCallState: 'LOADED',
+            list: this.stateService.$value().list.map(c => {
+              if (c.id === id) {
+                return {
+                  ...c,
+                  confirmed: true,
+                };
+              }
+
+              return c;
+            }),
+          });
+        })
+      )
+      .subscribe();
+  }
 
   add(payload: AddCompanyFormValue) {
     return this.http.post<Company>(`${this.url}`, payload);
@@ -55,35 +81,9 @@ export class CompaniesApiService extends HttpBaseService {
   ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
-    const url = new URL(this.url);
-    const sp = new URLSearchParams({
-      // _sort: 'startTime',
-      // _order: params.sort,
-      q: params.search,
-      // _page: params.pageIndex.toString(),
-      _start: (params.pageIndex * params.pageSize).toString(),
-      _limit: params.pageSize.toString(),
-      id_like: params.id || '',
-    });
-
-    url.search = sp.toString();
-
     return this.http
-      .get<Company[]>(url.href, { observe: 'response' })
+      .get<ListApiResponse<Company>>(this.url, { params: createListHttpParams(params) })
       .pipe(
-        map(response => {
-          const totalCount = response.headers.get('X-Total-Count');
-
-          return {
-            content: response.body,
-            empty: response.body?.length === 0,
-            last: false,
-            number: params.pageIndex,
-            numberOfElements: response.body?.length,
-            totalElements: totalCount ? +totalCount : 0,
-            totalPages: totalCount ? Math.ceil(+totalCount / params.pageSize) : 0,
-          } as ListApiResponse<Company>;
-        }),
         tap(response => {
           this.stateService.setState({
             loadListCallState: 'LOADED',

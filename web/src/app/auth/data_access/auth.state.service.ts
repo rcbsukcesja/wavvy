@@ -4,7 +4,7 @@ import { ID } from 'src/app/core/types/id.type';
 import { UserRoles } from 'src/app/core/user-roles.enum';
 
 export interface User {
-  id: ID;
+  id: string;
   role: UserRoles;
   login: string;
   firstLogin: boolean;
@@ -31,13 +31,9 @@ export class AuthStateService {
     user: null,
   });
 
-  get $value() {
-    return this.$state.asReadonly();
-  }
+  $value = this.$state.asReadonly();
 
-  get value$() {
-    return toObservable(this.$state);
-  }
+  value$ = toObservable(this.$state);
 
   setState(value: AuthStateValue) {
     this.$state.update(state => ({ ...state, ...value }));

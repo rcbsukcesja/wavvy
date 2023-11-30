@@ -1,10 +1,10 @@
-import { Project } from '../../projects/model/project.model';
+import { Address, Project } from '../../projects/model/project.model';
 import { UserData } from 'src/app/auth/models/user.model';
 import { ID } from 'src/app/core/types/id.type';
 
 export interface BusinessArea {
   name: string;
-  id: ID;
+  id: string;
 }
 
 export type LegalStatusNGO = 'FOUNDATION' | 'ASSOCIATION' | 'SOCIAL_COOPERATIVE' | 'PUBLIC_BENEFIT_ORGANIZATION';
@@ -26,19 +26,17 @@ export const NgoStatus = {
 } as const;
 
 export interface NGO {
-  id: ID;
+  id: string;
   name: string;
   logoUrl: string;
   owner: UserData;
-  street: string;
-  zipcode: string;
-  city: string;
+  address: Address | null;
   phone: string;
   email: string;
   website: string;
   foundedAt: string;
   description: string;
-  businnessAreas: number[];
+  businnessAreas: string[];
   bankAccount?: string;
   KRS: string;
   NIP: string;
@@ -51,5 +49,4 @@ export interface NGO {
   disabled: boolean;
   reason?: string;
   confirmed: true;
-  followedByUser: ID[];
 }

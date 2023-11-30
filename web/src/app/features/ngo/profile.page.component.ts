@@ -16,6 +16,7 @@ import { NgoProfileFirstCompletionComponent } from './profile/ngo-profile-form.c
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ID } from 'src/app/core/types/id.type';
 import { CompanyProfileFirstCompletionComponent } from '../companies/profile/company-profile-form.component';
+import { USER_ROLES } from 'src/app/core/user-roles.enum';
 
 @Component({
   selector: 'app-organization-profile-page',
@@ -36,26 +37,35 @@ import { CompanyProfileFirstCompletionComponent } from '../companies/profile/com
   ],
   template: `
     <ng-container *ngIf="state() as state">
-      <p *ngIf="state.loadProfileCallState === 'LOADING'">
-        <mat-spinner [diameter]="16" />
-      </p>
-
-      @if($authState().user?.role === 'NGO_USER') {
-      <app-ngo-profile-form
-        *ngIf="state.loadProfileCallState === 'LOADED'"
-        (save)="save($event, state.profile!.id)"
-        (saveLogo)="saveLogo($event)"
-        [bussinessAreas]="bussinessAreas"
-        [firstCompletion]="!!$firstCompletion()"
-        [profile]="state.profile!" />
-      } @else {
-      <app-company-profile-form
-        *ngIf="state.loadProfileCallState === 'LOADED'"
-        (save)="saveCompany($event, state.profile!.id)"
-        (saveLogo)="saveLogo($event)"
-        [bussinessAreas]="bussinessAreas"
-        [firstCompletion]="!!$firstCompletion()"
-        [profile]="state.profile!" />
+      @switch (state.loadProfileCallState) {
+        @case ('LOADING') {
+          <p>
+            <mat-spinner [diameter]="16" />
+          </p>
+        }
+        @case ('LOADED') {
+          @if (!state.profile?.confirmed) {
+            <div class="bg-red-300 px-4 py-2 rounded-md w-fit relative mb-4">
+              <mat-icon class="absolute -top-2 -left-2">warning</mat-icon>
+              <p class="!m-0">Twoja organizacja nie jest jeszcze zatwierdzona</p>
+            </div>
+          }
+          @if ($authState().user?.role === USER_ROLES.NGO_USER) {
+            <app-ngo-profile-form
+              (save)="save($event, state.profile!.id)"
+              (saveLogo)="saveLogo($event, state.profile!.id)"
+              [bussinessAreas]="bussinessAreas"
+              [firstCompletion]="!!$firstCompletion()"
+              [profile]="state.profile!" />
+          } @else {
+            <app-company-profile-form
+              (save)="saveCompany($event, state.profile!.id)"
+              (saveLogo)="saveLogo($event, state.profile!.id)"
+              [bussinessAreas]="bussinessAreas"
+              [firstCompletion]="!!$firstCompletion()"
+              [profile]="state.profile!" />
+          }
+        }
       }
     </ng-container>
   `,
@@ -65,6 +75,8 @@ export default class OrganizationProfilePageComponent implements OnInit {
   @Input() bussinessAreas!: BusinessArea[];
   private service = inject(NGOsApiService);
   public $authState = inject(AuthStateService).$value;
+
+  USER_ROLES = USER_ROLES;
 
   $firstCompletion = computed(() => {
     const user = this.$authState().user;
@@ -80,8 +92,8 @@ export default class OrganizationProfilePageComponent implements OnInit {
     }
   }
 
-  saveLogo(logo: File) {
-    this.service.updateLogo(logo);
+  saveLogo(logo: File, id: string) {
+    this.service.updateLogo(logo, id);
   }
 
   save(
@@ -100,14 +112,23 @@ export default class OrganizationProfilePageComponent implements OnInit {
       foundedAt: string;
       businnessAreas: { id: ID; name: string }[];
       resources: string[];
+      logo: File | null;
     },
-    id: ID
+    id: string
   ) {
+    const { logo, street, city, zipcode, businnessAreas, ...payload } = formValue;
+
     this.service
       .updateProfile(
         {
-          ...formValue,
-          businnessAreas: formValue.businnessAreas.map(area => area.id),
+          ...payload,
+          address: {
+            street,
+            city,
+            zipCode: zipcode,
+            country: 'Polska',
+          },
+          businessAreaIds: formValue.businnessAreas.map(area => area.id),
         },
         id
       )
@@ -129,13 +150,13 @@ export default class OrganizationProfilePageComponent implements OnInit {
       businnessAreas: { id: ID; name: string }[];
       resources: string[];
     },
-    id: ID
+    id: string
   ) {
     this.service
       .updateProfile(
         {
           ...formValue,
-          businnessAreas: formValue.businnessAreas.map(area => area.id),
+          businessAreaIds: formValue.businnessAreas.map(area => area.id),
         },
         id
       )

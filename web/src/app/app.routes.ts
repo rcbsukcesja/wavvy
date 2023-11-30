@@ -3,7 +3,6 @@ import { authGuard } from './auth/utils/auth.guard';
 import { inject } from '@angular/core';
 import { ProjectsApiService } from './features/projects/data-access/projects.api.service';
 import { BusinessAreaApiService } from './shared/bussiness-area.api.service';
-import { tap } from 'rxjs';
 import { AuthStateService } from './auth/data_access/auth.state.service';
 import { roleGuard } from './auth/utils/role.guard';
 import { USER_ROLES, UserRoles } from './core/user-roles.enum';
@@ -11,7 +10,6 @@ import { NGOsStateService } from './features/ngo/data-access/ngos.state.service'
 
 export const resolveUserRole: ResolveFn<UserRoles | undefined> = () => {
   const user = inject(AuthStateService).$value().user;
-
   return user?.role;
 };
 
@@ -23,7 +21,7 @@ export const NgoProfileCompletedGuard: CanMatchFn = () => {
   if (user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.MANAGER) {
     return true;
   }
-
+  console.log(user, ngo, ngo?.confirmed);
   if (user && ngo && !ngo.confirmed) {
     router.navigateByUrl('/manage/my-profile');
 
@@ -54,10 +52,10 @@ export const routes: Routes = [
   {
     path: '',
     children: [
-      {
-        path: 'auth',
-        loadChildren: () => import('./auth/auth.routes'),
-      },
+      // {
+      //   path: 'auth',
+      //   loadChildren: () => import('./auth/auth.routes'),
+      // },
       {
         path: '',
         // canMatch: [NonFirstLoginGuard],

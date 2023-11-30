@@ -13,4 +13,5 @@ export interface Offer {
   closeDeadline: boolean;
   scope: string;
   categories: { id: ID; name: string }[];
+  followedByUser: boolean;
 }

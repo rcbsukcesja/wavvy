@@ -12,6 +12,8 @@ public class ErrorMessages {
     public static final String ORGANIZATION_NOT_FOUND = "Organization with id %s not found!";
 
     public static final String ORGANIZATION_NGO_NOT_FOUND = "Organization NGO with id %s not found!";
+
+    public static final String ORGANIZATION_NGO_BY_OWNER_ID_NOT_FOUND = "Organization NGO with owner id %s not found!";
     public static final String ORGANIZATION_NAME_ALREADY_EXISTS = "Organization with name %s already exists";
     public static final String ORGANIZATION_NIP_ALREADY_EXISTS = "Organization with nip %s already exists";
     public static final String ORGANIZATION_KRS_ALREADY_EXISTS = "Organization with krs %s already exists";

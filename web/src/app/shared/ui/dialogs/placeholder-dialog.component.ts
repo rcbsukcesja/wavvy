@@ -13,13 +13,18 @@ export type PlaceholderDialogData<C, T extends Record<any, any>> = {
 @Component({
   template: `
     <h1 mat-dialog-title>Podgląd</h1>
-    <div mat-dialog-content>
+    <div mat-dialog-content class="text-black">
       <ng-container *ngComponentOutlet="dialogData.component; inputs: dialogData.inputs" />
     </div>
     <div mat-dialog-actions>
       <button mat-button [mat-dialog-close]="false">Zamknij</button>
       <!-- <button mat-button (click)="retry()">Powtórz!</button> -->
     </div>
+  `,
+  styles: `
+    :host {
+      --mdc-dialog-supporting-text-color: var(--mat-tree-node-text-color);
+    }
   `,
   standalone: true,
   imports: [MatDialogModule, MatButtonModule, CommonModule, NgComponentOutlet],

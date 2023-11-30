@@ -22,6 +22,7 @@ import com.rcbsukcesja.hack2react.specifications.ProjectSpecifications;
 import com.rcbsukcesja.hack2react.utils.AuthenticationUtils;
 import com.rcbsukcesja.hack2react.utils.FileUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
+import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +65,27 @@ public class ProjectService {
         if (authentication == null || !AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
             spec = spec.and(ProjectSpecifications.isNotDisabled());
         }
+
+        if (search != null && !search.isEmpty()) {
+            spec = spec.and(ProjectSpecifications.nameOrTagsContain(search));
+        }
+        if (statuses != null && !statuses.isEmpty()) {
+            spec = spec.and(ProjectSpecifications.statusInStatusList(statuses));
+        }
+        return projectRepository.findAll(spec, pageable).map(projectMapper::projectToProjectView);
+    }
+
+    public Page<ProjectView> getMyProjects(String search, Set<ProjectStatus> statuses, LocalDate startDate,
+                                            LocalDate endDate, Pageable pageable, Authentication authentication) {
+
+        OrganizationNGO ngo = getNgoByOwnerIdOrThrowException(TokenUtils.getUserId(authentication));
+        statuses = setProjectStatuses(statuses, authentication);
+        checkProjectStatuses(statuses, authentication);
+
+        dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
+        Specification<Project> spec = ProjectSpecifications.notOutsideDateRange(startDate, endDate);
+
+        spec = spec.and(ProjectSpecifications.isOrganizedBy(ngo));
 
         if (search != null && !search.isEmpty()) {
             spec = spec.and(ProjectSpecifications.nameOrTagsContain(search));
@@ -170,9 +192,6 @@ public class ProjectService {
         if (dto.cooperationMessage() != null && !dto.cooperationMessage().equals(project.getCooperationMessage())) {
             project.setCooperationMessage(dto.cooperationMessage());
         }
-        if (dto.organizerId() != null && !dto.organizerId().equals(project.getOrganizer().getId())) {
-            project.setOrganizer(getNgoByIdOrThrowException(dto.organizerId()));
-        }
         if (dto.status() != null && !dto.status().equals(project.getStatus())) {
             project.setStatus(dto.status());
         }
@@ -240,7 +259,7 @@ public class ProjectService {
         project.setCooperationMessage(dto.cooperationMessage());
         project.setPossibleVolunteer(dto.possibleVolunteer());
         project.setStatus(dto.status());
-        project.setOrganizer(getNgoByIdOrThrowException(dto.organizerId()));
+        project.setOrganizer(getNgoByOwnerIdOrThrowException(TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication())));
     }
 
     private void updateTags(Project project, Set<String> tags) {
@@ -304,6 +323,12 @@ public class ProjectService {
         return organizationNGORepository.getOrganizationNGOById(id)
                 .orElseThrow(() -> new OrganizationNGONotFoundException(
                         ErrorMessages.ORGANIZATION_NGO_NOT_FOUND, id));
+    }
+
+    private OrganizationNGO getNgoByOwnerIdOrThrowException(UUID userId) {
+        return organizationNGORepository.getOrganizationNGOByOwner_Id(userId)
+                .orElseThrow(() -> new OrganizationNGONotFoundException(
+                        ErrorMessages.ORGANIZATION_NGO_BY_OWNER_ID_NOT_FOUND, userId));
     }
 
     public ProjectView updateProjectLike(UUID projectId, String clientId) {

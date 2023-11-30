@@ -2,24 +2,35 @@ import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Injectable, inject } from '@angular/core';
 import { INITIAL_PAGINATION_STATE, ProjectsStateService } from './projects.state.service';
 import { map, tap } from 'rxjs';
-import { Project } from '../model/project.model';
+import { Project, ProjectStatus } from '../model/project.model';
 import { Router } from '@angular/router';
 import { ID } from 'src/app/core/types/id.type';
 import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
+import { HttpParams } from '@angular/common/http';
+import { createListHttpParams } from 'src/app/core/list-http-params.factory';
 
 export interface GetAllProjectsParams {}
 
 export interface AddProjectFormValue {
   name: string;
   description: string;
-  startDate: string;
-  endDate: string;
-  link: string;
-  categories: { id: ID; name: string }[];
-  reason?: string;
+  startTime: string;
+  endTime: string;
+  links: string[];
+  possibleVolunteer: boolean;
+  tags: string[];
+  cooperationMessage: string;
+  status: ProjectStatus;
+  budget: number;
+  address: {
+    city: string;
+    zipCode: string;
+    street: string;
+  };
+  // categories: { id: ID; name: string }[];
 }
 
 @Injectable({
@@ -43,14 +54,14 @@ export class ProjectsApiService extends HttpBaseService {
   }
 
   add(payload: AddProjectFormValue) {
-    const ngo = this.ngoState().profile;
-
-    if (ngo) {
-      payload = { ...payload, ngoId: ngo.id } as AddProjectFormValue;
-    }
-
     this.http
-      .post<Project>(`${this.url}`, payload)
+      .post<Project>(`${this.url}`, {
+        ...payload,
+        address: {
+          ...payload.address,
+          country: 'Polska',
+        },
+      })
       .pipe(
         tap(() => {
           this.getAll();
@@ -62,11 +73,13 @@ export class ProjectsApiService extends HttpBaseService {
 
   update(
     id: ID,
-    payload: Partial<AddProjectFormValue & { disabled: boolean }>,
+    payload: Partial<AddProjectFormValue & { disabled: boolean; reason: string }>,
     filters?: CommonFilters & PaginationFilters
   ) {
     this.http
-      .patch<Project>(`${this.url}/${id}`, payload)
+      .patch<Project>(`${this.url}/${id}`, {
+        ...payload,
+      })
       .pipe(
         tap(() => {
           this.getAll(filters);
@@ -81,7 +94,7 @@ export class ProjectsApiService extends HttpBaseService {
       .delete(`${this.url}/${id}`)
       .pipe(
         tap(() => {
-          this.getAll();
+          this.getAllMine();
         })
       )
       .subscribe();
@@ -95,7 +108,7 @@ export class ProjectsApiService extends HttpBaseService {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     this.http
-      .get<Project[]>(`${this.url}/?ngoId=${id}`)
+      .get<Project[]>(`${this.url}/my`)
       .pipe(
         tap(projects => {
           this.stateService.setState({ loadListCallState: 'LOADED', list: projects });
@@ -114,42 +127,9 @@ export class ProjectsApiService extends HttpBaseService {
   ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
-    // todo: mock before backend
-    const ngo = this.ngoState().profile;
-
-    const url = new URL(this.url);
-    const sp = new URLSearchParams({
-      _sort: 'startTime',
-      _order: params.sort,
-      q: params.search,
-      // _page: params.pageIndex.toString(),
-      _start: (params.pageIndex * params.pageSize).toString(),
-      _limit: params.pageSize.toString(),
-      // id_like: params.id || '',
-    });
-
-    if (ngo) {
-      sp.append('ngoId', ngo.id.toString());
-    }
-
-    url.search = sp.toString();
-
     this.http
-      .get<Project[]>(url.href, { observe: 'response' })
+      .get<ListApiResponse<Project>>(this.url + '/my', { params: createListHttpParams(params, params.sort) })
       .pipe(
-        map(response => {
-          const totalCount = response.headers.get('X-Total-Count');
-
-          return {
-            content: response.body,
-            empty: response.body?.length === 0,
-            last: false,
-            number: params.pageIndex,
-            numberOfElements: response.body?.length,
-            totalElements: totalCount ? +totalCount : 0,
-            totalPages: totalCount ? Math.ceil(+totalCount / params.pageSize) : 0,
-          } as ListApiResponse<Project>;
-        }),
         tap(response => {
           this.stateService.setState({
             loadListCallState: 'LOADED',
@@ -171,42 +151,11 @@ export class ProjectsApiService extends HttpBaseService {
   ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
-    // todo: mock before backend
-    // const ngo = this.ngoState().profile;
-
-    const url = new URL(this.url);
-    const sp = new URLSearchParams({
-      _sort: 'startTime',
-      _order: params.sort,
-      q: params.search,
-      // _page: params.pageIndex.toString(),
-      _start: (params.pageIndex * params.pageSize).toString(),
-      _limit: params.pageSize.toString(),
-      id_like: params.id || '',
-    });
-
-    // if (ngo) {
-    //   sp.append('ngoId', ngo.id.toString());
-    // }
-
-    url.search = sp.toString();
-
     this.http
-      .get<Project[]>(url.href, { observe: 'response' })
+      .get<ListApiResponse<Project>>(this.url, {
+        params: createListHttpParams(params, params.sort),
+      })
       .pipe(
-        map(response => {
-          const totalCount = response.headers.get('X-Total-Count');
-
-          return {
-            content: response.body,
-            empty: response.body?.length === 0,
-            last: false,
-            number: params.pageIndex,
-            numberOfElements: response.body?.length,
-            totalElements: totalCount ? +totalCount : 0,
-            totalPages: totalCount ? Math.ceil(+totalCount / params.pageSize) : 0,
-          } as ListApiResponse<Project>;
-        }),
         tap(response => {
           this.stateService.setState({
             loadListCallState: 'LOADED',

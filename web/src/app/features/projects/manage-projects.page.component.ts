@@ -54,93 +54,97 @@ import { ProjectCardComponent } from './ui/project-card.component';
     <br />
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
     <ng-container *ngIf="dataSource() as data">
-      <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
-        <ng-container matColumnDef="position">
-          <th mat-header-cell *matHeaderCellDef>Lp</th>
-          <td mat-cell *matCellDef="let element">{{ element.position + data.positionModifier }}</td>
-        </ng-container>
+      @if (data.loadListCallState === 'LOADING') {
+        <p>Ładowanie...</p>
+      } @else {
+        <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef>Lp</th>
+            <td mat-cell *matCellDef="let element">{{ element.position + data.positionModifier }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let element">
-            <div class="flex items-center">
-              {{ element.status | projectStatus }}
-              <div
-                class="rounded-full h-4 w-4 ml-1 shrink-0"
-                [matTooltip]="'Powód blokady: ' + element.reason"
-                [matTooltipDisabled]="!element.disabled"
-                [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
-            </div>
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Etap</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="flex items-center">
+                {{ element.status | projectStatus }}
+                <div
+                  class="rounded-full h-4 w-4 ml-1 shrink-0"
+                  [matTooltip]="'Powód blokady: ' + element.reason"
+                  [matTooltipDisabled]="!element.disabled"
+                  [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
+              </div>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Nazwa</th>
-          <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-        </ng-container>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nazwa</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef>Opis</th>
-          <td mat-cell *matCellDef="let element">
-            <p class="line-clamp-4">{{ element.description }}</p>
-          </td>
-        </ng-container>
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>Opis</th>
+            <td mat-cell *matCellDef="let element">
+              <p class="line-clamp-4">{{ element.description }}</p>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="startTime">
-          <th mat-header-cell *matHeaderCellDef>Data rozpoczęcia</th>
-          <td mat-cell *matCellDef="let element">{{ element.startTime | date }}</td>
-        </ng-container>
+          <ng-container matColumnDef="startTime">
+            <th mat-header-cell *matHeaderCellDef>Data rozpoczęcia</th>
+            <td mat-cell *matCellDef="let element">{{ element.startTime | date }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="endTime">
-          <th mat-header-cell *matHeaderCellDef>Data zakończenia</th>
-          <td mat-cell *matCellDef="let element">{{ element.endTime | date }}</td>
-        </ng-container>
+          <ng-container matColumnDef="endTime">
+            <th mat-header-cell *matHeaderCellDef>Data zakończenia</th>
+            <td mat-cell *matCellDef="let element">{{ element.endTime | date }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="budget">
-          <th mat-header-cell *matHeaderCellDef>Budżet (PLN)</th>
-          <td mat-cell *matCellDef="let element">{{ element.budget }}</td>
-        </ng-container>
+          <ng-container matColumnDef="budget">
+            <th mat-header-cell *matHeaderCellDef>Budżet (PLN)</th>
+            <td mat-cell *matCellDef="let element">{{ element.budget }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="tags">
-          <th mat-header-cell *matHeaderCellDef>Tagi</th>
-          <td mat-cell *matCellDef="let element">{{ element.tags.join(', ') }}</td>
-        </ng-container>
+          <ng-container matColumnDef="tags">
+            <th mat-header-cell *matHeaderCellDef>Tagi</th>
+            <td mat-cell *matCellDef="let element">{{ element.tags.join(', ') }}</td>
+          </ng-container>
 
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let element">
-            <div class="flex gap-4">
-              <button [matTooltip]="'Pokaż projekt'" (click)="showProjectOnList(element)">
-                <mat-icon>preview</mat-icon>
-              </button>
-              <button *ngIf="role !== ADMIN_ROLE" [matTooltip]="'Edytuj projekt'" (click)="goToProjectForm(element)">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <ng-container *ngIf="role !== ADMIN_ROLE">
-                <input #input type="file" class="w-0 absolute" (change)="handleChange($event, element.id)" />
-                <button
-                  [matTooltip]="'Nie dodałeś logo projektu, przez co korzysta od z domyślnego placeholdera'"
-                  [matTooltipDisabled]="!!element.imageLink"
-                  (click)="input.click()"
-                  [ngClass]="!!element.imageLink ? 'text-green-500' : 'text-red-500'">
-                  <mat-icon>image</mat-icon>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+              <div class="flex gap-4">
+                <button [matTooltip]="'Pokaż projekt'" (click)="showProjectOnList(element)">
+                  <mat-icon>preview</mat-icon>
                 </button>
-              </ng-container>
-              <button [matTooltip]="'Zmień status'" *ngIf="role === ADMIN_ROLE" (click)="changeStatus(element)">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button [matTooltip]="'Usuń projekt'" *ngIf="role !== ADMIN_ROLE" (click)="remove(element)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </td>
-        </ng-container>
+                <button *ngIf="role !== ADMIN_ROLE" [matTooltip]="'Edytuj projekt'" (click)="goToProjectForm(element)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <ng-container *ngIf="role !== ADMIN_ROLE">
+                  <input #input type="file" class="w-0 absolute" (change)="handleChange($event, element.id)" />
+                  <button
+                    [matTooltip]="'Nie dodałeś logo projektu, przez co korzysta od z domyślnego placeholdera'"
+                    [matTooltipDisabled]="!!element.imageLink"
+                    (click)="input.click()"
+                    [ngClass]="!!element.imageLink ? 'text-green-500' : 'text-red-500'">
+                    <mat-icon>image</mat-icon>
+                  </button>
+                </ng-container>
+                <button [matTooltip]="'Zmień status'" *ngIf="role === ADMIN_ROLE" (click)="changeStatus(element)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button [matTooltip]="'Usuń projekt'" *ngIf="role !== ADMIN_ROLE" (click)="remove(element)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-      <br />
-      <app-pagination [totalElements]="data.totalElements" (paginationChange)="handlePageEvent($event)" />
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        <br />
+        <app-pagination [totalElements]="data.totalElements" (paginationChange)="handlePageEvent($event)" />
+      }
     </ng-container>
   `,
 })
@@ -184,7 +188,6 @@ export default class ManageProjectsPageComponent implements OnInit {
         },
       },
     });
-    // this.router.navigateByUrl(`/projects?projectId=${id}`);
   }
 
   changeStatus(project: Project) {
@@ -196,13 +199,13 @@ export default class ManageProjectsPageComponent implements OnInit {
         } as ChangeStatusDialogData,
       })
       .afterClosed()
-      .pipe(take(1))
+      .pipe(take(1), filter(Boolean))
       .subscribe((state: DisableFormValue) => {
         if (state === undefined) {
           return;
         }
 
-        this.service.update(project.id, { disabled: state.shouldDisable, reason: state.reason }, this.filters$$.value);
+        this.service.update(project.id, { disabled: state.disabled, reason: state.reason }, this.filters$$.value);
       });
   }
 
@@ -224,8 +227,10 @@ export default class ManageProjectsPageComponent implements OnInit {
 
   dataSource = toSignal(
     this.stateService.value$.pipe(
-      map(({ list, totalElements }) => {
+      map(({ list, totalElements, loadListCallState }) => {
+        console.log({ loadListCallState });
         return {
+          loadListCallState,
           list: list.map((offer, index) => ({
             position: index + 1,
             ...offer,
@@ -253,7 +258,7 @@ export default class ManageProjectsPageComponent implements OnInit {
 
   ngOnInit() {
     this.filters$$.subscribe(filters => {
-      if (this.role === 'ADMIN') {
+      if (this.role === USER_ROLES.ADMIN) {
         this.service.getAll(filters);
       } else {
         this.service.getAllMine(filters);
