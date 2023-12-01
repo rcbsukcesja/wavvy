@@ -24,12 +24,8 @@ services:
       - FRONTEND_URL=${FRONTEND_URL}
       - BASE_URL=${BASE_URL}
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
-      - KC_LOG_LEVEL=info
-      - DEBUG=true
-      - DEBUG_PORT=*:5005
     ports:
-      - 30134:8080
-      - 5005:5005
+      - 30134:8443
     expose:
       - 30134
     depends_on:
@@ -116,9 +112,9 @@ services:
     container_name: wavvy-frontend
     restart: always
     ports:
-      - 80:80
+      - 443:443
     expose:
-      - 80
+      - 443
     environment:
       - API_URL=${API_URL}
       - KEYCLOAK_URL=${KEYCLOAK_URL}

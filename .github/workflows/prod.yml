@@ -58,6 +58,12 @@ jobs:
           echo "FRONTEND_URL=${{ vars.FRONTEND_URL }}" >> .env
           echo "BASE_URL=${{ vars.BASE_URL }}" >> .env
 
+
+      - name: Webserver certificate
+        run: |
+          echo "${{ secrets.ORIGIN_CERTIFICATE }}" | > ${{ github.workspace }}/web/certificate.pem
+          echo "${{ secrets.ORIGIN_PRIVATE_KEY }}" | > ${{ github.workspace }}/web/private.key
+
       - name: Create SSL certificate file
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 -d > ${{ github.workspace }}/keystore.p12
