@@ -59,7 +59,7 @@ jobs:
       - name: Create SSL certificate file
         run: |
           echo "${{ secrets.KEYSTORE_FILE }}" > ${{ github.workspace }}/keystore.p12 
-          CP keystore.p12 /backend/src/main/resources/keystore.p12
+          cp keystore.p12 /backend/src/main/resources/keystore.p12
 
       - name: Build and Export Docker Images
         run: |
