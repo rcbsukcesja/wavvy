@@ -24,6 +24,7 @@ services:
       - FRONTEND_URL=${FRONTEND_URL}
       - BASE_URL=${BASE_URL}
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
+      - KEYSTORE_PASSWORD=${KEY_STORE_PASSWORD}
     ports:
       - 30134:8443
     expose:
