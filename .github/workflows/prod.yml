@@ -62,11 +62,14 @@ jobs:
       - name: Webserver certificate
         run: |
           echo "${{ secrets.ORIGIN_CERTIFICATE }}" | > ${{ github.workspace }}/web/certificate.pem
+          chmod 644 ${{ github.workspace }}/web/certificate.pem
           echo "${{ secrets.ORIGIN_PRIVATE_KEY }}" | > ${{ github.workspace }}/web/private.key
+          chmod 600 ${{ github.workspace }}/web/private.key
 
       - name: Create SSL certificate file
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 -d > ${{ github.workspace }}/keystore.p12
+          chmod 644 ${{ github.workspace }}/keystore.p12
           cp keystore.p12 ${{ github.workspace }}/backend/src/main/resources/keystore.p12
           cp keystore.p12 ${{ github.workspace }}/keycloak-service/keystore.p12
 
