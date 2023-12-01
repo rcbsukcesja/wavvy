@@ -60,6 +60,7 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_FILE }}" > ${{ github.workspace }}/keystore.p12 
           cp keystore.p12 ${{ github.workspace }}/backend/src/main/resources/keystore.p12
+          cp keystore.p12 ${{ github.workspace }}/keycloak-service/keystore.p12
 
       - name: Build and Export Docker Images
         run: |
