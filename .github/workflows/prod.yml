@@ -53,6 +53,13 @@ jobs:
           echo "PGADMIN_DEFAULT_PASSWORD=${{ secrets.PGADMIN_DEFAULT_PASSWORD }}" >> .env
           
           echo "IMAGES_BASE_URL=${{ vars.IMAGES_BASE_URL }}" >> .env
+          echo "KEY_STORE_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}" >> .env
+
+
+      - name: Create SSL certificate file
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" > ${{ github.workspace }}/keystore.p12 
+          CP keystore.p12 /backend/src/main/resources/keystore.p12
 
       - name: Build and Export Docker Images
         run: |
@@ -69,15 +76,15 @@ jobs:
           source: "wavvy.tar"
           target: "/home/rcbsukcesja/wavvy/"
 
-      - name: Copy .env file to Server
-        uses: garygrossgarten/github-action-scp@release
-        with:
-          local: .env
-          remote: /home/rcbsukcesja/wavvy/.env
-          host: ${{ secrets.SERVER_HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.SERVER_USER }}
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+#      - name: Copy .env file to Server
+#        uses: garygrossgarten/github-action-scp@release
+#        with:
+#          local: .env
+#          remote: /home/rcbsukcesja/wavvy/.env
+#          host: ${{ secrets.SERVER_HOST }}
+#          port: ${{ secrets.PORT }}
+#          username: ${{ secrets.SERVER_USER }}
+#          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Load and Run Docker Images on Server
         uses: appleboy/ssh-action@v1.0.0
