@@ -32,5 +32,4 @@ COPY ./keycloak/custom-registration/. /opt/keycloak/themes/custom/login/
 
 # copy providers
 COPY --from=buildprovider /home/app/target/keycloak-user-storage-provider.jar /opt/keycloak/providers/keycloak-user-storage-provider.jar
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start", "--optimized", "--config-keystore=/opt/keycloak/conf/server.keystore",
-"--config-keystore-password=${KEYSTORE_PASSWORD}", "--config-keystore-alias=wavvy_eu", "--import-realm"]
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start", "--optimized", "--config-keystore=/opt/keycloak/conf/server.keystore", "--config-keystore-password=${KEYSTORE_PASSWORD}", "--config-keystore-alias=wavvy_eu", "--import-realm"]
