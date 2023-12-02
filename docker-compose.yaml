@@ -26,9 +26,10 @@ services:
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
       - KEYSTORE_PASSWORD=${KEY_STORE_PASSWORD}
     ports:
-      - 30134:8443
+      - 8090:8080
     expose:
-      - 30134
+      - 8090
+#      - 30134
     depends_on:
       - keycloak-db
       - db
@@ -70,9 +71,10 @@ services:
       - KEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
     ports:
-      - 20134:8443
+      - 8080:8080
     expose:
-      - 20134
+      - 8080
+#      - 20134
     depends_on:
       - db
 
@@ -98,9 +100,10 @@ services:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     ports:
-      - 40432:80
+      - 81:80
     expose:
-      - 40432
+      - 81
+#      - 40432
   frontend:
     build:
       context: ./web
@@ -113,9 +116,9 @@ services:
     container_name: wavvy-frontend
     restart: always
     ports:
-      - 443:443
+      - 80:80
     expose:
-      - 443
+      - 80
     environment:
       - API_URL=${API_URL}
       - KEYCLOAK_URL=${KEYCLOAK_URL}
