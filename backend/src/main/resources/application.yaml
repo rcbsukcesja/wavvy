@@ -50,19 +50,13 @@ spring:
   liquibase:
     change-log: classpath:main-changelog.xml
     enabled: true
-#server:
-#  port: 8443
-#  ssl:
-#    key-store: "classpath:keystore.p12"
-#    key-store-password: "${KEY_STORE_PASSWORD}"
-#    key-store-type: "PKCS12"
-#    key-alias: "wavvy_eu"
-#    enabled: true
 springdoc:
   swagger-ui:
     oauth:
       client-id: ${SWAGGER_CLIENT_ID}
       client-secret: ${SWAGGER_CLIENT_SECRET}
+    path: /swagger-ui/index.html
+    display-request-duration: true
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE
