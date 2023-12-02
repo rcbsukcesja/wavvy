@@ -55,7 +55,7 @@ springdoc:
     oauth:
       client-id: ${SWAGGER_CLIENT_ID}
       client-secret: ${SWAGGER_CLIENT_SECRET}
-    path: /swagger-ui/index.html
+    path: /api/swagger-ui/index.html
     display-request-duration: true
 logging:
   level:
