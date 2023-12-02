@@ -25,6 +25,10 @@ services:
       - BASE_URL=${BASE_URL}
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
       - KEYSTORE_PASSWORD=${KEY_STORE_PASSWORD}
+      - KC_PROXY_ADDRESS_FORWARDING=true
+      - KC_HOSTNAME_PATH=/keycloak
+      - KC_PROXY=edge
+      - KC_HOSTNAME_ADMIN_URL=https://wavvy.eu/keycloak
     ports:
       - 8090:8080
     expose:
