@@ -36,7 +36,7 @@ public class ProjectView {
     private boolean possibleVolunteer;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Set<String> likes = new HashSet<>();
+    private Set<String> likes;
     private String reason;
     private boolean disabled;
 }
