@@ -76,7 +76,7 @@ services:
       - SWAGGER_CLIENT_ID=${SWAGGER_CLIENT_ID}
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
       - IMAGES_BASE_URL=${IMAGES_BASE_URL}
-
+      - API_URL=${API_URL}
   db:
     image: "postgres:15.4-bullseye"
     container_name: db

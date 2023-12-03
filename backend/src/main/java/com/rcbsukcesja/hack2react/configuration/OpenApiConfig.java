@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.security.OAuthFlow;
 import io.swagger.v3.oas.annotations.security.OAuthFlows;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -21,7 +22,8 @@ import org.springframework.context.annotation.Configuration;
 )
 @OpenAPIDefinition(
         info = @Info(title = "Wavvy API", version = "v1"),
-        security = @SecurityRequirement(name = "OAuth2")
+        security = @SecurityRequirement(name = "OAuth2"),
+        servers = {@Server(url = "${API_URL}")}
 )
 public class OpenApiConfig {
 
