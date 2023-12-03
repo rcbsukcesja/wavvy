@@ -43,6 +43,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CompanyService {
 
+    private final static String NAME = "name";
+    private final static String NIP = "nip";
+    private final static String KRS = "krs";
+    private final static String REGON = "regon";
+
     private final CompanyMapper companyMapper;
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
@@ -120,7 +125,8 @@ public class CompanyService {
         if (ConfirmedStatusUtils.checkUserCanChangeFields(company.isConfirmed())) {
             setOfficialCompanyFields(dto, company);
         } else {
-            throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+            putUpdateOfficialFieldChangesValidation(dto, company);
+            setOfficialCompanyFields(dto, company);
         }
         setCompanyBasicFields(dto, company);
         if (dto.confirmed() != null) {
@@ -167,7 +173,7 @@ public class CompanyService {
                 if (userCanChangeOfficialFields) {
                     actual.setName(dto.name());
                 } else {
-                    throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                    throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NAME);
                 }
             }
         }
@@ -176,7 +182,7 @@ public class CompanyService {
             if (userCanChangeOfficialFields) {
                 actual.setKrs(dto.krs());
             } else {
-                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, KRS);
             }
         }
         if (dto.nip() != null && !actual.getNip().equals(dto.nip())) {
@@ -184,7 +190,7 @@ public class CompanyService {
             if (userCanChangeOfficialFields) {
                 actual.setNip(dto.nip());
             } else {
-                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NIP);
             }
         }
         if (dto.regon() != null && !actual.getRegon().equals(dto.regon())) {
@@ -192,7 +198,7 @@ public class CompanyService {
             if (userCanChangeOfficialFields) {
                 actual.setRegon(dto.regon());
             } else {
-                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, REGON);
             }
         }
         if (dto.address() != null && !actual.getAddress().equals(addressMapper.organizationAddressPatchDtoToAddress(dto.address()))) {
@@ -348,5 +354,20 @@ public class CompanyService {
     private User getUserByIdOrThrowException(UUID id) {
         return userRepository.getUserById(id)
                 .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, id));
+    }
+
+    private void putUpdateOfficialFieldChangesValidation(CompanySaveDto dto, Company company) {
+        if (!company.getName().equals(dto.name())) {
+            throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NAME);
+        }
+        if (!company.getKrs().equals(dto.krs())) {
+            throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, KRS);
+        }
+        if (!company.getRegon().equals(dto.regon())) {
+            throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, REGON);
+        }
+        if (!company.getNip().equals(dto.nip())) {
+            throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NIP);
+        }
     }
 }

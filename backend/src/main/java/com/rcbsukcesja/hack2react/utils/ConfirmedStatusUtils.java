@@ -6,14 +6,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @UtilityClass
 public class ConfirmedStatusUtils {
 
-    public static boolean checkUserCanChangeFields(Boolean confirmedStatus) {
-        boolean result;
-        boolean isCityUser = AuthenticationUtils.isCityUser(SecurityContextHolder.getContext().getAuthentication());
-        if (isCityUser) {
-            result = true;
-        } else {
-            result = !Boolean.TRUE.equals(confirmedStatus);
+    public static boolean checkUserCanChangeFields(boolean confirmedStatus) {
+        if (AuthenticationUtils.isCityUser(SecurityContextHolder.getContext().getAuthentication())) {
+            return  true;
         }
-        return result;
+        return !confirmedStatus;
     }
 }

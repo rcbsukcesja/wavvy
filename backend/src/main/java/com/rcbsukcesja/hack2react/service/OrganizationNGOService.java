@@ -45,6 +45,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrganizationNGOService {
 
+    private final static String NAME = "name";
+    private final static String NIP = "nip";
+    private final static String KRS = "krs";
+    private final static String REGON = "regon";
+
     private final OrganizationNGOMapper organizationNGOMapper;
     private final OrganizationNGORepository organizationNGORepository;
     private final UserRepository userRepository;
@@ -137,7 +142,8 @@ public class OrganizationNGOService {
         if (ConfirmedStatusUtils.checkUserCanChangeFields(ngo.isConfirmed())) {
             setOfficialNGOFields(dto, ngo);
         } else {
-            throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+            putUpdateOfficialFieldChangesValidation(dto, ngo);
+            setOfficialNGOFields(dto, ngo);
         }
 
         setBasicNGOFields(dto, ngo);
@@ -185,7 +191,7 @@ public class OrganizationNGOService {
                 if (userCanChangeOfficialFields) {
                     actual.setName(dto.name());
                 } else {
-                    throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                    throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NAME);
                 }
             }
         }
@@ -194,7 +200,7 @@ public class OrganizationNGOService {
             if (userCanChangeOfficialFields) {
                 actual.setKrs(dto.krs());
             } else {
-                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, KRS);
             }
         }
         if (dto.nip() != null && !actual.getNip().equals(dto.nip())) {
@@ -202,7 +208,7 @@ public class OrganizationNGOService {
             if (userCanChangeOfficialFields) {
                 actual.setNip(dto.nip());
             } else {
-                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NIP);
             }
         }
         if (dto.regon() != null && !actual.getRegon().equals(dto.regon())) {
@@ -210,7 +216,7 @@ public class OrganizationNGOService {
             if (userCanChangeOfficialFields) {
                 actual.setRegon(dto.regon());
             } else {
-                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, REGON);
             }
         }
         if (dto.address() != null && !actual.getAddress().equals(addressMapper.organizationAddressPatchDtoToAddress(dto.address()))) {
@@ -419,5 +425,20 @@ public class OrganizationNGOService {
     private User getUserByIdOrThrowException(UUID id) {
         return userRepository.getUserById(id)
                 .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, id));
+    }
+
+    private void putUpdateOfficialFieldChangesValidation(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
+        if (!ngo.getName().equals(dto.name())) {
+            throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NAME);
+        }
+        if (!ngo.getKrs().equals(dto.krs())) {
+            throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, KRS);
+        }
+        if (!ngo.getRegon().equals(dto.regon())) {
+            throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, REGON);
+        }
+        if (!ngo.getNip().equals(dto.nip())) {
+            throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NIP);
+        }
     }
 }
