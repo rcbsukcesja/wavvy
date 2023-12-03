@@ -14,12 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +30,7 @@ import java.util.UUID;
 public class CompanyController {
     private final CompanyService organizationCompanyService;
 
+    // TODO: sprawdzić wymagania odnośnie security - czy niezalogowany ma widzieć companies
     @GetMapping
     public ResponseEntity<Page<CompanyListView>> getAllCompanies(@RequestParam(required = false) String search,
                                                                  @ParameterObject Pageable pageable,
@@ -40,39 +38,45 @@ public class CompanyController {
         return new ResponseEntity<>(organizationCompanyService.getAllCompany(search, pageable, authentication), HttpStatus.OK);
     }
 
+    // TODO: sprawdzić wymagania odnośnie security
     @GetMapping("/{companyId}")
-    @PreAuthorize("hasAnyRole('ROLE_NGO', 'ROLE_COMPANY', 'ROLE_CITY_HALL')")
     public ResponseEntity<?> getCompanyById(@PathVariable UUID companyId) {
         return new ResponseEntity<>(organizationCompanyService.getCompanyById(companyId), HttpStatus.OK);
     }
 
-    @PostMapping
+    // This endpoint has been disabled because it is not used anymore
+    //@PostMapping
     public ResponseEntity<CompanyView> createCompany(
             @RequestBody @Valid CompanySaveDto dto) {
         return new ResponseEntity<>(organizationCompanyService.createCompany(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{companyId}")
+    // This endpoint has been disabled because it is not used anymore
+    //@PutMapping("/{companyId}")
     public ResponseEntity<CompanyView> putUpdateCompany(
             @PathVariable UUID companyId,
             @RequestBody @Valid CompanySaveDto dto) {
         return new ResponseEntity<>(organizationCompanyService.putUpdateCompany(companyId, dto), HttpStatus.OK);
     }
 
+    // TODO: może tylko miasto albo company, którego to dotyczy
     @PatchMapping("/{companyId}")
+    @PreAuthorize("hasAnyRole('ROLE_CITY_HALL', 'ROLE_COMPANY')")
     public ResponseEntity<CompanyView> patchUpdateCompany(
             @PathVariable UUID companyId,
             @RequestBody @Valid CompanyPatchDto dto) {
         return new ResponseEntity<>(organizationCompanyService.patchUpdateCompany(companyId, dto), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{companyId}")
+    // This endpoint has been disabled because it is not used anymore
+    //@DeleteMapping("/{companyId}")
     public ResponseEntity<?> deleteCompany(@PathVariable UUID companyId) {
         organizationCompanyService.deleteCompany(companyId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/my")
+    @PreAuthorize("hasRole('ROLE_COMPANY')")
     public ResponseEntity<CompanyView> getMyCompany() {
         return new ResponseEntity<>(organizationCompanyService.getMyCompany(), HttpStatus.OK);
     }

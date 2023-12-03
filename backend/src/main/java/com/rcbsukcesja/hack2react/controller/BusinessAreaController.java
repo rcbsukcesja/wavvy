@@ -6,6 +6,7 @@ import com.rcbsukcesja.hack2react.service.BusinessAreaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,7 @@ public class BusinessAreaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<BusinessAreaView> createBusinessArea(
             @RequestBody BusinessAreaDto businessAreaDto) {
         return new ResponseEntity<>(businessAreaService
@@ -44,6 +46,7 @@ public class BusinessAreaController {
     }
 
     @PutMapping("/{businessAreaId}")
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<BusinessAreaView> updateBusinessArea(
             @PathVariable UUID businessAreaId,
             @RequestBody BusinessAreaDto businessAreaDto) {
@@ -52,6 +55,7 @@ public class BusinessAreaController {
     }
 
     @DeleteMapping("/{businessAreaId}")
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<?> deleteBusinessArea(@PathVariable UUID businessAreaId) {
         businessAreaService.deleteBusinessArea(businessAreaId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
