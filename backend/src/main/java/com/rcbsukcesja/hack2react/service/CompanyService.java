@@ -51,7 +51,7 @@ public class CompanyService {
 
     public Page<CompanyListView> getAllCompany(String search, Pageable pageable, Authentication authentication) {
         Specification<Company> spec = Specification.where(null);
-
+        //TODO: sprawdzić czy to konieczne
         if (authentication == null || !AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
             spec = CompanySpecifications.isNotDisabledAndConfirmed();
         }

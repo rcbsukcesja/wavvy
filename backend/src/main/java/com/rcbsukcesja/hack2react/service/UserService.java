@@ -84,9 +84,6 @@ public class UserService {
         if (dto.username() != null && !user.getUsername().equalsIgnoreCase(dto.username())) {
             checkUsername(dto.username());
         }
-        if (dto.email() != null && !user.getEmail().equalsIgnoreCase(dto.email())) {
-            checkUserEmail(dto.email());
-        }
         if (dto.firstName() != null && !user.getFirstName().equals(dto.firstName())) {
             user.setFirstName(dto.firstName());
         }

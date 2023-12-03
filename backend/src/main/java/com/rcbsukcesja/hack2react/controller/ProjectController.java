@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,6 +54,7 @@ public class ProjectController {
     }
 
     @GetMapping("/my")
+    @PreAuthorize("hasAnyRole('ROLE_NGO')")
     public ResponseEntity<Page<ProjectView>> getMyProjects(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Set<ProjectStatus> statusList,
@@ -70,11 +72,13 @@ public class ProjectController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_NGO')")
     public ResponseEntity<ProjectView> createProject(@RequestBody @Valid ProjectSaveDto projectSaveDto) {
         return new ResponseEntity<>(projectService.createProject(projectSaveDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{projectId}")
+    @PreAuthorize("hasAnyRole('ROLE_NGO')")
     public ResponseEntity<ProjectView> updateProject(
             @PathVariable UUID projectId,
             @RequestBody @Valid ProjectSaveDto projectSaveDto) {
@@ -82,18 +86,22 @@ public class ProjectController {
     }
 
     @PatchMapping("/{projectId}")
+    @PreAuthorize("hasAnyRole('ROLE_NGO')")
     public ResponseEntity<ProjectView> patchUpdateProject(
             @PathVariable UUID projectId,
             @RequestBody @Valid ProjectPatchDto projectPatchDto) {
         return new ResponseEntity<>(projectService.patchUpdateProject(projectId, projectPatchDto), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{projectId}")
+    // This endpoint has been disabled because it is not used anymore
+    //@DeleteMapping("/{projectId}")
     public ResponseEntity<?> deleteProject(@PathVariable UUID projectId) {
         projectService.deleteProject(projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    // TODO: tylko właściciel projektu może zmienić logo
+    @PreAuthorize("hasAnyRole('ROLE_NGO')")
     @PostMapping(value = "/{id}/image", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadLogo(
             @PathVariable UUID id,
