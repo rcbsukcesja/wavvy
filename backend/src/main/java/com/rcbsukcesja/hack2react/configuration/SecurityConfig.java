@@ -26,8 +26,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html")
+                                "/swagger-ui/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/offers", "/ngos", "/projects", "/companies", "/business-areas",
                                 "/ngos/{id:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}",
