@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,7 +36,7 @@ public class ProjectView {
     private boolean possibleVolunteer;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Set<String> likes;
+    private Set<String> likes = new HashSet<>();
     private String reason;
     private boolean disabled;
 }
