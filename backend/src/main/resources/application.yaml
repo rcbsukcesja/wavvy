@@ -57,6 +57,7 @@ springdoc:
       client-secret: ${SWAGGER_CLIENT_SECRET}
     display-request-duration: true
     url: /v3/api-docs
+    disable-swagger-default-url: true
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE
