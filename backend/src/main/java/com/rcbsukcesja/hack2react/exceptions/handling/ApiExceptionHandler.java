@@ -8,6 +8,7 @@ import com.rcbsukcesja.hack2react.exceptions.alreadyExists.EmailAlreadyExistsExc
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationsAlreadyAttachedToBusinessAreaException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.UsernameAlreadyExistsException;
+import com.rcbsukcesja.hack2react.exceptions.forbidden.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidDateRangeException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidEnumParameterException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidFileException;
@@ -51,7 +52,7 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ForbiddenAccessDeniedException.class)
+    @ExceptionHandler(value = {ForbiddenAccessDeniedException.class, InvalidConfirmedStatusException.class})
     public ResponseEntity<Object> handleForbiddenTypeException(ApiRequestException e) {
 
         ApiException apiException = new ApiException(
