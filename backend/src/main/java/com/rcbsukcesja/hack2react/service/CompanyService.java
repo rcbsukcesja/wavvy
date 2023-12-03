@@ -1,6 +1,6 @@
 package com.rcbsukcesja.hack2react.service;
 
-import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidConfirmedStatusException;
+import com.rcbsukcesja.hack2react.exceptions.forbidden.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.messages.ForbiddenErrorMessageResources;

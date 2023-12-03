@@ -48,5 +48,5 @@ public class ErrorMessages {
     public static final String REASON_MUST_NOT_BE_NULL = "Reason must not be null when disabling NGO";
 
     public static final String FORBIDDEN_MODIFICATION = "Forbidden. You don't have permission to modify %s";
-    
+
 }

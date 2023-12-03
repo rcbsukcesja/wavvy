@@ -1,4 +1,4 @@
-package com.rcbsukcesja.hack2react.exceptions.badrequest;
+package com.rcbsukcesja.hack2react.exceptions.forbidden;
 
 import com.rcbsukcesja.hack2react.exceptions.ApiRequestException;
 
