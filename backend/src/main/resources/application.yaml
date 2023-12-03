@@ -58,6 +58,7 @@ springdoc:
     display-request-duration: true
     url: /v3/api-docs
     path: /swagger-ui
+    disable-swagger-default-url: true
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE
