@@ -74,6 +74,7 @@ services:
       - IMAGES_BASE_URL=${IMAGES_BASE_URL}
       - KEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}
       - SWAGGER_CLIENT_SECRET=${SWAGGER_CLIENT_SECRET}
+      - API_URL=${API_URL}
     ports:
       - 8080:8080
     expose:
