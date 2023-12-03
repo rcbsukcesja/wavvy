@@ -55,8 +55,8 @@ springdoc:
     oauth:
       client-id: ${SWAGGER_CLIENT_ID}
       client-secret: ${SWAGGER_CLIENT_SECRET}
-    path: /api/swagger-ui/index.html
     display-request-duration: true
+    url: /v3/api-docs
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE
