@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.service;
 
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.messages.ForbiddenErrorMessageResources;
@@ -22,6 +23,7 @@ import com.rcbsukcesja.hack2react.repositories.OrganizationNGORepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.specifications.OrganizationNGOSpecifications;
 import com.rcbsukcesja.hack2react.utils.AuthenticationUtils;
+import com.rcbsukcesja.hack2react.utils.ConfirmedStatusUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
@@ -75,6 +77,7 @@ public class OrganizationNGOService {
     public OrganizationNGOView createNGO(OrganizationNGOSaveDto dto) {
         validateCreateNgo(dto);
         OrganizationNGO ngo = new OrganizationNGO();
+        setOfficialNGOFields(dto, ngo);
         setBasicNGOFields(dto, ngo);
         ngo.setProjects(new HashSet<>());
         ngo.setResources(new HashSet<>());
@@ -131,6 +134,12 @@ public class OrganizationNGOService {
         OrganizationNGO ngo = getNgoByIdOrThrowException(organizationNGOId);
         validateUpdateNgo(dto, ngo);
 
+        if (ConfirmedStatusUtils.checkUserCanChangeFields(ngo.isConfirmed())) {
+            setOfficialNGOFields(dto, ngo);
+        } else {
+            throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+        }
+
         setBasicNGOFields(dto, ngo);
 
         if (dto.disabled() != null) {
@@ -167,25 +176,42 @@ public class OrganizationNGOService {
     @Transactional
     public OrganizationNGOView patchUpdateNGO(UUID ngoId, OrganizationNGOPatchDto dto) {
         OrganizationNGO actual = getNgoByIdOrThrowException(ngoId);
+        boolean userCanChangeOfficialFields = ConfirmedStatusUtils.checkUserCanChangeFields(actual.isConfirmed());
         if (dto.name() != null && !actual.getName().equals(dto.name())) {
             if (actual.getName().equalsIgnoreCase(dto.name())) {
                 actual.setName(dto.name());
             } else {
                 organizationValidation.checkIfOrganizationNameAlreadyExists(dto.name());
-                actual.setName(dto.name());
+                if (userCanChangeOfficialFields) {
+                    actual.setName(dto.name());
+                } else {
+                    throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                }
             }
         }
         if (dto.krs() != null && !actual.getKrs().equals(dto.krs())) {
             organizationValidation.checkIfOrganizationKrsAlreadyExists(dto.krs());
-            actual.setKrs(dto.krs());
+            if (userCanChangeOfficialFields) {
+                actual.setKrs(dto.krs());
+            } else {
+                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+            }
         }
         if (dto.nip() != null && !actual.getNip().equals(dto.nip())) {
             organizationValidation.checkIfOrganizationNipAlreadyExists(dto.nip());
-            actual.setNip(dto.nip());
+            if (userCanChangeOfficialFields) {
+                actual.setNip(dto.nip());
+            } else {
+                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+            }
         }
         if (dto.regon() != null && !actual.getRegon().equals(dto.regon())) {
             organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
-            actual.setRegon(dto.regon());
+            if (userCanChangeOfficialFields) {
+                actual.setRegon(dto.regon());
+            } else {
+                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+            }
         }
         if (dto.address() != null && !actual.getAddress().equals(addressMapper.organizationAddressPatchDtoToAddress(dto.address()))) {
             actual.setAddress(addressMapper.organizationAddressPatchDtoToAddress(dto.address()));
@@ -327,11 +353,15 @@ public class OrganizationNGOService {
         }
     }
 
-    private void setBasicNGOFields(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
+    private void setOfficialNGOFields(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
         ngo.setName(dto.name());
         ngo.setKrs(dto.krs());
         ngo.setNip(dto.nip());
         ngo.setRegon(dto.regon());
+    }
+
+
+    private void setBasicNGOFields(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
         ngo.setOwner(getUserByIdOrThrowException(TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication())));
         ngo.setAddress(addressMapper.organizationAddressSaveDtoToAddress(dto.address()));
         ngo.setPhone(dto.phone());

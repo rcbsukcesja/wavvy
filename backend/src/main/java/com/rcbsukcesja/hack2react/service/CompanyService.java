@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.service;
 
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.messages.ForbiddenErrorMessageResources;
@@ -21,6 +22,7 @@ import com.rcbsukcesja.hack2react.repositories.CompanyRepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.specifications.CompanySpecifications;
 import com.rcbsukcesja.hack2react.utils.AuthenticationUtils;
+import com.rcbsukcesja.hack2react.utils.ConfirmedStatusUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
@@ -74,6 +76,7 @@ public class CompanyService {
         validateCreateCompany(dto);
         Company company = new Company();
 
+        setOfficialCompanyFields(dto, company);
         setCompanyBasicFields(dto, company);
 
         company.setResources(new HashSet<>());
@@ -114,8 +117,13 @@ public class CompanyService {
         Company company = getCompanyByIdOrThrowException(companyId);
         validateUpdateCompany(dto, company);
 
+        if (ConfirmedStatusUtils.checkUserCanChangeFields(company.isConfirmed())) {
+            setOfficialCompanyFields(dto, company);
+        } else {
+            throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+        }
         setCompanyBasicFields(dto, company);
-        if (dto.confirmed() != null){
+        if (dto.confirmed() != null) {
             AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
                     ForbiddenErrorMessageResources.CONFIRMED);
             company.setConfirmed(dto.confirmed());
@@ -150,25 +158,42 @@ public class CompanyService {
     @Transactional
     public CompanyView patchUpdateCompany(UUID companyId, CompanyPatchDto dto) {
         Company actual = getCompanyByIdOrThrowException(companyId);
+        boolean userCanChangeOfficialFields = ConfirmedStatusUtils.checkUserCanChangeFields(actual.isConfirmed());
         if (dto.name() != null && !actual.getName().equals(dto.name())) {
             if (actual.getName().equalsIgnoreCase(dto.name())) {
                 actual.setName(dto.name());
             } else {
                 organizationValidation.checkIfOrganizationNameAlreadyExists(dto.name());
-                actual.setName(dto.name());
+                if (userCanChangeOfficialFields) {
+                    actual.setName(dto.name());
+                } else {
+                    throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+                }
             }
         }
         if (dto.krs() != null && !actual.getKrs().equals(dto.krs())) {
             organizationValidation.checkIfOrganizationKrsAlreadyExists(dto.krs());
-            actual.setKrs(dto.krs());
+            if (userCanChangeOfficialFields) {
+                actual.setKrs(dto.krs());
+            } else {
+                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+            }
         }
         if (dto.nip() != null && !actual.getNip().equals(dto.nip())) {
             organizationValidation.checkIfOrganizationNipAlreadyExists(dto.nip());
-            actual.setNip(dto.nip());
+            if (userCanChangeOfficialFields) {
+                actual.setNip(dto.nip());
+            } else {
+                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+            }
         }
         if (dto.regon() != null && !actual.getRegon().equals(dto.regon())) {
             organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
-            actual.setRegon(dto.regon());
+            if (userCanChangeOfficialFields) {
+                actual.setRegon(dto.regon());
+            } else {
+                throw new InvalidConfirmedStatusException(ErrorMessages.INVALID_CONFIRMED_STATUS_MESSAGE);
+            }
         }
         if (dto.address() != null && !actual.getAddress().equals(addressMapper.organizationAddressPatchDtoToAddress(dto.address()))) {
             actual.setAddress(addressMapper.organizationAddressPatchDtoToAddress(dto.address()));
@@ -226,11 +251,14 @@ public class CompanyService {
         companyRepository.delete(company);
     }
 
-    private void setCompanyBasicFields(CompanySaveDto dto, Company company) {
+    private void setOfficialCompanyFields(CompanySaveDto dto, Company company) {
         company.setName(dto.name());
         company.setKrs(dto.krs());
         company.setNip(dto.nip());
         company.setRegon(dto.regon());
+    }
+
+    private void setCompanyBasicFields(CompanySaveDto dto, Company company) {
         company.setOwner(getUserByIdOrThrowException(TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication())));
         company.setAddress(addressMapper.organizationAddressSaveDtoToAddress(dto.address()));
         company.setPhone(dto.phone());
