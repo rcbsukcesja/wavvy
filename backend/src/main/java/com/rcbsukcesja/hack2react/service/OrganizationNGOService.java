@@ -28,6 +28,7 @@ import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
 import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
+import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,6 +58,7 @@ public class OrganizationNGOService {
     private final OrganizationValidation organizationValidation;
     private final AddressMapper addressMapper;
     private final DateValidation dateValidation;
+    private final UserValidation userValidation;
 
     public Page<OrganizationNGOListView> getAllNGO(String search, Pageable pageable, Authentication authentication) {
         Specification<OrganizationNGO> spec = Specification.where(null);
@@ -182,6 +184,11 @@ public class OrganizationNGOService {
     @Transactional
     public OrganizationNGOView patchUpdateNGO(UUID ngoId, OrganizationNGOPatchDto dto) {
         OrganizationNGO actual = getNgoByIdOrThrowException(ngoId);
+
+        if(!AuthenticationUtils.isCityUser(SecurityContextHolder.getContext().getAuthentication())){
+            userValidation.checkIfIsOwner(actual.getOwner().getId());
+        }
+
         boolean userCanChangeOfficialFields = ConfirmedStatusUtils.checkUserCanChangeFields(actual.isConfirmed());
         if (dto.name() != null && !actual.getName().equals(dto.name())) {
             if (actual.getName().equalsIgnoreCase(dto.name())) {

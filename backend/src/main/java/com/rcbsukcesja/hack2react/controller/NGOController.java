@@ -57,7 +57,6 @@ public class NGOController {
         return new ResponseEntity<>(organizationNGOService.putUpdateNGO(ngoId, dto), HttpStatus.OK);
     }
 
-    // TODO: może tylko miasto albo NGO, którego to dotyczy
     @PatchMapping("/{ngoId}")
     @PreAuthorize("hasAnyRole('ROLE_CITY_HALL', 'ROLE_NGO')")
     public ResponseEntity<OrganizationNGOView> patchUpdateNGO(

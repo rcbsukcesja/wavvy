@@ -42,7 +42,14 @@ public class UserController {
                 userService.getUserById(id), HttpStatus.OK);
     }
 
-    //TODO: dodać /my -> ep zwraca dane zalogowanego użytkownika
+    @GetMapping("/my")
+    @PreAuthorize("hasAnyRole('ROLE_NGO','ROLE_COMPANY')")
+    public ResponseEntity<UserView> getLoggedUser() {
+        UserView result = userService.getLoggedUser();
+        return new ResponseEntity<>(
+                result, HttpStatus.OK);
+    }
+
 
     // This endpoint has been disabled because it is not used anymore
     //@PostMapping
@@ -59,7 +66,6 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    //TODO: tylko użytkownik, którego to dotyczy mogą zmieniać dane
     @PatchMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_NGO','ROLE_COMPANY')")
     public ResponseEntity<UserView> patchUpdateUser(@PathVariable UUID userId, @RequestBody @Valid UserPatchDto userPatchDto) {
