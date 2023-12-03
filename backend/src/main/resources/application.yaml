@@ -56,7 +56,7 @@ springdoc:
       client-id: ${SWAGGER_CLIENT_ID}
       client-secret: ${SWAGGER_CLIENT_SECRET}
     display-request-duration: true
-    url: /v3/api-docs
+    url: ${API_URL}/v3/api-docs
     path: /swagger-ui
     disable-swagger-default-url: true
 logging:
