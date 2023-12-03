@@ -41,7 +41,6 @@ public class MessageController {
                 , HttpStatus.CREATED);
     }
 
-    //TODO: zabezpieczyć żeby tylko twórca mógł zmienić message
     @PatchMapping("/{messageId}")
     public ResponseEntity<MessageView> patchUpdateMessage(
             @PathVariable UUID messageId,
@@ -61,7 +60,6 @@ public class MessageController {
                 messageService.getReceivedMessages(), HttpStatus.OK);
     }
 
-    //TODO: zabezpieczyć żeby tylko twórca mógł usunąć message
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMessage(@PathVariable("id") UUID id) {
         messageService.deleteMessage(id);

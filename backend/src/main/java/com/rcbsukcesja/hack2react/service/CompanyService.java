@@ -26,6 +26,7 @@ import com.rcbsukcesja.hack2react.utils.ConfirmedStatusUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
+import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +55,7 @@ public class CompanyService {
     private final BusinessAreaRepository businessAreaRepository;
     private final OrganizationValidation organizationValidation;
     private final AddressMapper addressMapper;
+    private final UserValidation userValidation;
 
 
     public Page<CompanyListView> getAllCompany(String search, Pageable pageable, Authentication authentication) {
@@ -164,6 +166,11 @@ public class CompanyService {
     @Transactional
     public CompanyView patchUpdateCompany(UUID companyId, CompanyPatchDto dto) {
         Company actual = getCompanyByIdOrThrowException(companyId);
+
+        if(!AuthenticationUtils.isCityUser(SecurityContextHolder.getContext().getAuthentication())){
+            userValidation.checkIfIsOwner(actual.getOwner().getId());
+        }
+
         boolean userCanChangeOfficialFields = ConfirmedStatusUtils.checkUserCanChangeFields(actual.isConfirmed());
         if (dto.name() != null && !actual.getName().equals(dto.name())) {
             if (actual.getName().equalsIgnoreCase(dto.name())) {

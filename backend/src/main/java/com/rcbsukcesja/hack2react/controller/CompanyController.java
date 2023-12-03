@@ -59,7 +59,6 @@ public class CompanyController {
         return new ResponseEntity<>(organizationCompanyService.putUpdateCompany(companyId, dto), HttpStatus.OK);
     }
 
-    // TODO: może tylko miasto albo company, którego to dotyczy
     @PatchMapping("/{companyId}")
     @PreAuthorize("hasAnyRole('ROLE_CITY_HALL', 'ROLE_COMPANY')")
     public ResponseEntity<CompanyView> patchUpdateCompany(

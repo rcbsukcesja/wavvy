@@ -13,6 +13,7 @@ import com.rcbsukcesja.hack2react.model.mappers.MessageMapper;
 import com.rcbsukcesja.hack2react.repositories.MessageRepository;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
+import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class MessageService {
     private final MessageMapper messageMapper;
     private final UserService userService;
     private final ProjectService projectService;
+    private final UserValidation userValidation;
 
     private static final String CITY_NAME_ADDITION = "Urząd Miasta Kołobrzeg";
 
@@ -75,6 +77,8 @@ public class MessageService {
 
         Message actual = getMessageOrThrowException(messageId);
 
+        userValidation.checkIfIsOwner(actual.getSender().getId());
+
         if (dto.contact() != null && !actual.getContact().equals(dto.contact())) {
             actual.setContact(dto.contact());
         }
@@ -95,6 +99,7 @@ public class MessageService {
 
     public void deleteMessage(UUID id) {
         Message message = getMessageOrThrowException(id);
+        userValidation.checkIfIsOwner(message.getSender().getId());
         messageRepository.delete(message);
     }
 

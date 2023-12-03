@@ -26,7 +26,6 @@ public class OrganizationController {
 
     private final static String UPLOAD_DIRECTORY = "logo";
 
-    //TODO: tylko właściciel może korzystać z EP
     @PostMapping(value = "/{id}/logo", consumes = "multipart/form-data")
     @PreAuthorize("hasAnyRole('ROLE_NGO','ROLE_COMPANY')")
     public ResponseEntity<?> uploadLogo(
@@ -38,7 +37,6 @@ public class OrganizationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //TODO: tylko właściciel może korzystać z EP
     @DeleteMapping("/{id}/logo")
     @PreAuthorize("hasAnyRole('ROLE_NGO','ROLE_COMPANY')")
     public ResponseEntity<?> removeLogo(
