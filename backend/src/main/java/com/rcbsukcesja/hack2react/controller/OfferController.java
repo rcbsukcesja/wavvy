@@ -52,7 +52,6 @@ public class OfferController {
                 offerScopes, closeDeadlineOnly, followedByUser, pageable, authentication));
     }
 
-    //TODO: zmienić tak, aby każdy mógł podejrzeć tylko oferty ze scope'a do którego należy
     @GetMapping("/{offerId}")
     public ResponseEntity<OfferView> getOfferById(@PathVariable UUID offerId) {
         return new ResponseEntity<>(

@@ -24,6 +24,7 @@ import com.rcbsukcesja.hack2react.utils.FileUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
+import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
 import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +53,7 @@ public class ProjectService {
     private final DateValidation dateValidation;
     private final AddressMapper addressMapper;
     private final UserValidation userValidation;
+    private final OrganizationValidation organizationValidation;
 
     @Value("${wavvy.images.project.url}")
     private String projectUrl;
@@ -78,7 +80,7 @@ public class ProjectService {
     }
 
     public Page<ProjectView> getMyProjects(String search, Set<ProjectStatus> statuses, LocalDate startDate,
-                                            LocalDate endDate, Pageable pageable, Authentication authentication) {
+                                           LocalDate endDate, Pageable pageable, Authentication authentication) {
 
         OrganizationNGO ngo = getNgoByOwnerIdOrThrowException(TokenUtils.getUserId(authentication));
         statuses = setProjectStatuses(statuses, authentication);
@@ -104,6 +106,8 @@ public class ProjectService {
 
     @Transactional
     public ProjectView createProject(ProjectSaveDto dto) {
+        organizationValidation.checkIfNotDisabledOrUnconfirmed(getNgoByOwnerIdOrThrowException(TokenUtils
+                .getUserId(SecurityContextHolder.getContext().getAuthentication())));
         Project project = new Project();
 
         setBasicProjectFields(dto, project);

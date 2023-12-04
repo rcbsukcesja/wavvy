@@ -54,7 +54,7 @@ public class ProjectController {
     }
 
     @GetMapping("/my")
-    @PreAuthorize("hasAnyRole('ROLE_NGO')")
+    @PreAuthorize("hasRole('ROLE_NGO')")
     public ResponseEntity<Page<ProjectView>> getMyProjects(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Set<ProjectStatus> statusList,
@@ -72,13 +72,13 @@ public class ProjectController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_NGO')")
+    @PreAuthorize("hasRole('ROLE_NGO')")
     public ResponseEntity<ProjectView> createProject(@RequestBody @Valid ProjectSaveDto projectSaveDto) {
         return new ResponseEntity<>(projectService.createProject(projectSaveDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{projectId}")
-    @PreAuthorize("hasAnyRole('ROLE_NGO')")
+    @PreAuthorize("hasRole('ROLE_NGO')")
     public ResponseEntity<ProjectView> updateProject(
             @PathVariable UUID projectId,
             @RequestBody @Valid ProjectSaveDto projectSaveDto) {
@@ -86,22 +86,21 @@ public class ProjectController {
     }
 
     @PatchMapping("/{projectId}")
-    @PreAuthorize("hasAnyRole('ROLE_NGO')")
+    @PreAuthorize("hasRole('ROLE_NGO')")
     public ResponseEntity<ProjectView> patchUpdateProject(
             @PathVariable UUID projectId,
             @RequestBody @Valid ProjectPatchDto projectPatchDto) {
         return new ResponseEntity<>(projectService.patchUpdateProject(projectId, projectPatchDto), HttpStatus.OK);
     }
 
-    // This endpoint has been disabled because it is not used anymore
-    //@DeleteMapping("/{projectId}")
+    @DeleteMapping("/{projectId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteProject(@PathVariable UUID projectId) {
         projectService.deleteProject(projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // TODO: tylko właściciel projektu może zmienić logo
-    @PreAuthorize("hasAnyRole('ROLE_NGO')")
+    @PreAuthorize("hasRole('ROLE_NGO')")
     @PostMapping(value = "/{id}/image", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadLogo(
             @PathVariable UUID id,
@@ -109,7 +108,7 @@ public class ProjectController {
         storageService.store(file, id.toString(), UPLOAD_DIRECTORY);
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
         projectService.updateImagePath(fileExtension, id, UPLOAD_DIRECTORY);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}/image")

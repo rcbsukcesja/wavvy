@@ -33,7 +33,6 @@ services:
       - 8090:8080
     expose:
       - 8090
-#      - 30134
     depends_on:
       - keycloak-db
       - db
@@ -80,7 +79,6 @@ services:
       - 8080:8080
     expose:
       - 8080
-#      - 20134
     depends_on:
       - db
 
@@ -109,7 +107,6 @@ services:
       - 81:80
     expose:
       - 81
-#      - 40432
   frontend:
     build:
       context: ./web
