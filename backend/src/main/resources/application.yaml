@@ -52,20 +52,20 @@ spring:
     enabled: true
 springdoc:
   api-docs:
-    path: ${API_PREFIX}/v3/api-docs
+    path: /v3/api-docs
     enabled: true
   swagger-ui:
     oauth:
       client-id: ${SWAGGER_CLIENT_ID}
       client-secret: ${SWAGGER_CLIENT_SECRET}
     display-request-duration: true
-    url: ${API_PREFIX}/v3/api-docs
+    url: /v3/api-docs
     path: /swagger-ui
     disable-swagger-default-url: true
     urls:
       - name: Wavvy API
-        url: ${API_URL}/v3/api-docs
-    config-url: ${API_PREFIX}/v3/api-docs/swagger-config
+        url: /v3/api-docs
+    config-url: /v3/api-docs/swagger-config
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE
