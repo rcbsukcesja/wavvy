@@ -11,7 +11,10 @@ import com.rcbsukcesja.hack2react.model.entity.User;
 import com.rcbsukcesja.hack2react.model.mappers.UserMapper;
 import com.rcbsukcesja.hack2react.notificator.mail.MessageManager;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
+import com.rcbsukcesja.hack2react.utils.TokenUtils;
+import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +28,19 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final MessageManager messageManager;
+    private final UserValidation userValidation;
 
     public List<UserView> getAllUsers() {
         return userMapper.listUserToListUserView(userRepository.findAll());
     }
 
     public UserView getUserById(UUID userId) {
+        User user = getUserByIdOrThrowException(userId);
+        return userMapper.userToUserView(user);
+    }
+
+    public UserView getLoggedUser() {
+        UUID userId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
         User user = getUserByIdOrThrowException(userId);
         return userMapper.userToUserView(user);
     }
@@ -81,11 +91,9 @@ public class UserService {
     @Transactional
     public UserView updateUser(UUID userId, UserPatchDto dto) {
         User user = getUserByIdOrThrowException(userId);
+        userValidation.checkIfIsOwner(userId);
         if (dto.username() != null && !user.getUsername().equalsIgnoreCase(dto.username())) {
             checkUsername(dto.username());
-        }
-        if (dto.email() != null && !user.getEmail().equalsIgnoreCase(dto.email())) {
-            checkUserEmail(dto.email());
         }
         if (dto.firstName() != null && !user.getFirstName().equals(dto.firstName())) {
             user.setFirstName(dto.firstName());
@@ -118,4 +126,6 @@ public class UserService {
         return userRepository.getUserById(id)
                 .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, id));
     }
+
+
 }

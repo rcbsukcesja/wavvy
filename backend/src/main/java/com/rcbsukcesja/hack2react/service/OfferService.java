@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,7 +76,11 @@ public class OfferService {
     }
 
     public OfferView getOfferById(UUID id) {
-        return offerMapper.offerToOfferView(getOfferByIdOrThrowException(id));
+        Offer offer = getOfferByIdOrThrowException(id);
+        Set<OfferScope> offerScopeSet = new HashSet<>();
+        offerScopeSet.add(offer.getScope());
+        checkOfferScopes(offerScopeSet, SecurityContextHolder.getContext().getAuthentication());
+        return offerMapper.offerToOfferView(offer);
     }
 
     @Transactional

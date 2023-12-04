@@ -24,6 +24,8 @@ import com.rcbsukcesja.hack2react.utils.FileUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
+import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
+import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -50,6 +52,8 @@ public class ProjectService {
     private final OrganizationNGORepository organizationNGORepository;
     private final DateValidation dateValidation;
     private final AddressMapper addressMapper;
+    private final UserValidation userValidation;
+    private final OrganizationValidation organizationValidation;
 
     @Value("${wavvy.images.project.url}")
     private String projectUrl;
@@ -76,7 +80,7 @@ public class ProjectService {
     }
 
     public Page<ProjectView> getMyProjects(String search, Set<ProjectStatus> statuses, LocalDate startDate,
-                                            LocalDate endDate, Pageable pageable, Authentication authentication) {
+                                           LocalDate endDate, Pageable pageable, Authentication authentication) {
 
         OrganizationNGO ngo = getNgoByOwnerIdOrThrowException(TokenUtils.getUserId(authentication));
         statuses = setProjectStatuses(statuses, authentication);
@@ -102,6 +106,8 @@ public class ProjectService {
 
     @Transactional
     public ProjectView createProject(ProjectSaveDto dto) {
+        organizationValidation.checkIfNotDisabledOrUnconfirmed(getNgoByOwnerIdOrThrowException(TokenUtils
+                .getUserId(SecurityContextHolder.getContext().getAuthentication())));
         Project project = new Project();
 
         setBasicProjectFields(dto, project);
@@ -141,6 +147,7 @@ public class ProjectService {
     @Transactional
     public ProjectView putUpdateProject(UUID projectId, ProjectSaveDto dto) {
         Project project = getProjectByIdOrThrowException(projectId);
+        userValidation.checkIfIsOwner(project.getOrganizer().getOwner().getId());
 
         setBasicProjectFields(dto, project);
 
@@ -171,6 +178,7 @@ public class ProjectService {
     @Transactional
     public ProjectView patchUpdateProject(UUID projectId, ProjectPatchDto dto) {
         Project project = getProjectByIdOrThrowException(projectId);
+        userValidation.checkIfIsOwner(project.getOrganizer().getOwner().getId());
         if (dto.name() != null && !dto.name().equals(project.getName())) {
             project.setName(dto.name());
         }
@@ -231,6 +239,7 @@ public class ProjectService {
     @Transactional
     public void updateImagePath(String fileExtension, UUID id, String directory) {
         Project project = getProjectByIdOrThrowException(id);
+        userValidation.checkIfIsOwner(project.getOrganizer().getOwner().getId());
         project.setImagePath(FileUtils.getPathAsString(fileExtension, id.toString(), directory));
         project.setImageLink(projectUrl + "/" + id + "." + fileExtension.toLowerCase());
         project.setUpdatedAt(TimeUtils.nowInUTC());
@@ -333,9 +342,7 @@ public class ProjectService {
 
     public ProjectView updateProjectLike(UUID projectId, String clientId) {
         Project project = getProjectByIdOrThrowException(projectId);
-        if (project.getLikes() == null) {
-            project.setLikes(new HashSet<>());
-        }
+
         if (project.getLikes().contains(clientId)) {
             project.getLikes().remove(clientId);
         } else {

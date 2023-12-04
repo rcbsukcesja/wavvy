@@ -21,6 +21,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -67,7 +68,7 @@ public class Project {
     private ZonedDateTime createdAt;
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime updatedAt;
-    private Set<String> likes;
+    private Set<String> likes = new HashSet<>();
     @Column(length = 2000)
     private String reason;
     private boolean disabled;

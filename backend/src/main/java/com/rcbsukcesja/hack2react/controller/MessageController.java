@@ -1,8 +1,8 @@
 package com.rcbsukcesja.hack2react.controller;
 
 import com.rcbsukcesja.hack2react.model.dto.save.MessageByProjectSaveDto;
-import com.rcbsukcesja.hack2react.model.dto.save.MessageSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.save.MessagePatchDto;
+import com.rcbsukcesja.hack2react.model.dto.save.MessageSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
 import com.rcbsukcesja.hack2react.service.MessageService;
 import jakarta.validation.Valid;
@@ -30,14 +30,12 @@ public class MessageController {
 
     @PostMapping
     public ResponseEntity<MessageView> createMessage(@RequestBody MessageSaveDto messageSaveDto) {
-        return new ResponseEntity<>(messageService.createMessage(messageSaveDto)
-                , HttpStatus.CREATED);
+        return new ResponseEntity<>(messageService.createMessage(messageSaveDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/project")
     public ResponseEntity<MessageView> createMessageByProject(@RequestBody MessageByProjectSaveDto messageSaveDto) {
-        return new ResponseEntity<>(messageService.createMessageByProjectSaveDto(messageSaveDto)
-                , HttpStatus.CREATED);
+        return new ResponseEntity<>(messageService.createMessageByProjectSaveDto(messageSaveDto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{messageId}")
@@ -48,7 +46,7 @@ public class MessageController {
     }
 
     @GetMapping("/sent")
-    public ResponseEntity<List<MessageView>> getSendMessages() {
+    public ResponseEntity<List<MessageView>> getSentMessages() {
         return new ResponseEntity<>(
                 messageService.getSentMessages(), HttpStatus.OK);
     }

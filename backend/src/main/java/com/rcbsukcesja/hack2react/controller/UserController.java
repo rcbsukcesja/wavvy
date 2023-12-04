@@ -8,12 +8,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,37 +29,52 @@ public class UserController {
 
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<List<UserView>> getAllUsers() {
         return new ResponseEntity<>(
                 userService.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<UserView> getUserById(@PathVariable("id") UUID id) {
         return new ResponseEntity<>(
                 userService.getUserById(id), HttpStatus.OK);
     }
 
-    @PostMapping
+    @GetMapping("/my")
+    @PreAuthorize("hasAnyRole('ROLE_NGO','ROLE_COMPANY')")
+    public ResponseEntity<UserView> getLoggedUser() {
+        UserView result = userService.getLoggedUser();
+        return new ResponseEntity<>(
+                result, HttpStatus.OK);
+    }
+
+
+    // This endpoint has been disabled because it is not used anymore
+    //@PostMapping
     public ResponseEntity<UserView> createUser(@RequestBody @Valid UserSaveDto userSaveDto) {
         UserView result = userService.saveUser(null, userSaveDto);
         return new ResponseEntity<>(
                 result, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{userId}")
+    // This endpoint has been disabled because it is not used anymore
+    //@PutMapping("/{userId}")
     public ResponseEntity<UserView> putUpdateUser(@PathVariable UUID userId, @RequestBody @Valid UserSaveDto userSaveDto) {
         UserView result = userService.saveUser(userId, userSaveDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PatchMapping("/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_NGO','ROLE_COMPANY')")
     public ResponseEntity<UserView> patchUpdateUser(@PathVariable UUID userId, @RequestBody @Valid UserPatchDto userPatchDto) {
         UserView result = userService.updateUser(userId, userPatchDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<UserView> deleteUser(@PathVariable("id") UUID id) {
         return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
     }

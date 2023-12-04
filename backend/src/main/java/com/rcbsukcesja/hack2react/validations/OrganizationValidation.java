@@ -1,7 +1,9 @@
 package com.rcbsukcesja.hack2react.validations;
 
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationAlreadyExistsException;
+import com.rcbsukcesja.hack2react.exceptions.forbidden.ForbiddenAccessDeniedException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
+import com.rcbsukcesja.hack2react.model.entity.Organization;
 import com.rcbsukcesja.hack2react.repositories.OrganizationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,12 @@ public class OrganizationValidation {
         if (organizationRepository.existsByRegon(regon)) {
             throw new OrganizationAlreadyExistsException(
                     ErrorMessages.ORGANIZATION_REGON_ALREADY_EXISTS, regon);
+        }
+    }
+
+    public void checkIfNotDisabledOrUnconfirmed(Organization organization) {
+        if (organization.isDisabled() || !organization.isConfirmed()) {
+            throw new ForbiddenAccessDeniedException(ErrorMessages.ACCESS_DENIED_MESSAGE);
         }
     }
 }

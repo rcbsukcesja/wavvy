@@ -59,11 +59,13 @@ public class OfferController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<OfferView> createOffer(@RequestBody OfferSaveDto offerSaveDto) {
         return new ResponseEntity<>(offerService.createOffer(offerSaveDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{offerId}")
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<OfferView> putUpdateOffer(
             @PathVariable UUID offerId,
             @RequestBody @Valid OfferSaveDto offerSaveDto) {
@@ -71,6 +73,7 @@ public class OfferController {
     }
 
     @PatchMapping("/{offerId}")
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<OfferView> patchUpdateOffer(
             @PathVariable UUID offerId,
             @RequestBody @Valid OfferPatchDto offerPatchDto) {
@@ -78,6 +81,7 @@ public class OfferController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_CITY_HALL')")
     public ResponseEntity<?> deleteOffer(@PathVariable("id") UUID id) {
         offerService.deleteOffer(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

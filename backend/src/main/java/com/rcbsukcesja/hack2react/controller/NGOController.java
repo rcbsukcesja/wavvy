@@ -12,13 +12,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,13 +42,15 @@ public class NGOController {
         return new ResponseEntity<>(organizationNGOService.getNGOById(ngoId), HttpStatus.OK);
     }
 
-    @PostMapping
+    // This endpoint has been disabled because it is not used anymore
+    //@PostMapping
     public ResponseEntity<OrganizationNGOView> createNGO(
             @RequestBody @Valid OrganizationNGOSaveDto dto) {
         return new ResponseEntity<>(organizationNGOService.createNGO(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{ngoId}")
+    // This endpoint has been disabled because it is not used anymore
+    //@PutMapping("/{ngoId}")
     public ResponseEntity<OrganizationNGOView> putUpdateNGO(
             @PathVariable UUID ngoId,
             @RequestBody @Valid OrganizationNGOSaveDto dto) {
@@ -58,19 +58,22 @@ public class NGOController {
     }
 
     @PatchMapping("/{ngoId}")
+    @PreAuthorize("hasAnyRole('ROLE_CITY_HALL', 'ROLE_NGO')")
     public ResponseEntity<OrganizationNGOView> patchUpdateNGO(
             @PathVariable UUID ngoId,
             @RequestBody @Valid OrganizationNGOPatchDto dto) {
         return new ResponseEntity<>(organizationNGOService.patchUpdateNGO(ngoId, dto), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{ngoId}")
+    // This endpoint has been disabled because it is not used anymore
+    //@DeleteMapping("/{ngoId}")
     public ResponseEntity<?> deleteNGO(@PathVariable UUID ngoId) {
         organizationNGOService.deleteNGO(ngoId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/my")
+    @PreAuthorize("hasRole('ROLE_NGO')")
     public ResponseEntity<OrganizationNGOView> getMyNGO() {
         return new ResponseEntity<>(organizationNGOService.getMyNGO(), HttpStatus.OK);
     }

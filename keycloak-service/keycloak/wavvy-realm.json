@@ -113,6 +113,15 @@
           "clientRole": true,
           "containerId": "ad5faa00-3f38-45ca-b0dc-0858baee2f8c",
           "attributes": {}
+        },
+        {
+          "id": "031a1881-5f19-4ccf-9576-05506677e73b",
+          "name": "admin",
+          "description": "ADMIN_ROLE",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "ad5faa00-3f38-45ca-b0dc-0858baee2f8c",
+          "attributes": {}
         }
       ],
       "realm-management": [
@@ -846,13 +855,15 @@
       "baseUrl": "${BASE_URL}",
       "surrogateAuthRequired": false,
       "enabled": true,
-      "alwaysDisplayInConsole": true,
+      "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/*"
+        "/*",
+        "https://www.wavvy.eu/*"
       ],
       "webOrigins": [
-        "/"
+        "/",
+        "https://www.wavvy.eu/"
       ],
       "notBefore": 0,
       "bearerOnly": false,

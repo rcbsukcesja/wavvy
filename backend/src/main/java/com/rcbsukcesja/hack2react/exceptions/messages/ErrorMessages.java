@@ -26,9 +26,6 @@ public class ErrorMessages {
     public static final String MESSAGE_NOT_FOUND = "Message with id %s not found!";
 
     public static final String OFFER_NOT_FOUND = "Offer with id %s not found!";
-
-    public static final String CONVERSATION_NOT_FOUND = "Conversation with id %s not found!";
-
     public static final String FILE_IS_EMPTY = "Failed to store empty file!";
     public static final String FILE_IS_NOT_IMAGE = "File is not an image!";
     public static final String FILE_IS_TOO_LARGE = "File is too large! Maximum file size is %s";
@@ -51,4 +48,6 @@ public class ErrorMessages {
     public static final String REASON_MUST_NOT_BE_NULL = "Reason must not be null when disabling NGO";
 
     public static final String FORBIDDEN_MODIFICATION = "Forbidden. You don't have permission to modify %s";
+    public static String ACCESS_DENIED_MESSAGE = "Forbidden. You don't have access.";
+
 }
