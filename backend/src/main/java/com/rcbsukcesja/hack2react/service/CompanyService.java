@@ -1,7 +1,7 @@
 package com.rcbsukcesja.hack2react.service;
 
-import com.rcbsukcesja.hack2react.exceptions.forbidden.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
+import com.rcbsukcesja.hack2react.exceptions.forbidden.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.messages.ForbiddenErrorMessageResources;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
@@ -58,9 +58,9 @@ public class CompanyService {
     private final UserValidation userValidation;
 
 
-    public Page<CompanyListView> getAllCompany(String search, Pageable pageable, Authentication authentication) {
+    public Page<CompanyListView> getAllCompanies(String search, Pageable pageable, Authentication authentication) {
         Specification<Company> spec = Specification.where(null);
-        //TODO: sprawdzić czy to konieczne
+
         if (authentication == null || !AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
             spec = CompanySpecifications.isNotDisabledAndConfirmed();
         }

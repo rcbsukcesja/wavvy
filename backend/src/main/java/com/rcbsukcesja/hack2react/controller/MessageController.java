@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,14 +30,12 @@ public class MessageController {
 
     @PostMapping
     public ResponseEntity<MessageView> createMessage(@RequestBody MessageSaveDto messageSaveDto) {
-        return new ResponseEntity<>(messageService.createMessage(messageSaveDto)
-                , HttpStatus.CREATED);
+        return new ResponseEntity<>(messageService.createMessage(messageSaveDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/project")
     public ResponseEntity<MessageView> createMessageByProject(@RequestBody MessageByProjectSaveDto messageSaveDto) {
-        return new ResponseEntity<>(messageService.createMessageByProjectSaveDto(messageSaveDto)
-                , HttpStatus.CREATED);
+        return new ResponseEntity<>(messageService.createMessageByProjectSaveDto(messageSaveDto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{messageId}")

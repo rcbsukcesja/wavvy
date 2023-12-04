@@ -11,12 +11,12 @@ import java.util.UUID;
 @Component
 public class UserValidation {
 
-    public void checkIfIsOwner(UUID id){
-        UUID loggedUserId =TokenUtils.getUserId(SecurityContextHolder.getContext()
-                .getAuthentication());
+    public void checkIfIsOwner(UUID id) {
+        UUID loggedUserId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
 
-        if(!id.equals(loggedUserId))
+        if (!id.equals(loggedUserId)) {
             throw new ForbiddenAccessDeniedException(ErrorMessages.ACCESS_DENIED_MESSAGE);
+        }
 
     }
 }

@@ -30,15 +30,13 @@ import java.util.UUID;
 public class CompanyController {
     private final CompanyService organizationCompanyService;
 
-    // TODO: sprawdzić wymagania odnośnie security - czy niezalogowany ma widzieć companies
     @GetMapping
     public ResponseEntity<Page<CompanyListView>> getAllCompanies(@RequestParam(required = false) String search,
                                                                  @ParameterObject Pageable pageable,
                                                                  Authentication authentication) {
-        return new ResponseEntity<>(organizationCompanyService.getAllCompany(search, pageable, authentication), HttpStatus.OK);
+        return new ResponseEntity<>(organizationCompanyService.getAllCompanies(search, pageable, authentication), HttpStatus.OK);
     }
 
-    // TODO: sprawdzić wymagania odnośnie security
     @GetMapping("/{companyId}")
     public ResponseEntity<?> getCompanyById(@PathVariable UUID companyId) {
         return new ResponseEntity<>(organizationCompanyService.getCompanyById(companyId), HttpStatus.OK);
