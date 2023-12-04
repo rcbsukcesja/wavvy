@@ -184,7 +184,7 @@ public class CompanyService {
                 }
             }
         }
-        if (dto.krs() != null && !actual.getKrs().equals(dto.krs())) {
+        if (dto.krs() != null && !dto.krs().equals(actual.getKrs())) {
             organizationValidation.checkIfOrganizationKrsAlreadyExists(dto.krs());
             if (userCanChangeOfficialFields) {
                 actual.setKrs(dto.krs());
@@ -192,7 +192,7 @@ public class CompanyService {
                 throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, KRS);
             }
         }
-        if (dto.nip() != null && !actual.getNip().equals(dto.nip())) {
+        if (dto.nip() != null && !dto.nip().equals(actual.getNip())) {
             organizationValidation.checkIfOrganizationNipAlreadyExists(dto.nip());
             if (userCanChangeOfficialFields) {
                 actual.setNip(dto.nip());
@@ -200,7 +200,7 @@ public class CompanyService {
                 throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NIP);
             }
         }
-        if (dto.regon() != null && !actual.getRegon().equals(dto.regon())) {
+        if (dto.regon() != null && !dto.regon().equals(actual.getRegon())) {
             organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
             if (userCanChangeOfficialFields) {
                 actual.setRegon(dto.regon());
@@ -208,19 +208,19 @@ public class CompanyService {
                 throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, REGON);
             }
         }
-        if (dto.address() != null && !actual.getAddress().equals(addressMapper.organizationAddressPatchDtoToAddress(dto.address()))) {
+        if (dto.address() != null && !addressMapper.organizationAddressPatchDtoToAddress(dto.address()).equals(actual.getAddress())) {
             actual.setAddress(addressMapper.organizationAddressPatchDtoToAddress(dto.address()));
         }
-        if (dto.phone() != null && !actual.getPhone().equals(dto.phone())) {
+        if (dto.phone() != null && !dto.phone().equals(actual.getPhone())) {
             actual.setPhone(dto.phone());
         }
-        if (dto.email() != null && !actual.getEmail().equals(dto.email())) {
+        if (dto.email() != null && !dto.email().equals(actual.getEmail())) {
             actual.setEmail(dto.email());
         }
-        if (dto.website() != null && !actual.getWebsite().equals(dto.website())) {
+        if (dto.website() != null && !dto.website().equals(actual.getWebsite())) {
             actual.setWebsite(dto.website());
         }
-        if (dto.description() != null && !actual.getDescription().equals(dto.description())) {
+        if (dto.description() != null && !dto.description().equals(actual.getDescription())) {
             actual.setDescription(dto.description());
         }
         if (dto.businessAreaIds() != null) {
@@ -229,7 +229,7 @@ public class CompanyService {
                             .orElseThrow(() -> new BusinessAreaNotFoundException(ErrorMessages.BUSINESS_AREA_NOT_FOUND, id)))
                     .toList()));
         }
-        if (dto.confirmed() != null && !(actual.isConfirmed() == dto.confirmed())) {
+        if (dto.confirmed() != null && !(dto.confirmed() == actual.isConfirmed())) {
             AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
                     ForbiddenErrorMessageResources.CONFIRMED);
             actual.setConfirmed(dto.confirmed());
@@ -364,16 +364,16 @@ public class CompanyService {
     }
 
     private void putUpdateOfficialFieldChangesValidation(CompanySaveDto dto, Company company) {
-        if (!company.getName().equals(dto.name())) {
+        if (dto.name() != null && !dto.name().equals(company.getName())) {
             throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NAME);
         }
-        if (!company.getKrs().equals(dto.krs())) {
+        if (dto.krs() != null && !dto.krs().equals(company.getKrs())) {
             throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, KRS);
         }
-        if (!company.getRegon().equals(dto.regon())) {
+        if (dto.regon() != null && !dto.regon().equals(company.getRegon())) {
             throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, REGON);
         }
-        if (!company.getNip().equals(dto.nip())) {
+        if (dto.nip() != null && !dto.nip().equals(company.getNip())) {
             throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NIP);
         }
     }
