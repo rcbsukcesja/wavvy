@@ -435,16 +435,16 @@ public class OrganizationNGOService {
     }
 
     private void putUpdateOfficialFieldChangesValidation(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
-        if (!ngo.getName().equals(dto.name())) {
+        if (dto.name()!= null && !dto.name().equals(ngo.getName())) {
             throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NAME);
         }
-        if (!ngo.getKrs().equals(dto.krs())) {
+        if (dto.krs()!= null && !dto.krs().equals(ngo.getKrs())) {
             throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, KRS);
         }
-        if (!ngo.getRegon().equals(dto.regon())) {
+        if (dto.regon()!= null && !dto.regon().equals(ngo.getRegon())) {
             throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, REGON);
         }
-        if (!ngo.getNip().equals(dto.nip())) {
+        if (dto.nip()!= null && !dto.nip().equals(ngo.getNip())) {
             throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NIP);
         }
     }
