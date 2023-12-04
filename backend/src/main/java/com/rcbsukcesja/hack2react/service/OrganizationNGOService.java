@@ -202,7 +202,7 @@ public class OrganizationNGOService {
                 }
             }
         }
-        if (dto.krs() != null && !actual.getKrs().equals(dto.krs())) {
+        if (dto.krs() != null && !dto.krs().equals(actual.getKrs())) {
             organizationValidation.checkIfOrganizationKrsAlreadyExists(dto.krs());
             if (userCanChangeOfficialFields) {
                 actual.setKrs(dto.krs());
@@ -210,7 +210,7 @@ public class OrganizationNGOService {
                 throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, KRS);
             }
         }
-        if (dto.nip() != null && !actual.getNip().equals(dto.nip())) {
+        if (dto.nip() != null && !dto.nip().equals(actual.getNip())) {
             organizationValidation.checkIfOrganizationNipAlreadyExists(dto.nip());
             if (userCanChangeOfficialFields) {
                 actual.setNip(dto.nip());
@@ -218,7 +218,7 @@ public class OrganizationNGOService {
                 throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NIP);
             }
         }
-        if (dto.regon() != null && !actual.getRegon().equals(dto.regon())) {
+        if (dto.regon() != null && !dto.regon().equals(actual.getRegon())) {
             organizationValidation.checkIfOrganizationRegonAlreadyExists(dto.regon());
             if (userCanChangeOfficialFields) {
                 actual.setRegon(dto.regon());
@@ -226,22 +226,22 @@ public class OrganizationNGOService {
                 throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, REGON);
             }
         }
-        if (dto.address() != null && !actual.getAddress().equals(addressMapper.organizationAddressPatchDtoToAddress(dto.address()))) {
+        if (dto.address() != null && !addressMapper.organizationAddressPatchDtoToAddress(dto.address()).equals(actual.getAddress())) {
             actual.setAddress(addressMapper.organizationAddressPatchDtoToAddress(dto.address()));
         }
-        if (dto.phone() != null && !actual.getPhone().equals(dto.phone())) {
+        if (dto.phone() != null && !dto.phone().equals(actual.getPhone())) {
             actual.setPhone(dto.phone());
         }
-        if (dto.email() != null && !actual.getEmail().equals(dto.email())) {
+        if (dto.email() != null && !dto.email().equals(actual.getEmail())) {
             actual.setEmail(dto.email());
         }
-        if (dto.website() != null && !actual.getWebsite().equals(dto.website())) {
+        if (dto.website() != null && !dto.website().equals(actual.getWebsite())) {
             actual.setWebsite(dto.website());
         }
-        if (dto.bankAccount() != null && !actual.getBankAccount().equals(dto.bankAccount())) {
+        if (dto.bankAccount() != null && !dto.bankAccount().equals(actual.getBankAccount())) {
             actual.setBankAccount(dto.bankAccount());
         }
-        if (dto.foundedAt() != null & !actual.getFoundedAt().equals(dto.foundedAt())) {
+        if (dto.foundedAt() != null & !dto.foundedAt().equals(actual.getFoundedAt())) {
             dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
             actual.setFoundedAt(dto.foundedAt());
         }
@@ -250,13 +250,13 @@ public class OrganizationNGOService {
         updateResources(actual, dto.resources());
         updateTags(actual, dto.tags());
 
-        if (dto.confirmed() != null && !(actual.isConfirmed() == dto.confirmed())) {
+        if (dto.confirmed() != null && !dto.confirmed() == actual.isConfirmed()) {
             AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
                     ForbiddenErrorMessageResources.CONFIRMED);
             actual.setConfirmed(dto.confirmed());
         }
 
-        if (dto.description() != null && !actual.getDescription().equals(dto.description())) {
+        if (dto.description() != null && !dto.description().equals(actual.getDescription())) {
             actual.setDescription(dto.description());
         }
         if (dto.businessAreaIds() != null) {
@@ -266,7 +266,7 @@ public class OrganizationNGOService {
                     .toList()));
         }
 
-        if (dto.legalStatus() != null && !actual.getLegalStatus().equals(dto.legalStatus())) {
+        if (dto.legalStatus() != null && !dto.legalStatus().equals(actual.getLegalStatus())) {
             actual.setLegalStatus(dto.legalStatus());
         }
         if (dto.disabled() != null) {
