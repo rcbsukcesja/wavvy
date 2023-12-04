@@ -338,9 +338,7 @@ public class ProjectService {
 
     public ProjectView updateProjectLike(UUID projectId, String clientId) {
         Project project = getProjectByIdOrThrowException(projectId);
-        if (project.getLikes() == null) {
-            project.setLikes(new HashSet<>());
-        }
+
         if (project.getLikes().contains(clientId)) {
             project.getLikes().remove(clientId);
         } else {
