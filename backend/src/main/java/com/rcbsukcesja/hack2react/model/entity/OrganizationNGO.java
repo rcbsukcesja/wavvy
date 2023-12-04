@@ -32,10 +32,10 @@ public class OrganizationNGO extends Organization {
 
     private String bankAccount;
 
-    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organizer", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Project> projects;
 
-    @OneToMany(mappedBy = "organizationNgo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organizationNgo", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<OrganizationNGOTag> tags;
 
     private LocalDate foundedAt;
