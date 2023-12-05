@@ -70,9 +70,9 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           </th>
           <td mat-cell *matCellDef="let element">
             @if (element.confirmed) {
-              <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
+            <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
             } @else {
-              <mat-icon>hourglass_empty</mat-icon>
+            <mat-icon>hourglass_empty</mat-icon>
             }
           </td>
         </ng-container>
@@ -151,7 +151,6 @@ export default class ManageCompaniesPageComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((confirmed: boolean) => {
-        console.log({ confirmed });
         if (!confirmed) {
           return;
         }

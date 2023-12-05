@@ -56,10 +56,6 @@ export class CompanyCardComponent {
   @Input() canSendMessage = true;
   @Output() message = new EventEmitter<MessageDialogFormValue>();
 
-  ngOnInit() {
-    console.log(this);
-  }
-
   openResourcesModal(items: string[]) {
     this.dialog.open(ListDialogComponent, {
       width: '450px',

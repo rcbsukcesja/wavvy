@@ -113,8 +113,6 @@ export class AddOfferFormComponent implements OnInit {
   }>;
 
   addOffer() {
-    console.log((this.form.getRawValue().startDate as any).utc().format());
-
     this.add.emit({
       ...this.form.getRawValue(),
       startDate: (this.form.getRawValue().startDate as any).utc().format(),

@@ -387,7 +387,6 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       return true;
     }
 
-    console.log(d);
 
     return d.getTime() < new Date().getTime();
   };

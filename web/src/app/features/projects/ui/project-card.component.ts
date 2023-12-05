@@ -24,9 +24,9 @@ import { Project } from '../model/project.model';
         class="relative h-80 bg-cover"
         [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
         @if (project.disabled && currentUserId === project.organizer.id) {
-          <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
-            <mat-icon>warning</mat-icon>
-          </div>
+        <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
+          <mat-icon>warning</mat-icon>
+        </div>
         }
         <div class="absolute bg-black text-white right-0  text-xs px-1 py-2 flex items-center">
           <mat-icon class="mr-2">schedule</mat-icon> <span>{{ project.startTime | date }}</span>
@@ -102,10 +102,6 @@ export class ProjectCardComponent {
   @Output() message = new EventEmitter<MessageDialogFormValue>();
 
   private pipe = new IsOwnProjectPipe();
-
-  ngOnInit() {
-    console.log(this);
-  }
 
   openDescriptionDialog(name: string, description: string) {
     this.dialog.open(DescriptionDialogComponent, {

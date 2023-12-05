@@ -386,7 +386,6 @@ export default class ProjectFormPageComponent implements OnInit {
 
     const { endTime, startTime } = this.prepareDates(formValue);
 
-    console.log(formValue.startTime);
     const payload = {
       description: formValue.description,
       endTime: formatDateToUTC(endTime),

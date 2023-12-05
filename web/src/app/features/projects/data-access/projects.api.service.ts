@@ -50,7 +50,7 @@ export class ProjectsApiService extends HttpBaseService {
     const formData: FormData = new FormData();
     formData.append('file', logo);
 
-    this.http.post(`${this.url}/${projectId}/logo`, formData).subscribe();
+    this.http.post(`${this.url}/${projectId}/image`, formData).subscribe();
   }
 
   add(payload: AddProjectFormValue) {
