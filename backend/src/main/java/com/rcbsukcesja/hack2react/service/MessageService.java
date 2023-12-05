@@ -2,15 +2,20 @@ package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.MessageNotFoundException;
-import com.rcbsukcesja.hack2react.model.dto.save.MessageByProjectSaveDto;
+import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNotFoundException;
+import com.rcbsukcesja.hack2react.model.dto.save.MessageByCitySaveDto;
+import com.rcbsukcesja.hack2react.model.dto.save.MessageByOrganizationsSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.save.MessagePatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.MessageSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
 import com.rcbsukcesja.hack2react.model.entity.Message;
+import com.rcbsukcesja.hack2react.model.entity.Organization;
 import com.rcbsukcesja.hack2react.model.entity.User;
 import com.rcbsukcesja.hack2react.model.enums.UserType;
 import com.rcbsukcesja.hack2react.model.mappers.MessageMapper;
 import com.rcbsukcesja.hack2react.repositories.MessageRepository;
+import com.rcbsukcesja.hack2react.repositories.OrganizationRepository;
+import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.UserValidation;
@@ -31,8 +36,10 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final UserService userService;
-    private final ProjectService projectService;
     private final UserValidation userValidation;
+    private final OrganizationRepository organizationRepository;
+
+    private final UserRepository userRepository;
 
     private static final String CITY_NAME_ADDITION = "Urząd Miasta Kołobrzeg";
 
@@ -56,8 +63,8 @@ public class MessageService {
     }
 
     @Transactional
-    public MessageView createMessageByProjectSaveDto(MessageByProjectSaveDto messageSaveDto) {
-        log.info("createMessageByProjectSaveDto(messageSaveDto: {})", messageSaveDto);
+    public MessageView createMessageByOrganizations(MessageByOrganizationsSaveDto messageSaveDto) {
+        log.info("createMessageByOrganizations(messageSaveDto: {})", messageSaveDto);
 
         Message message = new Message();
         message.setMessage(messageSaveDto.message());
@@ -66,13 +73,37 @@ public class MessageService {
 
         User sender = getLoggedUser();
         message.setSender(sender);
-        User receiver = projectService.getProjectByIdOrThrowException(messageSaveDto.projectId()).getOrganizer().getOwner();
+        User receiver = getOrganizationByIdOrThrowException(messageSaveDto.organizationId()).getOwner();
         message.setReceiver(receiver);
         message.setCreatedAt(TimeUtils.nowInUTC());
         message.setUpdatedAt(message.getCreatedAt());
         message.setName(createName(sender, messageSaveDto.name()));
 
         messageRepository.save(message);
+        return messageMapper.messageToMessageView(message);
+    }
+
+    @Transactional
+    public MessageView createMessageByCity(MessageByCitySaveDto messageSaveDto) {
+        log.info("createMessageByCity(messageSaveDto: {})", messageSaveDto);
+        List<User> receivers = findUserCity();
+        Message message = new Message();
+        for(User receiver : receivers) {
+
+            message.setMessage(messageSaveDto.message());
+            message.setTitle(messageSaveDto.title());
+            message.setContact(messageSaveDto.contact());
+
+            User sender = getLoggedUser();
+            message.setSender(sender);
+
+            message.setReceiver(receiver);
+            message.setCreatedAt(TimeUtils.nowInUTC());
+            message.setUpdatedAt(message.getCreatedAt());
+            message.setName(createName(sender, messageSaveDto.name()));
+
+            messageRepository.save(message);
+        }
         return messageMapper.messageToMessageView(message);
     }
 
@@ -147,6 +178,16 @@ public class MessageService {
             sB.append(tempName).append(" ").append(user.getOrganization().getName());
         }
         return sB.toString();
+    }
+
+    private Organization getOrganizationByIdOrThrowException(UUID id) {
+        return organizationRepository.findById(id)
+                .orElseThrow(() -> new OrganizationNotFoundException(
+                        ErrorMessages.ORGANIZATION_NOT_FOUND, id));
+    }
+
+    private List<User> findUserCity(){
+        return userRepository.getUserByUserType(UserType.CITY_HALL);
     }
 
 
