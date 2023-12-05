@@ -43,7 +43,7 @@ export class CommonFiltersComponent {
   searchCtrl = new FormControl('', { nonNullable: true });
 
   constructor() {
-    this.searchCtrl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(250), distinctUntilChanged()).subscribe(() => {
+    this.searchCtrl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(500), distinctUntilChanged()).subscribe(() => {
       this.emitFiltersChanged();
     });
   }

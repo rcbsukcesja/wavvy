@@ -70,13 +70,10 @@ export class ChangeStatusDialogComponent implements OnInit {
     this.form.controls.shouldDisable.valueChanges
       .pipe(startWith(this.form.controls.shouldDisable.value), takeUntilDestroyed(this.destroy))
       .subscribe(value => {
-        console.log({ value });
         if (value) {
           reasonCtrl.enable();
           reasonCtrl.addValidators([Validators.required, Validators.minLength(10), CustomValidators.maxLength()]);
           reasonCtrl.updateValueAndValidity();
-
-          console.log(reasonCtrl.valid);
         } else {
           reasonCtrl.disable();
           reasonCtrl.patchValue('');
@@ -87,7 +84,6 @@ export class ChangeStatusDialogComponent implements OnInit {
   }
 
   changeStatus() {
-    console.log(this.form.invalid);
     this.form.markAllAsTouched();
 
     if (this.form.invalid) {

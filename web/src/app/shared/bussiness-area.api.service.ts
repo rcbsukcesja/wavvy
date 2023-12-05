@@ -12,9 +12,6 @@ export class BusinessAreaApiService extends HttpBaseService {
   }
 
   getAll() {
-    return this.http.get<BusinessArea[]>(this.url).pipe(
-      map(areas => areas.slice(0, 9)),
-      tap(console.log)
-    );
+    return this.http.get<BusinessArea[]>(this.url).pipe(map(areas => areas.slice(0, 9)));
   }
 }

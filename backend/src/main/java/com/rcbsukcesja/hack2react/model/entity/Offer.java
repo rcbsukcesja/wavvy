@@ -20,6 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,6 +36,7 @@ import java.util.UUID;
 @Builder
 @EqualsAndHashCode(of = "id")
 @Table(name = "offers", schema = "wavvy")
+@ToString
 public class Offer {
 
     @Id

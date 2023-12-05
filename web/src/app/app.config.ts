@@ -77,7 +77,6 @@ function initializeKeycloak(keycloak: KeycloakService, auth: AuthService) {
         }
         const keycloakRoles = keycloak.getUserRoles();
 
-        console.log({ user });
         auth.setAuthenticatedUser({
           firstLogin: false,
           id: user.id!,

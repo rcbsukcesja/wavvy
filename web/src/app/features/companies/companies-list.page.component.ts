@@ -90,12 +90,12 @@ export default class CompaniesListPageComponent implements OnInit {
     });
   }
 
-  sendMessage(message: MessageDialogFormValue, receiverId: ID) {
+  sendMessage(message: MessageDialogFormValue, organizationId: ID) {
     this.snackbar.open('Wiadomość została wysłana!', '', {
       duration: 3000,
       horizontalPosition: 'end',
       verticalPosition: 'bottom',
     });
-    this.messagesService.send({ ...message, receiverId });
+    this.messagesService.send({ ...message, organizationId });
   }
 }

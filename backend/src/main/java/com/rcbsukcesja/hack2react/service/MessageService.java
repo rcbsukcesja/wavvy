@@ -15,6 +15,7 @@ import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MessageService {
 
     private final MessageRepository messageRepository;
@@ -36,6 +38,7 @@ public class MessageService {
 
     @Transactional
     public MessageView createMessage(MessageSaveDto messageSaveDto) {
+        log.info("createMessage(messageSaveDto: {})", messageSaveDto);
 
         Message message = new Message();
         setBasicMessageFields(message, messageSaveDto);
@@ -54,6 +57,7 @@ public class MessageService {
 
     @Transactional
     public MessageView createMessageByProjectSaveDto(MessageByProjectSaveDto messageSaveDto) {
+        log.info("createMessageByProjectSaveDto(messageSaveDto: {})", messageSaveDto);
 
         Message message = new Message();
         message.setMessage(messageSaveDto.message());
@@ -74,6 +78,7 @@ public class MessageService {
 
     @Transactional
     public MessageView patchUpdateMessage(UUID messageId, MessagePatchDto dto) {
+        log.info("patchUpdateMessage(messageId: {}, dto: {})", messageId, dto);
 
         Message actual = getMessageOrThrowException(messageId);
 
@@ -98,17 +103,20 @@ public class MessageService {
     }
 
     public void deleteMessage(UUID id) {
+        log.info("deleteMessage(id: {})", id);
         Message message = getMessageOrThrowException(id);
         userValidation.checkIfIsOwner(message.getSender().getId());
         messageRepository.delete(message);
     }
 
     public List<MessageView> getSentMessages() {
+        log.info("getSentMessage()");
         List<Message> messages = messageRepository.getMessageBySender(getLoggedUser());
         return messageMapper.messageListToMessageViewList(messages);
     }
 
     public List<MessageView> getReceivedMessages() {
+        log.info("getReceivedMessages()");
         List<Message> messages = messageRepository.getMessageByReceiver(getLoggedUser());
         return messageMapper.messageListToMessageViewList(messages);
     }
