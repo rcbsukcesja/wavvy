@@ -63,7 +63,7 @@ jobs:
 
       - name: Build and Export Docker Images
         run: |
-          docker-compose build
+          docker-compose build --no-cache
           docker save -o wavvy.tar wavvy_keycloak wavvy_backend wavvy_frontend
 
       - name: Copy Docker Images to Server
