@@ -7,12 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.UUID;
 
 @UtilityClass
 public class FileUtils {
     public static String UPLOAD_DIRECTORY = "/usr/share/wavvy/images";
 
-    public String getPathAsString(String fileExtension, String id, String dir) {
+    public String getPathAsString(String fileExtension, UUID id, String dir) {
         if (Objects.isNull(fileExtension)) {
             return null;
         }

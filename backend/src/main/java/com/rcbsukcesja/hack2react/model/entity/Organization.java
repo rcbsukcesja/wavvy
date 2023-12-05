@@ -56,7 +56,7 @@ public abstract class Organization {
     private String logoPath;
     private String logoUrl;
 
-    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<SocialLink> socialLinks;
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime createdAt;
@@ -78,7 +78,7 @@ public abstract class Organization {
     private String nip;
     private String regon;
 
-    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Resource> resources;
     private boolean confirmed;
     @Column(length = 2000)

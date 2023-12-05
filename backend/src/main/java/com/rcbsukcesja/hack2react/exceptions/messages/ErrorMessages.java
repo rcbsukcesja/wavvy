@@ -31,6 +31,7 @@ public class ErrorMessages {
     public static final String FILE_IS_TOO_LARGE = "File is too large! Maximum file size is %s";
 
     public static final String FILE_FAILED_TO_STORE = "Failed to store file!";
+    public static final String FILE_EXTENSION_FAILURE = "Failed to store file! Extension cannot be null!";
     public static final String FILE_FAILED_TO_REMOVE = "Failed to remove file!";
 
     public static final String DATE_START_AFTER_END_VALIDATION_MESSAGE = "Start date cannot be after end date";

@@ -1,9 +1,7 @@
 package com.rcbsukcesja.hack2react.controller;
 
 import com.rcbsukcesja.hack2react.service.OrganizationService;
-import com.rcbsukcesja.hack2react.service.StorageService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,29 +20,23 @@ import java.util.UUID;
 @RequestMapping("/organizations")
 public class OrganizationController {
     private final OrganizationService organizationService;
-    private final StorageService storageService;
 
     private final static String UPLOAD_DIRECTORY = "logo";
 
-    @PostMapping(value = "/{id}/logo", consumes = "multipart/form-data")
+    @PostMapping(value = "/{organizationId}/logo", consumes = "multipart/form-data")
     @PreAuthorize("hasAnyRole('ROLE_NGO','ROLE_COMPANY')")
     public ResponseEntity<?> uploadLogo(
-            @PathVariable UUID id,
+            @PathVariable UUID organizationId,
             @RequestParam("file") MultipartFile file) {
-        storageService.store(file, id.toString(), UPLOAD_DIRECTORY);
-        String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
-        organizationService.updateLogoPath(fileExtension, id, UPLOAD_DIRECTORY);
-        return new ResponseEntity<>(HttpStatus.OK);
+        organizationService.updateLogo(file, organizationId, UPLOAD_DIRECTORY);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}/logo")
+    @DeleteMapping("/{organizationId}/logo")
     @PreAuthorize("hasAnyRole('ROLE_NGO','ROLE_COMPANY')")
     public ResponseEntity<?> removeLogo(
-            @PathVariable UUID id) {
-        String filePath = organizationService.removeLogoPath(id);
-        if (filePath != null) {
-            storageService.remove(filePath);
-        }
+            @PathVariable UUID organizationId) {
+        organizationService.removeLogo(organizationId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

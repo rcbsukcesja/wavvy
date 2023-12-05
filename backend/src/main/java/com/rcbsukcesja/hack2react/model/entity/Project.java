@@ -43,7 +43,7 @@ public class Project {
     private Address address;
     private String imagePath;
     private String imageLink;
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<ProjectLink> links;
     @Column(columnDefinition = "TIMESTAMP", nullable = false)
     private ZonedDateTime startTime;
@@ -59,7 +59,7 @@ public class Project {
     @Column(columnDefinition = "INTEGER")
     private ProjectStatus status;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<ProjectTag> tags;
 
     private boolean possibleVolunteer;

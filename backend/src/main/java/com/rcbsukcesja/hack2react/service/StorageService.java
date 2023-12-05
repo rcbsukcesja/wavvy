@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import static com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages.FILE_FAILED_TO_REMOVE;
 import static com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages.FILE_FAILED_TO_STORE;
@@ -20,10 +21,10 @@ import static com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages.FILE_
 public class StorageService {
     private final ImageFileValidation imageFileValidation;
 
-    public void store(MultipartFile file, String id, String directory) {
+    public void store(MultipartFile file, UUID id, String directory) {
         try {
             imageFileValidation.validateImageFile(file);
-            Path fileNameAndPath = FileUtils.getPath(file, id, directory);
+            Path fileNameAndPath = FileUtils.getPath(file, id.toString(), directory);
             Files.write(fileNameAndPath, file.getBytes());
         } catch (IOException e) {
             throw new StorageException(FILE_FAILED_TO_STORE, e);
