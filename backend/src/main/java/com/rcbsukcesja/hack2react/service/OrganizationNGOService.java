@@ -1,7 +1,7 @@
 package com.rcbsukcesja.hack2react.service;
 
-import com.rcbsukcesja.hack2react.exceptions.forbidden.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
+import com.rcbsukcesja.hack2react.exceptions.forbidden.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.messages.ForbiddenErrorMessageResources;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
@@ -241,7 +241,7 @@ public class OrganizationNGOService {
         if (dto.bankAccount() != null && !dto.bankAccount().equals(actual.getBankAccount())) {
             actual.setBankAccount(dto.bankAccount());
         }
-        if (dto.foundedAt() != null & !dto.foundedAt().equals(actual.getFoundedAt())) {
+        if (dto.foundedAt() != null && !dto.foundedAt().equals(actual.getFoundedAt())) {
             dateValidation.isFoundedAtDateNotBeforeTodayDate(dto.foundedAt());
             actual.setFoundedAt(dto.foundedAt());
         }
