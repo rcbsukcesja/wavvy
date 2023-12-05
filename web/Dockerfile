@@ -20,5 +20,7 @@ RUN npm run build
 FROM nginx:1.24.0-bullseye
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /usr/src/app/dist/starter/browser /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/starter/browser/assets /usr/share/nginx/html/assets
+COPY --from=build /usr/src/app/dist/starter/browser/assets/images /usr/share/nginx/html/assets/images
 RUN mkdir /usr/share/nginx/html/assets/images/logo
 RUN mkdir /usr/share/nginx/html/assets/images/project
