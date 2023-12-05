@@ -86,7 +86,7 @@ public class ProjectController {
     }
 
     @PatchMapping("/{projectId}")
-    @PreAuthorize("hasRole('ROLE_NGO')")
+    @PreAuthorize("hasAnyRole('ROLE_NGO', 'ROLE_CITY_HALL')")
     public ResponseEntity<ProjectView> patchUpdateProject(
             @PathVariable UUID projectId,
             @RequestBody @Valid ProjectPatchDto projectPatchDto) {
