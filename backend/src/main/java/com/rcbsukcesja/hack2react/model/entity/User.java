@@ -22,6 +22,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,7 @@ import java.util.UUID;
 @Builder
 @EqualsAndHashCode(of = "id")
 @Table(name = "app_users", schema = "wavvy")
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
