@@ -1,6 +1,7 @@
 package com.rcbsukcesja.hack2react.repositories;
 
 import com.rcbsukcesja.hack2react.model.entity.User;
+import com.rcbsukcesja.hack2react.model.enums.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
 
     Boolean existsByUsernameIgnoreCase(String username);
+
+    User getUserByUserType(UserType cityHall);
 }
