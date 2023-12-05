@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Table(name = "resources", schema = "wavvy")
+@ToString
 public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

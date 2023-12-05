@@ -18,6 +18,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -32,6 +33,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Table(name = "projects", schema = "wavvy")
+@ToString
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

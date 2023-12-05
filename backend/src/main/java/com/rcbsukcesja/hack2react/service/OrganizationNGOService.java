@@ -30,6 +30,8 @@ import com.rcbsukcesja.hack2react.validations.DateValidation;
 import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
 import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -44,6 +46,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrganizationNGOService {
 
     private final static String NAME = "name";
@@ -61,6 +64,7 @@ public class OrganizationNGOService {
     private final UserValidation userValidation;
 
     public Page<OrganizationNGOListView> getAllNGO(String search, Pageable pageable, Authentication authentication) {
+        log.info("getAllNGO(search: {})", search);
         Specification<OrganizationNGO> spec = Specification.where(null);
 
         if (authentication == null || !AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
@@ -76,12 +80,14 @@ public class OrganizationNGOService {
     }
 
     public OrganizationNGOView getNGOById(UUID id) {
+        log.info("getNGOById( id: {})", id);
         return organizationNGOMapper
                 .organizationNGOToOrganizationNGOView(getNgoByIdOrThrowException(id));
     }
 
     @Transactional
     public OrganizationNGOView createNGO(OrganizationNGOSaveDto dto) {
+        log.info("createNGO( dto: {})", dto);
         validateCreateNgo(dto);
         OrganizationNGO ngo = new OrganizationNGO();
         setOfficialNGOFields(dto, ngo);
@@ -138,6 +144,7 @@ public class OrganizationNGOService {
 
     @Transactional
     public OrganizationNGOView putUpdateNGO(UUID organizationNGOId, OrganizationNGOSaveDto dto) {
+        log.info("putUpdateNGO( organizationNGOId: {}, dto: {})", organizationNGOId, dto);
         OrganizationNGO ngo = getNgoByIdOrThrowException(organizationNGOId);
         validateUpdateNgo(dto, ngo);
 
@@ -183,6 +190,7 @@ public class OrganizationNGOService {
 
     @Transactional
     public OrganizationNGOView patchUpdateNGO(UUID ngoId, OrganizationNGOPatchDto dto) {
+        log.info("patchUpdateNGO( ngoId: {}, dto: {})", ngoId, dto);
         OrganizationNGO actual = getNgoByIdOrThrowException(ngoId);
 
         if(!AuthenticationUtils.isCityUser(SecurityContextHolder.getContext().getAuthentication())){
@@ -291,6 +299,7 @@ public class OrganizationNGOService {
 
     @Transactional
     public void deleteNGO(UUID id) {
+        log.info("deleteNGO(id: {})", id);
         OrganizationNGO ngo = getNgoByIdOrThrowException(id);
         organizationNGORepository.delete(ngo);
     }
@@ -423,6 +432,7 @@ public class OrganizationNGOService {
     }
 
     public OrganizationNGOView getMyNGO() {
+        log.info("getMyNgo()");
         UUID userId = TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication());
         User owner = getUserByIdOrThrowException(userId);
         OrganizationNGO organizationNGO = organizationNGORepository.getOrganizationNGOByOwner(owner);
