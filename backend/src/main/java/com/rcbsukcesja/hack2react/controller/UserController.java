@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,17 +52,16 @@ public class UserController {
                 result, HttpStatus.OK);
     }
 
-
-    // This endpoint has been disabled because it is not used anymore
-    //@PostMapping
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserView> createUser(@RequestBody @Valid UserSaveDto userSaveDto) {
         UserView result = userService.saveUser(null, userSaveDto);
         return new ResponseEntity<>(
                 result, HttpStatus.CREATED);
     }
 
-    // This endpoint has been disabled because it is not used anymore
-    //@PutMapping("/{userId}")
+    @PutMapping("/{userId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserView> putUpdateUser(@PathVariable UUID userId, @RequestBody @Valid UserSaveDto userSaveDto) {
         UserView result = userService.saveUser(userId, userSaveDto);
         return new ResponseEntity<>(result, HttpStatus.OK);

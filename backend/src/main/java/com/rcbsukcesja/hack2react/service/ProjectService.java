@@ -178,14 +178,16 @@ public class ProjectService {
     @Transactional
     public ProjectView patchUpdateProject(UUID projectId, ProjectPatchDto dto) {
         Project project = getProjectByIdOrThrowException(projectId);
-        userValidation.checkIfIsOwner(project.getOrganizer().getOwner().getId());
+        if(!AuthenticationUtils.isCityUser(SecurityContextHolder.getContext().getAuthentication())){
+            userValidation.checkIfIsOwner(project.getOrganizer().getOwner().getId());
+        }
         if (dto.name() != null && !dto.name().equals(project.getName())) {
             project.setName(dto.name());
         }
         if (dto.description() != null && !dto.description().equals(project.getDescription())) {
             project.setDescription(dto.description());
         }
-        if (dto.address() != null && !project.getAddress().equals(addressMapper.projectAddressPatchDtoToAddress(dto.address()))) {
+        if (dto.address() != null && !addressMapper.projectAddressPatchDtoToAddress(dto.address()).equals(project.getAddress())) {
             project.setAddress(addressMapper.projectAddressPatchDtoToAddress(dto.address()));
         }
         if (dto.startTime() != null && !dto.startTime().equals(project.getStartTime())) {
