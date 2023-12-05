@@ -24,6 +24,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
@@ -40,6 +41,7 @@ import java.util.UUID;
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "organization_type", discriminatorType = DiscriminatorType.STRING)
+@ToString
 public abstract class Organization {
 
     @Id

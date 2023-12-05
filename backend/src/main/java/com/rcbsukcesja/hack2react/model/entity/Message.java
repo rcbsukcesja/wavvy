@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -26,6 +27,7 @@ import java.util.UUID;
 @Builder
 @EqualsAndHashCode(of = "id")
 @Table(name = "messages", schema = "wavvy")
+@ToString
 public class Message {
 
     @Id
