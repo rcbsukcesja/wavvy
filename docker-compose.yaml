@@ -126,5 +126,5 @@ services:
       - KEYCLOAK_URL=${KEYCLOAK_URL}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
-    volumes:
+#    volumes:
 #      - /var/images:/usr/share/nginx/html/assets/images
