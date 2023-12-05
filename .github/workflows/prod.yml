@@ -11,18 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check Docker Version
-        run: docker --version
-      - name: Install Latest Docker
-        run: |
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
-          sudo apt-get update
-          sudo apt-get install docker-ce
-      - name: Check Docker Version
-        run: docker --version
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: List images
+        run: ls -la ./web/src/assets/images
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -70,7 +63,7 @@ jobs:
 
       - name: Build and Export Docker Images
         run: |
-          docker-compose build
+          docker-compose build --no-cache
           docker save -o wavvy.tar wavvy_keycloak wavvy_backend wavvy_frontend
 
       - name: Copy Docker Images to Server
