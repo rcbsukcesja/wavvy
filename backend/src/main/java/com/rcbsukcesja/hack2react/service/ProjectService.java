@@ -2,6 +2,7 @@ package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidProjectStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.ReasonValueException;
+import com.rcbsukcesja.hack2react.exceptions.io.StorageException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.messages.ForbiddenErrorMessageResources;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundException;
@@ -27,6 +28,7 @@ import com.rcbsukcesja.hack2react.validations.DateValidation;
 import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
 import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -42,6 +45,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages.FILE_EXTENSION_FAILURE;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +59,7 @@ public class ProjectService {
     private final AddressMapper addressMapper;
     private final UserValidation userValidation;
     private final OrganizationValidation organizationValidation;
+    private final StorageService storageService;
 
     @Value("${wavvy.images.project.url}")
     private String projectUrl;
@@ -239,25 +245,46 @@ public class ProjectService {
     }
 
     @Transactional
-    public void updateImagePath(String fileExtension, UUID id, String directory) {
-        Project project = getProjectByIdOrThrowException(id);
+    public void updateImage(MultipartFile file, UUID projectId, String directory) {
+        Project project = getProjectByIdOrThrowException(projectId);
         userValidation.checkIfIsOwner(project.getOrganizer().getOwner().getId());
-        project.setImagePath(FileUtils.getPathAsString(fileExtension, id.toString(), directory));
-        project.setImageLink(projectUrl + "/" + id + "." + fileExtension.toLowerCase());
+        String oldFilePath = removeImagePathAndLinkAndReturnPath(project);
+        storageService.store(file, projectId, directory);
+        String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (fileExtension == null) {
+            throw new StorageException(FILE_EXTENSION_FAILURE);
+        }
+        String newFilePath = FileUtils.getPathAsString(fileExtension, projectId, directory);
+        project.setImagePath(newFilePath);
+        project.setImageLink(projectUrl + "/" + projectId + "." + fileExtension.toLowerCase());
         project.setUpdatedAt(TimeUtils.nowInUTC());
         projectRepository.saveAndFlush(project);
+        if (oldFilePath != null && !oldFilePath.equals(newFilePath)) {
+            removeImage(oldFilePath);
+        }
     }
 
     @Transactional
-    public String removeImagePath(UUID id) {
-        Project project = getProjectByIdOrThrowException(id);
+    public void removeImage(UUID projectId) {
+        Project project = getProjectByIdOrThrowException(projectId);
+        userValidation.checkIfIsOwner(project.getOrganizer().getOwner().getId());
+        String filePath = removeImagePathAndLinkAndReturnPath(project);
+        removeImage(filePath);
+    }
+
+    private String removeImagePathAndLinkAndReturnPath(Project project) {
         String filePath = project.getImagePath();
         project.setImagePath(null);
         project.setImageLink(null);
-
         project.setUpdatedAt(TimeUtils.nowInUTC());
         projectRepository.saveAndFlush(project);
         return filePath;
+    }
+
+    private void removeImage(String filePath) {
+        if (filePath != null) {
+            storageService.remove(filePath);
+        }
     }
 
     private void setBasicProjectFields(ProjectSaveDto dto, Project project) {

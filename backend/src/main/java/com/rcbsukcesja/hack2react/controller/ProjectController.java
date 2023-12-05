@@ -5,10 +5,8 @@ import com.rcbsukcesja.hack2react.model.dto.save.ProjectSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.ProjectView;
 import com.rcbsukcesja.hack2react.model.enums.ProjectStatus;
 import com.rcbsukcesja.hack2react.service.ProjectService;
-import com.rcbsukcesja.hack2react.service.StorageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +35,6 @@ import java.util.UUID;
 @RequestMapping("/projects")
 public class ProjectController {
     private final ProjectService projectService;
-    private final StorageService storageService;
 
     private static final String UPLOAD_DIRECTORY = "project";
 
@@ -101,23 +98,18 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasRole('ROLE_NGO')")
-    @PostMapping(value = "/{id}/image", consumes = "multipart/form-data")
+    @PostMapping(value = "/{projectId}/image", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadLogo(
-            @PathVariable UUID id,
+            @PathVariable UUID projectId,
             @RequestParam("file") MultipartFile file) {
-        storageService.store(file, id.toString(), UPLOAD_DIRECTORY);
-        String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
-        projectService.updateImagePath(fileExtension, id, UPLOAD_DIRECTORY);
+        projectService.updateImage(file, projectId, UPLOAD_DIRECTORY);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}/image")
+    @DeleteMapping("/{projectId}/image")
     public ResponseEntity<?> removeLogo(
-            @PathVariable UUID id) {
-        String filePath = projectService.removeImagePath(id);
-        if (filePath != null) {
-            storageService.remove(filePath);
-        }
+            @PathVariable UUID projectId) {
+        projectService.removeImage(projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
