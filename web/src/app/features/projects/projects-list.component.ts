@@ -23,7 +23,6 @@ export class IsOwnProjectPipe implements PipeTransform {
   private authState = inject(NGOsStateService).$value;
 
   transform(projectOwnerId: string) {
-    console.log(projectOwnerId, this.authState().profile?.id);
     return projectOwnerId === this.authState().profile?.id;
   }
 }
@@ -68,14 +67,14 @@ export class DescriptionDialogComponent {
             class="relative h-80 bg-cover"
             [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
             @if (project.disabled && $ngoId() === project.ngoId) {
-              <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
-                <mat-icon>warning</mat-icon>
-              </div>
+            <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
+              <mat-icon>warning</mat-icon>
+            </div>
             }
             <div class="absolute bg-black text-white right-0  text-xs px-1 py-2 flex items-center">
               <mat-icon class="mr-2">schedule</mat-icon> <span>{{ project.startTime | date }}</span>
               @if (project.startTime !== project.endTime) {
-                <span class="pl-1">- {{ project.endTime | date }}</span>
+              <span class="pl-1">- {{ project.endTime | date }}</span>
               }
             </div>
           </div>
@@ -172,7 +171,7 @@ export default class ProjectsListComponent {
               horizontalPosition: 'end',
               verticalPosition: 'bottom',
             });
-            this.messagesService.send({ ...value, receiverId: id });
+            this.messagesService.send({ ...value, organizationId: id });
           }
         }),
         take(1)

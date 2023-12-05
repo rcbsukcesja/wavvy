@@ -3,8 +3,6 @@ import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Message, MessagePayload } from '../model/message.model';
 import { MessagesStateService } from './messages.state.service';
 import { tap } from 'rxjs';
-import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
-import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 import { MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
@@ -24,22 +22,23 @@ export class MessagesApiService extends HttpBaseService {
   }
 
   sendToCity(messageValue: MessageDialogFormValue) {
-    // todo: provide city user id
-    this.send({ ...messageValue, receiverId: '321' });
+    this.stateService.setState({ sendCallState: 'LOADING' });
+
+    this.http
+      .post(`${this.url}/city`, messageValue)
+      .pipe(
+        tap(() => {
+          this.stateService.setState({ sendCallState: 'LOADED' });
+        })
+      )
+      .subscribe();
   }
 
   send(payload: MessagePayload) {
     this.stateService.setState({ sendCallState: 'LOADING' });
 
-    // const id = this.authStateService.$value().user?.id;
-
     this.http
-      .post(`${this.url}`, {
-        ...payload,
-        // senderId: id,
-        // createdAt: Date.now(),
-        receiverId: payload.receiverId,
-      })
+      .post(`${this.url}/organizations`, payload)
       .pipe(
         tap(() => {
           this.stateService.setState({ sendCallState: 'LOADED' });

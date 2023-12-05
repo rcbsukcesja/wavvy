@@ -88,15 +88,11 @@ export class AuthService extends HttpBaseService {
   }
 
   checkToken(token: Token) {
-    console.log('adad', this.kc.isLoggedIn());
-
     return of(this.kc.isLoggedIn());
   }
 
   logout(callback?: VoidFunction) {
     this.kc.logout().then(() => {
-      console.log('wylogowano!');
-
       this.authStateService.setState({ status: 'NON_AUTHENTICATED', user: null });
       this.router.navigateByUrl('/');
 

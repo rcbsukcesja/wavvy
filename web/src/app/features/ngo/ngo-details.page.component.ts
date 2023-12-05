@@ -174,7 +174,7 @@ export default class NgoDetailsPageComponent implements OnInit {
               horizontalPosition: 'end',
               verticalPosition: 'bottom',
             });
-            this.messagesService.send({ ...value, receiverId: id });
+            this.messagesService.send({ ...value, organizationId: id });
           }
         }),
         take(1)

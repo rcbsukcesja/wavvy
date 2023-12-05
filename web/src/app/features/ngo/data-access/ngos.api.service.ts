@@ -88,7 +88,6 @@ export class NGOsApiService extends HttpBaseService {
 
   getProfile() {
     this.stateService.setState({ loadProfileCallState: 'LOADING' });
-    console.log('test', this.url);
     const user = this.authState.$value().user;
 
     if (!user) {
@@ -99,7 +98,6 @@ export class NGOsApiService extends HttpBaseService {
       .get<NGO>(`${user.role === USER_ROLES.NGO_USER ? this.url : this.url.replace('ngos', 'companies')}/my`)
       .pipe(
         tap(ngo => {
-          console.log({ ngo });
           this.stateService.setState({ loadProfileCallState: 'LOADED', profile: ngo });
         })
       )
@@ -119,7 +117,6 @@ export class NGOsApiService extends HttpBaseService {
       .get<ListApiResponse<NGO>>(this.url, { params: createListHttpParams(params) })
       .pipe(
         tap(response => {
-          console.log({ response });
           this.stateService.setState({
             loadListCallState: 'LOADED',
             list: response.content,
@@ -132,7 +129,6 @@ export class NGOsApiService extends HttpBaseService {
 
   getById(id: ID) {
     this.stateService.setState({ loadByIdCallState: 'LOADING' });
-    console.log();
     this.http
       .get<NGO>(`${this.url}/${id}`)
       .pipe(

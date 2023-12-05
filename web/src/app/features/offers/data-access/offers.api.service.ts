@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Offer } from '../model/offer.model';
 import { OffersStateService } from './offers.state.service';
-import { map, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
 import { User } from 'src/app/auth/data_access/auth.state.service';
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
@@ -41,8 +41,6 @@ export class OffersApiService extends HttpBaseService {
   toggleFav(offerId: string, following: boolean) {
     const ngo = this.ngoState.$value().profile;
 
-    console.log(ngo);
-
     if (!ngo) {
       return;
     }
@@ -70,13 +68,6 @@ export class OffersApiService extends HttpBaseService {
               return offer;
             }),
           });
-          // this.ngoState.setState({
-          //   ...this.ngoState.$value(),
-          //   profile: {
-          //     ...ngo,
-          //     // followedByUser: payload,
-          //   },
-          // });
         })
       )
       .subscribe();
@@ -84,7 +75,7 @@ export class OffersApiService extends HttpBaseService {
 
   add(payload: AddOfferFormValue) {
     this.http
-      .post<Offer>(`${this.url}`, payload)
+      .post<Offer>(`${this.url}`, { ...payload, scope: 'NGO_AND_COMPANY' })
       .pipe(
         tap(() => {
           this.getAll();
@@ -129,7 +120,6 @@ export class OffersApiService extends HttpBaseService {
       .get<ListApiResponse<Offer>>(this.url, { params: createListHttpParams(params, params.sort, 'startDate') })
       .pipe(
         tap(response => {
-          console.log(response.content);
           this.stateService.setState({
             loadListCallState: 'LOADED',
             list: response.content,
