@@ -86,21 +86,24 @@ public class MessageService {
     @Transactional
     public MessageView createMessageByCity(MessageByCitySaveDto messageSaveDto) {
         log.info("createMessageByCity(messageSaveDto: {})", messageSaveDto);
-
+        List<User> receivers = findUserCity();
         Message message = new Message();
-        message.setMessage(messageSaveDto.message());
-        message.setTitle(messageSaveDto.title());
-        message.setContact(messageSaveDto.contact());
+        for(User receiver : receivers) {
 
-        User sender = getLoggedUser();
-        message.setSender(sender);
-        User receiver = findUserCity();
-        message.setReceiver(receiver);
-        message.setCreatedAt(TimeUtils.nowInUTC());
-        message.setUpdatedAt(message.getCreatedAt());
-        message.setName(createName(sender, messageSaveDto.name()));
+            message.setMessage(messageSaveDto.message());
+            message.setTitle(messageSaveDto.title());
+            message.setContact(messageSaveDto.contact());
 
-        messageRepository.save(message);
+            User sender = getLoggedUser();
+            message.setSender(sender);
+
+            message.setReceiver(receiver);
+            message.setCreatedAt(TimeUtils.nowInUTC());
+            message.setUpdatedAt(message.getCreatedAt());
+            message.setName(createName(sender, messageSaveDto.name()));
+
+            messageRepository.save(message);
+        }
         return messageMapper.messageToMessageView(message);
     }
 
@@ -183,7 +186,7 @@ public class MessageService {
                         ErrorMessages.ORGANIZATION_NOT_FOUND, id));
     }
 
-    private User findUserCity(){
+    private List<User> findUserCity(){
         return userRepository.getUserByUserType(UserType.CITY_HALL);
     }
 
