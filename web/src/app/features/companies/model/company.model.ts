@@ -14,10 +14,11 @@ export interface Company {
   socialLinks: string[];
   creationDate: string;
   description: string;
-  businnessAreas: BusinessArea[];
-  KRS: string;
-  NIP: string;
-  resource: string[];
+  businessAreas: BusinessArea[];
+  krs: string;
+  nip: string;
+  regon: string;
+  resources: string[];
   donatedProjects: Project[];
   status: keyof typeof NgoStatus;
   disabled: boolean;

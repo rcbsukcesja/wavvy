@@ -30,14 +30,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
 import { NGO, BusinessArea } from '../../ngo/model/ngo.model';
-import { NgoProfileFormModel } from '../../ngo/profile/ngo-profile-form.component';
+import { Company } from '../model/company.model';
 
 export type CompanyProfileFormModel = FormGroup<{
   name: FormControl<string>;
   logo: FormControl<File | null>;
-  KRS: FormControl<string>;
-  NIP: FormControl<string>;
-  REGON: FormControl<string>;
+  krs: FormControl<string>;
+  nip: FormControl<string>;
+  regon: FormControl<string>;
   street: FormControl<string>;
   zipcode: FormControl<string>;
   city: FormControl<string>;
@@ -81,19 +81,19 @@ export type CompanyProfileFormModel = FormGroup<{
           <br />
           <mat-form-field class="md:w-1/2">
             <mat-label>REGON</mat-label>
-            <input formControlName="REGON" matInput />
+            <input formControlName="regon" matInput />
           </mat-form-field>
           <br />
         </div>
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
             <mat-label>KRS</mat-label>
-            <input formControlName="KRS" matInput />
+            <input formControlName="krs" matInput />
           </mat-form-field>
           <br />
           <mat-form-field class="md:w-1/2">
             <mat-label>NIP</mat-label>
-            <input formControlName="NIP" matInput />
+            <input formControlName="nip" matInput />
           </mat-form-field>
           <br />
         </div>
@@ -159,7 +159,7 @@ export type CompanyProfileFormModel = FormGroup<{
             <mat-label>Obszary działania</mat-label>
             <mat-select formControlName="businnessAreas" multiple>
               <mat-select-trigger>
-                {{ form.controls.businnessAreas.value[0].name || '' }}
+                {{ form.controls.businnessAreas.value[0]?.name || '' }}
                 <span *ngIf="(form.controls.businnessAreas.value.length || 0) > 1">
                   (+{{ (form.controls.businnessAreas.value.length || 0) - 1 }}
                   {{ form.controls.businnessAreas.value.length === 2 ? 'other' : 'others' }})
@@ -236,7 +236,7 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
   private builder = inject(NonNullableFormBuilder);
 
   addOnBlur = true;
-  ngoProfile: NGO | null = null;
+  companyProfile: Company | null = null;
   separatorKeysCodes = [ENTER, COMMA] as const;
 
   form!: CompanyProfileFormModel;
@@ -261,9 +261,9 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
     this.form = this.builder.group({
       name: this.builder.control({ value: this.profile.name, disabled: true }),
       logo: this.builder.control<File | null>(null),
-      KRS: this.builder.control({ value: this.profile.KRS, disabled: true }),
-      NIP: this.builder.control({ value: this.profile.NIP, disabled: true }),
-      REGON: this.builder.control({ value: this.profile.REGON, disabled: true }),
+      krs: this.builder.control({ value: this.profile.krs, disabled: true }),
+      nip: this.builder.control({ value: this.profile.nip, disabled: true }),
+      regon: this.builder.control({ value: this.profile.regon, disabled: true }),
       description: this.builder.control(this.profile.description || '', [Validators.required]),
       street: this.builder.control(this.profile.address?.street || '', [Validators.required]),
       city: this.builder.control(this.profile.address?.city || '', [Validators.required]),
@@ -272,7 +272,7 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
       website: this.builder.control(this.profile.website || '', [Validators.required]),
       phone: this.builder.control(this.profile.phone || '', [Validators.required]),
       businnessAreas: this.builder.control<{ id: ID; name: string }[]>(
-        this.bussinessAreas.filter(area => this.profile.businnessAreas?.includes(area.id) || [])
+        this.bussinessAreas.filter(area => this.profile.businessAreas.includes(area.id) || [])
       ),
       resources: this.builder.array<FormControl<string>>([]),
     });

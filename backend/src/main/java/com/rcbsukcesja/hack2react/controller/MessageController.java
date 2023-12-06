@@ -1,6 +1,7 @@
 package com.rcbsukcesja.hack2react.controller;
 
-import com.rcbsukcesja.hack2react.model.dto.save.MessageByProjectSaveDto;
+import com.rcbsukcesja.hack2react.model.dto.save.MessageByCitySaveDto;
+import com.rcbsukcesja.hack2react.model.dto.save.MessageByOrganizationsSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.save.MessagePatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.MessageSaveDto;
 import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
@@ -33,9 +34,14 @@ public class MessageController {
         return new ResponseEntity<>(messageService.createMessage(messageSaveDto), HttpStatus.CREATED);
     }
 
-    @PostMapping("/project")
-    public ResponseEntity<MessageView> createMessageByProject(@RequestBody MessageByProjectSaveDto messageSaveDto) {
-        return new ResponseEntity<>(messageService.createMessageByProjectSaveDto(messageSaveDto), HttpStatus.CREATED);
+    @PostMapping("/organizations")
+    public ResponseEntity<MessageView> createMessageByOrganizations(@RequestBody MessageByOrganizationsSaveDto messageSaveDto) {
+        return new ResponseEntity<>(messageService.createMessageByOrganizations(messageSaveDto), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/city")
+    public ResponseEntity<MessageView> createMessageByCity(@RequestBody MessageByCitySaveDto messageSaveDto) {
+        return new ResponseEntity<>(messageService.createMessageByCity(messageSaveDto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{messageId}")

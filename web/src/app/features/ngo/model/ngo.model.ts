@@ -36,11 +36,11 @@ export interface NGO {
   website: string;
   foundedAt: string;
   description: string;
-  businnessAreas: string[];
+  businessAreas: string[];
   bankAccount?: string;
-  KRS: string;
-  NIP: string;
-  REGON: string;
+  krs: string;
+  nip: string;
+  regon: string;
   resources: string[];
   legalStatus: LegalStatusNGO;
   projects: Project[];

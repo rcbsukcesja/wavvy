@@ -7,7 +7,7 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
 import { ID } from 'src/app/core/types/id.type';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
-import { USER_ROLES } from 'src/app/core/user-roles.enum';
+import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
 import { INITIAL_PAGINATION_STATE, ProjectsStateService } from '../../projects/data-access/projects.state.service';
 import { createListHttpParams } from 'src/app/core/list-http-params.factory';
 import { ProjectsApiService } from '../../projects/data-access/projects.api.service';
@@ -84,6 +84,18 @@ export class NGOsApiService extends HttpBaseService {
         this.getProfile();
       })
     );
+  }
+
+  getProfileOnInit(role: UserRoles) {
+    this.stateService.setState({ loadProfileCallState: 'LOADING' });
+
+    return this.http
+      .get<NGO>(`${role === USER_ROLES.NGO_USER ? this.url : this.url.replace('ngos', 'companies')}/my`)
+      .pipe(
+        tap(organization => {
+          this.stateService.setState({ loadProfileCallState: 'LOADED', profile: organization });
+        })
+      );
   }
 
   getProfile() {

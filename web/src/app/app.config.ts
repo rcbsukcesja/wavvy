@@ -15,7 +15,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { environment } from 'src/environment';
-import { UserRoles } from './core/user-roles.enum';
+import { USER_ROLES, UserRoles } from './core/user-roles.enum';
+import { NGOsApiService } from './features/ngo/data-access/ngos.api.service';
 
 registerLocaleData(localePl);
 
@@ -50,7 +51,7 @@ function checkTokenFactory(authService: AuthService, keycloak: KeycloakService) 
   };
 }
 
-function initializeKeycloak(keycloak: KeycloakService, auth: AuthService) {
+function initializeKeycloak(keycloak: KeycloakService, auth: AuthService, ngoService: NGOsApiService) {
   return () =>
     keycloak
       .init({
@@ -85,6 +86,11 @@ function initializeKeycloak(keycloak: KeycloakService, auth: AuthService) {
           profileCompleted: false,
           role: keycloakRoles[0] as UserRoles,
         });
+
+        if (keycloakRoles[0] !== USER_ROLES.ADMIN) {
+          return ngoService.getProfileOnInit(keycloakRoles[0] as UserRoles).toPromise();
+        }
+        return;
       })
       .catch(e => {
         console.log('%cKeycloak nie działa 💥' + JSON.stringify(e), 'font-size: 60px');
@@ -98,7 +104,7 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,
       multi: true,
-      deps: [KeycloakService, AuthService],
+      deps: [KeycloakService, AuthService, NGOsApiService],
     },
     {
       provide: APP_INITIALIZER,
