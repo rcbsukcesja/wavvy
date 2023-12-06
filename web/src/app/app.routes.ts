@@ -31,23 +31,6 @@ export const NgoProfileCompletedGuard: CanMatchFn = () => {
   return true;
 };
 
-export const NonFirstLoginGuard: CanMatchFn = () => {
-  const user = inject(AuthStateService).$value().user;
-  const router = inject(Router);
-
-  if (user?.role === USER_ROLES.ADMIN || user?.role === USER_ROLES.MANAGER) {
-    return true;
-  }
-
-  if (user?.firstLogin) {
-    router.navigateByUrl('/auth/first-login');
-
-    return false;
-  }
-
-  return true;
-};
-
 export const routes: Routes = [
   {
     path: '',
@@ -58,7 +41,6 @@ export const routes: Routes = [
       // },
       {
         path: '',
-        // canMatch: [NonFirstLoginGuard],
         resolve: {
           role: resolveUserRole,
         },

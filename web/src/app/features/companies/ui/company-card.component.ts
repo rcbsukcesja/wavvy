@@ -29,14 +29,14 @@ import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/u
       </div>
       }
       <!--  -->
-      @if (company.resource?.length) {
-      <div class="cursor-pointer" (click)="openResourcesModal(company.resource)">
+      @if (company.resources.length) {
+      <div class="cursor-pointer" (click)="openResourcesModal(company.resources)">
         <mat-icon>build</mat-icon>
       </div>
       }
       <!--  -->
-      @if (company.businnessAreas?.length) {
-      <div class="cursor-pointer" (click)="openCategoriessModal(company.businnessAreas)">
+      @if (company.businessAreas.length) {
+      <div class="cursor-pointer" (click)="openCategoriessModal(company.businessAreas)">
         <mat-icon>assignment</mat-icon>
       </div>
       }

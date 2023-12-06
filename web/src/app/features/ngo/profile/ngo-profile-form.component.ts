@@ -36,9 +36,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 export type NgoProfileFormModel = FormGroup<{
   name: FormControl<string>;
   logo: FormControl<File | null>;
-  KRS: FormControl<string>;
-  NIP: FormControl<string>;
-  REGON: FormControl<string>;
+  krs: FormControl<string>;
+  nip: FormControl<string>;
+  regon: FormControl<string>;
   bankAccount: FormControl<string>;
   description: FormControl<string>;
   street: FormControl<string>;
@@ -86,19 +86,19 @@ export type NgoProfileFormModel = FormGroup<{
           <br />
           <mat-form-field class="md:w-1/2">
             <mat-label>REGON</mat-label>
-            <input formControlName="REGON" matInput />
+            <input formControlName="regon" matInput />
           </mat-form-field>
           <br />
         </div>
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
             <mat-label>KRS</mat-label>
-            <input formControlName="KRS" matInput />
+            <input formControlName="krs" matInput />
           </mat-form-field>
           <br />
           <mat-form-field class="md:w-1/2">
             <mat-label>NIP</mat-label>
-            <input formControlName="NIP" matInput />
+            <input formControlName="nip" matInput />
           </mat-form-field>
           <br />
         </div>
@@ -164,7 +164,7 @@ export type NgoProfileFormModel = FormGroup<{
             <mat-label>Obszary działania</mat-label>
             <mat-select formControlName="businnessAreas" multiple>
               <mat-select-trigger>
-                {{ form.controls.businnessAreas.value[0].name || '' }}
+                {{ form.controls.businnessAreas.value[0]?.name || '' }}
                 <span *ngIf="(form.controls.businnessAreas.value.length || 0) > 1">
                   (+{{ (form.controls.businnessAreas.value.length || 0) - 1 }}
                   {{ form.controls.businnessAreas.value.length === 2 ? 'other' : 'others' }})
@@ -296,17 +296,15 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       });
     }
 
-    this.profile.confirmed;
-
     this.form = this.builder.group({
       name: this.builder.control({ value: this.profile.name, disabled: this.profile.confirmed }, [
         Validators.required,
         CustomValidators.maxLength,
       ]),
       logo: this.builder.control<File | null>(null),
-      KRS: this.builder.control({ value: this.profile.KRS, disabled: this.profile.confirmed }),
-      NIP: this.builder.control({ value: this.profile.NIP, disabled: this.profile.confirmed }),
-      REGON: this.builder.control({ value: this.profile.REGON, disabled: this.profile.confirmed }),
+      krs: this.builder.control({ value: this.profile.krs, disabled: this.profile.confirmed }),
+      nip: this.builder.control({ value: this.profile.nip, disabled: this.profile.confirmed }),
+      regon: this.builder.control({ value: this.profile.regon, disabled: this.profile.confirmed }),
       bankAccount: this.builder.control(this.profile.bankAccount || '', [
         Validators.minLength(26),
         Validators.maxLength(26),
@@ -335,7 +333,7 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       tags: this.builder.control(this.profile.tags || [], [Validators.required, Validators.minLength(3)]),
       foundedAt: this.builder.control(this.profile.foundedAt || '', [Validators.required]),
       businnessAreas: this.builder.control<{ id: ID; name: string }[]>(
-        this.bussinessAreas.filter(area => this.profile.businnessAreas?.includes(area.id) || [])
+        this.bussinessAreas.filter(area => this.profile.businessAreas.includes(area.id)) || []
       ),
       resources: this.builder.array<FormControl<string>>([], [Validators.maxLength(20)]),
     });
@@ -386,7 +384,6 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
     if (!d) {
       return true;
     }
-
 
     return d.getTime() < new Date().getTime();
   };

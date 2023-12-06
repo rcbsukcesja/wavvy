@@ -82,7 +82,7 @@ import { API_URL } from 'src/app/core/API-URL.token';
           <div>
             <h3>Obszary działania:</h3>
             <ul class="flex flex-col gap-2 mt-4">
-              <li *ngFor="let area of state.details.businnessAreas">- {{ getBusinessArea(area) }}</li>
+              <li *ngFor="let area of state.details.businessAreas">- {{ getBusinessArea(area) }}</li>
             </ul>
           </div>
           <mat-divider />
