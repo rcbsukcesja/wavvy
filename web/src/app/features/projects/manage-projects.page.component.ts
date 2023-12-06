@@ -48,7 +48,13 @@ import { ProjectCardComponent } from './ui/project-card.component';
     <header>
       <h2>Zarządzaj projektami</h2>
     </header>
-    <button *ngIf="role !== ADMIN_ROLE" class="mb-4" mat-raised-button color="primary" (click)="goToProjectForm()">
+    <button
+      [disabled]="profileState().profile?.disabled"
+      *ngIf="role !== ADMIN_ROLE"
+      class="mb-4"
+      mat-raised-button
+      color="primary"
+      (click)="goToProjectForm()">
       Dodaj
     </button>
     <br />
@@ -151,7 +157,7 @@ import { ProjectCardComponent } from './ui/project-card.component';
 export default class ManageProjectsPageComponent implements OnInit {
   @Input() role?: UserRoles;
 
-  private profileState = inject(NGOsStateService).$value;
+  profileState = inject(NGOsStateService).$value;
 
   $ngoId = computed(() => this.profileState().profile?.id);
 
@@ -266,6 +272,9 @@ export default class ManageProjectsPageComponent implements OnInit {
   }
 
   goToProjectForm(project?: Project) {
+    if (this.profileState().profile?.disabled) {
+      return;
+    }
     this.router.navigateByUrl(`/manage/projects/form${project ? `/${project.id}` : ''}`);
   }
 
