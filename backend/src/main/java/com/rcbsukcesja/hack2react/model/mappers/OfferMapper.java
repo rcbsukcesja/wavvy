@@ -3,7 +3,7 @@ package com.rcbsukcesja.hack2react.model.mappers;
 import com.rcbsukcesja.hack2react.model.dto.view.OfferView;
 import com.rcbsukcesja.hack2react.model.entity.Offer;
 import com.rcbsukcesja.hack2react.model.entity.User;
-import com.rcbsukcesja.hack2react.model.enums.OfferStatus;
+import com.rcbsukcesja.hack2react.utils.OfferUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import org.mapstruct.AfterMapping;
@@ -47,12 +47,6 @@ public interface OfferMapper {
 
     @AfterMapping
     default void setStatus(Offer offer, @MappingTarget OfferView offerView) {
-        if (TimeUtils.today().isBefore(offer.getStartDate())) {
-            offerView.setStatus(OfferStatus.NOT_STARTED);
-        } else if (TimeUtils.today().isAfter(offer.getEndDate())) {
-            offerView.setStatus(OfferStatus.EXPIRED);
-        } else {
-            offerView.setStatus(OfferStatus.ACTIVE);
-        }
+        offerView.setStatus(OfferUtils.getOfferStatus(offer));
     }
 }
