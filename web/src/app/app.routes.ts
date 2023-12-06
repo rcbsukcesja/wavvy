@@ -116,7 +116,23 @@ export const routes: Routes = [
           {
             path: 'manage/projects/form',
             loadComponent: () => import('./features/projects/project-form.page.component'),
-            canMatch: [authGuard, NgoProfileCompletedGuard],
+            canMatch: [
+              authGuard,
+              roleGuard,
+              NgoProfileCompletedGuard,
+              () => {
+                const ngo = inject(NGOsStateService).$value().profile;
+
+                if (!ngo) {
+                  return false;
+                }
+
+                return !ngo.disabled;
+              },
+            ],
+            data: {
+              roles: [USER_ROLES.NGO_USER],
+            },
             resolve: {
               bussinessAreas: () => {
                 return inject(BusinessAreaApiService).getAll();

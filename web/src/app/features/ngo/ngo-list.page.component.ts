@@ -48,7 +48,11 @@ import { LoadingComponent } from '../../shared/ui/loading.component';
             {{ ngo.legalStatus | legalStatus }}
           </div>
           <div class="mb-4">
-            <p>{{ (ngo.description | slice : 0 : 160) + '...' }}</p>
+            <p>
+              @if(ngo.description) {
+              {{ (ngo.description | slice : 0 : 160) + '...' }}
+              } @else { Brak opisu }
+            </p>
             <div class="flex justify-end">
               <button
                 (click)="goTo(ngo.id)"

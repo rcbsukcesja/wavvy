@@ -100,6 +100,13 @@ export class NGOsApiService extends HttpBaseService {
     return this.http.patch(`${this.url}/${id}`, { ...payload }).pipe(
       tap(() => {
         this.stateService.setState({ updateProfileCallState: 'LOADED' });
+
+        const user = this.authState.$value().user;
+
+        if (!user || user.role === USER_ROLES.ADMIN) {
+          return;
+        }
+
         this.getProfile();
       })
     );
