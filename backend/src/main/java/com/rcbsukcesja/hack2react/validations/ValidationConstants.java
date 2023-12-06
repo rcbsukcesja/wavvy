@@ -18,7 +18,7 @@ public interface ValidationConstants {
     String KRS_REGEX = "^\\d{10}$";
     String NOT_BLANK_PATTERN = "^(?!\\s*$).+";
 
-    String BANK_ACCOUNT = "^[0-9]{26}$";
+    String BANK_ACCOUNT = "^(\\s*|\\d{26})$";
 
     String ZIP_CODE_REGEX = "^[0-9]{2}-[0-9]{3}$";
 
