@@ -30,7 +30,6 @@ import com.rcbsukcesja.hack2react.validations.DateValidation;
 import com.rcbsukcesja.hack2react.validations.OrganizationValidation;
 import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -322,6 +321,7 @@ public class OrganizationNGOService {
                         newTag.setTag(tag);
                         newTag.setOrganizationNgo(ngo);
                         ngo.getTags().add(newTag);
+                        organizationNGORepository.save(ngo);
                     }
                 }
             }
@@ -346,6 +346,7 @@ public class OrganizationNGOService {
                         newResource.setResource(resource);
                         newResource.setOrganization(ngo);
                         ngo.getResources().add(newResource);
+                        organizationNGORepository.save(ngo);
                     }
                 }
             }
@@ -369,6 +370,7 @@ public class OrganizationNGOService {
                         socialLink.setLink(link);
                         socialLink.setOrganization(ngo);
                         ngo.getSocialLinks().add(socialLink);
+                        organizationNGORepository.save(ngo);
                     }
                 }
             }
