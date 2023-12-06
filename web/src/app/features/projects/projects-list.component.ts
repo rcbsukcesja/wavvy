@@ -64,7 +64,7 @@ export class DescriptionDialogComponent {
       <ng-template #item let-project>
         <div class="">
           <div
-            class="relative h-80 bg-cover"
+            class="relative h-80 bg-no-repeat bg-contain bg-center"
             [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
             @if (project.disabled && $ngoId() === project.ngoId) {
             <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
@@ -91,9 +91,9 @@ export class DescriptionDialogComponent {
             class="ml-auto block -mt-1 mb-2 bg-black text-white px-2 py-1 rounded-md hover:bg-opacity-70 transition">
             Pełny opis
           </button>
-          <p *ngIf="project.link">
+          <p *ngIf="project.links[0] as link">
             <span class="font-semibold">Więcej informacji: </span>
-            <a class="underline" [href]="project.link" target="_blank">{{ project.link }}</a>
+            <a class="underline" [href]="link" target="_blank">{{ link }}</a>
           </p>
           <div class="mb-2">
             <span *ngFor="let tag of project.tags; let last = last">#{{ tag }} </span>

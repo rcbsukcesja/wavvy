@@ -1,7 +1,7 @@
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { Injectable, inject } from '@angular/core';
 import { INITIAL_PAGINATION_STATE, ProjectsStateService } from './projects.state.service';
-import { map, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { Project, ProjectStatus } from '../model/project.model';
 import { Router } from '@angular/router';
 import { ID } from 'src/app/core/types/id.type';
@@ -9,7 +9,6 @@ import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
-import { HttpParams } from '@angular/common/http';
 import { createListHttpParams } from 'src/app/core/list-http-params.factory';
 
 export interface GetAllProjectsParams {}
@@ -30,7 +29,6 @@ export interface AddProjectFormValue {
     zipCode: string;
     street: string;
   };
-  // categories: { id: ID; name: string }[];
 }
 
 @Injectable({
@@ -50,7 +48,23 @@ export class ProjectsApiService extends HttpBaseService {
     const formData: FormData = new FormData();
     formData.append('file', logo);
 
-    this.http.post(`${this.url}/${projectId}/image`, formData).subscribe();
+    this.http
+      .post<Project>(`${this.url}/${projectId}/image`, formData)
+      .pipe(
+        tap(updated => {
+          this.stateService.setState({
+            list: this.stateService.$value().list.map(project => {
+              return projectId === project.id
+                ? {
+                    ...project,
+                    imageLink: updated.imageLink,
+                  }
+                : project;
+            }),
+          });
+        })
+      )
+      .subscribe();
   }
 
   add(payload: AddProjectFormValue) {

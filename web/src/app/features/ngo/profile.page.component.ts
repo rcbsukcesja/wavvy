@@ -104,7 +104,7 @@ export default class OrganizationProfilePageComponent implements OnInit {
       phone: string;
       tags: string[];
       foundedAt: string;
-      businnessAreas: { id: ID; name: string }[];
+      businnessAreas: string[];
       resources: string[];
       logo: File | null;
     },
@@ -122,7 +122,7 @@ export default class OrganizationProfilePageComponent implements OnInit {
             zipCode: zipcode,
             country: 'Polska',
           },
-          businessAreaIds: formValue.businnessAreas.map(area => area.id),
+          businessAreaIds: formValue.businnessAreas,
         },
         id
       )
@@ -141,7 +141,7 @@ export default class OrganizationProfilePageComponent implements OnInit {
       email: string;
       website: string;
       phone: string;
-      businnessAreas: { id: ID; name: string }[];
+      businnessAreas: string[];
       resources: string[];
     },
     id: string
@@ -150,7 +150,7 @@ export default class OrganizationProfilePageComponent implements OnInit {
       .updateProfile(
         {
           ...formValue,
-          businessAreaIds: formValue.businnessAreas.map(area => area.id),
+          businessAreaIds: formValue.businnessAreas,
         },
         id
       )

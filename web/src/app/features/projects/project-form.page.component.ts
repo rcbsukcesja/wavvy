@@ -65,9 +65,9 @@ export type ProjectForm = FormGroup<{
   template: `
     <h2>{{ project ? 'Edytowanie projektu' : 'Dodawanie projektu' }}</h2>
     @if (project?.imageLink; as link) {
-      <section class="flex w-1/4 mb-4">
-        <img [src]="link" />
-      </section>
+    <section class="flex w-1/4 mb-4">
+      <img [src]="link" />
+    </section>
     }
 
     <form [formGroup]="form" (ngSubmit)="addProject()" class="flex flex-col">
@@ -356,9 +356,9 @@ export default class ProjectFormPageComponent implements OnInit {
       link: this.builder.control(this.project?.links[0] || ''),
       possibleVolunteer: this.builder.control(this.project?.possibleVolunteer || false),
       budget: this.builder.control(this.project?.budget || 0),
-      city: this.builder.control(this.project?.address?.city || '', [CustomValidators.maxLength]),
+      city: this.builder.control(this.project?.address?.city || 'Kołobrzeg', [CustomValidators.maxLength]),
       street: this.builder.control(this.project?.address?.street || '', [CustomValidators.maxLength]),
-      zipCode: this.builder.control(this.project?.address?.zipCode || '', [CustomValidators.maxLength]),
+      zipCode: this.builder.control(this.project?.address?.zipCode || '78-100', [CustomValidators.maxLength]),
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
   }

@@ -29,7 +29,6 @@ import { BusinessArea, NGO } from '../model/ngo.model';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { BehaviorSubject } from 'rxjs';
-import { ID } from 'src/app/core/types/id.type';
 import { CustomValidators } from 'src/app/shared/custom.validator';
 import { MatNativeDateModule } from '@angular/material/core';
 
@@ -49,7 +48,7 @@ export type NgoProfileFormModel = FormGroup<{
   phone: FormControl<string>;
   tags: FormControl<string[]>;
   foundedAt: FormControl<string>;
-  businnessAreas: FormControl<{ id: ID; name: string }[]>;
+  businnessAreas: FormControl<string[]>;
   resources: FormArray<FormControl<string>>;
 }>;
 
@@ -164,13 +163,13 @@ export type NgoProfileFormModel = FormGroup<{
             <mat-label>Obszary działania</mat-label>
             <mat-select formControlName="businnessAreas" multiple>
               <mat-select-trigger>
-                {{ form.controls.businnessAreas.value[0]?.name || '' }}
+                {{ getBusinessAreaLabel(form.controls.businnessAreas.value[0]) }}
                 <span *ngIf="(form.controls.businnessAreas.value.length || 0) > 1">
                   (+{{ (form.controls.businnessAreas.value.length || 0) - 1 }}
                   {{ form.controls.businnessAreas.value.length === 2 ? 'other' : 'others' }})
                 </span>
               </mat-select-trigger>
-              <mat-option *ngFor="let area of bussinessAreas" [value]="area">{{ area.name }}</mat-option>
+              <mat-option *ngFor="let area of bussinessAreas" [value]="area.id">{{ area.name }}</mat-option>
             </mat-select>
             <mat-hint>Minimum jeden obszar działania</mat-hint>
           </mat-form-field>
@@ -332,8 +331,9 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       ]),
       tags: this.builder.control(this.profile.tags || [], [Validators.required, Validators.minLength(3)]),
       foundedAt: this.builder.control(this.profile.foundedAt || '', [Validators.required]),
-      businnessAreas: this.builder.control<{ id: ID; name: string }[]>(
-        this.bussinessAreas.filter(area => this.profile.businessAreas.includes(area.id)) || []
+      businnessAreas: this.builder.control<string[]>(
+        this.profile.businessAreas.map(ba => ba.id),
+        [Validators.minLength(1)]
       ),
       resources: this.builder.array<FormControl<string>>([], [Validators.maxLength(20)]),
     });
@@ -378,6 +378,10 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
         });
       }
     });
+  }
+
+  getBusinessAreaLabel(id?: string) {
+    return this.bussinessAreas.find(ba => ba.id === id)?.name || 'Nieznany';
   }
 
   filterFutureDates = (d: Date | null) => {

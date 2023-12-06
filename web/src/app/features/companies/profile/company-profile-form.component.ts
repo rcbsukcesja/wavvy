@@ -45,7 +45,7 @@ export type CompanyProfileFormModel = FormGroup<{
   email: FormControl<string>;
   website: FormControl<string>;
   phone: FormControl<string>;
-  businnessAreas: FormControl<{ id: ID; name: string }[]>;
+  businnessAreas: FormControl<string[]>;
   resources: FormArray<FormControl<string>>;
 }>;
 
@@ -159,7 +159,7 @@ export type CompanyProfileFormModel = FormGroup<{
             <mat-label>Obszary działania</mat-label>
             <mat-select formControlName="businnessAreas" multiple>
               <mat-select-trigger>
-                {{ form.controls.businnessAreas.value[0]?.name || '' }}
+                {{ getBusinessAreaLabel(form.controls.businnessAreas.value[0]) }}
                 <span *ngIf="(form.controls.businnessAreas.value.length || 0) > 1">
                   (+{{ (form.controls.businnessAreas.value.length || 0) - 1 }}
                   {{ form.controls.businnessAreas.value.length === 2 ? 'other' : 'others' }})
@@ -271,8 +271,9 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
       email: this.builder.control(this.profile.email || '', [Validators.required]),
       website: this.builder.control(this.profile.website || '', [Validators.required]),
       phone: this.builder.control(this.profile.phone || '', [Validators.required]),
-      businnessAreas: this.builder.control<{ id: ID; name: string }[]>(
-        this.bussinessAreas.filter(area => this.profile.businessAreas.includes(area.id) || [])
+      businnessAreas: this.builder.control<string[]>(
+        this.profile.businessAreas.map(ba => ba.id),
+        [Validators.minLength(1)]
       ),
       resources: this.builder.array<FormControl<string>>([]),
     });
@@ -315,6 +316,10 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
         });
       }
     });
+  }
+
+  getBusinessAreaLabel(id?: string) {
+    return this.bussinessAreas.find(ba => ba.id === id)?.name || 'Nieznany';
   }
 
   onSubmit() {
