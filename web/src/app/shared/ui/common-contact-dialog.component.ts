@@ -11,7 +11,10 @@ import { MatIconModule } from '@angular/material/icon';
     <div mat-dialog-content>
       <mat-divider />
       <ul class="flex flex-col gap-4 mt-4">
-        <li class="flex items-center gap-2"><mat-icon> place</mat-icon> <strong>Adres: </strong>{{ data.address }}</li>
+        <li class="flex items-center gap-2">
+          <mat-icon> place</mat-icon> <strong>Adres: </strong>{{ data.address.street }}, {{ data.address.zipCode }}
+          {{ data.address.city }}
+        </li>
         <li class="flex items-center gap-2"><mat-icon> phone</mat-icon> <strong>Telefon: </strong>{{ data.phone }}</li>
         <li class="flex items-center gap-2"><mat-icon> mail</mat-icon> <strong>E-mail: </strong>{{ data.email }}</li>
         <li class="flex items-center gap-2">
