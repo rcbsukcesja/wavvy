@@ -40,38 +40,40 @@ export interface MenuItem {
         <mat-toolbar class="!py-12">
           <div *ngIf="$isAuth()" class="flex flex-col relative">
             <span class="text-xs">
-              <span class="font-semibold whitespace-pre-wrap">Zalogowano jako:</span>
-              <ng-container *ngIf="role === USER_ROLES.ADMIN"> Miasto Kołobrzeg </ng-container>
+              <span class="font-semibold block">Zalogowano jako:</span>
+              <span class="whitespace-pre-wrap">
+                <ng-container *ngIf="role === USER_ROLES.ADMIN"> Miasto Kołobrzeg </ng-container>
 
-              <ng-container *ngIf="role === USER_ROLES.NGO_USER">
-                {{ ngoState().profile?.name }}
-              </ng-container>
+                <ng-container *ngIf="role === USER_ROLES.NGO_USER">
+                  {{ ngoState().profile?.name }}
+                </ng-container>
 
-              <ng-container *ngIf="role === USER_ROLES.COMPANY_USER">
-                <!-- TODO SET SERVICE -->
-                {{ ngoState().profile?.name }}
-              </ng-container>
+                <ng-container *ngIf="role === USER_ROLES.COMPANY_USER">
+                  <!-- TODO SET SERVICE -->
+                  {{ ngoState().profile?.name }}
+                </ng-container>
+              </span>
             </span>
             <br />
 
             <ng-container *ngIf="role !== USER_ROLES.ADMIN">
               @if (ngoState().profile?.confirmed) {
-                <span
-                  class="text-xs absolute bottom-0 rounded-md px-2 py-1"
-                  [matTooltipDisabled]="!ngoState().profile?.disabled"
-                  [matTooltip]="ngoState().profile?.reason || ''"
-                  [ngClass]="{
-                    'bg-red-500 text-white': ngoState().profile?.disabled,
-                    'bg-green-700 text-white': !ngoState().profile?.disabled
-                  }">
-                  {{ ngoState().profile?.disabled ? 'Zablokowany' : 'Aktywny' }}
-                </span>
+              <span
+                class="text-xs absolute bottom-0 rounded-md px-2 py-1"
+                [matTooltipDisabled]="!ngoState().profile?.disabled"
+                [matTooltip]="ngoState().profile?.reason || ''"
+                [ngClass]="{
+                  'bg-red-500 text-white': ngoState().profile?.disabled,
+                  'bg-green-700 text-white': !ngoState().profile?.disabled
+                }">
+                {{ ngoState().profile?.disabled ? 'Zablokowany' : 'Aktywny' }}
+              </span>
               } @else {
-                <span
-                  class="text-xs absolute bottom-0 rounded-md px-2 py-1 bg-slate-500"
-                  matTooltip="Musisz najpierw uzupełnić swój profil i zostać zatwierdzony przez miasto">
-                  Konto Niezatwierdzone
-                </span>
+              <span
+                class="text-xs absolute bottom-0 rounded-md px-2 py-1 bg-slate-500"
+                matTooltip="Musisz najpierw uzupełnić swój profil i zostać zatwierdzony przez miasto">
+                Konto Niezatwierdzone
+              </span>
               }
             </ng-container>
           </div>

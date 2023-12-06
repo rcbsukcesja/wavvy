@@ -11,6 +11,7 @@ import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
 import { INITIAL_PAGINATION_STATE, ProjectsStateService } from '../../projects/data-access/projects.state.service';
 import { createListHttpParams } from 'src/app/core/list-http-params.factory';
 import { ProjectsApiService } from '../../projects/data-access/projects.api.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface GetAllNGOsParams {}
 
@@ -68,24 +69,40 @@ export class NGOsApiService extends HttpBaseService {
     return this.http.post<NGO>(`${this.url}`, payload);
   }
 
+  private snack = inject(MatSnackBar);
+
   updateLogo(logo: File, id: string) {
     const formData: FormData = new FormData();
     formData.append('file', logo);
 
-    this.http.post(`${this.url.replace('ngos', 'organizations')}/${id}/logo`, formData).subscribe();
+    const start = this.snack.open('Rozpoczęto dodawanie obrazka', '', {
+      duration: 0,
+      verticalPosition: 'top',
+    });
+
+    this.http
+      .post(`${this.url.replace('ngos', 'organizations')}/${id}/logo`, formData)
+      .pipe(
+        tap(() => {
+          start.dismiss();
+          this.snack.open('Udało się!, Dodano logo', '', {
+            duration: 2000,
+            verticalPosition: 'top',
+          });
+        })
+      )
+      .subscribe();
   }
 
   updateProfile(payload: UpdateNGOProfileFormValue, id: string) {
     this.stateService.setState({ updateProfileCallState: 'LOADING' });
 
-    return this.http
-      .patch(`${this.url}/${id}`, { ...payload, krs: '0000000000', nip: '0000000000', regon: '000000000' })
-      .pipe(
-        tap(() => {
-          this.stateService.setState({ updateProfileCallState: 'LOADED' });
-          this.getProfile();
-        })
-      );
+    return this.http.patch(`${this.url}/${id}`, { ...payload }).pipe(
+      tap(() => {
+        this.stateService.setState({ updateProfileCallState: 'LOADED' });
+        this.getProfile();
+      })
+    );
   }
 
   getProfileOnInit(role: UserRoles) {

@@ -42,7 +42,7 @@ import { LoadingComponent } from '../../shared/ui/loading.component';
             <p class="font-semibold text-lg">{{ ngo.name }}</p>
           </div>
           <div
-            class="mb-4 relative h-80 bg-no-repeat bg-contain bg-center"
+            class="mb-4 relative h-80 bg-no-repeat bg-cover bg-center"
             [style.background-image]="'url(' + (ngo.logoUrl || '/assets/images/placeholder.jpg') + ')'"></div>
           <div class="bottom-0 left-0 w-full h-10 p-4 bg-material-blue text-white flex items-center">
             {{ ngo.legalStatus | legalStatus }}

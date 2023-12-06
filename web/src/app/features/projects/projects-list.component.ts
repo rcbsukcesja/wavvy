@@ -64,7 +64,7 @@ export class DescriptionDialogComponent {
       <ng-template #item let-project>
         <div class="">
           <div
-            class="relative h-80 bg-no-repeat bg-contain bg-center"
+            class="relative h-80 bg-no-repeat bg-cover bg-center"
             [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
             @if (project.disabled && $ngoId() === project.ngoId) {
             <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
