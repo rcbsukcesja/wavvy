@@ -78,12 +78,14 @@ export class NGOsApiService extends HttpBaseService {
   updateProfile(payload: UpdateNGOProfileFormValue, id: string) {
     this.stateService.setState({ updateProfileCallState: 'LOADING' });
 
-    return this.http.patch(`${this.url}/${id}`, payload).pipe(
-      tap(() => {
-        this.stateService.setState({ updateProfileCallState: 'LOADED' });
-        this.getProfile();
-      })
-    );
+    return this.http
+      .patch(`${this.url}/${id}`, { ...payload, krs: '0000000000', nip: '0000000000', regon: '000000000' })
+      .pipe(
+        tap(() => {
+          this.stateService.setState({ updateProfileCallState: 'LOADED' });
+          this.getProfile();
+        })
+      );
   }
 
   getProfileOnInit(role: UserRoles) {
