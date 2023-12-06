@@ -298,6 +298,7 @@ public class CompanyService {
                         newResource.setResource(resource);
                         newResource.setOrganization(company);
                         company.getResources().add(newResource);
+                        companyRepository.save(company);
                     }
                 }
             }
@@ -317,6 +318,7 @@ public class CompanyService {
                         socialLink.setLink(link);
                         socialLink.setOrganization(company);
                         company.getSocialLinks().add(socialLink);
+                        companyRepository.save(company);
                     }
                 }
             }
