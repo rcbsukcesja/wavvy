@@ -113,6 +113,8 @@ export class DescriptionDialogComponent {
             <div *ngIf="project.cooperationMessage" class="flex flex-col">
               <mat-icon [matTooltip]="project.cooperationMessage">spatial_audio_off</mat-icon>
             </div>
+
+            @if (isAuth()) {
             <div class="flex flex-col" (click)="openMessageModal(project.organizer.id, project.name)">
               <mat-icon
                 matTooltip="To twój własny projekt, nie ma co wysyłać wiadomości do siebie 😉"
@@ -121,6 +123,7 @@ export class DescriptionDialogComponent {
                 >forward_to_inbox</mat-icon
               >
             </div>
+            }
           </div>
         </div>
       </ng-template>
