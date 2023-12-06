@@ -317,6 +317,7 @@ public class ProjectService {
                         newProjectTag.setTag(tag);
                         newProjectTag.setProject(project);
                         project.getTags().add(newProjectTag);
+                        projectRepository.save(project);
                     }
                 }
             }
@@ -340,6 +341,7 @@ public class ProjectService {
                         newLink.setLink(link);
                         newLink.setProject(project);
                         project.getLinks().add(newLink);
+                        projectRepository.save(project);
                     }
                 }
             }
