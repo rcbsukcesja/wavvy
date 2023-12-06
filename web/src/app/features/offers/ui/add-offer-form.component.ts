@@ -23,7 +23,6 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatSelectModule,
     MatButtonModule,
     CommonModule,
-    MatNativeDateModule,
   ],
   template: `
     <form [formGroup]="form" (ngSubmit)="addOffer()" class="flex flex-col">
@@ -115,8 +114,8 @@ export class AddOfferFormComponent implements OnInit {
   addOffer() {
     this.add.emit({
       ...this.form.getRawValue(),
-      startDate: (this.form.getRawValue().startDate as any).utc().format(),
-      endDate: (this.form.getRawValue().endDate as any).utc().format(),
+      startDate: this.form.getRawValue().startDate as any,
+      endDate: this.form.getRawValue().endDate as any,
     });
   }
 
