@@ -10,6 +10,7 @@ import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.co
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
 import { createListHttpParams } from 'src/app/core/list-http-params.factory';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface GetAllProjectsParams {}
 
@@ -38,7 +39,7 @@ export class ProjectsApiService extends HttpBaseService {
   private stateService = inject(ProjectsStateService);
   private router = inject(Router);
 
-  private ngoState = inject(NGOsStateService).$value;
+  private snack = inject(MatSnackBar);
 
   constructor() {
     super('projects');
@@ -48,10 +49,20 @@ export class ProjectsApiService extends HttpBaseService {
     const formData: FormData = new FormData();
     formData.append('file', logo);
 
+    const start = this.snack.open('Rozpoczęto dodawanie obrazka', '', {
+      duration: 0,
+      verticalPosition: 'top',
+    });
+
     this.http
       .post<Project>(`${this.url}/${projectId}/image`, formData)
       .pipe(
         tap(updated => {
+          start.dismiss();
+          this.snack.open('Udało się!, Dodano obrazek projektu', '', {
+            duration: 2000,
+            verticalPosition: 'top',
+          });
           this.stateService.setState({
             list: this.stateService.$value().list.map(project => {
               return projectId === project.id

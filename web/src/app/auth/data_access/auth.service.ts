@@ -1,12 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { AuthStateService, User } from './auth.state.service';
-import { Observable, map, of, switchMap, tap, throwError } from 'rxjs';
+import { map, of, switchMap, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { API_URL } from 'src/app/core/API-URL.token';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NGOsApiService } from 'src/app/features/ngo/data-access/ngos.api.service';
-import { ID } from 'src/app/core/types/id.type';
 import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
 import { KeycloakService } from 'keycloak-angular';
 

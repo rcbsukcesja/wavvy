@@ -64,7 +64,7 @@ export class DescriptionDialogComponent {
       <ng-template #item let-project>
         <div class="">
           <div
-            class="relative h-80 bg-no-repeat bg-contain bg-center"
+            class="relative h-80 bg-no-repeat bg-cover bg-center"
             [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
             @if (project.disabled && $ngoId() === project.ngoId) {
             <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
@@ -113,6 +113,8 @@ export class DescriptionDialogComponent {
             <div *ngIf="project.cooperationMessage" class="flex flex-col">
               <mat-icon [matTooltip]="project.cooperationMessage">spatial_audio_off</mat-icon>
             </div>
+
+            @if (isAuth()) {
             <div class="flex flex-col" (click)="openMessageModal(project.organizer.id, project.name)">
               <mat-icon
                 matTooltip="To twój własny projekt, nie ma co wysyłać wiadomości do siebie 😉"
@@ -121,6 +123,7 @@ export class DescriptionDialogComponent {
                 >forward_to_inbox</mat-icon
               >
             </div>
+            }
           </div>
         </div>
       </ng-template>
