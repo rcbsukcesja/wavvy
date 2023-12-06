@@ -8,13 +8,14 @@ import com.rcbsukcesja.hack2react.exceptions.alreadyExists.EmailAlreadyExistsExc
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationAlreadyExistsException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.OrganizationsAlreadyAttachedToBusinessAreaException;
 import com.rcbsukcesja.hack2react.exceptions.alreadyExists.UsernameAlreadyExistsException;
-import com.rcbsukcesja.hack2react.exceptions.forbidden.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidDateRangeException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidEnumParameterException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidFileException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferScopeException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidProjectStatusException;
 import com.rcbsukcesja.hack2react.exceptions.forbidden.ForbiddenAccessDeniedException;
+import com.rcbsukcesja.hack2react.exceptions.forbidden.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.CompanyNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.MessageNotFoundException;
@@ -75,6 +76,7 @@ public class ApiExceptionHandler {
             OrganizationsAlreadyAttachedToBusinessAreaException.class,
             InvalidEnumParameterException.class,
             InvalidOfferScopeException.class,
+            InvalidOfferStatusException.class,
             InvalidProjectStatusException.class
     })
     public ResponseEntity<Object> handleBadRequestTypeException(ApiRequestException e) {

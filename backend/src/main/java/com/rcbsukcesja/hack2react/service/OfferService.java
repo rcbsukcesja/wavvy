@@ -1,6 +1,7 @@
 package com.rcbsukcesja.hack2react.service;
 
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferScopeException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferStatusException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OfferNotFoundException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.UserNotFoundException;
@@ -16,6 +17,7 @@ import com.rcbsukcesja.hack2react.repositories.OfferRepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
 import com.rcbsukcesja.hack2react.specifications.OfferSpecifications;
 import com.rcbsukcesja.hack2react.utils.AuthenticationUtils;
+import com.rcbsukcesja.hack2react.utils.OfferUtils;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.DateValidation;
@@ -54,6 +56,9 @@ public class OfferService {
         offerScopes = setOfferScopes(offerScopes, authentication);
         checkOfferScopes(offerScopes, authentication);
 
+        offerStatuses = setOfferStatuses(offerStatuses, authentication);
+        checkOfferStatuses(offerStatuses, authentication);
+
         dateValidation.isStartDateBeforeOrEqualEndDate(startDate, endDate);
         Specification<Offer> spec = OfferSpecifications.notOutsideDateRange(startDate, endDate);
         if (offerStatuses != null && !offerStatuses.isEmpty()) {
@@ -77,9 +82,13 @@ public class OfferService {
 
     public OfferView getOfferById(UUID id) {
         Offer offer = getOfferByIdOrThrowException(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Set<OfferScope> offerScopeSet = new HashSet<>();
         offerScopeSet.add(offer.getScope());
-        checkOfferScopes(offerScopeSet, SecurityContextHolder.getContext().getAuthentication());
+        checkOfferScopes(offerScopeSet, authentication);
+        Set<OfferStatus> offerStatusSet = new HashSet<>();
+        offerStatusSet.add(OfferUtils.getOfferStatus(offer));
+        checkOfferStatuses(offerStatusSet, authentication);
         return offerMapper.offerToOfferView(offer);
     }
 
@@ -219,6 +228,38 @@ public class OfferService {
                 && OfferScope.isOfferScopeNotAllowed(offerScopes, OfferScope.offerScopesNotForNgo())
                 || AuthenticationUtils.hasRole(authentication, "ROLE_COMPANY")
                 && OfferScope.isOfferScopeNotAllowed(offerScopes, OfferScope.offerScopesNotForCompany())
+        ) {
+            throw new InvalidOfferScopeException(ErrorMessages.INVALID_OFFER_SCOPE);
+        }
+    }
+
+    private static Set<OfferStatus> setOfferStatuses(Set<OfferStatus> offerStatuses, Authentication authentication) {
+        if (offerStatuses == null || offerStatuses.isEmpty()) {
+            if (authentication == null) {
+                offerStatuses = OfferStatus.getAllowedOfferStatuses(OfferStatus.offerStatusesNotPublic());
+            } else if (AuthenticationUtils.hasRole(authentication, "ROLE_NGO")) {
+                offerStatuses = OfferStatus.getAllowedOfferStatuses(OfferStatus.offerStatusesNotForNgo());
+            } else if (AuthenticationUtils.hasRole(authentication, "ROLE_COMPANY")) {
+                offerStatuses = OfferStatus.getAllowedOfferStatuses(OfferStatus.offerStatusesNotForCompany());
+            } else if (AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
+                offerStatuses = Arrays.stream(OfferStatus.values()).collect(Collectors.toSet());
+            }
+        }
+        return offerStatuses;
+    }
+
+    private static void checkOfferStatuses(Set<OfferStatus> offerStatuses, Authentication authentication) {
+        if (authentication != null && AuthenticationUtils.hasRole(authentication, "ROLE_CITY_HALL")) {
+            return;
+        }
+        if (authentication == null) {
+            if (OfferStatus.isOfferStatusNotAllowed(offerStatuses, OfferStatus.offerStatusesNotPublic())) {
+                throw new InvalidOfferStatusException(ErrorMessages.INVALID_OFFER_STATUS);
+            }
+        } else if (AuthenticationUtils.hasRole(authentication, "ROLE_NGO")
+                && OfferStatus.isOfferStatusNotAllowed(offerStatuses, OfferStatus.offerStatusesNotForNgo())
+                || AuthenticationUtils.hasRole(authentication, "ROLE_COMPANY")
+                && OfferStatus.isOfferStatusNotAllowed(offerStatuses, OfferStatus.offerStatusesNotForCompany())
         ) {
             throw new InvalidOfferScopeException(ErrorMessages.INVALID_OFFER_SCOPE);
         }

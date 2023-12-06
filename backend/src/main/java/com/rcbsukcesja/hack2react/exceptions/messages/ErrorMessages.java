@@ -41,7 +41,8 @@ public class ErrorMessages {
     public static final String INVALID_ENUM_ID = "Could not find enum with id: %s";
     public static final String INVALID_ENUM_NAME = "Could not find enum: %s";
 
-    public static final String INVALID_OFFER_SCOPE = "Requested offer scopes are not allowed for this user";
+    public static final String INVALID_OFFER_SCOPE = "At least one requested offer scope is not allowed for this user";
+    public static final String INVALID_OFFER_STATUS = "At least one requested offer status is not allowed for this user";
     public static final String INVALID_PROJECT_STATUS = "Requested project statuses are not allowed for this user";
 
     public static final String FOUNDED_AT_DATE_VALIDATION_MESSAGE = "Founded at date must be in the past";
