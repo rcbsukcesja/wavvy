@@ -1,12 +1,11 @@
 import { Control, Controller } from 'react-hook-form';
 import { TextInput } from 'react-native';
-import { SignInFormData } from 'src/features/Auth/types';
+import { SignInFormData, SignUpFormData } from 'src/features/Auth/types';
 
 interface InputFormControlProps {
   type: 'emailAddress' | 'password';
   placeholder: string;
-  control: Control<SignInFormData>;
-
+  control: Control<SignInFormData> | Control<SignUpFormData>;
   required: boolean;
   validationPattern?: RegExp;
   controlName: 'password' | 'email';
