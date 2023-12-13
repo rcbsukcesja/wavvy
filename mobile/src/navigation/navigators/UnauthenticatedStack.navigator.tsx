@@ -1,9 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { LOGIN_SCREEN_NAME, LoginScreen, LoginScreenParams } from 'src/screens/Login.screen';
+import { LoginScreen } from 'src/screens/Login.screen';
 
-export type UnauthenticatedStackParams = {
-  [LOGIN_SCREEN_NAME]: LoginScreenParams;
-};
+import { LOGIN_SCREEN_NAME, UnauthenticatedStackParams } from '../types';
 
 const Stack = createNativeStackNavigator<UnauthenticatedStackParams>();
 
