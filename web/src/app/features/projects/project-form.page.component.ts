@@ -11,7 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProjectsApiService } from './data-access/projects.api.service';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { COMMA, ENTER, P } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipEditedEvent, MatChipsModule } from '@angular/material/chips';
 import { BehaviorSubject } from 'rxjs';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -190,7 +190,9 @@ export type ProjectForm = FormGroup<{
         <mat-label>Link</mat-label>
         <input formControlName="link" matInput />
         <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
-        <mat-hint>Zewnętrzny link do projektu</mat-hint>
+        <mat-hint [class.text-red-500]="form.controls.link.errors"
+          >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
+        >
       </mat-form-field>
       <br />
       <mat-form-field>
@@ -292,26 +294,26 @@ export default class ProjectFormPageComponent implements OnInit {
     }
   }
 
-  blockAfterEndDate = (d: Date | null) => {
-    if (!d || !this.form.controls.endTime.value) {
+  blockAfterEndDate = (current: Date | null) => {
+    if (!current || !this.form.controls.endTime.value) {
       return true;
     }
 
-    const endTime = new Date(this.form.controls.endTime.value).getTime();
-    const current = d.getTime();
+    const endTime = new Date(this.form.controls.endTime.value);
+    const end = new Date(endTime.getFullYear(), endTime.getMonth(), endTime.getDate()).getTime();
 
-    return current < endTime;
+    return end >= new Date(current.getFullYear(), current.getMonth(), current.getDate()).getTime();
   };
 
-  blockBeforeStartDate = (d: Date | null) => {
-    if (!d || !this.form.controls.startTime.value) {
+  blockBeforeStartDate = (current: Date | null) => {
+    if (!current || !this.form.controls.startTime.value) {
       return true;
     }
 
-    const startTime = new Date(this.form.controls.startTime.value).getTime();
-    const current = d.getTime();
+    const startTime = new Date(this.form.controls.startTime.value);
+    const start = new Date(startTime.getFullYear(), startTime.getMonth(), startTime.getDate()).getTime();
 
-    return current > startTime;
+    return start <= new Date(current.getFullYear(), current.getMonth(), current.getDate()).getTime();
   };
 
   @ViewChild('logoInput') logoInput!: ElementRef<HTMLInputElement>;
@@ -353,7 +355,7 @@ export default class ProjectFormPageComponent implements OnInit {
         Validators.required,
       ]),
       startTimeHour: this.builder.control(startTimeHour || '18:00', [Validators.required]),
-      link: this.builder.control(this.project?.links[0] || ''),
+      link: this.builder.control(this.project?.links[0] || '', [CustomValidators.link]),
       possibleVolunteer: this.builder.control(this.project?.possibleVolunteer || false),
       budget: this.builder.control(this.project?.budget || 0),
       city: this.builder.control(this.project?.address?.city || 'Kołobrzeg', [CustomValidators.maxLength]),

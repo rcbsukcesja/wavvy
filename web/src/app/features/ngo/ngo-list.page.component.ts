@@ -106,8 +106,11 @@ import { LoadingComponent } from '../../shared/ui/loading.component';
         </ng-template>
       </app-list-shell>
       <app-loader *ngIf="state.loadListCallState === 'LOADING'" text="Ładowanie NGOs..."></app-loader>
-      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     </ng-container>
+    <br />
+    @if (state(); as state) {
+    <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

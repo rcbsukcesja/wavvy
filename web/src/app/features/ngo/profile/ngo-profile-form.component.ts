@@ -86,6 +86,7 @@ export type NgoProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>REGON</mat-label>
             <input formControlName="regon" matInput />
+            <mat-hint *ngIf="!form.controls.regon.disabled">REGON składa się z 9 cyfr</mat-hint>
           </mat-form-field>
           <br />
         </div>
@@ -93,11 +94,13 @@ export type NgoProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>KRS</mat-label>
             <input formControlName="krs" matInput />
+            <mat-hint *ngIf="!form.controls.krs.disabled">Numer KRS składa się z 9 cyfr</mat-hint>
           </mat-form-field>
           <br />
           <mat-form-field class="md:w-1/2">
             <mat-label>NIP</mat-label>
             <input formControlName="nip" matInput />
+            <mat-hint *ngIf="!form.controls.nip.disabled">Numer NIP składa się z 10 cyfr</mat-hint>
           </mat-form-field>
           <br />
         </div>
@@ -155,6 +158,9 @@ export type NgoProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>Strona internetowa</mat-label>
             <input formControlName="website" matInput />
+            <mat-hint [class.text-red-500]="form.controls.website.errors"
+              >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
+            >
           </mat-form-field>
           <br />
         </div>
@@ -301,9 +307,18 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
         CustomValidators.maxLength,
       ]),
       logo: this.builder.control<File | null>(null),
-      krs: this.builder.control({ value: this.profile.krs, disabled: this.profile.confirmed }),
-      nip: this.builder.control({ value: this.profile.nip, disabled: this.profile.confirmed }),
-      regon: this.builder.control({ value: this.profile.regon, disabled: this.profile.confirmed }),
+      krs: this.builder.control({ value: this.profile.krs, disabled: this.profile.confirmed }, [
+        Validators.minLength(9),
+        Validators.maxLength(9),
+      ]),
+      nip: this.builder.control({ value: this.profile.nip, disabled: this.profile.confirmed }, [
+        Validators.minLength(10),
+        Validators.maxLength(10),
+      ]),
+      regon: this.builder.control({ value: this.profile.regon, disabled: this.profile.confirmed }, [
+        Validators.minLength(9),
+        Validators.maxLength(9),
+      ]),
       bankAccount: this.builder.control(this.profile.bankAccount || '', [
         Validators.minLength(26),
         Validators.maxLength(26),
@@ -323,7 +338,11 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       ]),
       city: this.builder.control(this.profile.address?.city || '', [Validators.required, CustomValidators.maxLength]),
       email: this.builder.control(this.profile.email || '', [Validators.required, CustomValidators.maxLength]),
-      website: this.builder.control(this.profile.website || '', [Validators.required, CustomValidators.maxLength]),
+      website: this.builder.control(this.profile.website || '', [
+        Validators.required,
+        CustomValidators.maxLength,
+        CustomValidators.link,
+      ]),
       phone: this.builder.control(this.profile.phone || '', [
         Validators.required,
         Validators.minLength(9),

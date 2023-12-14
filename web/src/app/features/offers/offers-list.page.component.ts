@@ -19,6 +19,7 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
+import { LoadingComponent } from 'src/app/shared/ui/loading.component';
 
 @Component({
   selector: 'app-offers.page',
@@ -33,6 +34,7 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
     MatDialogModule,
     MatSnackBarModule,
     PaginationComponent,
+    LoadingComponent,
   ],
   template: `
     <ng-container *ngIf="state() as state">
@@ -91,9 +93,14 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           </div>
         </ng-template>
       </app-list-shell>
-      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
-      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
+      @if (state.loadListCallState === 'LOADING') {
+      <app-loader text="Ładowanie ofert..."></app-loader>
+      }
     </ng-container>
+    <br />
+    @if (state(); as state) {
+    <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+    }
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,

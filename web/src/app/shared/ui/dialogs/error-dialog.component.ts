@@ -3,7 +3,6 @@ import { HttpErrorResponse, HttpHandlerFn, HttpRequest } from '@angular/common/h
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { tap } from 'rxjs';
 
 export type ErrorDialogData = {
   error: HttpErrorResponse;
@@ -17,13 +16,13 @@ export type ErrorDialogData = {
     <div mat-dialog-content>
       <p>Status: {{ dialogData.error.status }}</p>
       <p></p>
-      <p>Status: {{ dialogData.error.message }}</p>
-      <p></p>
+      <p><span class="font-bold">Co poszło nie tak?</span> {{ dialogData.error.error.message }}</p>
+      <p>Skontaktuj się z administratorem, by dowiedzieć się więcej</p>
     </div>
 
     <div mat-dialog-actions>
       <button mat-button [mat-dialog-close]="false">Zamknij</button>
-      <button mat-button (click)="retry()">Powtórz!</button>
+      <button mat-button (click)="retry()">Spróbuj ponownie!</button>
     </div>
   `,
   standalone: true,

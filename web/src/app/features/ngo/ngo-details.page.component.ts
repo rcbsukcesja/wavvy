@@ -14,9 +14,7 @@ import { take, tap } from 'rxjs';
 import { ProjectsApiService } from '../projects/data-access/projects.api.service';
 import { ProjectsStateService } from '../projects/data-access/projects.state.service';
 import ProjectsListComponent from '../projects/projects-list.component';
-import { ID } from 'src/app/core/types/id.type';
 import { BusinessArea } from './model/ngo.model';
-import { API_URL } from 'src/app/core/API-URL.token';
 
 @Component({
   selector: 'app-ngo-details-page',
@@ -69,6 +67,21 @@ import { API_URL } from 'src/app/core/API-URL.token';
             <div class="mt-4">
               <span class="block font-semibold">Numer konta:</span>
               {{ state.details.bankAccount }}
+            </div>
+            } @if (state.details.krs) {
+            <div class="mt-4">
+              <span class="block font-semibold">KRS:</span>
+              {{ state.details.krs }}
+            </div>
+            } @if (state.details.regon) {
+            <div class="mt-4">
+              <span class="block font-semibold">REGON:</span>
+              {{ state.details.regon }}
+            </div>
+            } @if (state.details.nip) {
+            <div class="mt-4">
+              <span class="block font-semibold">NIP:</span>
+              {{ state.details.nip }}
             </div>
             }
           </div>
@@ -149,7 +162,6 @@ export default class NgoDetailsPageComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
     this.service.getById(id);
-    // this.projectsService.getByNGOId(id);
   }
 
   getBusinessArea(id: string) {

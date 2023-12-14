@@ -9,11 +9,12 @@ import { BehaviorSubject } from 'rxjs';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
+import { LoadingComponent } from 'src/app/shared/ui/loading.component';
 
 @Component({
   selector: 'app-messages.page',
   standalone: true,
-  imports: [CommonModule, ListShellComponent, DatePipe, CommonFiltersComponent, PaginationComponent],
+  imports: [CommonModule, ListShellComponent, DatePipe, CommonFiltersComponent, PaginationComponent, LoadingComponent],
   template: `
     <ng-container *ngIf="state() as state">
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
@@ -26,10 +27,15 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           <div><strong>Wysłano: </strong>{{ message.createdAt | date : 'short' }}</div>
         </ng-template>
       </app-list-shell>
-      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
 
-      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
+      @if (state.loadListCallState === 'LOADING') {
+      <app-loader text="Ładowanie wiadomości..."></app-loader>
+      }
     </ng-container>
+    <br />
+    @if (state(); as state) {
+    <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+    }
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,

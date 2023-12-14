@@ -9,7 +9,6 @@ import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Va
 import { MatButtonModule } from '@angular/material/button';
 import { AddOfferFormValue } from '../data-access/offers.api.service';
 import { CustomValidators } from 'src/app/shared/custom.validator';
-import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-add-offer-form',
