@@ -101,6 +101,8 @@ export class SameDayPipe implements PipeTransform {
               <mat-icon class="mr-2">schedule</mat-icon> <span>{{ project.startTime | date }}</span>
               @if (!(project.startTime | sameDay: project.endTime)) {
               <span class="pl-1">- {{ project.endTime | date }}</span>
+              } @else {
+              <span class="pl-1">| {{ project.startTime | date : 'HH:mm' }}</span>
               }
             </div>
           </div>
