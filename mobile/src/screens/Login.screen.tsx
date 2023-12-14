@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { SignInForm } from 'src/features/Auth/SignInForm';
-
-export const LOGIN_SCREEN_NAME = 'Login';
-
-export type LoginScreenParams = undefined;
+import { LoginContainer } from 'src/features/Auth/LoginContainer';
 
 const image = require('src/assets/kolobrzeg.jpg');
 
@@ -28,7 +24,13 @@ const styles = StyleSheet.create({
 
 export function LoginScreen() {
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+      keyboardVerticalOffset={Platform.select({
+        ios: -100,
+        android: -150,
+      })}>
       <ImageBackground
         source={image}
         style={styles.image}
@@ -40,7 +42,7 @@ export function LoginScreen() {
         }}>
         <View style={styles.filter} />
       </ImageBackground>
-      <SignInForm />
+      <LoginContainer />
     </KeyboardAvoidingView>
   );
 }

@@ -42,10 +42,36 @@ export class DescriptionDialogComponent {
   data = inject(MAT_DIALOG_DATA);
 }
 
+@Pipe({
+  name: 'sameDay',
+  standalone: true,
+})
+export class SameDayPipe implements PipeTransform {
+  transform(startDate: string, endDate: string) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (start.getFullYear() < end.getFullYear()) {
+      return false;
+    }
+
+    if (start.getMonth() < end.getMonth()) {
+      return false;
+    }
+
+    if (start.getDate() < end.getDate()) {
+      return false;
+    }
+
+    return true;
+  }
+}
+
 @Component({
   selector: 'app-projects-list',
   standalone: true,
   imports: [
+    SameDayPipe,
     CommonModule,
     ListShellComponent,
     MatIconModule,
@@ -73,8 +99,10 @@ export class DescriptionDialogComponent {
             }
             <div class="absolute bg-black text-white right-0  text-xs px-1 py-2 flex items-center">
               <mat-icon class="mr-2">schedule</mat-icon> <span>{{ project.startTime | date }}</span>
-              @if (project.startTime !== project.endTime) {
+              @if (!(project.startTime | sameDay: project.endTime)) {
               <span class="pl-1">- {{ project.endTime | date }}</span>
+              } @else {
+              <span class="pl-1">| {{ project.startTime | date : 'HH:mm' }}</span>
               }
             </div>
           </div>

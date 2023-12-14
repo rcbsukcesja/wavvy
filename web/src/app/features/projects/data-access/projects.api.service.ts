@@ -5,7 +5,6 @@ import { tap } from 'rxjs';
 import { Project, ProjectStatus } from '../model/project.model';
 import { Router } from '@angular/router';
 import { ID } from 'src/app/core/types/id.type';
-import { NGOsStateService } from '../../ngo/data-access/ngos.state.service';
 import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
@@ -59,7 +58,7 @@ export class ProjectsApiService extends HttpBaseService {
       .pipe(
         tap(updated => {
           start.dismiss();
-          this.snack.open('Udało się!, Dodano obrazek projektu', '', {
+          this.snack.open('Udało się! Dodano obrazek projektu', '', {
             duration: 2000,
             verticalPosition: 'top',
           });

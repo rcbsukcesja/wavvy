@@ -16,6 +16,7 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
+import { LoadingComponent } from 'src/app/shared/ui/loading.component';
 
 @Component({
   selector: 'app-manage-offers-page',
@@ -31,6 +32,7 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
     SlicePipe,
     PaginationComponent,
     CommonFiltersComponent,
+    LoadingComponent,
   ],
   template: `
     <header>
@@ -40,7 +42,7 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
 
     <ng-container *ngIf="dataSource() as data">
-      <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
+      <table *ngIf="data.loadListCallState === 'LOADED'" mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
           <td mat-cell *matCellDef="let element">{{ element.position + data.positionModifier }}</td>
@@ -94,9 +96,14 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
-      <br />
-      <app-pagination [totalElements]="data.totalElements" (paginationChange)="handlePageEvent($event)" />
+      @if (data.loadListCallState === 'LOADING') {
+      <app-loader text="Ładowanie ofert..."></app-loader>
+      }
     </ng-container>
+    <br />
+    @if (dataSource(); as state) {
+    <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+    }
   `,
 })
 export default class ManageOffersPageComponent implements OnInit {
@@ -123,8 +130,9 @@ export default class ManageOffersPageComponent implements OnInit {
 
   dataSource = toSignal(
     this.stateService.value$.pipe(
-      map(({ list, totalElements }) => {
+      map(({ list, totalElements, loadListCallState }) => {
         return {
+          loadListCallState,
           list: list.map((offer, index) => ({
             position: index + 1,
             ...offer,

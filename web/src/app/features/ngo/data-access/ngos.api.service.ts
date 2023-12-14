@@ -12,6 +12,7 @@ import { INITIAL_PAGINATION_STATE, ProjectsStateService } from '../../projects/d
 import { createListHttpParams } from 'src/app/core/list-http-params.factory';
 import { ProjectsApiService } from '../../projects/data-access/projects.api.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 
 export interface GetAllNGOsParams {}
 
@@ -85,7 +86,7 @@ export class NGOsApiService extends HttpBaseService {
       .pipe(
         tap(() => {
           start.dismiss();
-          this.snack.open('Udało się!, Dodano logo', '', {
+          this.snack.open('Udało się! Dodano logo', '', {
             duration: 2000,
             verticalPosition: 'top',
           });
@@ -143,8 +144,9 @@ export class NGOsApiService extends HttpBaseService {
   }
 
   getAll(
-    params: PaginationFilters & { search: string } & { id?: string } = {
+    params: CommonFilters & PaginationFilters & { search: string } & { id?: string } = {
       pageIndex: 0,
+      sort: DEFAULT_SORT,
       pageSize: INITIAL_PAGINATION_STATE.size,
       search: '',
     }
@@ -152,7 +154,7 @@ export class NGOsApiService extends HttpBaseService {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     this.http
-      .get<ListApiResponse<NGO>>(this.url, { params: createListHttpParams(params) })
+      .get<ListApiResponse<NGO>>(this.url, { params: createListHttpParams(params, params.sort, 'createdAt') })
       .pipe(
         tap(response => {
           this.stateService.setState({

@@ -1,0 +1,41 @@
+{
+  "cli": {
+    "version": ">= 5.4.0"
+  },
+  "build": {
+    "development": {
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "ios": {
+        "buildConfiguration": "Debug"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "wavvy-9dc2b.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "wavvy-9dc2b",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "wavvy-9dc2b.appspot.com",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:809203693643:web:f8086fcb15a76c6720f5ce",
+        "EXPO_PUBLIC_API_URL": "https://wavvy.eu/api"
+      }
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "production": {}
+  },
+  "submit": {
+    "production": {}
+  }
+}

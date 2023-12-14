@@ -27,6 +27,7 @@ import { ID } from 'src/app/core/types/id.type';
 import { NgoRegisterDialogComponent } from './register/ui/ngo-register-dialog.component';
 import { LegalStatusPipe } from './utils/legal-status.pipe';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
+import { LoadingComponent } from 'src/app/shared/ui/loading.component';
 
 @Component({
   selector: 'app-manage-ngos-page',
@@ -37,7 +38,7 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
     </header>
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
     <ng-container *ngIf="dataSource() as data">
-      <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
+      <table *ngIf="data.loadListCallState === 'LOADED'" mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
           <td mat-cell *matCellDef="let element">{{ element.position + data.positionModifier }}</td>
@@ -61,11 +62,13 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let element">
-            <div
-              class="rounded-full h-4 w-4 mx-auto"
-              [matTooltip]="'Powód: ' + element.reason"
-              [matTooltipDisabled]="!element.disabled"
-              [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
+            <div class="flex items-center justify-center">
+              <div
+                class="rounded-full h-4 w-4 ml-1 shrink-0"
+                [matTooltip]="'Powód blokady: ' + element.reason"
+                [matTooltipDisabled]="!element.disabled"
+                [ngClass]="element.disabled ? 'bg-red-500' : 'bg-green-500'"></div>
+            </div>
           </td>
         </ng-container>
 
@@ -80,9 +83,9 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           </th>
           <td mat-cell *matCellDef="let element">
             @if (element.confirmed) {
-              <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
+            <mat-icon class="bg-green-500 rounded-full text-white">check</mat-icon>
             } @else {
-              <mat-icon>hourglass_empty</mat-icon>
+            <mat-icon>hourglass_empty</mat-icon>
             }
           </td>
         </ng-container>
@@ -111,11 +114,17 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
-      <br />
-      <app-pagination [totalElements]="data.totalElements" (paginationChange)="handlePageEvent($event)" />
+      @if (data.loadListCallState === 'LOADING') {
+      <app-loader text="Ładowanie NGOs..."></app-loader>
+      }
     </ng-container>
+    <br />
+    @if (dataSource(); as state) {
+    <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+    }
   `,
   imports: [
+    LoadingComponent,
     MatTableModule,
     MatIconModule,
     MatDialogModule,
@@ -208,8 +217,9 @@ export default class ManageNGOsPageComponent implements OnInit {
 
   dataSource = toSignal(
     this.stateService.value$.pipe(
-      map(({ list, totalElements }) => {
+      map(({ list, totalElements, loadListCallState }) => {
         return {
+          loadListCallState,
           list: list.map((offer, index) => ({
             position: index + 1,
             ...offer,

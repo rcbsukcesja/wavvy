@@ -7,7 +7,7 @@ import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.
 import { ListDialogComponent } from 'src/app/shared/ui/common-list-dialog.component';
 import { tap, take } from 'rxjs';
 import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
-import { DescriptionDialogComponent, IsOwnProjectPipe } from '../projects-list.component';
+import { DescriptionDialogComponent, IsOwnProjectPipe, SameDayPipe } from '../projects-list.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
@@ -30,7 +30,11 @@ import { Project } from '../model/project.model';
         }
         <div class="absolute bg-black text-white right-0  text-xs px-1 py-2 flex items-center">
           <mat-icon class="mr-2">schedule</mat-icon> <span>{{ project.startTime | date }}</span>
-          <span *ngIf="project.startTime !== project.endTime" class="pl-1">- {{ project.endTime | date }}</span>
+          @if (!(project.startTime | sameDay: project.endTime)) {
+          <span class="pl-1">- {{ project.endTime | date }}</span>
+          } @else {
+          <span class="pl-1">| {{ project.startTime | date : 'HH:mm' }}</span>
+          }
         </div>
       </div>
       <div class="bottom-0 left-0 w-full h-10 p-4 bg-material-blue text-white flex items-center">
@@ -90,6 +94,7 @@ import { Project } from '../model/project.model';
     NgIf,
     NgFor,
     IsOwnProjectPipe,
+    SameDayPipe,
   ],
 })
 export class ProjectCardComponent {

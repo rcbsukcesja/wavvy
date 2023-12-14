@@ -31,6 +31,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ID } from 'src/app/core/types/id.type';
 import { NGO, BusinessArea } from '../../ngo/model/ngo.model';
 import { Company } from '../model/company.model';
+import { CustomValidators } from 'src/app/shared/custom.validator';
 
 export type CompanyProfileFormModel = FormGroup<{
   name: FormControl<string>;
@@ -82,6 +83,7 @@ export type CompanyProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>REGON</mat-label>
             <input formControlName="regon" matInput />
+            <mat-hint *ngIf="!form.controls.regon.disabled">REGON składa się z 9 cyfr</mat-hint>
           </mat-form-field>
           <br />
         </div>
@@ -151,6 +153,9 @@ export type CompanyProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>Strona internetowa</mat-label>
             <input formControlName="website" matInput />
+            <mat-hint [class.text-red-500]="form.controls.website.errors"
+              >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
+            >
           </mat-form-field>
           <br />
         </div>
@@ -165,7 +170,7 @@ export type CompanyProfileFormModel = FormGroup<{
                   {{ form.controls.businnessAreas.value.length === 2 ? 'other' : 'others' }})
                 </span>
               </mat-select-trigger>
-              <mat-option *ngFor="let area of bussinessAreas" [value]="area">{{ area.name }}</mat-option>
+              <mat-option *ngFor="let area of bussinessAreas" [value]="area.id">{{ area.name }}</mat-option>
             </mat-select>
             <mat-hint>Minimum jeden obszar działania</mat-hint>
           </mat-form-field>
@@ -261,15 +266,28 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
     this.form = this.builder.group({
       name: this.builder.control({ value: this.profile.name, disabled: true }),
       logo: this.builder.control<File | null>(null),
-      krs: this.builder.control({ value: this.profile.krs, disabled: true }),
-      nip: this.builder.control({ value: this.profile.nip, disabled: true }),
-      regon: this.builder.control({ value: this.profile.regon, disabled: true }),
+      krs: this.builder.control({ value: this.profile.krs, disabled: this.profile.confirmed }, [
+        Validators.minLength(9),
+        Validators.maxLength(9),
+      ]),
+      nip: this.builder.control({ value: this.profile.nip, disabled: this.profile.confirmed }, [
+        Validators.minLength(10),
+        Validators.maxLength(10),
+      ]),
+      regon: this.builder.control({ value: this.profile.regon, disabled: this.profile.confirmed }, [
+        Validators.minLength(9),
+        Validators.maxLength(9),
+      ]),
       description: this.builder.control(this.profile.description || '', [Validators.required]),
       street: this.builder.control(this.profile.address?.street || '', [Validators.required]),
       city: this.builder.control(this.profile.address?.city || '', [Validators.required]),
       zipcode: this.builder.control(this.profile.address?.zipCode || '', [Validators.required]),
       email: this.builder.control(this.profile.email || '', [Validators.required]),
-      website: this.builder.control(this.profile.website || '', [Validators.required]),
+      website: this.builder.control(this.profile.website || '', [
+        Validators.required,
+        CustomValidators.maxLength,
+        CustomValidators.link,
+      ]),
       phone: this.builder.control(this.profile.phone || '', [Validators.required]),
       businnessAreas: this.builder.control<string[]>(
         this.profile.businessAreas.map(ba => ba.id),

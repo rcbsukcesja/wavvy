@@ -26,6 +26,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ID } from 'src/app/core/types/id.type';
 import { PlaceholderDialogComponent } from 'src/app/shared/ui/dialogs/placeholder-dialog.component';
 import { ProjectCardComponent } from './ui/project-card.component';
+import { LoadingComponent } from 'src/app/shared/ui/loading.component';
 
 @Component({
   selector: 'app-manage-projects-page',
@@ -43,6 +44,7 @@ import { ProjectCardComponent } from './ui/project-card.component';
     NgClass,
     MatTooltipModule,
     JsonPipe,
+    LoadingComponent,
   ],
   template: `
     <header>
@@ -61,7 +63,7 @@ import { ProjectCardComponent } from './ui/project-card.component';
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
     <ng-container *ngIf="dataSource() as data">
       @if (data.loadListCallState === 'LOADING') {
-      <p>Ładowanie...</p>
+      <app-loader text="Ładowanie projektów..."></app-loader>
       } @else {
       <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
@@ -74,6 +76,14 @@ import { ProjectCardComponent } from './ui/project-card.component';
           <td mat-cell *matCellDef="let element">
             <div class="flex items-center">
               {{ element.status | projectStatus }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="disabledStatus">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="flex items-center justify-center">
               <div
                 class="rounded-full h-4 w-4 ml-1 shrink-0"
                 [matTooltip]="'Powód blokady: ' + element.reason"
@@ -148,10 +158,15 @@ import { ProjectCardComponent } from './ui/project-card.component';
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
-      <br />
-      <app-pagination [totalElements]="data.totalElements" (paginationChange)="handlePageEvent($event)" />
-      }
+
+      @if(!data.list.length) {
+      <p class="!mt-4">Nie stworzyłeś jeszcze żadnego projektu</p>
+      } }
     </ng-container>
+    <br />
+    @if (dataSource(); as data) {
+    <app-pagination [totalElements]="data.totalElements" (paginationChange)="handlePageEvent($event)" />
+    }
   `,
 })
 export default class ManageProjectsPageComponent implements OnInit {
@@ -227,6 +242,7 @@ export default class ManageProjectsPageComponent implements OnInit {
     'endTime',
     'budget',
     'status',
+    'disabledStatus',
     'tags',
     'actions',
   ];

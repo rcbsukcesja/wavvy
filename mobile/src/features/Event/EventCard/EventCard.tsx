@@ -1,199 +1,216 @@
-import { Entypo } from '@expo/vector-icons';
-import axios from 'axios';
-import { AspectRatio, Box, Button, Center, HStack, Heading, Icon, IconButton, Stack, Text } from 'native-base';
-import { useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-import { useMutation } from 'react-query';
-import { ENDPOINTS } from 'src/API';
-import { VolunteeringSignup } from 'src/features/Volunteering/VolunteeringSignup';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack/lib/typescript/src/types';
+import { format } from 'date-fns';
+import { Animated, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { SecondaryButton } from 'src/components/button/variants/SecondaryButton.component';
+import { Text } from 'src/components/text/Text.component';
+import { AuthenticatedStackParams, EVENT_DETAILS_SCREEN_NAME } from 'src/navigation/types';
 import { useCombinedStore } from 'src/store';
+import { useTheme } from 'src/theme/hooks/useTheme';
+import { useThemedStyles } from 'src/theme/hooks/useThemedStyles';
+import { Theme } from 'src/theme/types';
+
+import { useLike } from '../hooks/useLike';
+import { EventDTO } from '../types';
 
 interface EventCardProps {
-  id: number;
-  imageUri: string;
-  imageAlt: string;
-  title: string;
-  description: string;
-  date: string;
-  tag: string;
-  likesCount: number;
+  event: EventDTO;
+  scrollOffsetAnimatedValue: Animated.Value;
 }
 
-const styles = StyleSheet.create({
-  cta: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  likeIconWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  actionsWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  fontBold: {
-    fontFamily: 'Poppins-Bold',
-  },
-  fontRegular: {
-    fontFamily: 'Poppins-Regular',
-  },
-});
-
-export function EventCard({ id, imageUri, imageAlt, title, description, date, tag, likesCount }: EventCardProps) {
-  const [likes, setLikes] = useState(() => likesCount);
-
-  const showForm = useCombinedStore(state => state.showForm);
-  const isVisible = useCombinedStore(state => state.isVisible);
-  const likesCountMutation = useMutation({
-    mutationFn: () => axios.patch(`${ENDPOINTS.events}/${id}`, { likesCount: likesCount + 1 }),
+const themedStyles = (theme: Theme) => {
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      borderRadius: 48,
+      backgroundColor: theme.colors.main.primaryLight,
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+      borderTopLeftRadius: 48,
+      borderTopRightRadius: 48,
+    },
+    imageWrapper: {
+      flex: 0.7,
+      position: 'relative',
+    },
+    actionsWrapper: {
+      paddingHorizontal: theme.spacing.layout.horizontal.xl,
+      paddingVertical: theme.spacing.layout.vertical.xl,
+      flex: 0.3,
+      justifyContent: 'space-between',
+    },
+    buttonWrapper: {
+      width: '33%',
+    },
+    actionsUpper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    actionsLower: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+    },
+    iconWrapper: {},
+    moreButton: {
+      marginRight: theme.spacing.layout.horizontal.lg,
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'center',
+    },
+    tagsWrapper: {
+      position: 'absolute',
+      top: theme.spacing.layout.vertical.xl,
+      left: theme.spacing.layout.horizontal.xxl,
+      flexDirection: 'row',
+      gap: theme.spacing.layout.horizontal.md,
+      flexWrap: 'wrap',
+      maxWidth: '90%',
+    },
+    infoWrapper: {
+      position: 'absolute',
+      bottom: theme.spacing.layout.vertical.xl,
+      right: theme.spacing.layout.horizontal.xl,
+      gap: theme.spacing.layout.horizontal.md,
+    },
+    tag: {
+      paddingHorizontal: theme.spacing.layout.horizontal.lg,
+      paddingVertical: theme.spacing.layout.vertical.xs,
+      overflow: 'hidden',
+    },
+    tagDark: {
+      backgroundColor: theme.colors.main.primarySecondVariant,
+    },
+    tagLight: {
+      backgroundColor: theme.colors.main.primary,
+      alignSelf: 'flex-end',
+      maxWidth: 300,
+    },
+    icon: {
+      alignItems: 'center',
+    },
   });
 
-  const handleOpenVolunteeringSignup = () => {
-    showForm();
+  return styles;
+};
+
+export function EventCard({ event, scrollOffsetAnimatedValue }: EventCardProps) {
+  const styles = useThemedStyles(themedStyles);
+  const { colors, fontSizes } = useTheme();
+  const setModalState = useCombinedStore(state => state.setModalState);
+  const userId = useCombinedStore(state => state.userId);
+  const { isLiked, handleLikeEvent } = useLike(event.likes);
+  const { navigate } = useNavigation<NativeStackNavigationProp<AuthenticatedStackParams>>();
+
+  const formatedStartDate = format(new Date(event.startTime), 'dd.MM.yyyy, hh:mm');
+  const formatedEndDate = format(new Date(event.endTime), 'dd.MM.yyyy, hh:mm');
+  const address = `ul. ${event.address?.street ?? ''}, ${event.address?.city ?? ''}`;
+
+  const inputRange = [0, 0.5, 0.99];
+  const inputRangeOpacity = [0, 0.5, 0.99];
+
+  const scale = scrollOffsetAnimatedValue.interpolate({
+    inputRange,
+    outputRange: [1, 0, 1],
+  });
+
+  const opacity = scrollOffsetAnimatedValue.interpolate({
+    inputRange: inputRangeOpacity,
+    outputRange: [1, 0, 1],
+  });
+
+  const handleOpenModal = () =>
+    setModalState({
+      message: `${event.cooperationMessage}\n\nWyślij email pod adres: ${event.organizer.email}`,
+      visible: true,
+      type: 'voluntaary',
+      param: event.organizer.email,
+    });
+
+  const handleNavigateEventDetailsScreen = () => {
+    navigate(EVENT_DETAILS_SCREEN_NAME, { event });
   };
 
   return (
-    <>
-      <Box alignItems="center">
-        <Box
-          maxW="350"
-          rounded="lg"
-          overflow="hidden"
-          borderColor="coolGray.200"
-          borderWidth="1"
-          mr={4}
-          _dark={{
-            borderColor: 'coolGray.600',
-            backgroundColor: 'gray.700',
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          transform: [{ scale }],
+          opacity,
+        },
+      ]}>
+      <TouchableOpacity style={styles.imageWrapper} onPress={handleNavigateEventDetailsScreen}>
+        <Image
+          style={styles.image}
+          source={{
+            uri: event.imageLink,
           }}
-          _web={{
-            shadow: 2,
-            borderWidth: 0,
-          }}
-          _light={{
-            backgroundColor: 'gray.50',
-          }}>
-          <Box>
-            <AspectRatio w="100%" ratio={16 / 9}>
-              <Image
-                source={{
-                  uri: `${imageUri}`,
-                }}
-                alt={imageAlt}
-              />
-            </AspectRatio>
-            <Center
-              bg="violet.500"
-              _dark={{
-                bg: 'violet.400',
-              }}
-              _text={{
-                color: 'warmGray.50',
-                fontWeight: '700',
-                fontSize: 'xs',
-              }}
-              position="absolute"
-              fontFamily="Poppins-Bold"
-              bottom="0"
-              px="3"
-              py="1.5">
-              {`#${tag}`}
-            </Center>
-          </Box>
-          <Stack p="4" space={3}>
-            <Stack space={2}>
-              <Heading size="md" ml="-1" fontFamily="Poppins-Bold">
-                {title}
-              </Heading>
-            </Stack>
-            <Text fontWeight="400" fontFamily="Poppins-Regular">
-              {description}
-            </Text>
-            <HStack alignItems="center" space={4} justifyContent="space-between">
-              <HStack alignItems="center">
-                <Text
-                  color="coolGray.600"
-                  _dark={{
-                    color: 'warmGray.200',
-                  }}
-                  fontWeight="700"
-                  fontFamily="Poppins-Bold">
-                  Kiedy ? {date}
-                </Text>
-              </HStack>
-            </HStack>
-          </Stack>
-          <Stack p="4" space={3}>
-            <View style={styles.cta}>
-              <View style={styles.actionsWrapper}>
-                <Button
-                  _text={{ fontFamily: 'Poppins-Bold' }}
-                  size="md"
-                  variant="solid"
-                  mr={4}
-                  backgroundColor="violet.600">
-                  Wspomóż
-                </Button>
-                <Button
-                  _text={{ fontFamily: 'Poppins-Bold' }}
-                  size="md"
-                  variant="solid"
-                  backgroundColor="amber.600"
-                  onPress={handleOpenVolunteeringSignup}>
-                  Wolontariat
-                </Button>
-              </View>
-              <View style={styles.likeIconWrapper}>
-                <IconButton
-                  icon={<Icon as={Entypo} name="emoji-happy" />}
-                  borderRadius="full"
-                  _icon={{
-                    color: 'violet.500',
-                    size: 'xl',
-                  }}
-                  _hover={{
-                    bg: 'violet.600:alpha.20',
-                  }}
-                  _pressed={{
-                    bg: 'violet.600:alpha.20',
-                    _icon: {
-                      name: 'emoji-flirt',
-                    },
-                    _ios: {
-                      _icon: {
-                        size: '2xl',
-                      },
-                    },
-                  }}
-                  _ios={{
-                    _icon: {
-                      size: '2xl',
-                    },
-                  }}
-                  onPress={() => {
-                    setLikes(likes + 1);
-                    return likesCountMutation.mutate();
-                  }}
-                />
-                <Text
-                  color="coolGray.600"
-                  _dark={{
-                    color: 'warmGray.200',
-                  }}
-                  fontFamily="Poppins-Bold"
-                  fontWeight="700">
-                  {likes}
-                </Text>
-              </View>
+        />
+        <View style={styles.tagsWrapper}>
+          {event.tags.map(tag => (
+            <View key={tag} style={[styles.tag, styles.tagDark]}>
+              <Text color="warning" letterSpacing="wide" type="primaryBold">
+                {tag}
+              </Text>
             </View>
-          </Stack>
-        </Box>
-      </Box>
-
-      <VolunteeringSignup isVisible={isVisible} />
-    </>
+          ))}
+        </View>
+        <View style={styles.infoWrapper}>
+          <View style={[styles.tag, styles.tagLight]}>
+            <Text color="onPrimary" letterSpacing="wide" type="primaryBold">
+              {event.name}
+            </Text>
+          </View>
+          <View style={[styles.tag, styles.tagLight]}>
+            <Text color="onPrimary" letterSpacing="wide" type="primaryBold">
+              {event.organizer.name}
+            </Text>
+          </View>
+          {event.address ? (
+            <View style={[styles.tag, styles.tagLight]}>
+              <Text color="onPrimary" letterSpacing="wide" type="primaryBold">
+                {address}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+      </TouchableOpacity>
+      <View style={styles.actionsWrapper}>
+        <View style={styles.actionsUpper}>
+          <View style={styles.iconWrapper}>
+            <TouchableOpacity style={styles.icon} onPress={() => handleLikeEvent(event.id, userId)}>
+              <AntDesign name={isLiked ? 'heart' : 'hearto'} size={32} color={colors.main.primary} />
+              {event.likes?.length ? (
+                <Text type="primaryBold" color="onHoverPrimary">
+                  {+event.likes.length}
+                </Text>
+              ) : (
+                <Text type="primaryBold" color="onHoverPrimary">
+                  0
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonWrapper}>
+            {event.possibleVolunteer ? <SecondaryButton onPress={handleOpenModal} label="Wolontariat" /> : null}
+          </View>
+        </View>
+        <View style={styles.actionsLower}>
+          <View>
+            <Text type="primaryBold">Od: {formatedStartDate}</Text>
+            <Text type="primaryBold">Do: {formatedEndDate}</Text>
+          </View>
+          <TouchableOpacity style={styles.moreButton} onPress={handleNavigateEventDetailsScreen}>
+            <Text type="primaryBold">WIĘCEJ</Text>
+            <AntDesign name="doubleright" size={fontSizes.md} color={colors.text.onBackground} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Animated.View>
   );
 }

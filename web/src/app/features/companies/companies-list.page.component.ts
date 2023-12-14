@@ -18,6 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CompanyCardComponent } from './ui/company-card.component';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
+import { LoadingComponent } from 'src/app/shared/ui/loading.component';
 
 @Component({
   selector: 'app-companies.page',
@@ -33,6 +34,7 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
     MatSnackBarModule,
     MatDialogModule,
     CompanyCardComponent,
+    LoadingComponent,
   ],
   template: `
     <ng-container *ngIf="state() as state">
@@ -43,9 +45,14 @@ import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state
           <app-company-card [company]="company" (message)="sendMessage($event, company.id)" />
         </ng-template>
       </app-list-shell>
-      <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
-      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+      @if (state.loadListCallState === 'LOADING') {
+      <app-loader text="Ładowanie firm..."></app-loader>
+      }
     </ng-container>
+    <br />
+    @if (state(); as state) {
+    <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+    }
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,

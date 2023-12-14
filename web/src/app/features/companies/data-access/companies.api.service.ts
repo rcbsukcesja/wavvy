@@ -9,6 +9,7 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { ListApiResponse } from 'src/app/core/types/list-response.type';
 import { INITIAL_PAGINATION_STATE } from '../../projects/data-access/projects.state.service';
 import { createListHttpParams } from 'src/app/core/list-http-params.factory';
+import { CommonFilters, DEFAULT_SORT } from 'src/app/shared/ui/common-filters.component';
 
 export interface GetAllCompaniesParams {}
 
@@ -73,16 +74,17 @@ export class CompaniesApiService extends HttpBaseService {
   }
 
   getAll(
-    params: PaginationFilters & { search: string } & { id?: string } = {
+    params: PaginationFilters & CommonFilters & { id?: string } = {
       pageIndex: 0,
       pageSize: INITIAL_PAGINATION_STATE.size,
       search: '',
+      sort: DEFAULT_SORT,
     }
   ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     return this.http
-      .get<ListApiResponse<Company>>(this.url, { params: createListHttpParams(params) })
+      .get<ListApiResponse<Company>>(this.url, { params: createListHttpParams(params, params.sort, 'createdAt') })
       .pipe(
         tap(response => {
           this.stateService.setState({
