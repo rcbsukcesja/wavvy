@@ -9,6 +9,7 @@ import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNGONotFoundExc
 import com.rcbsukcesja.hack2react.exceptions.notFound.ProjectNotFoundException;
 import com.rcbsukcesja.hack2react.model.dto.save.ProjectPatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.ProjectSaveDto;
+import com.rcbsukcesja.hack2react.model.dto.view.ImageLinkView;
 import com.rcbsukcesja.hack2react.model.dto.view.ProjectView;
 import com.rcbsukcesja.hack2react.model.entity.OrganizationNGO;
 import com.rcbsukcesja.hack2react.model.entity.Project;
@@ -245,7 +246,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public void updateImage(MultipartFile file, UUID projectId, String directory) {
+    public ImageLinkView updateImage(MultipartFile file, UUID projectId, String directory) {
         Project project = getProjectByIdOrThrowException(projectId);
         userValidation.checkIfIsOwner(project.getOrganizer().getOwner().getId());
         String oldFilePath = removeImagePathAndLinkAndReturnPath(project);
@@ -255,13 +256,15 @@ public class ProjectService {
             throw new StorageException(FILE_EXTENSION_FAILURE);
         }
         String newFilePath = FileUtils.getPathAsString(fileExtension, projectId, directory);
+        String newImageUrl = projectUrl + "/" + projectId + "." + fileExtension.toLowerCase();
         project.setImagePath(newFilePath);
-        project.setImageLink(projectUrl + "/" + projectId + "." + fileExtension.toLowerCase());
+        project.setImageLink(newImageUrl);
         project.setUpdatedAt(TimeUtils.nowInUTC());
         projectRepository.saveAndFlush(project);
         if (oldFilePath != null && !oldFilePath.equals(newFilePath)) {
             removeImage(oldFilePath);
         }
+        return ImageLinkView.builder().imageLink(newImageUrl).build();
     }
 
     @Transactional

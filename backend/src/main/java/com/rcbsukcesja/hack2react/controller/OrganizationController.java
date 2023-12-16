@@ -1,5 +1,6 @@
 package com.rcbsukcesja.hack2react.controller;
 
+import com.rcbsukcesja.hack2react.model.dto.view.ImageLinkView;
 import com.rcbsukcesja.hack2react.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,11 +26,10 @@ public class OrganizationController {
 
     @PostMapping(value = "/{organizationId}/logo", consumes = "multipart/form-data")
     @PreAuthorize("hasAnyRole('ROLE_NGO','ROLE_COMPANY')")
-    public ResponseEntity<?> uploadLogo(
+    public ResponseEntity<ImageLinkView> uploadLogo(
             @PathVariable UUID organizationId,
             @RequestParam("file") MultipartFile file) {
-        organizationService.updateLogo(file, organizationId, UPLOAD_DIRECTORY);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(organizationService.updateLogo(file, organizationId, UPLOAD_DIRECTORY), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{organizationId}/logo")
