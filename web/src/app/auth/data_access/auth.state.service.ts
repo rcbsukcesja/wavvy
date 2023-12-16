@@ -7,8 +7,6 @@ export interface User {
   id: string;
   role: UserRoles;
   login: string;
-  firstLogin: boolean;
-  profileCompleted: boolean;
   offersFollowed: number[];
 }
 

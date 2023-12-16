@@ -54,9 +54,9 @@ export class ProjectsApiService extends HttpBaseService {
     });
 
     this.http
-      .post<Project>(`${this.url}/${projectId}/image`, formData)
+      .post<{ imageLink: string }>(`${this.url}/${projectId}/image`, formData)
       .pipe(
-        tap(updated => {
+        tap(({ imageLink }) => {
           start.dismiss();
           this.snack.open('Udało się! Dodano obrazek projektu', '', {
             duration: 2000,
@@ -67,7 +67,7 @@ export class ProjectsApiService extends HttpBaseService {
               return projectId === project.id
                 ? {
                     ...project,
-                    imageLink: updated.imageLink,
+                    imageLink,
                   }
                 : project;
             }),

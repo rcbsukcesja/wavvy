@@ -1,11 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { AddOfferFormComponent } from './ui/add-offer-form.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { OffersApiService } from './data-access/offers.api.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe, NgIf, SlicePipe } from '@angular/common';
 import { BehaviorSubject, filter, map } from 'rxjs';
 import { Offer } from './model/offer.model';
@@ -55,7 +55,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
 
         <ng-container matColumnDef="description">
           <th mat-header-cell *matHeaderCellDef>Opis</th>
-          <td class="py-4" mat-cell *matCellDef="let element">{{ element.description | slice : 0 : 100 }}...</td>
+          <td class="py-4" mat-cell *matCellDef="let element">{{ element.description | slice: 0 : 100 }}...</td>
         </ng-container>
 
         <ng-container matColumnDef="targetAudience">
@@ -97,16 +97,18 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
       @if (data.loadListCallState === 'LOADING') {
-      <app-loader text="Ładowanie ofert..."></app-loader>
+        <app-loader text="Ładowanie ofert..."></app-loader>
       }
     </ng-container>
     <br />
     @if (dataSource(); as state) {
-    <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }
   `,
 })
 export default class ManageOffersPageComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
+
   private filters$$ = new BehaviorSubject<PaginationFilters & CommonFilters>({
     pageIndex: 0,
     pageSize: INITIAL_PAGINATION_STATE.size,
@@ -147,7 +149,9 @@ export default class ManageOffersPageComponent implements OnInit {
   dialog = inject(MatDialog);
 
   ngOnInit(): void {
-    this.service.getAll();
+    this.filters$$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(filters => {
+      this.service.getAll(filters);
+    });
   }
 
   remove(offer: Offer) {

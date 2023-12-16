@@ -25,6 +25,8 @@ export type ProjectForm = FormGroup<{
   description: FormControl<string>;
   startTime: FormControl<Date>;
   startTimeHour: FormControl<string>;
+  setEndDate: FormControl<boolean>;
+  setEndTimeHour: FormControl<boolean>;
   endTime: FormControl<Date>;
   endTimeHour: FormControl<string>;
   budget: FormControl<number>;
@@ -65,9 +67,9 @@ export type ProjectForm = FormGroup<{
   template: `
     <h2>{{ project ? 'Edytowanie projektu' : 'Dodawanie projektu' }}</h2>
     @if (project?.imageLink; as link) {
-    <section class="flex w-1/4 mb-4">
-      <img [src]="link" />
-    </section>
+      <section class="flex w-1/4 mb-4">
+        <img [src]="link" />
+      </section>
     }
 
     <form [formGroup]="form" (ngSubmit)="addProject()" class="flex flex-col">
@@ -133,6 +135,19 @@ export type ProjectForm = FormGroup<{
 
       <br />
       <div class="flex gap-4">
+        <div class="flex-1">
+          <label>Czy data zakończenia jest inna?</label>
+          <mat-checkbox class="example-margin" formControlName="setEndDate"></mat-checkbox>
+        </div>
+        <div class="flex-1">
+          <label>Czy chcesz podać godzinę zakończenia?</label>
+          <mat-checkbox class="example-margin" formControlName="setEndTimeHour"></mat-checkbox>
+        </div>
+      </div>
+
+      <br />
+
+      <div class="flex gap-4">
         <mat-form-field class="flex-1">
           <mat-label>Data zakończenia </mat-label>
           <input
@@ -189,8 +204,7 @@ export type ProjectForm = FormGroup<{
       <mat-form-field>
         <mat-label>Link</mat-label>
         <input formControlName="link" matInput />
-        <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
-        <mat-hint [class.text-red-500]="form.controls.link.errors"
+        <mat-hint [class.text-red-500]="form.controls.link.touched && form.controls.link.errors"
           >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
         >
       </mat-form-field>
@@ -212,24 +226,10 @@ export type ProjectForm = FormGroup<{
             (matChipInputTokenEnd)="add($event)" />
         </mat-chip-grid>
         <mat-hint *ngIf="form.controls.tags as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
-          >Podaj przynajmniej jeden tag</mat-hint
+          >Podaj przynajmniej jeden tag. By dodać tag po jego wpisaniu naciśnij enter</mat-hint
         >
       </mat-form-field>
       <br />
-      <!-- <mat-form-field>
-        <mat-label>Kategorie</mat-label>
-        <mat-select formControlName="categories" multiple>
-          <mat-select-trigger>
-            {{ form.controls.categories.value[0]?.name || '' }}
-            <span *ngIf="(form.controls.categories.value.length || 0) > 1">
-              (+{{ (form.controls.categories.value.length || 0) - 1 }}
-              {{ form.controls.categories.value.length === 2 ? 'other' : 'others' }})
-            </span>
-          </mat-select-trigger>
-          <mat-option *ngFor="let area of bussinessAreas" [value]="area">{{ area.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br /> -->
 
       <button mat-raised-button color="primary">Zapisz</button>
     </form>
@@ -345,6 +345,8 @@ export default class ProjectFormPageComponent implements OnInit {
     this.tags = this.project?.tags || [];
 
     this.form = this.builder.group({
+      setEndDate: this.builder.control(!!this.project?.endTime),
+      setEndTimeHour: this.builder.control(!!this.project?.endTime),
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || '', [Validators.required, CustomValidators.maxLength]),

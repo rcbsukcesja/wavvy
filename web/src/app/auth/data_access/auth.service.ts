@@ -74,7 +74,7 @@ export class AuthService extends HttpBaseService {
         tap(user => {
           this.setAuthenticatedUser(user);
 
-          this.router.navigateByUrl(user.firstLogin ? 'auth/first-login' : '/');
+          this.router.navigateByUrl('/');
         })
       )
       .subscribe({

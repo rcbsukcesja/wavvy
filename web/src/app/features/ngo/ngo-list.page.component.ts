@@ -25,6 +25,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BusinessArea } from './model/ngo.model';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from '../../shared/ui/loading.component';
+import { IsOwnProjectPipe } from '../projects/projects-list.component';
 
 @Component({
   selector: 'app-ngo-list-page',
@@ -49,9 +50,11 @@ import { LoadingComponent } from '../../shared/ui/loading.component';
           </div>
           <div class="mb-4">
             <p>
-              @if(ngo.description) {
-              {{ (ngo.description | slice : 0 : 160) + '...' }}
-              } @else { Brak opisu }
+              @if (ngo.description) {
+                {{ (ngo.description | slice: 0 : 160) + '...' }}
+              } @else {
+                Brak opisu
+              }
             </p>
             <div class="flex justify-end">
               <button
@@ -63,38 +66,44 @@ import { LoadingComponent } from '../../shared/ui/loading.component';
           </div>
           <div class="mb-2">
             @for (tag of ngo.tags; track tag) {
-            <span>#{{ tag }} </span>
+              <span>#{{ tag }} </span>
             }
           </div>
           <mat-divider />
           <div class="flex justify-between mt-4">
             @if ($isAuth()) {
-            <div
-              matTooltip="Wyślij wiadomość do organizacji"
-              class="cursor-pointer"
-              (click)="openMessageModal(ngo.id, ngo.name)">
-              <mat-icon>forward_to_inbox</mat-icon>
-            </div>
+              <div
+                [matTooltip]="
+                  !(ngo.id | isOwnProject)
+                    ? 'Wyślij wiadomość do organizacji'
+                    : 'To twoja własna organizacja, nie ma co wysyłać wiadomości do siebie 😉'
+                "
+                [matTooltipDisabled]="!(ngo.id | isOwnProject)"
+                [class.text-gray-400]="ngo.id | isOwnProject"
+                class="cursor-pointer"
+                (click)="openMessageModal(ngo.id, ngo.name)">
+                <mat-icon>forward_to_inbox</mat-icon>
+              </div>
             }
             <!--  -->
             @if (ngo.resources?.length) {
-            <div
-              matTooltip="Wyświetl zasoby organizacji"
-              class="cursor-pointer"
-              (click)="openResourcesModal(ngo.resources)">
-              <mat-icon [ngClass]="{ ' bg-yellow-400 rounded-full': resourcesContainsSearchTerm(ngo.resources) }"
-                >build</mat-icon
-              >
-            </div>
+              <div
+                matTooltip="Wyświetl zasoby organizacji"
+                class="cursor-pointer"
+                (click)="openResourcesModal(ngo.resources)">
+                <mat-icon [ngClass]="{ ' bg-yellow-400 rounded-full': resourcesContainsSearchTerm(ngo.resources) }"
+                  >build</mat-icon
+                >
+              </div>
             }
             <!--  -->
             @if (ngo.businnessAreas?.length) {
-            <div
-              matTooltip="Wyświetl obszary działań organizacji"
-              class="cursor-pointer"
-              (click)="openCategoriessModal(ngo.businnessAreas)">
-              <mat-icon>assignment</mat-icon>
-            </div>
+              <div
+                matTooltip="Wyświetl obszary działań organizacji"
+                class="cursor-pointer"
+                (click)="openCategoriessModal(ngo.businnessAreas)">
+                <mat-icon>assignment</mat-icon>
+              </div>
             }
             <div
               matTooltip="Wyświetl kontakt do organizacji"
@@ -109,7 +118,7 @@ import { LoadingComponent } from '../../shared/ui/loading.component';
     </ng-container>
     <br />
     @if (state(); as state) {
-    <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
+      <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -127,6 +136,7 @@ import { LoadingComponent } from '../../shared/ui/loading.component';
     PaginationComponent,
     MatTooltipModule,
     LoadingComponent,
+    IsOwnProjectPipe,
   ],
 })
 export default class NgoListPageComponent implements OnInit {

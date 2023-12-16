@@ -58,22 +58,22 @@ export interface MenuItem {
 
             <ng-container *ngIf="role !== USER_ROLES.ADMIN">
               @if (ngoState().profile?.confirmed) {
-              <span
-                class="text-xs absolute bottom-0 rounded-md px-2 py-1"
-                [matTooltipDisabled]="!ngoState().profile?.disabled"
-                [matTooltip]="ngoState().profile?.reason || ''"
-                [ngClass]="{
-                  'bg-red-500 text-white': ngoState().profile?.disabled,
-                  'bg-green-700 text-white': !ngoState().profile?.disabled
-                }">
-                {{ ngoState().profile?.disabled ? 'Zablokowany' : 'Aktywny' }}
-              </span>
+                <span
+                  class="text-xs absolute bottom-0 rounded-md px-2 py-1"
+                  [matTooltipDisabled]="!ngoState().profile?.disabled"
+                  [matTooltip]="ngoState().profile?.reason || ''"
+                  [ngClass]="{
+                    'bg-red-500 text-white': ngoState().profile?.disabled,
+                    'bg-green-700 text-white': !ngoState().profile?.disabled
+                  }">
+                  {{ ngoState().profile?.disabled ? 'Zablokowany' : 'Aktywny' }}
+                </span>
               } @else {
-              <span
-                class="text-xs absolute bottom-0 rounded-md px-2 py-1 bg-slate-500"
-                matTooltip="Musisz najpierw uzupełnić swój profil i zostać zatwierdzony przez miasto">
-                Konto Niezatwierdzone
-              </span>
+                <span
+                  class="text-xs absolute bottom-0 rounded-md px-2 py-1 bg-slate-500"
+                  matTooltip="Musisz najpierw uzupełnić swój profil i zostać zatwierdzony przez miasto">
+                  Konto Niezatwierdzone
+                </span>
               }
             </ng-container>
           </div>
@@ -107,7 +107,7 @@ export interface MenuItem {
             </div>
 
             <div class="flex justify-between items-start">
-              <a *ngIf="$isAuth() && ngoState().profile?.confirmed" routerLink="/messages" class="block"
+              <a *ngIf="$showMessageBox()" routerLink="/messages" class="block"
                 ><mat-icon class="!w-9 !h-9 text-3xl"> local_post_office</mat-icon>
               </a>
               <button *ngIf="$isAuth()" class="ml-4" mat-button (click)="logout()">Wyloguj</button>
@@ -171,6 +171,10 @@ export default class ShellComponent {
 
   private $authState = inject(AuthStateService).$value;
   public $isAuth = computed(() => this.$authState().status === 'AUTHENTICATED');
+  public $showMessageBox = computed(
+    () => this.$isAuth() && (this.ngoState().profile?.confirmed || this.$authState().user?.role === USER_ROLES.ADMIN)
+  );
+
   public ngoState = inject(NGOsStateService).$value;
   public companyState = inject(CompaniesStateService).$value;
 

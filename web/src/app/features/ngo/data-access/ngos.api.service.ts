@@ -98,19 +98,32 @@ export class NGOsApiService extends HttpBaseService {
   updateProfile(payload: UpdateNGOProfileFormValue, id: string) {
     this.stateService.setState({ updateProfileCallState: 'LOADING' });
 
-    return this.http.patch(`${this.url}/${id}`, { ...payload }).pipe(
-      tap(() => {
-        this.stateService.setState({ updateProfileCallState: 'LOADED' });
+    const user = this.authState.$value().user;
 
-        const user = this.authState.$value().user;
-
-        if (!user || user.role === USER_ROLES.ADMIN) {
-          return;
-        }
-
-        this.getProfile();
+    return this.http
+      .patch(`${user?.role === USER_ROLES.COMPANY_USER ? this.url.replace('ngos', 'companies') : this.url}/${id}`, {
+        ...payload,
       })
-    );
+      .pipe(
+        tap(() => {
+          this.stateService.setState({ updateProfileCallState: 'LOADED' });
+
+          if (!user || user.role === USER_ROLES.ADMIN) {
+            return;
+          }
+
+          this.snack.open(
+            `Profil twojej ${user.role === USER_ROLES.NGO_USER ? 'organizacji' : 'firmy'} został zaktualizowany`,
+            '',
+            {
+              duration: 2000,
+              verticalPosition: 'top',
+            }
+          );
+
+          this.getProfile();
+        })
+      );
   }
 
   getProfileOnInit(role: UserRoles) {

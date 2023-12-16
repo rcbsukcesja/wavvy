@@ -57,18 +57,8 @@ export class MessagesApiService extends HttpBaseService {
   ) {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
-    // const url = new URL(this.url + '/received');
-    // const sp = new URLSearchParams({
-    //   _sort: 'createdAt',
-    //   _order: params.sort,
-    //   _start: (params.pageIndex * params.pageSize).toString(),
-    //   _limit: params.pageSize.toString(),
-    //   receiverId: this.ngoStateService.$value().profile?.id.toString() || '',
-    //   q: params.search,
-    // });
-
     this.http
-      .get<Message[]>(this.url + '/received', { params: createListHttpParams(params, params.sort) })
+      .get<Message[]>(this.url + '/received', { params: createListHttpParams(params, params.sort, 'createdAt') })
       .pipe(
         tap(messages => {
           this.stateService.setState({ loadListCallState: 'LOADED', list: messages });

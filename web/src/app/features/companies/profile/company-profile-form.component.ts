@@ -28,7 +28,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { BehaviorSubject } from 'rxjs';
-import { ID } from 'src/app/core/types/id.type';
 import { NGO, BusinessArea } from '../../ngo/model/ngo.model';
 import { Company } from '../model/company.model';
 import { CustomValidators } from 'src/app/shared/custom.validator';
@@ -91,11 +90,13 @@ export type CompanyProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>KRS</mat-label>
             <input formControlName="krs" matInput />
+            <mat-hint *ngIf="!form.controls.krs.disabled">KRS składa się z 10 cyfr</mat-hint>
           </mat-form-field>
           <br />
           <mat-form-field class="md:w-1/2">
             <mat-label>NIP</mat-label>
             <input formControlName="nip" matInput />
+            <mat-hint *ngIf="!form.controls.nip.disabled">NIP składa się z 10 cyfr</mat-hint>
           </mat-form-field>
           <br />
         </div>
@@ -141,16 +142,9 @@ export type CompanyProfileFormModel = FormGroup<{
           </mat-form-field>
           <br />
         </div>
-        <div class="flex flex-col md:flex-row  md:gap-4">
-          <!-- <mat-form-field class="md:w-1/2">
-            <mat-label>Data utworzenia</mat-label>
-            <input matInput formControlName="creationDate" [matDatepicker]="picker" placeholder="Wybierz datę" />
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field> -->
-
+        <div class="mb-4">
           <br />
-          <mat-form-field class="md:w-1/2">
+          <mat-form-field class="w-full">
             <mat-label>Strona internetowa</mat-label>
             <input formControlName="website" matInput />
             <mat-hint [class.text-red-500]="form.controls.website.errors"
@@ -179,6 +173,11 @@ export type CompanyProfileFormModel = FormGroup<{
             <div class="w-full flex flex-col">
               <label [class.text-red-500]="logo$.value.error" for="logo">Logo</label>
               <input [class.text-red-500]="logo$.value.error" id="logo" formControlName="logo" #logoInput type="file" />
+              @if (logo$.value.error) {
+                <p class="text-red-500">L</p>
+              } @else {
+                <p class="text-xs !mt-4 !mb-0">By zapisać wybrane logo, kliknij ikonę dyskietki.</p>
+              }
             </div>
             <button type="button" (click)="upload()"><mat-icon>save</mat-icon></button>
           </div>
@@ -216,7 +215,7 @@ export type CompanyProfileFormModel = FormGroup<{
                   temacie! Daj znać o swoich super mocach 😎</mat-hint
                 >
               </mat-form-field>
-              <button (click)="addResource(newResource.value)" type="button">Dodaj</button>
+              <button (click)="addResource(newResource.value); newResource.value = ''" type="button">Dodaj</button>
             </div>
           </section>
         </div>
@@ -232,8 +231,6 @@ export type CompanyProfileFormModel = FormGroup<{
 export class CompanyProfileFirstCompletionComponent implements OnInit {
   @Input({ required: true }) profile!: NGO;
   @Input({ required: true }) bussinessAreas!: BusinessArea[];
-  @Input() firstCompletion = false;
-  @Input() adminMode = false;
   @Output() save = new EventEmitter<Required<typeof this.form.value>>();
   @Output() saveLogo = new EventEmitter<File>();
   @ViewChild('logoInput') logoInput!: ElementRef<HTMLInputElement>;
@@ -267,8 +264,8 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
       name: this.builder.control({ value: this.profile.name, disabled: true }),
       logo: this.builder.control<File | null>(null),
       krs: this.builder.control({ value: this.profile.krs, disabled: this.profile.confirmed }, [
-        Validators.minLength(9),
-        Validators.maxLength(9),
+        Validators.minLength(10),
+        Validators.maxLength(10),
       ]),
       nip: this.builder.control({ value: this.profile.nip, disabled: this.profile.confirmed }, [
         Validators.minLength(10),
@@ -291,7 +288,7 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
       phone: this.builder.control(this.profile.phone || '', [Validators.required]),
       businnessAreas: this.builder.control<string[]>(
         this.profile.businessAreas.map(ba => ba.id),
-        [Validators.minLength(1)]
+        [Validators.minLength(1), Validators.required]
       ),
       resources: this.builder.array<FormControl<string>>([]),
     });

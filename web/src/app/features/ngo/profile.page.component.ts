@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ID } from 'src/app/core/types/id.type';
 import { CompanyProfileFirstCompletionComponent } from '../companies/profile/company-profile-form.component';
 import { USER_ROLES } from 'src/app/core/user-roles.enum';
+import { CompaniesApiService } from '../companies/data-access/companies.api.service';
 
 @Component({
   selector: 'app-organization-profile-page',
@@ -37,30 +38,34 @@ import { USER_ROLES } from 'src/app/core/user-roles.enum';
   ],
   template: `
     <ng-container *ngIf="state() as state">
-      @switch (state.loadProfileCallState) { @case ('LOADING') {
-      <p>
-        <mat-spinner [diameter]="16" />
-      </p>
-      } @case ('LOADED') { @if (!state.profile?.confirmed) {
-      <div class="bg-red-300 px-4 py-2 rounded-md w-fit relative mb-4">
-        <mat-icon class="absolute -top-2 -left-2">warning</mat-icon>
-        <p class="!m-0">Twoja organizacja nie jest jeszcze zatwierdzona</p>
-      </div>
-      } @if ($authState().user?.role === USER_ROLES.NGO_USER) {
-      <app-ngo-profile-form
-        (save)="save($event, state.profile!.id)"
-        (saveLogo)="saveLogo($event, state.profile!.id)"
-        [bussinessAreas]="bussinessAreas"
-        [firstCompletion]="!!$firstCompletion()"
-        [profile]="state.profile!" />
-      } @else {
-      <app-company-profile-form
-        (save)="saveCompany($event, state.profile!.id)"
-        (saveLogo)="saveLogo($event, state.profile!.id)"
-        [bussinessAreas]="bussinessAreas"
-        [firstCompletion]="!!$firstCompletion()"
-        [profile]="state.profile!" />
-      } } }
+      @switch (state.loadProfileCallState) {
+        @case ('LOADING') {
+          <p>
+            <mat-spinner [diameter]="16" />
+          </p>
+        }
+        @case ('LOADED') {
+          @if (!state.profile?.confirmed) {
+            <div class="bg-red-300 px-4 py-2 rounded-md w-fit relative mb-4">
+              <mat-icon class="absolute -top-2 -left-2">warning</mat-icon>
+              <p class="!m-0">Twoja organizacja nie jest jeszcze zatwierdzona</p>
+            </div>
+          }
+          @if ($authState().user?.role === USER_ROLES.NGO_USER) {
+            <app-ngo-profile-form
+              (save)="save($event, state.profile!.id)"
+              (saveLogo)="saveLogo($event, state.profile!.id)"
+              [bussinessAreas]="bussinessAreas"
+              [profile]="state.profile!" />
+          } @else {
+            <app-company-profile-form
+              (save)="saveCompany($event, state.profile!.id)"
+              (saveLogo)="saveLogo($event, state.profile!.id)"
+              [bussinessAreas]="bussinessAreas"
+              [profile]="state.profile!" />
+          }
+        }
+      }
     </ng-container>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,15 +73,10 @@ import { USER_ROLES } from 'src/app/core/user-roles.enum';
 export default class OrganizationProfilePageComponent implements OnInit {
   @Input() bussinessAreas!: BusinessArea[];
   private service = inject(NGOsApiService);
+
   public $authState = inject(AuthStateService).$value;
 
   USER_ROLES = USER_ROLES;
-
-  $firstCompletion = computed(() => {
-    const user = this.$authState().user;
-
-    return user && !user.profileCompleted;
-  });
 
   state = inject(NGOsStateService).$value;
 
@@ -143,13 +143,22 @@ export default class OrganizationProfilePageComponent implements OnInit {
       phone: string;
       businnessAreas: string[];
       resources: string[];
+      logo: File | null;
     },
     id: string
   ) {
+    const { logo, street, city, zipcode, businnessAreas, ...payload } = formValue;
+
     this.service
       .updateProfile(
         {
-          ...formValue,
+          ...payload,
+          address: {
+            street,
+            city,
+            zipCode: zipcode,
+            country: 'Polska',
+          },
           businessAreaIds: formValue.businnessAreas,
         },
         id

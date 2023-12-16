@@ -143,7 +143,7 @@ export type NgoProfileFormModel = FormGroup<{
         </div>
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
-            <mat-label>Data utworzenia</mat-label>
+            <mat-label>Data założenia organizacji</mat-label>
             <input
               matInput
               formControlName="foundedAt"
@@ -184,6 +184,7 @@ export type NgoProfileFormModel = FormGroup<{
             <div class="w-full flex flex-col">
               <label [class.text-red-500]="logo$.value.error" for="logo">Logo</label>
               <input [class.text-red-500]="logo$.value.error" id="logo" formControlName="logo" #logoInput type="file" />
+              <p class="text-xs !mt-4 !mb-0">By zapisać wybrane logo, kliknij ikonę dyskietki.</p>
             </div>
             <button type="button" (click)="upload()"><mat-icon>save</mat-icon></button>
           </div>
@@ -221,7 +222,7 @@ export type NgoProfileFormModel = FormGroup<{
                 (matChipInputTokenEnd)="add($event)" />
             </mat-chip-grid>
             <mat-hint *ngIf="form.controls.tags as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
-              >Podaj przynajmniej 3 tagi</mat-hint
+              >Podaj przynajmniej 3 tagi. By dodać tag po jego wpisaniu naciśnij enter</mat-hint
             >
           </mat-form-field>
 
@@ -238,7 +239,6 @@ export type NgoProfileFormModel = FormGroup<{
             <p class="font-semibold">Zasoby organizacji</p>
             <div *ngFor="let ctrl of form.controls.resources.controls; let i = index" class="flex">
               <mat-form-field class="w-full">
-                <!-- <mat-label>Opis</mat-label> -->
                 <input [formControl]="ctrl" matInput />
               </mat-form-field>
               <button *ngIf="ctrl.disabled" (click)="ctrl.enable()"><mat-icon>edit</mat-icon></button>
@@ -254,7 +254,7 @@ export type NgoProfileFormModel = FormGroup<{
                   temacie! Daj znać o swoich super mocach 😎</mat-hint
                 >
               </mat-form-field>
-              <button (click)="addResource(newResource.value)" type="button">Dodaj</button>
+              <button (click)="addResource(newResource.value); newResource.value = ''" type="button">Dodaj</button>
             </div>
           </section>
         </div>
@@ -270,8 +270,6 @@ export type NgoProfileFormModel = FormGroup<{
 export class NgoProfileFirstCompletionComponent implements OnInit {
   @Input({ required: true }) profile!: NGO;
   @Input({ required: true }) bussinessAreas!: BusinessArea[];
-  @Input() firstCompletion = false;
-  @Input() adminMode = false;
   @Output() save = new EventEmitter<Required<typeof this.form.value>>();
   @Output() saveLogo = new EventEmitter<File>();
   @ViewChild('logoInput') logoInput!: ElementRef<HTMLInputElement>;

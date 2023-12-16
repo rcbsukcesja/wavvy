@@ -18,4 +18,10 @@ export class CustomValidators {
       invalidLink: true,
     };
   };
+
+  static trimTest: ValidatorFn = (control: AbstractControl<string>) => {
+    const trimmed = control.value.trim();
+
+    return trimmed ? null : { emptyValue: true };
+  };
 }
