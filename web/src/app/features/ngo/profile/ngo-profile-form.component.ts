@@ -94,7 +94,7 @@ export type NgoProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>KRS</mat-label>
             <input formControlName="krs" matInput />
-            <mat-hint *ngIf="!form.controls.krs.disabled">Numer KRS składa się z 9 cyfr</mat-hint>
+            <mat-hint *ngIf="!form.controls.krs.disabled">Numer KRS składa się z 10 cyfr</mat-hint>
           </mat-form-field>
           <br />
           <mat-form-field class="md:w-1/2">
@@ -308,8 +308,8 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       ]),
       logo: this.builder.control<File | null>(null),
       krs: this.builder.control({ value: this.profile.krs, disabled: this.profile.confirmed }, [
-        Validators.minLength(9),
-        Validators.maxLength(9),
+        Validators.minLength(10),
+        Validators.maxLength(10),
       ]),
       nip: this.builder.control({ value: this.profile.nip, disabled: this.profile.confirmed }, [
         Validators.minLength(10),
