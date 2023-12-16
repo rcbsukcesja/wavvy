@@ -2,6 +2,7 @@ package com.rcbsukcesja.hack2react.controller;
 
 import com.rcbsukcesja.hack2react.model.dto.save.ProjectPatchDto;
 import com.rcbsukcesja.hack2react.model.dto.save.ProjectSaveDto;
+import com.rcbsukcesja.hack2react.model.dto.view.ImageLinkView;
 import com.rcbsukcesja.hack2react.model.dto.view.ProjectView;
 import com.rcbsukcesja.hack2react.model.enums.ProjectStatus;
 import com.rcbsukcesja.hack2react.service.ProjectService;
@@ -99,11 +100,10 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ROLE_NGO')")
     @PostMapping(value = "/{projectId}/image", consumes = "multipart/form-data")
-    public ResponseEntity<?> uploadLogo(
+    public ResponseEntity<ImageLinkView> uploadLogo(
             @PathVariable UUID projectId,
             @RequestParam("file") MultipartFile file) {
-        projectService.updateImage(file, projectId, UPLOAD_DIRECTORY);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(projectService.updateImage(file, projectId, UPLOAD_DIRECTORY), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{projectId}/image")
