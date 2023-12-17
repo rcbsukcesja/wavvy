@@ -8,6 +8,9 @@ import com.rcbsukcesja.hack2react.model.dto.view.MessageView;
 import com.rcbsukcesja.hack2react.service.MessageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,9 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -52,15 +55,20 @@ public class MessageController {
     }
 
     @GetMapping("/sent")
-    public ResponseEntity<List<MessageView>> getSentMessages() {
+    public ResponseEntity<Page<MessageView>> getSentMessages(
+            @RequestParam(required = false) String search,
+            @ParameterObject Pageable pageable) {
         return new ResponseEntity<>(
-                messageService.getSentMessages(), HttpStatus.OK);
+                messageService.getSentMessages(search, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/received")
-    public ResponseEntity<List<MessageView>> getReceivedMessages() {
+    public ResponseEntity<Page<MessageView>> getReceivedMessages(
+            @RequestParam(required = false) String search,
+            @ParameterObject Pageable pageable
+    ) {
         return new ResponseEntity<>(
-                messageService.getReceivedMessages(), HttpStatus.OK);
+                messageService.getReceivedMessages(search, pageable), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
