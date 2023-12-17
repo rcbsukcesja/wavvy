@@ -1,5 +1,7 @@
 package com.rcbsukcesja.hack2react.validations;
 
+import java.util.regex.Pattern;
+
 public interface ValidationConstants {
 
     int STANDARD_TEXT_MAX_LENGTH = 255;
@@ -13,9 +15,14 @@ public interface ValidationConstants {
     int PROJECT_TAG_MIN = 1;
     int PROJECT_TAG_MAX =5;
     String PHONE_REGEX = "^\\d{9}$";
-    String REGON_REGEX = "^(\\d{9}|\\d{14})$";
-    String NIP_REGEX = "^\\d{10}$";
-    String KRS_REGEX = "^\\d{10}$";
+    String REGON_REGEX = "^(\\s*|\\d{9}|\\d{14})$";
+    String NIP_REGEX = "^\\s*|\\d{10}$";
+    String KRS_REGEX = "^\\s*|\\d{10}$";
+
+    Pattern patternRegon = Pattern.compile(REGON_REGEX);
+    Pattern patternNip = Pattern.compile(NIP_REGEX);
+    Pattern patternKrs = Pattern.compile(KRS_REGEX);
+
     String NOT_BLANK_PATTERN = "^(?!\\s*$).+";
 
     String BANK_ACCOUNT = "^(\\s*|\\d{26})$";

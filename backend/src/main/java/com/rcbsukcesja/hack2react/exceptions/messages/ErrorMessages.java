@@ -52,4 +52,8 @@ public class ErrorMessages {
     public static final String FORBIDDEN_MODIFICATION = "Forbidden. You don't have permission to modify %s";
     public static String ACCESS_DENIED_MESSAGE = "Forbidden. You don't have access.";
 
+    public static String NIP_VALIDATION_ERROR = "NIP should have 10 digits.";
+    public static String KRS_VALIDATION_ERROR = "KRS should have 10 digits.";
+    public static String REGON_VALIDATION_ERROR = "REGON should have 9 or 14 digits.";
+
 }
