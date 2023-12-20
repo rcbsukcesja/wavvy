@@ -86,7 +86,7 @@ export class SameDayPipe implements PipeTransform {
     IsOwnProjectPipe,
   ],
   template: `
-    <app-list-shell listName="Projekty" [list]="projects">
+    <app-list-shell class="flex flex-col grow" listName="Projekty" [list]="projects">
       <ng-template #item let-project>
         <div class="">
           <div

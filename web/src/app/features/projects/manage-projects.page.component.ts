@@ -47,6 +47,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     LoadingComponent,
   ],
   template: `
+  <div class="flex flex-col min-h-[calc(100vh-152px)]">
     <header>
       <h2>Zarządzaj projektami</h2>
     </header>
@@ -65,7 +66,8 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
       @if (data.loadListCallState === 'LOADING') {
       <app-loader text="Ładowanie projektów..."></app-loader>
       } @else {
-      <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
+        <div class="min-w-full overflow-x-scroll">
+        <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
           <td mat-cell *matCellDef="let element">{{ element.position + data.positionModifier }}</td>
@@ -158,12 +160,14 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
+        </div>
+    
 
       @if(!data.list.length) {
       <p class="!mt-4">Nie stworzyłeś jeszcze żadnego projektu</p>
       } }
     </ng-container>
-    <br />
+    </div>
     @if (dataSource(); as data) {
     <app-pagination [totalElements]="data.totalElements" (paginationChange)="handlePageEvent($event)" />
     }

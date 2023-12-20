@@ -16,9 +16,10 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
   standalone: true,
   imports: [CommonModule, ListShellComponent, DatePipe, CommonFiltersComponent, PaginationComponent, LoadingComponent],
   template: `
+    <div class="flex flex-col min-h-[calc(100vh-152px)]">
     <ng-container *ngIf="state() as state">
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
-      <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="Wiadomości" [list]="state.list">
+      <app-list-shell class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" listName="Wiadomości" [list]="state.list">
         <ng-template #item let-message>
           <div class="mb-4"><strong>Tytuł: </strong>{{ message.title }}</div>
           <div class="mb-4"><strong>Treść: </strong>{{ message.message }}</div>
@@ -32,7 +33,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
       <app-loader text="Ładowanie wiadomości..."></app-loader>
       }
     </ng-container>
-    <br />
+    </div>
     @if (state(); as state) {
     <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }

@@ -31,7 +31,7 @@ import { BusinessArea } from './model/ngo.model';
   ],
   template: `
     <ng-container *ngIf="state() as state">
-      <div *ngIf="state.loadByIdCallState === 'LOADED' && state.details" class="flex gap-6">
+      <div *ngIf="state.loadByIdCallState === 'LOADED' && state.details" class="flex flex-col gap-6">
         <aside>
           <div class="mb-4 h-10">
             <p class="font-semibold text-lg">{{ state.details.name }}</p>
@@ -109,11 +109,12 @@ import { BusinessArea } from './model/ngo.model';
           <mat-divider />
           <div>
             <h3>Dane kontakowe:</h3>
-            <ul class="flex gap-6 mt-4">
+            <ul class="flex flex-col overflow-x-auto gap-6 mt-4">
               <div>
                 <li class="flex items-center gap-2 mb-4">
                   <mat-icon> place</mat-icon> <strong>Adres: </strong>{{ state.details.address?.street }},
-                  {{ state.details.address?.zipCode }} {{ state.details.address?.city }}
+                  {{ state.details.address?.zipCode }}
+                  {{ state.details.address?.city }}
                 </li>
                 <li class="flex items-center gap-2">
                   <mat-icon> phone</mat-icon> <strong>Telefon: </strong>{{ state.details.phone }}

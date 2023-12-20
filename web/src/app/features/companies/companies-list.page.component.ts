@@ -37,10 +37,11 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     LoadingComponent,
   ],
   template: `
+  <div class="flex flex-col min-h-[calc(100vh-152px)]">
     <ng-container *ngIf="state() as state">
       <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
 
-      <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="state.list">
+      <app-list-shell class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="[]">
         <ng-template #item let-company>
           <app-company-card [company]="company" (message)="sendMessage($event, company.id)" />
         </ng-template>
@@ -49,7 +50,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
       <app-loader text="Ładowanie firm..."></app-loader>
       }
     </ng-container>
-    <br />
+    </div>
     @if (state(); as state) {
     <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }

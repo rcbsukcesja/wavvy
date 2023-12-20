@@ -31,10 +31,11 @@ import { IsOwnProjectPipe } from '../projects/projects-list.component';
   selector: 'app-ngo-list-page',
   standalone: true,
   template: `
+  <div class="flex flex-col min-h-[calc(100vh-152px)]">
     <ng-container *ngIf="state() as state">
       <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
 
-      <app-list-shell
+      <app-list-shell class="flex flex-col grow"
         *ngIf="state.loadListCallState === 'LOADED'"
         listName="Organizacje pozarządowe"
         [list]="state.list">
@@ -76,7 +77,7 @@ import { IsOwnProjectPipe } from '../projects/projects-list.component';
                 [matTooltip]="
                   !(ngo.id | isOwnProject)
                     ? 'Wyślij wiadomość do organizacji'
-                    : 'To twoja własna organizacja, nie ma co wysyłać wiadomości do siebie 😉'
+                    : 'To Twoja własna organizacja, nie ma co wysyłać wiadomości do siebie 😉'
                 "
                 [matTooltipDisabled]="!(ngo.id | isOwnProject)"
                 [class.text-gray-400]="ngo.id | isOwnProject"
@@ -116,7 +117,7 @@ import { IsOwnProjectPipe } from '../projects/projects-list.component';
       </app-list-shell>
       <app-loader *ngIf="state.loadListCallState === 'LOADING'" text="Ładowanie NGOs..."></app-loader>
     </ng-container>
-    <br />
+    </div>
     @if (state(); as state) {
       <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }

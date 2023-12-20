@@ -29,8 +29,10 @@ export interface MenuItem {
 @Component({
   selector: 'app-shell',
   template: `
-    <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav-container autosize="true" class="sidenav-container">
+      
       <mat-sidenav
+        
         #drawer
         class="sidenav"
         fixedInViewport
@@ -190,7 +192,7 @@ export default class ShellComponent {
     this.keycloak.login();
   }
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).pipe(
     map(result => result.matches),
     shareReplay()
   );

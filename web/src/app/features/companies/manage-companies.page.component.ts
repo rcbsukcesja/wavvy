@@ -28,11 +28,13 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
   selector: 'app-manage-companies-page',
   standalone: true,
   template: `
+  <div class="flex flex-col min-h-[calc(100vh-152px)]">
     <header>
       <h2>Zarządzaj firmami</h2>
     </header>
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
     <ng-container *ngIf="dataSource() as data">
+    <div class="min-w-full overflow-x-scroll">
       <table *ngIf="data.loadListCallState === 'LOADED'" mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
@@ -98,11 +100,12 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
+          </div>
       @if (data.loadListCallState === 'LOADING') {
       <app-loader text="Ładowanie firm..."></app-loader>
       }
     </ng-container>
-    <br />
+    </div>
     @if (dataSource(); as state) {
     <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }

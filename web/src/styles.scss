@@ -13,3 +13,20 @@ body { margin: 0;
   * {
     font-family: 'Montserrat', sans-serif;
   }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: transparent !important;
+  }
+
+  .mat-mdc-form-field-focus-overlay {
+    background-color: transparent !important;
+  }
+
+.mat-mdc-paginator-container{
+  background-color: transparent !important;
+  justify-content: center !important;
+  align-items: center;
+  @media (min-width: 1024px) { 
+    justify-content: flex-end !important;
+  }
+}

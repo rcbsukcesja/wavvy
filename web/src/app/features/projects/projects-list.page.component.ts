@@ -15,11 +15,13 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
   selector: 'app-projects.page',
   standalone: true,
   template: `
+  <div class="flex flex-col min-h-[calc(100vh-152px)]">
     <ng-container *ngIf="state() as state">
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
-      <app-projects-list *ngIf="state.loadListCallState === 'LOADED'" [projects]="state.list" />
+      <app-projects-list class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" [projects]="state.list" />
       <app-loader *ngIf="state.loadListCallState === 'LOADING'" text="Ładowanie projektów..."></app-loader>
     </ng-container>
+  </div>
     @if (state(); as state) {
     <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }

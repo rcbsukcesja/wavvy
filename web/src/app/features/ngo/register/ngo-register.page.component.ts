@@ -31,7 +31,7 @@ import { NgoRegisterDialogComponent } from './ui/ngo-register-dialog.component';
     <header>
       <h2>Rejestracja organizacji</h2>
     </header>
-
+    <div class="min-w-full overflow-x-scroll">
     <table *ngIf="dataSource() as data" mat-table [dataSource]="data" class="mat-elevation-z8">
       <ng-container matColumnDef="position">
         <th mat-header-cell *matHeaderCellDef>Lp</th>
@@ -90,6 +90,7 @@ import { NgoRegisterDialogComponent } from './ui/ngo-register-dialog.component';
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+</div>
   `,
 })
 export default class RegisterNgoPageComponent implements OnInit {
