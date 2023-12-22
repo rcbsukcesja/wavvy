@@ -20,6 +20,7 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-offers.page',
@@ -35,9 +36,10 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     MatSnackBarModule,
     PaginationComponent,
     LoadingComponent,
+    CenterDirective
   ],
   template: `
-  <div class="flex flex-col min-h-[calc(100vh-152px)]">
+  <div appCenterDirective>
     <ng-container *ngIf="state() as state">
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
       <app-list-shell class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" listName="Oferty" [list]="[]">

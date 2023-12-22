@@ -19,6 +19,7 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CompanyCardComponent } from './ui/company-card.component';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-companies.page',
@@ -35,13 +36,14 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     MatDialogModule,
     CompanyCardComponent,
     LoadingComponent,
+    CenterDirective
   ],
   template: `
-  <div class="flex flex-col min-h-[calc(100vh-152px)]">
+  <div appCenterDirective>
     <ng-container *ngIf="state() as state">
       <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
 
-      <app-list-shell class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="state.list">
+      <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="state.list" class="flex flex-col grow">
         <ng-template #item let-company>
           <app-company-card [company]="company" (message)="sendMessage($event, company.id)" />
         </ng-template>

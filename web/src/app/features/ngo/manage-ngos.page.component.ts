@@ -28,12 +28,13 @@ import { NgoRegisterDialogComponent } from './register/ui/ngo-register-dialog.co
 import { LegalStatusPipe } from './utils/legal-status.pipe';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-manage-ngos-page',
   standalone: true,
   template: `
-  <div class="flex flex-col min-h-[calc(100vh-152px)]">
+  <div appCenterDirective>
     <header>
       <h2>Zarządzaj NGO</h2>
     </header>
@@ -141,6 +142,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     NgClass,
     MatTooltipModule,
     LegalStatusPipe,
+    CenterDirective
   ],
 })
 export default class ManageNGOsPageComponent implements OnInit {

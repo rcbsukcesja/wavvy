@@ -17,6 +17,7 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CommonFilters, CommonFiltersComponent } from 'src/app/shared/ui/common-filters.component';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-manage-offers-page',
@@ -33,9 +34,10 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     PaginationComponent,
     CommonFiltersComponent,
     LoadingComponent,
+    CenterDirective
   ],
   template: `
-  <div class="flex flex-col min-h-[calc(100vh-152px)]">
+  <div appCenterDirective>
     <header>
       <h2>Zarządzaj ofertami</h2>
     </header>

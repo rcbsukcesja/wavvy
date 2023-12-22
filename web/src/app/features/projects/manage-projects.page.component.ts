@@ -27,6 +27,7 @@ import { ID } from 'src/app/core/types/id.type';
 import { PlaceholderDialogComponent } from 'src/app/shared/ui/dialogs/placeholder-dialog.component';
 import { ProjectCardComponent } from './ui/project-card.component';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-manage-projects-page',
@@ -45,9 +46,10 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     MatTooltipModule,
     JsonPipe,
     LoadingComponent,
+    CenterDirective
   ],
   template: `
-  <div class="flex flex-col min-h-[calc(100vh-152px)]">
+  <div appCenterDirective>
     <header>
       <h2>Zarządzaj projektami</h2>
     </header>

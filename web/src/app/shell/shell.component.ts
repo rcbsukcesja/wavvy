@@ -88,8 +88,8 @@ export interface MenuItem {
           >
         </mat-nav-list>
       </mat-sidenav>
-      <mat-sidenav-content>
-        <mat-toolbar color="primary">
+      <mat-sidenav-content >
+        <mat-toolbar color="primary" class="!z-50">
           <button
             type="button"
             aria-label="Toggle sidenav"

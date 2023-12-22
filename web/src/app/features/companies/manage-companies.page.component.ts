@@ -23,12 +23,13 @@ import { PlaceholderDialogComponent } from 'src/app/shared/ui/dialogs/placeholde
 import { CompanyCardComponent } from './ui/company-card.component';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-manage-companies-page',
   standalone: true,
   template: `
-  <div class="flex flex-col min-h-[calc(100vh-152px)]">
+  <div appCenterDirective>
     <header>
       <h2>Zarządzaj firmami</h2>
     </header>
@@ -123,6 +124,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     NgoStatusPipe,
     NgClass,
     MatTooltipModule,
+    CenterDirective
   ],
 })
 export default class ManageCompaniesPageComponent implements OnInit {

@@ -22,7 +22,7 @@ export const DEFAULT_SORT = 'desc';
     <section #filters class="mb-4">
       <div class="ml-auto flex flex-col gap-4">
         @if (!hideSort) {
-          <div class="flex items-center justify-center lg:justify-start gap-4 py-2">
+          <div class="flex items-center justify-start gap-4 py-2">
         <span> Sortuj:</span>
         <button (click)="sortBy = 'desc'; emitFiltersChanged()" [class.font-bold]="sortBy === 'desc'">
           od najnowszych

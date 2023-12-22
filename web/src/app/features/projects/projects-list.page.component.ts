@@ -10,12 +10,13 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { API_URL } from 'src/app/core/API-URL.token';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-projects.page',
   standalone: true,
   template: `
-  <div class="flex flex-col min-h-[calc(100vh-152px)]">
+  <div appCenterDirective>
     <ng-container *ngIf="state() as state">
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
       <app-projects-list class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" [projects]="state.list" />
@@ -28,7 +29,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProjectsListComponent, CommonFiltersComponent, PaginationComponent, LoadingComponent],
+  imports: [CommonModule, ProjectsListComponent, CommonFiltersComponent, PaginationComponent, LoadingComponent, CenterDirective],
 })
 export default class ProjectsListPageComponent implements OnInit {
   @Input() projectId?: string;

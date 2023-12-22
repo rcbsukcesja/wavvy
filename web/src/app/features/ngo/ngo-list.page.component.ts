@@ -26,12 +26,13 @@ import { BusinessArea } from './model/ngo.model';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from '../../shared/ui/loading.component';
 import { IsOwnProjectPipe } from '../projects/projects-list.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-ngo-list-page',
   standalone: true,
   template: `
-  <div class="flex flex-col min-h-[calc(100vh-152px)]">
+  <div appCenterDirective>
     <ng-container *ngIf="state() as state">
       <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
 
@@ -138,6 +139,7 @@ import { IsOwnProjectPipe } from '../projects/projects-list.component';
     MatTooltipModule,
     LoadingComponent,
     IsOwnProjectPipe,
+    CenterDirective
   ],
 })
 export default class NgoListPageComponent implements OnInit {
