@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ID } from 'src/app/core/types/id.type';
-import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.component';
-import { ListDialogComponent } from 'src/app/shared/ui/common-list-dialog.component';
 import { tap, take } from 'rxjs';
 import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
 import { DescriptionDialogComponent, IsOwnProjectPipe, SameDayPipe } from '../projects-list.component';
@@ -24,16 +22,16 @@ import { Project } from '../model/project.model';
         class="relative h-80 bg-cover"
         [style.background-image]="'url(' + (project.imageLink || '/assets/images/placeholder.jpg') + ')'">
         @if (project.disabled && currentUserId === project.organizer.id) {
-          <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
-            <mat-icon>warning</mat-icon>
-          </div>
+        <div class="absolute left-2 top-2 text-red-600 " [matTooltip]="'Powód blokady: ' + project.reason">
+          <mat-icon>warning</mat-icon>
+        </div>
         }
         <div class="absolute bg-black text-white right-0  text-xs px-1 py-2 flex items-center">
           <mat-icon class="mr-2">schedule</mat-icon> <span>{{ project.startTime | date }}</span>
           @if (!(project.startTime | sameDay: project.endTime)) {
-            <span class="pl-1">- {{ project.endTime | date }}</span>
+          <span class="pl-1">- {{ project.endTime | date }}</span>
           } @else {
-            <span class="pl-1">| {{ project.startTime | date: 'HH:mm' }}</span>
+          <span class="pl-1">| {{ project.startTime | date : 'HH:mm' }}</span>
           }
         </div>
       </div>

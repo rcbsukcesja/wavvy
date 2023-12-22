@@ -156,6 +156,7 @@ export default class ManageCompaniesPageComponent implements OnInit {
         width: '500px',
         data: {
           element,
+          isCompany: true,
         },
       })
       .afterClosed()
