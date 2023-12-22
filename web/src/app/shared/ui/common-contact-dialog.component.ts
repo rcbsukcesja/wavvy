@@ -10,17 +10,33 @@ import { MatIconModule } from '@angular/material/icon';
     <h1 mat-dialog-title>Dane kontaktowe</h1>
     <div mat-dialog-content>
       <mat-divider />
-      <ul class="flex flex-col gap-4 mt-4">
-        <li class="flex items-center gap-2">
-          <mat-icon> place</mat-icon> <strong>Adres: </strong>{{ data.address.street }}, {{ data.address.zipCode }}
-          {{ data.address.city }}
-        </li>
-        <li class="flex items-center gap-2"><mat-icon> phone</mat-icon> <strong>Telefon: </strong>{{ data.phone }}</li>
-        <li class="flex items-center gap-2"><mat-icon> mail</mat-icon> <strong>E-mail: </strong>{{ data.email }}</li>
-        <li class="flex items-center gap-2">
-          <mat-icon> language</mat-icon> <strong>Strona internetowa: </strong>{{ data.website }}
-        </li>
-      </ul>
+      <table>
+                        <tbody class="[&>*]:h-12">
+                        <tr>
+                          <th><div class="flex justify-center items-center"><mat-icon> place</mat-icon></div></th>
+                          <th class="text-left">Adres: </th>
+                          <th class="text-left font-normal pl-2">{{ data.address?.street }},  {{ data.address?.zipCode }}  {{ data.address?.city }}</th>
+                        </tr>
+
+                        <tr>
+                          <th><div class="flex justify-center items-center"><mat-icon> phone</mat-icon></div></th>
+                          <th class="text-left">Telefon: </th>
+                          <th class="text-left font-normal pl-2">{{ data.phone }}</th>
+                         </tr>
+
+                         <tr>
+                          <th><div class="flex justify-center items-center"><mat-icon> mail</mat-icon></div></th>
+                          <th class="text-left">E-mail: </th>
+                          <th class="text-left font-normal pl-2">{{ data.email }}</th>
+                         </tr>
+
+                         <tr>
+                          <th><div class="flex justify-center items-center"><mat-icon> language</mat-icon></div></th>
+                          <th class="text-left">Strona internetowa: </th>
+                          <th class="text-left font-normal pl-2"><a [href]="data.website" target="_blank">{{ data.website }}</a></th>
+                         </tr>
+                        </tbody>
+                      </table>
     </div>
   `,
   standalone: true,

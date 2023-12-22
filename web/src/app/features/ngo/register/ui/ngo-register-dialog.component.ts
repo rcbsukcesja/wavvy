@@ -42,10 +42,10 @@ import { MatInputModule } from '@angular/material/input';
         </mat-form-field>
       </form> -->
 
-      <footer class="flex justify-between">
+      <div mat-dialog-actions>
         <button mat-raised-button [mat-dialog-close]="true">Zatwierdź organizacje</button>
         <button [mat-dialog-close]="false" mat-raised-button>Anuluj</button>
-      </footer>
+      </div>
     </div>`,
 })
 export class NgoRegisterDialogComponent {

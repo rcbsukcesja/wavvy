@@ -41,7 +41,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     <ng-container *ngIf="state() as state">
       <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
 
-      <app-list-shell class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="[]">
+      <app-list-shell class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="state.list">
         <ng-template #item let-company>
           <app-company-card [company]="company" (message)="sendMessage($event, company.id)" />
         </ng-template>

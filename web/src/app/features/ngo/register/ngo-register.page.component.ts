@@ -31,7 +31,7 @@ import { NgoRegisterDialogComponent } from './ui/ngo-register-dialog.component';
     <header>
       <h2>Rejestracja organizacji</h2>
     </header>
-    <div class="min-w-full overflow-x-scroll">
+    <div class="min-w-full overflow-x-auto">
     <table *ngIf="dataSource() as data" mat-table [dataSource]="data" class="mat-elevation-z8">
       <ng-container matColumnDef="position">
         <th mat-header-cell *matHeaderCellDef>Lp</th>

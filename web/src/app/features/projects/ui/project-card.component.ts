@@ -50,7 +50,7 @@ import { Project } from '../model/project.model';
         class="ml-auto block -mt-1 mb-2 bg-black text-white px-2 py-1 rounded-md hover:bg-opacity-70 transition">
         Pełny opis
       </button>
-      <p *ngIf="project.links[0]">
+      <p *ngIf="project.links[0]" class="text-ellipsis overflow-hidden">
         <span class="font-semibold">Więcej informacji: </span>
         <a class="underline" [href]="project.links[0]" target="_blank">{{ project.links[0] }}</a>
       </p>
@@ -72,7 +72,7 @@ import { Project } from '../model/project.model';
         <div *ngIf="project.cooperationMessage" class="flex flex-col">
           <mat-icon [matTooltip]="project.cooperationMessage">spatial_audio_off</mat-icon>
         </div>
-        <div class="flex flex-col" (click)="openMessageModal(project.organizer.id, project.name)">
+        <div class="flex flex-col cursor-pointer" (click)="openMessageModal(project.organizer.id, project.name)">
           <mat-icon
             [matTooltip]="
               !(project.organizer.id | isOwnProject)

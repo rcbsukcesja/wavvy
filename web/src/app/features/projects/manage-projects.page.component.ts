@@ -66,7 +66,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
       @if (data.loadListCallState === 'LOADING') {
       <app-loader text="Ładowanie projektów..."></app-loader>
       } @else {
-        <div class="min-w-full overflow-x-scroll">
+        <div class="min-w-full overflow-x-auto">
         <table mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>

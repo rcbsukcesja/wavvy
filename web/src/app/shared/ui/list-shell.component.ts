@@ -16,7 +16,7 @@ import { LoadingComponent } from './loading.component';
     <section class="flex justify-center items-center grow">
     <div class="flex flex-wrap flex items-center justify-center">
         @for (item of list; track item.id) {
-        <app-list-tile class="px-4 pb-4 max-w-[500px] md:max-w-[400px]">
+        <app-list-tile class="px-4 pb-4 max-w-[500px] md:max-w-[400px] xl:max-w-[550px]">
           <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: item }" />
         </app-list-tile>
         } @empty { 

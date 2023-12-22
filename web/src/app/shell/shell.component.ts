@@ -104,16 +104,16 @@ export interface MenuItem {
                 <mat-icon aria-label="Side nav toggle icon">waves</mat-icon>
                 <span class="ml-2">Wavvy</span>
               </div>
-              <span class="text-xs ml-2 text-blue-300">na fali pomocy</span>
+              <span class="text-xs ml-2 tracking-wide text-blue-300">na fali pomocy</span>
               <p class="absolute right-0 text-sm rotate-6 px-1 rounded-sm bg-blue-900">beta</p>
             </div>
 
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start pl-4">
               <a *ngIf="$showMessageBox()" routerLink="/messages" class="block"
                 ><mat-icon class="!w-9 !h-9 text-3xl"> local_post_office</mat-icon>
               </a>
-              <button *ngIf="$isAuth()" class="ml-4" mat-button (click)="logout()">Wyloguj</button>
-              <button *ngIf="!$isAuth()" class="ml-4" mat-button (click)="login()">Zaloguj</button>
+              <button *ngIf="$isAuth()" class="ml-1 md:ml-4" mat-button (click)="logout()">Wyloguj</button>
+              <button *ngIf="!$isAuth()" class="ml-1 md:ml-4" mat-button (click)="login()">Zaloguj</button>
             </div>
           </div>
         </mat-toolbar>

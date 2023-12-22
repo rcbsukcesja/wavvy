@@ -5,6 +5,10 @@
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
+:root {
+  --mat-toolbar-mobile-height: 64px;
+  --mat-toolbar-mobile-padding: 10px;
+}
 
 html, body { height: 100%; }
 body { margin: 0;
@@ -28,5 +32,11 @@ body { margin: 0;
   align-items: center;
   @media (min-width: 1024px) { 
     justify-content: flex-end !important;
+  }
+}
+.mat-toolbar-row, .mat-toolbar-single-row{
+  padding: 0 !important;
+  @media (min-width: 480px) { 
+    padding: 0 12px !important;
   }
 }

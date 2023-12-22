@@ -39,7 +39,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     </header>
     <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
     <ng-container *ngIf="dataSource() as data">
-    <div class="min-w-full overflow-x-scroll">
+    <div class="min-w-full overflow-x-auto">
       <table *ngIf="data.loadListCallState === 'LOADED'" mat-table [dataSource]="data.list" class="mat-elevation-z8">
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef>Lp</th>
