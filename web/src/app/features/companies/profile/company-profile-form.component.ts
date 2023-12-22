@@ -31,6 +31,7 @@ import { BehaviorSubject } from 'rxjs';
 import { NGO, BusinessArea } from '../../ngo/model/ngo.model';
 import { Company } from '../model/company.model';
 import { CustomValidators } from 'src/app/shared/custom.validator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export type CompanyProfileFormModel = FormGroup<{
   name: FormControl<string>;
@@ -63,6 +64,7 @@ export type CompanyProfileFormModel = FormGroup<{
     CommonModule,
     MatDividerModule,
     MatDatepickerModule,
+    MatTooltipModule,
   ],
   styles: [``],
   template: `
@@ -147,8 +149,11 @@ export type CompanyProfileFormModel = FormGroup<{
           <mat-form-field class="w-full">
             <mat-label>Strona internetowa</mat-label>
             <input formControlName="website" matInput />
-            <mat-hint [class.text-red-500]="form.controls.website.errors"
-              >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
+            <mat-icon matSuffix matTooltip="Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https"
+              >info</mat-icon
+            >
+            <mat-hint *ngIf="form.controls.website.errors && form.controls.website.touched" [class.text-red-500]=""
+              >Podaj prawidłowy adres strony</mat-hint
             >
           </mat-form-field>
           <br />

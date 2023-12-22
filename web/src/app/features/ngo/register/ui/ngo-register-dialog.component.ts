@@ -25,13 +25,13 @@ import { MatInputModule } from '@angular/material/input';
       {{ dialogData.element.name }}
     </h1>
     <div mat-dialog-content>
-      <p [ngClass]="validREGON ? 'text-green-500' : 'text-red-500'">
+      <p [ngClass]="validREGON ? 'text-green-500' : 'text-red-500'" class="text-xs">
         Prawidłowy numer REGON <span *ngIf="!dialogData.isCompany">lub jego brak</span>
       </p>
-      <p [ngClass]="validNIP ? 'text-green-500' : 'text-red-500'">
+      <p [ngClass]="validNIP ? 'text-green-500' : 'text-red-500'" class="text-xs">
         Prawidłowy NIP <span *ngIf="!dialogData.isCompany">lub jego brak</span>
       </p>
-      <p [ngClass]="validKRS ? 'text-green-500' : 'text-red-500'">Prawidłowy numer KRS lub jego brak</p>
+      <p [ngClass]="validKRS ? 'text-green-500' : 'text-red-500'" class="text-xs">Prawidłowy numer KRS lub jego brak</p>
       <br />
       <p>
         Zatwierdzona organizacja będzie widoczna publicznie. Zawszę będziesz mógł ją tymczasowo zablokować korzystając z

@@ -31,6 +31,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { CustomValidators } from 'src/app/shared/custom.validator';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export type NgoProfileFormModel = FormGroup<{
   name: FormControl<string>;
@@ -67,6 +68,7 @@ export type NgoProfileFormModel = FormGroup<{
     MatDividerModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTooltipModule,
   ],
   styles: [``],
   template: `
@@ -104,7 +106,7 @@ export type NgoProfileFormModel = FormGroup<{
           </mat-form-field>
           <br />
         </div>
-
+        <br />
         <div class="flex flex-col md:gap-4">
           <label>Adres</label>
           <mat-form-field>
@@ -158,8 +160,11 @@ export type NgoProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>Strona internetowa</mat-label>
             <input formControlName="website" matInput />
-            <mat-hint [class.text-red-500]="form.controls.website.errors"
-              >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
+            <mat-icon matSuffix matTooltip="Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https"
+              >info</mat-icon
+            >
+            <mat-hint *ngIf="form.controls.website.errors && form.controls.website.touched" [class.text-red-500]=""
+              >Podaj prawidłowy adres strony</mat-hint
             >
           </mat-form-field>
           <br />

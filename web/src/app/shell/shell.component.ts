@@ -103,7 +103,7 @@ export interface MenuItem {
                 <span class="ml-2">Wavvy</span>
               </div>
               <span class="text-xs ml-2 text-blue-300">na fali pomocy</span>
-              <p class="absolute right-0 text-sm rotate-6 px-1 rounded-sm bg-blue-900">beta</p>
+              <!-- <p class="absolute right-0 text-sm rotate-6 px-1 rounded-sm bg-blue-900">beta</p> -->
             </div>
 
             <div class="flex justify-between items-start">
