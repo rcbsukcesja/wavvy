@@ -32,7 +32,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
   ],
   template: `
     <ng-container *ngIf="state() as state">
-    <ng-container *ngIf="isHandset$ | async; else desktopView">
+    <ng-container *ngIf="isAsideHidden$ | async; else desktopView">
     <div *ngIf="state.loadByIdCallState === 'LOADED' && state.details" class="flex flex-col gap-6">
         <aside class="flex flex-col">
           <div class="mb-4 h-10">
@@ -292,7 +292,7 @@ export default class NgoDetailsPageComponent implements OnInit {
   projectsState = inject(ProjectsStateService).$value;
   dialog = inject(MatDialog);
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).pipe(
+  isAsideHidden$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).pipe(
     map(result => result.matches),
     shareReplay()
   );

@@ -36,9 +36,9 @@ export interface MenuItem {
         #drawer
         class="sidenav"
         fixedInViewport
-        [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-        [mode]="(isHandset$ | async) ? 'over' : 'side'"
-        [opened]="(isHandset$ | async) === false">
+        [attr.role]="(isAsideHidden$ | async) ? 'dialog' : 'navigation'"
+        [mode]="(isAsideHidden$ | async) ? 'over' : 'side'"
+        [opened]="(isAsideHidden$ | async) === false">
         <mat-toolbar class="!py-12">
           <div *ngIf="$isAuth()" class="flex flex-col relative">
             <span class="text-xs">
@@ -95,7 +95,7 @@ export interface MenuItem {
             aria-label="Toggle sidenav"
             mat-icon-button
             (click)="drawer.toggle()"
-            *ngIf="isHandset$ | async">
+            *ngIf="isAsideHidden$ | async">
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
           <div class="flex justify-between items-center w-full">
@@ -192,7 +192,7 @@ export default class ShellComponent {
     this.keycloak.login();
   }
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).pipe(
+  isAsideHidden$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).pipe(
     map(result => result.matches),
     shareReplay()
   );

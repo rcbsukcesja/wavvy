@@ -54,7 +54,7 @@ export class MyCustomPaginatorIntl implements MatPaginatorIntl {
       [showFirstLastButtons]="showFirstLastButtons"
       [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
       [pageIndex]="pageIndex"
-      [hidePageSize]="(isHandset$ | async) ?? hidePageSize"
+      [hidePageSize]="(isAsideHidden$ | async) ?? hidePageSize"
       aria-label="Select page">
     </mat-paginator>
   `,
@@ -92,7 +92,7 @@ export default class PaginationComponent {
     }
   }
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).pipe(
+  isAsideHidden$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).pipe(
     map(result => result.matches),
     shareReplay()
   );
