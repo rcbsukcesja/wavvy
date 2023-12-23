@@ -8,6 +8,7 @@ import { MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.
 import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { INITIAL_PAGINATION_STATE } from '../../projects/data-access/projects.state.service';
 import { createListHttpParams } from 'src/app/core/list-http-params.factory';
+import { ListApiResponse } from 'src/app/core/types/list-response.type';
 
 export interface GetAllMessagesParams {}
 
@@ -58,10 +59,13 @@ export class MessagesApiService extends HttpBaseService {
     this.stateService.setState({ loadListCallState: 'LOADING' });
 
     this.http
-      .get<Message[]>(this.url + '/received', { params: createListHttpParams(params, params.sort, 'createdAt') })
+      .get<ListApiResponse<Message>>(this.url + '/received', {
+        params: createListHttpParams(params, params.sort, 'createdAt'),
+      })
       .pipe(
-        tap(messages => {
-          this.stateService.setState({ loadListCallState: 'LOADED', list: messages });
+        tap(response => {
+          console;
+          this.stateService.setState({ loadListCallState: 'LOADED', list: response.content });
         })
       )
       .subscribe();

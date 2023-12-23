@@ -31,6 +31,7 @@ import { BehaviorSubject } from 'rxjs';
 import { NGO, BusinessArea } from '../../ngo/model/ngo.model';
 import { Company } from '../model/company.model';
 import { CustomValidators } from 'src/app/shared/custom.validator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export type CompanyProfileFormModel = FormGroup<{
   name: FormControl<string>;
@@ -63,6 +64,7 @@ export type CompanyProfileFormModel = FormGroup<{
     CommonModule,
     MatDividerModule,
     MatDatepickerModule,
+    MatTooltipModule,
   ],
   styles: [``],
   template: `
@@ -147,8 +149,11 @@ export type CompanyProfileFormModel = FormGroup<{
           <mat-form-field class="w-full">
             <mat-label>Strona internetowa</mat-label>
             <input formControlName="website" matInput />
-            <mat-hint [class.text-red-500]="form.controls.website.errors"
-              >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
+            <mat-icon matSuffix matTooltip="Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https"
+              >info</mat-icon
+            >
+            <mat-hint *ngIf="form.controls.website.errors && form.controls.website.touched" [class.text-red-500]=""
+              >Podaj prawidłowy adres strony</mat-hint
             >
           </mat-form-field>
           <br />
@@ -173,13 +178,19 @@ export type CompanyProfileFormModel = FormGroup<{
             <div class="w-full flex flex-col">
               <label [class.text-red-500]="logo$.value.error" for="logo">Logo</label>
               <input [class.text-red-500]="logo$.value.error" id="logo" formControlName="logo" #logoInput type="file" />
-              @if (logo$.value.error) {
-                <p class="text-red-500">L</p>
-              } @else {
-                <p class="text-xs !mt-4 !mb-0">By zapisać wybrane logo, kliknij ikonę dyskietki.</p>
-              }
+              <p class="text-xs !mt-4 !mb-0">
+                By zapisać wybrane logo, kliknij ikonę dyskietki.
+                <mat-icon
+                  class="align-sub text-base !w-4 !h-4 leading-none"
+                  matSuffix
+                  matTooltip="Akceptowalne rozszerzenia pliku to jpg, jpeg lub png. Dodatkowo logo może mieć maksymalny rozmiar 1 MB"
+                  >info</mat-icon
+                >
+              </p>
             </div>
-            <button type="button" (click)="upload()"><mat-icon>save</mat-icon></button>
+            <button [disabled]="logo$.value.error" type="button" (click)="upload()">
+              <mat-icon [class.text-gray-500]="logo$.value.error">save</mat-icon>
+            </button>
           </div>
 
           <br />

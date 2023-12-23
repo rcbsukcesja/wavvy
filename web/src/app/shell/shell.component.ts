@@ -30,9 +30,7 @@ export interface MenuItem {
   selector: 'app-shell',
   template: `
     <mat-sidenav-container autosize="true" class="sidenav-container">
-      
       <mat-sidenav
-        
         #drawer
         class="sidenav"
         fixedInViewport
@@ -88,7 +86,7 @@ export interface MenuItem {
           >
         </mat-nav-list>
       </mat-sidenav>
-      <mat-sidenav-content >
+      <mat-sidenav-content>
         <mat-toolbar color="primary" class="!z-50">
           <button
             type="button"

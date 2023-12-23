@@ -31,6 +31,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { CustomValidators } from 'src/app/shared/custom.validator';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export type NgoProfileFormModel = FormGroup<{
   name: FormControl<string>;
@@ -67,6 +68,7 @@ export type NgoProfileFormModel = FormGroup<{
     MatDividerModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTooltipModule,
   ],
   styles: [``],
   template: `
@@ -104,7 +106,7 @@ export type NgoProfileFormModel = FormGroup<{
           </mat-form-field>
           <br />
         </div>
-
+        <br />
         <div class="flex flex-col md:gap-4">
           <label>Adres</label>
           <mat-form-field>
@@ -158,8 +160,11 @@ export type NgoProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>Strona internetowa</mat-label>
             <input formControlName="website" matInput />
-            <mat-hint [class.text-red-500]="form.controls.website.errors"
-              >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
+            <mat-icon matSuffix matTooltip="Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https"
+              >info</mat-icon
+            >
+            <mat-hint *ngIf="form.controls.website.errors && form.controls.website.touched" [class.text-red-500]=""
+              >Podaj prawidłowy adres strony</mat-hint
             >
           </mat-form-field>
           <br />
@@ -184,9 +189,19 @@ export type NgoProfileFormModel = FormGroup<{
             <div class="w-full flex flex-col">
               <label [class.text-red-500]="logo$.value.error" for="logo">Logo</label>
               <input [class.text-red-500]="logo$.value.error" id="logo" formControlName="logo" #logoInput type="file" />
-              <p class="text-xs !mt-4 !mb-0">By zapisać wybrane logo, kliknij ikonę dyskietki.</p>
+              <p class="text-xs !mt-4 !mb-0">
+                By zapisać wybrane logo, kliknij ikonę dyskietki.
+                <mat-icon
+                  class="align-sub text-base !w-4 !h-4 leading-none"
+                  matSuffix
+                  matTooltip="Akceptowalne rozszerzenia pliku to jpg, jpeg lub png. Dodatkowo logo może mieć maksymalny rozmiar 1 MB"
+                  >info</mat-icon
+                >
+              </p>
             </div>
-            <button type="button" (click)="upload()"><mat-icon>save</mat-icon></button>
+            <button [disabled]="logo$.value.error" type="button" (click)="upload()">
+              <mat-icon [class.text-gray-500]="logo$.value.error">save</mat-icon>
+            </button>
           </div>
 
           <br />
@@ -367,7 +382,7 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       const logoFile = this.logoInput.nativeElement.files?.[0];
 
       if (logoFile) {
-        const validTypes = ['image/png', 'image/jpeg'];
+        const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
         if (!validTypes.includes(logoFile.type)) {
           this.logo$.next({
             url: this.logo$.value.url,

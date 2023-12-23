@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { NgoRegisterForm } from '../model/ngo-register-form.model';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,37 +19,67 @@ import { MatInputModule } from '@angular/material/input';
     CommonModule,
     MatFormFieldModule,
     MatButtonModule,
+    NgClass,
+    MatIconModule,
   ],
   template: ` <h1 mat-dialog-title>
       {{ dialogData.element.name }}
     </h1>
     <div mat-dialog-content>
+      <p class="text-xs">Wymagania:</p>
+      <p [ngClass]="validREGON ? 'text-green-500' : 'text-red-500'" class="text-xs flex items-center">
+        <mat-icon class="mr-2 text-base !w-4 !h-4 leading-none">{{ !validREGON ? 'error' : 'check' }}</mat-icon
+        >Prawidłowy numer REGON <span class="pl-1" *ngIf="!dialogData.isCompany">lub jego brak</span>
+      </p>
+      <p [ngClass]="validNIP ? 'text-green-500' : 'text-red-500'" class="text-xs">
+        <mat-icon class="mr-2 text-base !w-4 !h-4 leading-none">{{ !validNIP ? 'error' : 'check' }}</mat-icon
+        >Prawidłowy NIP <span *ngIf="!dialogData.isCompany">lub jego brak</span>
+      </p>
+      <p [ngClass]="validKRS ? 'text-green-500' : 'text-red-500'" class="text-xs">
+        <mat-icon class="mr-2 text-base !w-4 !h-4 leading-none">{{ !validKRS ? 'error' : 'check' }}</mat-icon
+        >Prawidłowy numer KRS lub jego brak
+      </p>
+      <br />
       <p>
         Zatwierdzona organizacja będzie widoczna publicznie. Zawszę będziesz mógł ją tymczasowo zablokować korzystając z
         tego samego panelu
       </p>
 
-      <!-- <form [formGroup]="form">
-        <mat-form-field class="w-full">
-          <mat-label>Powód odrzucenia, min. 10 znaków</mat-label>
-          <textarea formControlName="reason" matInput #textarea></textarea>
-          <mat-hint class="w-full flex justify-end">
-            <span [class.text-red-500]="textarea.value.length > MAX_LENGTH">
-              {{ textarea.value.length }}/{{ MAX_LENGTH }}
-            </span></mat-hint
-          >
-        </mat-form-field>
-      </form> -->
-
-      <div mat-dialog-actions>
-        <button mat-raised-button [mat-dialog-close]="true">Zatwierdź organizacje</button>
+      <footer class="flex justify-between">
+        <button mat-raised-button [disabled]="!canConfirm" [mat-dialog-close]="true">Zatwierdź organizacje</button>
         <button [mat-dialog-close]="false" mat-raised-button>Anuluj</button>
-      </div>
+      </footer>
     </div>`,
 })
 export class NgoRegisterDialogComponent {
   dialogRef = inject<MatDialogRef<NgoRegisterDialogComponent>>(MatDialogRef);
-  dialogData = inject<{ element: { name: string } }>(MAT_DIALOG_DATA);
+  dialogData = inject<{ element: { name: string; krs?: string; regon?: string; nip?: string }; isCompany?: boolean }>(
+    MAT_DIALOG_DATA
+  );
+
+  get validREGON() {
+    const { regon } = this.dialogData.element;
+
+    return this.dialogData.isCompany
+      ? regon?.trim().length === 10 || regon?.trim().length === 14
+      : !regon || regon.trim().length === 10 || regon.trim().length === 1;
+  }
+
+  get validNIP() {
+    const { nip } = this.dialogData.element;
+
+    return this.dialogData.isCompany ? nip?.trim().length === 10 : !nip || nip.trim().length === 10;
+  }
+
+  get validKRS() {
+    const { krs } = this.dialogData.element;
+
+    return !krs || krs.trim().length === 10;
+  }
+
+  get canConfirm() {
+    return this.validNIP && this.validKRS && this.validREGON;
+  }
 
   MAX_LENGTH = 300;
 

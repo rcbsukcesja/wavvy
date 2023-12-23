@@ -13,13 +13,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProjectsApiService } from './data-access/projects.api.service';
 import { COMMA, ENTER, P } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipEditedEvent, MatChipsModule } from '@angular/material/chips';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomValidators } from 'src/app/shared/custom.validator';
 
 export type ProjectForm = FormGroup<{
-  // image: FormControl<File | null>;
   status: FormControl<ProjectStatus>;
   name: FormControl<string>;
   description: FormControl<string>;
@@ -148,7 +147,7 @@ export type ProjectForm = FormGroup<{
       <br />
 
       <div class="flex gap-4">
-        <mat-form-field class="flex-1">
+        <mat-form-field *ngIf="form.controls.setEndDate.value" class="flex-1">
           <mat-label>Data zakończenia </mat-label>
           <input
             matInput
@@ -159,7 +158,7 @@ export type ProjectForm = FormGroup<{
           <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
           <mat-datepicker #datepicker2> </mat-datepicker>
         </mat-form-field>
-        <mat-form-field class="flex-1">
+        <mat-form-field *ngIf="form.controls.setEndTimeHour.value" class="flex-1">
           <mat-label>Godzina zakończenia </mat-label>
           <input formControlName="endTimeHour" matInput type="time" />
           <mat-hint>Podaj godzinę zakończenia</mat-hint>
@@ -295,7 +294,7 @@ export default class ProjectFormPageComponent implements OnInit {
   }
 
   blockAfterEndDate = (current: Date | null) => {
-    if (!current || !this.form.controls.endTime.value) {
+    if (!current || !this.form.controls.endTime.value || !this.form.controls.setEndDate.value) {
       return true;
     }
 
@@ -330,16 +329,16 @@ export default class ProjectFormPageComponent implements OnInit {
     let startTimeHour = '';
     let endTimeHour = '';
 
+    function getTimeinHHMMformat(date: Date) {
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+
+      return `${hours > 9 ? hours : '0' + hours}:${minutes > 9 ? minutes : '0' + minutes}`;
+    }
+
     if (this.project) {
-      const hours = new Date(this.project.startTime).getHours();
-      const minutes = new Date(this.project.startTime).getMinutes();
-
-      startTimeHour = `${hours > 9 ? hours : '0' + hours}:${minutes > 9 ? minutes : '0' + minutes}`;
-
-      const h = new Date(this.project.endTime).getHours();
-      const m = new Date(this.project.endTime).getMinutes();
-
-      endTimeHour = `${h > 9 ? h : '0' + h}:${m > 9 ? m : '0' + m}`;
+      startTimeHour = getTimeinHHMMformat(new Date(this.project.startTime));
+      endTimeHour = getTimeinHHMMformat(new Date(this.project.endTime));
     }
 
     this.tags = this.project?.tags || [];
@@ -351,8 +350,8 @@ export default class ProjectFormPageComponent implements OnInit {
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || '', [Validators.required, CustomValidators.maxLength]),
       description: this.builder.control(this.project?.description || '', [Validators.required]),
-      endTime: this.builder.control(this.project ? new Date(this.project.endTime) : new Date(), [Validators.required]),
-      endTimeHour: this.builder.control(endTimeHour || '', [Validators.required]),
+      endTime: this.builder.control(this.project ? new Date(this.project.endTime) : new Date(), []),
+      endTimeHour: this.builder.control(endTimeHour || '', []),
       startTime: this.builder.control(this.project ? new Date(this.project.startTime) : new Date(), [
         Validators.required,
       ]),
@@ -365,6 +364,26 @@ export default class ProjectFormPageComponent implements OnInit {
       zipCode: this.builder.control(this.project?.address?.zipCode || '78-100', [CustomValidators.maxLength]),
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
+
+    this.form.controls.startTimeHour.valueChanges.pipe(map(value => value.split(':'))).subscribe(([endH, endM]) => {
+      const { value } = this.form.controls.startTime;
+
+      this.form.controls.startTime.patchValue(new Date(value.setHours(+endH, +endM)));
+    });
+
+    this.form.controls.endTimeHour.valueChanges.pipe(map(value => value.split(':'))).subscribe(([endH, endM]) => {
+      const { value } = this.form.controls.endTime;
+
+      this.form.controls.endTime.patchValue(new Date(value.setHours(+endH, +endM)));
+    });
+
+    this.form.controls.setEndDate.valueChanges.subscribe(value => {
+      if (value) {
+        this.form.controls.endTime.patchValue(new Date(this.form.controls.startTime.value));
+      } else {
+        // this.form.controls.endTime.patchValue(new Date(this.form.controls.startTime.value))
+      }
+    });
   }
 
   private prepareDates(formValue: ReturnType<typeof this.form.getRawValue>) {
@@ -372,9 +391,43 @@ export default class ProjectFormPageComponent implements OnInit {
     const [startH, startM] = formValue.startTimeHour.split(':');
     startTime.setHours(+startH, +startM);
 
-    const endTime = formValue.endTime as unknown as Date;
-    const [endH, endM] = formValue.endTimeHour.split(':');
-    endTime.setHours(+endH, +endM);
+    let endTime: Date;
+
+    // ten sam dzien, brak godziny konca
+    if (!formValue.setEndDate && !formValue.setEndTimeHour) {
+      endTime = formValue.startTime;
+
+      return { startTime, endTime };
+    }
+
+    // ten sam dzien, godzina konca ustalona
+    if (!formValue.setEndDate && formValue.setEndTimeHour) {
+      endTime = structuredClone(formValue.startTime);
+      const [endH, endM] = formValue.endTimeHour.split(':');
+
+      endTime.setHours(+endH, +endM);
+
+      return { startTime, endTime };
+    }
+
+    // inny dzien, brak godziny konca
+    if (formValue.setEndDate && !formValue.setEndTimeHour) {
+      endTime = formValue.endTime;
+
+      return { startTime, endTime };
+    }
+
+    // inny idzien, godzina konca ustalona
+    if (formValue.setEndDate && formValue.setEndTimeHour) {
+      endTime = formValue.endTime;
+      const [endH, endM] = formValue.endTimeHour.split(':');
+
+      endTime.setHours(+endH, +endM);
+
+      return { startTime, endTime };
+    }
+
+    endTime = formValue.endTime;
 
     return { startTime, endTime };
   }
@@ -384,9 +437,9 @@ export default class ProjectFormPageComponent implements OnInit {
 
     const formValue = this.form.getRawValue();
 
-    if (this.form.invalid) {
-      return;
-    }
+    // if (this.form.invalid) {
+    //   return;
+    // }
 
     const { endTime, startTime } = this.prepareDates(formValue);
 
@@ -408,11 +461,13 @@ export default class ProjectFormPageComponent implements OnInit {
         country: 'Polska',
       },
     };
-    if (this.project) {
-      this.service.update(this.project.id, payload);
-    } else {
-      this.service.add(payload);
-    }
+
+    console.log(payload);
+    // if (this.project) {
+    //   this.service.update(this.project.id, payload);
+    // } else {
+    //   this.service.add(payload);
+    // }
   }
 }
 
