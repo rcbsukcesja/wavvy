@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NGOsApiService } from 'src/app/features/ngo/data-access/ngos.api.service';
 import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
 import { KeycloakService } from 'keycloak-angular';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
 export type RegisterFormValue = {
@@ -41,7 +41,7 @@ type Token = string;
     </div>
 
     <div mat-dialog-actions>
-      <button mat-button [mat-dialog-close]="false">Dobrze</button>
+      <button mat-button [mat-dialog-close]="false">Ok, rozumiem!</button>
     </div>
   `,
   standalone: true,
@@ -63,17 +63,15 @@ export class TokenExpiredDialogComponent {
 })
 export class AuthService extends HttpBaseService {
   handleTokenExpiration() {
-    // todo
-    throw new Error('Method not implemented.');
+    this.dialog.open(TokenExpiredDialogComponent);
   }
   router = inject(Router);
   authStateService = inject(AuthStateService);
   apiURL = inject(API_URL);
 
+  private dialog = inject(MatDialog);
   private kc = inject(KeycloakService);
-
   private snack = inject(MatSnackBar);
-
   private ngoService = inject(NGOsApiService);
 
   constructor() {

@@ -66,9 +66,9 @@ export type ProjectForm = FormGroup<{
   template: `
     <h2>{{ project ? 'Edytowanie projektu' : 'Dodawanie projektu' }}</h2>
     @if (project?.imageLink; as link) {
-    <section class="flex w-1/4 mb-4">
-      <img [src]="link" />
-    </section>
+      <section class="flex w-1/4 mb-4">
+        <img [src]="link" />
+      </section>
     }
 
     <form [formGroup]="form" (ngSubmit)="addProject()" class="flex flex-col">
@@ -147,7 +147,7 @@ export type ProjectForm = FormGroup<{
       <br />
 
       <div class="flex gap-4">
-        <mat-form-field class="flex-1">
+        <mat-form-field *ngIf="form.controls.setEndDate.value" class="flex-1">
           <mat-label>Data zakończenia </mat-label>
           <input
             matInput
@@ -158,7 +158,7 @@ export type ProjectForm = FormGroup<{
           <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
           <mat-datepicker #datepicker2> </mat-datepicker>
         </mat-form-field>
-        <mat-form-field class="flex-1">
+        <mat-form-field *ngIf="form.controls.setEndTimeHour.value" class="flex-1">
           <mat-label>Godzina zakończenia </mat-label>
           <input formControlName="endTimeHour" matInput type="time" />
           <mat-hint>Podaj godzinę zakończenia</mat-hint>
@@ -294,7 +294,7 @@ export default class ProjectFormPageComponent implements OnInit {
   }
 
   blockAfterEndDate = (current: Date | null) => {
-    if (!current || !this.form.controls.endTime.value) {
+    if (!current || !this.form.controls.endTime.value || !this.form.controls.setEndDate.value) {
       return true;
     }
 
@@ -350,8 +350,8 @@ export default class ProjectFormPageComponent implements OnInit {
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || '', [Validators.required, CustomValidators.maxLength]),
       description: this.builder.control(this.project?.description || '', [Validators.required]),
-      endTime: this.builder.control(this.project ? new Date(this.project.endTime) : new Date(), [Validators.required]),
-      endTimeHour: this.builder.control(endTimeHour || '', [Validators.required]),
+      endTime: this.builder.control(this.project ? new Date(this.project.endTime) : new Date(), []),
+      endTimeHour: this.builder.control(endTimeHour || '', []),
       startTime: this.builder.control(this.project ? new Date(this.project.startTime) : new Date(), [
         Validators.required,
       ]),
@@ -369,6 +369,20 @@ export default class ProjectFormPageComponent implements OnInit {
       const { value } = this.form.controls.startTime;
 
       this.form.controls.startTime.patchValue(new Date(value.setHours(+endH, +endM)));
+    });
+
+    this.form.controls.endTimeHour.valueChanges.pipe(map(value => value.split(':'))).subscribe(([endH, endM]) => {
+      const { value } = this.form.controls.endTime;
+
+      this.form.controls.endTime.patchValue(new Date(value.setHours(+endH, +endM)));
+    });
+
+    this.form.controls.setEndDate.valueChanges.subscribe(value => {
+      if (value) {
+        this.form.controls.endTime.patchValue(new Date(this.form.controls.startTime.value));
+      } else {
+        // this.form.controls.endTime.patchValue(new Date(this.form.controls.startTime.value))
+      }
     });
   }
 
@@ -423,9 +437,9 @@ export default class ProjectFormPageComponent implements OnInit {
 
     const formValue = this.form.getRawValue();
 
-    if (this.form.invalid) {
-      return;
-    }
+    // if (this.form.invalid) {
+    //   return;
+    // }
 
     const { endTime, startTime } = this.prepareDates(formValue);
 
@@ -447,11 +461,13 @@ export default class ProjectFormPageComponent implements OnInit {
         country: 'Polska',
       },
     };
-    if (this.project) {
-      this.service.update(this.project.id, payload);
-    } else {
-      this.service.add(payload);
-    }
+
+    console.log(payload);
+    // if (this.project) {
+    //   this.service.update(this.project.id, payload);
+    // } else {
+    //   this.service.add(payload);
+    // }
   }
 }
 
