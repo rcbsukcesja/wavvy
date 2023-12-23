@@ -42,7 +42,7 @@ import { Observable, map, shareReplay } from 'rxjs';
           <mat-icon class="mr-2"> language</mat-icon>
             Strona internetowa:
           </div>
-          <a class="break-words line-clamp-3 outline-none" [href]="data.website" target="_blank">huahuahauhauahuahauhauahuahauhauhauahuahauhauahuahuahauhauhauhauhauhauahauahuahauhauhauhauhauhauahauahuahauhauhauhauhauhauahauahuahauhauhauhauhauhauahauhuauhauahuahuah</a>
+          <a class="break-words line-clamp-3 outline-none" [href]="data.website" target="_blank">{{data.website}}</a>
         </div>
       } @else {
         <table>
