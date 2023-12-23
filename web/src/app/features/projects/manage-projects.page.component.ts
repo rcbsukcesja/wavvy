@@ -61,7 +61,7 @@ import { InfoDialogComponent, InfoDialogData } from 'src/app/shared/ui/dialogs/i
         mat-raised-button
         color="primary"
         (click)="goToProjectForm()">
-        Dodaj
+        Dodaj nowy projekt
       </button>
       <br />
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />

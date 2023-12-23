@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { PROJECT_STATUS, Project, ProjectStatus, projectStatusMap } from './model/project.model';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,6 +17,7 @@ import { BehaviorSubject, map } from 'rxjs';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomValidators } from 'src/app/shared/custom.validator';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export type ProjectForm = FormGroup<{
   status: FormControl<ProjectStatus>;
@@ -254,7 +255,9 @@ export default class ProjectFormPageComponent implements OnInit {
     };
   });
 
-  builder = inject(NonNullableFormBuilder);
+  private destroy$ = inject(DestroyRef);
+
+  private builder = inject(NonNullableFormBuilder);
 
   form!: ProjectForm;
 
@@ -343,9 +346,26 @@ export default class ProjectFormPageComponent implements OnInit {
 
     this.tags = this.project?.tags || [];
 
+    let setEndDateValue = false;
+    let setEndTimeValue = false;
+
+    if (this.project) {
+      const startDate = new Date(this.project.startTime);
+      const endDate = new Date(this.project.endTime);
+
+      setEndDateValue = startDate.getTime() !== endDate.getTime();
+
+      const startH = startDate.getHours();
+      const endH = endDate.getHours();
+      const startM = startDate.getMinutes();
+      const endM = endDate.getMinutes();
+
+      setEndTimeValue = (startH === endH && startM !== endM) || startH !== endH;
+    }
+
     this.form = this.builder.group({
-      setEndDate: this.builder.control(!!this.project?.endTime),
-      setEndTimeHour: this.builder.control(!!this.project?.endTime),
+      setEndDate: this.builder.control(setEndDateValue),
+      setEndTimeHour: this.builder.control(setEndTimeValue),
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || '', [Validators.required, CustomValidators.maxLength]),
@@ -365,23 +385,31 @@ export default class ProjectFormPageComponent implements OnInit {
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
 
-    this.form.controls.startTimeHour.valueChanges.pipe(map(value => value.split(':'))).subscribe(([endH, endM]) => {
-      const { value } = this.form.controls.startTime;
+    this.form.controls.startTimeHour.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroy$),
+        map(value => value.split(':'))
+      )
+      .subscribe(([endH, endM]) => {
+        const { value } = this.form.controls.startTime;
 
-      this.form.controls.startTime.patchValue(new Date(value.setHours(+endH, +endM)));
-    });
+        this.form.controls.startTime.patchValue(new Date(value.setHours(+endH, +endM)));
+      });
 
-    this.form.controls.endTimeHour.valueChanges.pipe(map(value => value.split(':'))).subscribe(([endH, endM]) => {
-      const { value } = this.form.controls.endTime;
+    this.form.controls.endTimeHour.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroy$),
+        map(value => value.split(':'))
+      )
+      .subscribe(([endH, endM]) => {
+        const { value } = this.form.controls.endTime;
 
-      this.form.controls.endTime.patchValue(new Date(value.setHours(+endH, +endM)));
-    });
+        this.form.controls.endTime.patchValue(new Date(value.setHours(+endH, +endM)));
+      });
 
-    this.form.controls.setEndDate.valueChanges.subscribe(value => {
+    this.form.controls.setEndDate.valueChanges.pipe(takeUntilDestroyed(this.destroy$)).subscribe(value => {
       if (value) {
         this.form.controls.endTime.patchValue(new Date(this.form.controls.startTime.value));
-      } else {
-        // this.form.controls.endTime.patchValue(new Date(this.form.controls.startTime.value))
       }
     });
   }
@@ -437,9 +465,9 @@ export default class ProjectFormPageComponent implements OnInit {
 
     const formValue = this.form.getRawValue();
 
-    // if (this.form.invalid) {
-    //   return;
-    // }
+    if (this.form.invalid) {
+      return;
+    }
 
     const { endTime, startTime } = this.prepareDates(formValue);
 
@@ -463,11 +491,11 @@ export default class ProjectFormPageComponent implements OnInit {
     };
 
     console.log(payload);
-    // if (this.project) {
-    //   this.service.update(this.project.id, payload);
-    // } else {
-    //   this.service.add(payload);
-    // }
+    if (this.project) {
+      this.service.update(this.project.id, payload);
+    } else {
+      this.service.add(payload);
+    }
   }
 }
 

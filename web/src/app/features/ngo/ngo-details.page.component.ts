@@ -95,12 +95,12 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
           </aside>
           <section class="flex flex-col gap-6">
             <div>
-              <h3>Opis organizacji:</h3>
+              <h3 class="!font-semibold">Opis organizacji:</h3>
               <p>{{ state.details.description }}</p>
             </div>
             <mat-divider />
             <div>
-              <h3>Obszary działania:</h3>
+              <h3 class="!font-semibold">Obszary działania:</h3>
               <ul class="flex flex-col gap-2 mt-4">
                 <li *ngFor="let area of state.details.businessAreas">- {{ area.name }}</li>
               </ul>
@@ -108,7 +108,7 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
             <mat-divider />
 
             <div>
-              <h3>Zasoby:</h3>
+              <h3 class="!font-semibold">Zasoby:</h3>
               <ul class="flex flex-col gap-2 mt-4">
                 <li *ngFor="let resource of state.details.resources">- {{ resource }}</li>
               </ul>
@@ -232,19 +232,19 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
           </aside>
           <section class="flex flex-col gap-6">
             <div>
-              <h3>Opis organizacji:</h3>
+              <h3 class="!font-semibold">Opis organizacji:</h3>
               <p>{{ state.details.description }}</p>
             </div>
             <mat-divider />
             <div>
-              <h3>Obszary działania:</h3>
+              <h3 class="!font-semibold">Obszary działania:</h3>
               <ul class="flex flex-col gap-2 mt-4">
                 <li *ngFor="let area of state.details.businessAreas">- {{ area.name }}</li>
               </ul>
             </div>
             <mat-divider />
             <div>
-              <h3>Zasoby:</h3>
+              <h3 class="!font-semibold">Zasoby:</h3>
               <ul class="flex flex-col gap-2 mt-4">
                 <li *ngFor="let resource of state.details.resources">- {{ resource }}</li>
               </ul>
