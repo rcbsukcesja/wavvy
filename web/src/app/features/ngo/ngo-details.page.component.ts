@@ -163,7 +163,9 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
         </div>
         <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
         <div *ngIf="projectsState() as projectState" class="mt-8">
-          <app-projects-list *ngIf="projectState.loadListCallState === 'LOADED'" [projects]="projectState.list" />
+          <app-projects-list
+            *ngIf="projectState.loadListCallState === 'LOADED'"
+            [projects]="projectState.list.slice(0, 3)" />
 
           @if (projectState.loadListCallState === 'LOADED' && !projectState.list.length) {
             <p>{{ state.details?.name }} nie prowadzi w tej chwili żadnych projektów</p>
@@ -281,7 +283,9 @@ import { AuthStateService } from 'src/app/auth/data_access/auth.state.service';
         </div>
         <p *ngIf="state.loadListCallState === 'LOADING'">Ładowanie...</p>
         <div *ngIf="projectsState() as projectState" class="mt-8">
-          <app-projects-list *ngIf="projectState.loadListCallState === 'LOADED'" [projects]="projectState.list" />
+          <app-projects-list
+            *ngIf="projectState.loadListCallState === 'LOADED'"
+            [projects]="projectState.list.slice(0, 3)" />
           @if (projectState.loadListCallState === 'LOADED' && !projectState.list.length) {
             <p>{{ state.details?.name }} nie prowadzi w tej chwili żadnych projektów</p>
           }
