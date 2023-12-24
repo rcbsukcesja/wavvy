@@ -15,7 +15,7 @@ export interface MessageDialogFormValue {
 
 @Component({
   template: `
-    <h1 mat-dialog-title>Wyślij wiadomość {{ this.data.connector }} {{ this.data.name }}</h1>
+    <h1 mat-dialog-title class="text-center">Wyślij wiadomość {{ this.data.connector }} {{ this.data.name }}</h1>
     <div mat-dialog-content>
       <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field class="w-full">
@@ -35,8 +35,8 @@ export interface MessageDialogFormValue {
 
         <br />
         <div mat-dialog-actions>
-          <button mat-button [mat-dialog-close]="false">Anuluj</button>
-          <button mat-button>Wyślij</button>
+          <button mat-raised-button [mat-dialog-close]="false">Anuluj</button>
+          <button mat-raised-button [mat-dialog-close]="true">Wyślij</button>
         </div>
       </form>
     </div>

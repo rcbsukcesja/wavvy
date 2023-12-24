@@ -29,14 +29,14 @@ export interface MenuItem {
 @Component({
   selector: 'app-shell',
   template: `
-    <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav-container autosize="true" class="sidenav-container">
       <mat-sidenav
         #drawer
         class="sidenav"
         fixedInViewport
-        [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-        [mode]="(isHandset$ | async) ? 'over' : 'side'"
-        [opened]="(isHandset$ | async) === false">
+        [attr.role]="(isAsideHidden$ | async) ? 'dialog' : 'navigation'"
+        [mode]="(isAsideHidden$ | async) ? 'over' : 'side'"
+        [opened]="(isAsideHidden$ | async) === false">
         <mat-toolbar class="!py-12">
           <div *ngIf="$isAuth()" class="flex flex-col relative">
             <span class="text-xs">
@@ -87,13 +87,13 @@ export interface MenuItem {
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>
-        <mat-toolbar color="primary">
+        <mat-toolbar color="primary" class="!z-50">
           <button
             type="button"
             aria-label="Toggle sidenav"
             mat-icon-button
             (click)="drawer.toggle()"
-            *ngIf="isHandset$ | async">
+            *ngIf="isAsideHidden$ | async">
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
           <div class="flex justify-between items-center w-full">
@@ -102,16 +102,16 @@ export interface MenuItem {
                 <mat-icon aria-label="Side nav toggle icon">waves</mat-icon>
                 <span class="ml-2">Wavvy</span>
               </div>
-              <span class="text-xs ml-2 text-blue-300">na fali pomocy</span>
+              <span class="text-xs ml-2 tracking-wide text-blue-300">na fali pomocy</span>
               <!-- <p class="absolute right-0 text-sm rotate-6 px-1 rounded-sm bg-blue-900">beta</p> -->
             </div>
 
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start pl-4">
               <a *ngIf="$showMessageBox()" routerLink="/messages" class="block"
                 ><mat-icon class="!w-9 !h-9 text-3xl"> local_post_office</mat-icon>
               </a>
-              <button *ngIf="$isAuth()" class="ml-4" mat-button (click)="logout()">Wyloguj</button>
-              <button *ngIf="!$isAuth()" class="ml-4" mat-button (click)="login()">Zaloguj</button>
+              <button *ngIf="$isAuth()" class="ml-1 md:ml-4" mat-button (click)="logout()">Wyloguj</button>
+              <button *ngIf="!$isAuth()" class="ml-1 md:ml-4" mat-button (click)="login()">Zaloguj</button>
             </div>
           </div>
         </mat-toolbar>
@@ -190,7 +190,7 @@ export default class ShellComponent {
     this.keycloak.login();
   }
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+  isAsideHidden$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).pipe(
     map(result => result.matches),
     shareReplay()
   );

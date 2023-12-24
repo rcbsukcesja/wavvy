@@ -86,7 +86,7 @@ export class SameDayPipe implements PipeTransform {
     IsOwnProjectPipe,
   ],
   template: `
-    <app-list-shell listName="Projekty" [list]="projects">
+    <app-list-shell class="flex flex-col grow" listName="Projekty" [list]="projects">
       <ng-template #item let-project>
         <div class="">
           <div
@@ -119,7 +119,7 @@ export class SameDayPipe implements PipeTransform {
             class="ml-auto block -mt-1 mb-2 bg-black text-white px-2 py-1 rounded-md hover:bg-opacity-70 transition">
             Pełny opis
           </button>
-          <p *ngIf="project.links[0] as link">
+          <p *ngIf="project.links[0] as link" class="text-ellipsis overflow-hidden">
             <span class="font-semibold">Więcej informacji: </span>
             <a class="underline" [href]="link" target="_blank">{{ link }}</a>
           </p>
@@ -143,7 +143,7 @@ export class SameDayPipe implements PipeTransform {
             </div>
 
             @if (isAuth()) {
-              <div class="flex flex-col" (click)="openMessageModal(project.organizer.id, project.name)">
+              <div class="flex flex-col cursor-pointer" (click)="openMessageModal(project.organizer.id, project.name)">
                 <mat-icon
                   [matTooltip]="
                     !(project.organizer.id | isOwnProject)

@@ -19,6 +19,7 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { CompanyCardComponent } from './ui/company-card.component';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-companies.page',
@@ -35,12 +36,14 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     MatDialogModule,
     CompanyCardComponent,
     LoadingComponent,
+    CenterDirective
   ],
   template: `
+  <div appCenterDirective>
     <ng-container *ngIf="state() as state">
       <app-common-filters [hideSort]="true" (filtersChanged)="onFiltersChanged($event)" />
 
-      <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="state.list">
+      <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="MŚP" [list]="state.list" class="flex flex-col grow">
         <ng-template #item let-company>
           <app-company-card [company]="company" (message)="sendMessage($event, company.id)" />
         </ng-template>
@@ -49,7 +52,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
       <app-loader text="Ładowanie firm..."></app-loader>
       }
     </ng-container>
-    <br />
+    </div>
     @if (state(); as state) {
     <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }

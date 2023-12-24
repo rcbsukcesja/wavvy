@@ -8,12 +8,13 @@ import { ContactDialogComponent } from 'src/app/shared/ui/common-contact-dialog.
 import { ListDialogComponent } from 'src/app/shared/ui/common-list-dialog.component';
 import { tap, take } from 'rxjs';
 import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/ui/common-message-dialog.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-company-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIconModule, MatDividerModule, MatDialogModule],
+  imports: [MatIconModule, MatDividerModule, MatDialogModule, MatTooltipModule],
   template: `
     <div class="mb-4 h-10">
       <p class="font-semibold text-lg">{{ company.name }}</p>
@@ -24,26 +25,30 @@ import { MessageDialogComponent, MessageDialogFormValue } from 'src/app/shared/u
     <mat-divider />
     <div class="flex justify-between mt-4">
       @if (canSendMessage) {
-      <div class="cursor-pointer" (click)="openMessageModal(company.name)">
+      <div class="cursor-pointer" (click)="openMessageModal(company.name)" matTooltip="Wyślij wiadomość">
+      
         <mat-icon>forward_to_inbox</mat-icon>
       </div>
       }
       <!--  -->
       @if (company.resources.length) {
-      <div class="cursor-pointer" (click)="openResourcesModal(company.resources)">
+      <div class="cursor-pointer" (click)="openResourcesModal(company.resources)" matTooltip="Wyświetl zasoby organizacji">
+      
         <mat-icon>build</mat-icon>
       </div>
       }
       <!--  -->
       @if (company.businessAreas.length) {
-      <div class="cursor-pointer" (click)="openCategoriessModal(company.businessAreas)">
+      <div class="cursor-pointer" (click)="openCategoriessModal(company.businessAreas)" matTooltip="Wyświetl obszary działania">
+      
         <mat-icon>assignment</mat-icon>
       </div>
       }
 
       <div
         class="cursor-pointer"
-        (click)="openContactModal(company.address, company.phone, company.email, company.website)">
+        (click)="openContactModal(company.address, company.phone, company.email, company.website)" matTooltip="Wyświetl dane kontaktowe">
+        
         <mat-icon> contact_mail</mat-icon>
       </div>
     </div>

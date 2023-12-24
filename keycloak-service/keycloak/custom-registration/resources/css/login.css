@@ -105,7 +105,7 @@ div.kc-logo-text span {
 
 .form-container {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    grid-template-columns: 1fr; /* Two equal columns */
     gap: 20px; /* Space between columns */
 
 }

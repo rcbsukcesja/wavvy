@@ -75,7 +75,7 @@ export class ShellService {
     {
       icon: '',
       link: '/manage/companies',
-      displayValue: 'Zarządzaj firmami',
+      displayValue: 'Zarządzaj MŚP',
       roles: [USER_ROLES.ADMIN],
     },
     {

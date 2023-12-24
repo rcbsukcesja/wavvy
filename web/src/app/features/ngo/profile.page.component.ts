@@ -50,6 +50,11 @@ import { CompaniesApiService } from '../companies/data-access/companies.api.serv
               <mat-icon class="absolute -top-2 -left-2">warning</mat-icon>
               <p class="!m-0">Twoja organizacja nie jest jeszcze zatwierdzona</p>
             </div>
+          } @else {
+            <p class="border p-2">
+              Gratulacje! Twoja organizacja została potwierdzona i możesz teraz w pełni korzystać z Wavvy. Ze względów
+              bezpieczeństwa, nie możesz zmieniać nazwy swojej organizacji oraz numerów NIP, KRS oraz REGON
+            </p>
           }
           @if ($authState().user?.role === USER_ROLES.NGO_USER) {
             <app-ngo-profile-form
