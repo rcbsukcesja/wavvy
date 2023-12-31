@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { PROJECT_STATUS, Project, ProjectStatus, projectStatusMap } from './model/project.model';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,18 +13,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProjectsApiService } from './data-access/projects.api.service';
 import { COMMA, ENTER, P } from '@angular/cdk/keycodes';
 import { MatChipInputEvent, MatChipEditedEvent, MatChipsModule } from '@angular/material/chips';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomValidators } from 'src/app/shared/custom.validator';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export type ProjectForm = FormGroup<{
-  // image: FormControl<File | null>;
   status: FormControl<ProjectStatus>;
   name: FormControl<string>;
   description: FormControl<string>;
   startTime: FormControl<Date>;
   startTimeHour: FormControl<string>;
+  setEndDate: FormControl<boolean>;
+  setEndTimeHour: FormControl<boolean>;
   endTime: FormControl<Date>;
   endTimeHour: FormControl<string>;
   budget: FormControl<number>;
@@ -65,9 +67,9 @@ export type ProjectForm = FormGroup<{
   template: `
     <h2>{{ project ? 'Edytowanie projektu' : 'Dodawanie projektu' }}</h2>
     @if (project?.imageLink; as link) {
-    <section class="flex w-1/4 mb-4">
-      <img [src]="link" />
-    </section>
+      <section class="flex w-1/4 mb-4">
+        <img [src]="link" />
+      </section>
     }
 
     <form [formGroup]="form" (ngSubmit)="addProject()" class="flex flex-col">
@@ -133,7 +135,20 @@ export type ProjectForm = FormGroup<{
 
       <br />
       <div class="flex gap-4">
-        <mat-form-field class="flex-1">
+        <div class="flex-1">
+          <label>Czy data zakończenia jest inna?</label>
+          <mat-checkbox class="example-margin" formControlName="setEndDate"></mat-checkbox>
+        </div>
+        <div class="flex-1">
+          <label>Czy chcesz podać godzinę zakończenia?</label>
+          <mat-checkbox class="example-margin" formControlName="setEndTimeHour"></mat-checkbox>
+        </div>
+      </div>
+
+      <br />
+
+      <div class="flex gap-4">
+        <mat-form-field *ngIf="form.controls.setEndDate.value" class="flex-1">
           <mat-label>Data zakończenia </mat-label>
           <input
             matInput
@@ -144,7 +159,7 @@ export type ProjectForm = FormGroup<{
           <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
           <mat-datepicker #datepicker2> </mat-datepicker>
         </mat-form-field>
-        <mat-form-field class="flex-1">
+        <mat-form-field *ngIf="form.controls.setEndTimeHour.value" class="flex-1">
           <mat-label>Godzina zakończenia </mat-label>
           <input formControlName="endTimeHour" matInput type="time" />
           <mat-hint>Podaj godzinę zakończenia</mat-hint>
@@ -189,8 +204,7 @@ export type ProjectForm = FormGroup<{
       <mat-form-field>
         <mat-label>Link</mat-label>
         <input formControlName="link" matInput />
-        <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
-        <mat-hint [class.text-red-500]="form.controls.link.errors"
+        <mat-hint [class.text-red-500]="form.controls.link.touched && form.controls.link.errors"
           >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
         >
       </mat-form-field>
@@ -212,24 +226,10 @@ export type ProjectForm = FormGroup<{
             (matChipInputTokenEnd)="add($event)" />
         </mat-chip-grid>
         <mat-hint *ngIf="form.controls.tags as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
-          >Podaj przynajmniej jeden tag</mat-hint
+          >Podaj przynajmniej jeden tag. By dodać tag po jego wpisaniu naciśnij enter</mat-hint
         >
       </mat-form-field>
       <br />
-      <!-- <mat-form-field>
-        <mat-label>Kategorie</mat-label>
-        <mat-select formControlName="categories" multiple>
-          <mat-select-trigger>
-            {{ form.controls.categories.value[0]?.name || '' }}
-            <span *ngIf="(form.controls.categories.value.length || 0) > 1">
-              (+{{ (form.controls.categories.value.length || 0) - 1 }}
-              {{ form.controls.categories.value.length === 2 ? 'other' : 'others' }})
-            </span>
-          </mat-select-trigger>
-          <mat-option *ngFor="let area of bussinessAreas" [value]="area">{{ area.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br /> -->
 
       <button mat-raised-button color="primary">Zapisz</button>
     </form>
@@ -255,7 +255,9 @@ export default class ProjectFormPageComponent implements OnInit {
     };
   });
 
-  builder = inject(NonNullableFormBuilder);
+  private destroy$ = inject(DestroyRef);
+
+  private builder = inject(NonNullableFormBuilder);
 
   form!: ProjectForm;
 
@@ -295,7 +297,7 @@ export default class ProjectFormPageComponent implements OnInit {
   }
 
   blockAfterEndDate = (current: Date | null) => {
-    if (!current || !this.form.controls.endTime.value) {
+    if (!current || !this.form.controls.endTime.value || !this.form.controls.setEndDate.value) {
       return true;
     }
 
@@ -330,27 +332,46 @@ export default class ProjectFormPageComponent implements OnInit {
     let startTimeHour = '';
     let endTimeHour = '';
 
+    function getTimeinHHMMformat(date: Date) {
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+
+      return `${hours > 9 ? hours : '0' + hours}:${minutes > 9 ? minutes : '0' + minutes}`;
+    }
+
     if (this.project) {
-      const hours = new Date(this.project.startTime).getHours();
-      const minutes = new Date(this.project.startTime).getMinutes();
-
-      startTimeHour = `${hours > 9 ? hours : '0' + hours}:${minutes > 9 ? minutes : '0' + minutes}`;
-
-      const h = new Date(this.project.endTime).getHours();
-      const m = new Date(this.project.endTime).getMinutes();
-
-      endTimeHour = `${h > 9 ? h : '0' + h}:${m > 9 ? m : '0' + m}`;
+      startTimeHour = getTimeinHHMMformat(new Date(this.project.startTime));
+      endTimeHour = getTimeinHHMMformat(new Date(this.project.endTime));
     }
 
     this.tags = this.project?.tags || [];
 
+    let setEndDateValue = false;
+    let setEndTimeValue = false;
+
+    if (this.project) {
+      const startDate = new Date(this.project.startTime);
+      const endDate = new Date(this.project.endTime);
+
+      setEndDateValue = startDate.getTime() !== endDate.getTime();
+
+      const startH = startDate.getHours();
+      const endH = endDate.getHours();
+      const startM = startDate.getMinutes();
+      const endM = endDate.getMinutes();
+
+      setEndTimeValue = (startH === endH && startM !== endM) || startH !== endH;
+    }
+
     this.form = this.builder.group({
+      setEndDate: this.builder.control(setEndDateValue),
+      setEndTimeHour: this.builder.control(setEndTimeValue),
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || '', [Validators.required, CustomValidators.maxLength]),
       description: this.builder.control(this.project?.description || '', [Validators.required]),
-      endTime: this.builder.control(this.project ? new Date(this.project.endTime) : new Date(), [Validators.required]),
-      endTimeHour: this.builder.control(endTimeHour || '', [Validators.required]),
+      endTime: this.builder.control(this.project ? new Date(this.project.endTime) : new Date(), []),
+      endTimeHour: this.builder.control(endTimeHour || '', []),
       startTime: this.builder.control(this.project ? new Date(this.project.startTime) : new Date(), [
         Validators.required,
       ]),
@@ -363,6 +384,34 @@ export default class ProjectFormPageComponent implements OnInit {
       zipCode: this.builder.control(this.project?.address?.zipCode || '78-100', [CustomValidators.maxLength]),
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
+
+    this.form.controls.startTimeHour.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroy$),
+        map(value => value.split(':'))
+      )
+      .subscribe(([endH, endM]) => {
+        const { value } = this.form.controls.startTime;
+
+        this.form.controls.startTime.patchValue(new Date(value.setHours(+endH, +endM)));
+      });
+
+    this.form.controls.endTimeHour.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroy$),
+        map(value => value.split(':'))
+      )
+      .subscribe(([endH, endM]) => {
+        const { value } = this.form.controls.endTime;
+
+        this.form.controls.endTime.patchValue(new Date(value.setHours(+endH, +endM)));
+      });
+
+    this.form.controls.setEndDate.valueChanges.pipe(takeUntilDestroyed(this.destroy$)).subscribe(value => {
+      if (value) {
+        this.form.controls.endTime.patchValue(new Date(this.form.controls.startTime.value));
+      }
+    });
   }
 
   private prepareDates(formValue: ReturnType<typeof this.form.getRawValue>) {
@@ -370,9 +419,43 @@ export default class ProjectFormPageComponent implements OnInit {
     const [startH, startM] = formValue.startTimeHour.split(':');
     startTime.setHours(+startH, +startM);
 
-    const endTime = formValue.endTime as unknown as Date;
-    const [endH, endM] = formValue.endTimeHour.split(':');
-    endTime.setHours(+endH, +endM);
+    let endTime: Date;
+
+    // ten sam dzien, brak godziny konca
+    if (!formValue.setEndDate && !formValue.setEndTimeHour) {
+      endTime = formValue.startTime;
+
+      return { startTime, endTime };
+    }
+
+    // ten sam dzien, godzina konca ustalona
+    if (!formValue.setEndDate && formValue.setEndTimeHour) {
+      endTime = structuredClone(formValue.startTime);
+      const [endH, endM] = formValue.endTimeHour.split(':');
+
+      endTime.setHours(+endH, +endM);
+
+      return { startTime, endTime };
+    }
+
+    // inny dzien, brak godziny konca
+    if (formValue.setEndDate && !formValue.setEndTimeHour) {
+      endTime = formValue.endTime;
+
+      return { startTime, endTime };
+    }
+
+    // inny idzien, godzina konca ustalona
+    if (formValue.setEndDate && formValue.setEndTimeHour) {
+      endTime = formValue.endTime;
+      const [endH, endM] = formValue.endTimeHour.split(':');
+
+      endTime.setHours(+endH, +endM);
+
+      return { startTime, endTime };
+    }
+
+    endTime = formValue.endTime;
 
     return { startTime, endTime };
   }
@@ -406,6 +489,8 @@ export default class ProjectFormPageComponent implements OnInit {
         country: 'Polska',
       },
     };
+
+    console.log(payload);
     if (this.project) {
       this.service.update(this.project.id, payload);
     } else {

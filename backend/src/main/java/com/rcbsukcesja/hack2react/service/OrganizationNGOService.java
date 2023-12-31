@@ -150,7 +150,7 @@ public class OrganizationNGOService {
         if (ConfirmedStatusUtils.checkUserCanChangeFields(ngo.isConfirmed())) {
             setOfficialNGOFields(dto, ngo);
         } else {
-            putUpdateOfficialFieldChangesValidation(dto, ngo);
+            throwExceptionOnPutUpdateOfficialFieldWithInvalidConfirmedStatus(dto, ngo);
             setOfficialNGOFields(dto, ngo);
         }
 
@@ -177,9 +177,8 @@ public class OrganizationNGOService {
         if (dto.confirmed() != null) {
             AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
                     ForbiddenErrorMessageResources.CONFIRMED);
+            organizationValidation.validateOfficialOrganizationFieldsDuringConfirmation(ngo);
             ngo.setConfirmed(dto.confirmed());
-        } else {
-            ngo.setConfirmed(false);
         }
         ngo.setUpdatedAt(TimeUtils.nowInUTC());
 
@@ -260,6 +259,7 @@ public class OrganizationNGOService {
         if (dto.confirmed() != null && !dto.confirmed() == actual.isConfirmed()) {
             AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
                     ForbiddenErrorMessageResources.CONFIRMED);
+            organizationValidation.validateOfficialOrganizationFieldsDuringConfirmation(actual);
             actual.setConfirmed(dto.confirmed());
         }
 
@@ -384,7 +384,6 @@ public class OrganizationNGOService {
         ngo.setRegon(dto.regon());
     }
 
-
     private void setBasicNGOFields(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
         ngo.setOwner(getUserByIdOrThrowException(TokenUtils.getUserId(SecurityContextHolder.getContext().getAuthentication())));
         ngo.setAddress(addressMapper.organizationAddressSaveDtoToAddress(dto.address()));
@@ -446,7 +445,7 @@ public class OrganizationNGOService {
                 .orElseThrow(() -> new UserNotFoundException(ErrorMessages.USER_NOT_FOUND, id));
     }
 
-    private void putUpdateOfficialFieldChangesValidation(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
+    private void throwExceptionOnPutUpdateOfficialFieldWithInvalidConfirmedStatus(OrganizationNGOSaveDto dto, OrganizationNGO ngo) {
         if (dto.name()!= null && !dto.name().equals(ngo.getName())) {
             throw new InvalidConfirmedStatusException(ErrorMessages.FORBIDDEN_MODIFICATION, NAME);
         }

@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { CustomValidators } from '../custom.validator';
 
 export interface MessageDialogFormValue {
   title: string;
@@ -14,7 +15,7 @@ export interface MessageDialogFormValue {
 
 @Component({
   template: `
-    <h1 mat-dialog-title>Wyślij wiadomość {{ this.data.connector }} {{ this.data.name }}</h1>
+    <h1 mat-dialog-title class="text-center">Wyślij wiadomość {{ this.data.connector }} {{ this.data.name }}</h1>
     <div mat-dialog-content>
       <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field class="w-full">
@@ -31,15 +32,11 @@ export interface MessageDialogFormValue {
           <mat-label>Kontakt</mat-label>
           <textarea formControlName="contact" matInput></textarea>
         </mat-form-field>
-        <br />
-        <mat-form-field class="w-full">
-          <mat-label>Nadawca</mat-label>
-          <textarea formControlName="name" matInput></textarea>
-        </mat-form-field>
+
         <br />
         <div mat-dialog-actions>
-          <button mat-button [mat-dialog-close]="false">Anuluj</button>
-          <button mat-button>Wyślij</button>
+          <button mat-raised-button [mat-dialog-close]="false">Anuluj</button>
+          <button mat-raised-button [mat-dialog-close]="true">Wyślij</button>
         </div>
       </form>
     </div>
@@ -53,10 +50,10 @@ export class MessageDialogComponent {
   private builder = inject(NonNullableFormBuilder);
 
   form = this.builder.group({
-    title: this.builder.control('', [Validators.required]),
-    message: this.builder.control('', [Validators.required]),
-    contact: this.builder.control('', [Validators.required]),
-    name: this.builder.control('', [Validators.required]),
+    title: this.builder.control('', [Validators.required, CustomValidators.maxLength, CustomValidators.trimTest]),
+    message: this.builder.control('', [Validators.required, CustomValidators.longMaxLength, CustomValidators.trimTest]),
+    contact: this.builder.control('', [Validators.required, CustomValidators.maxLength, CustomValidators.trimTest]),
+    name: this.builder.control('', []),
   });
 
   submit() {

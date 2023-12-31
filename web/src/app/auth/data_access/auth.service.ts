@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Component, Injectable, inject } from '@angular/core';
 import { HttpBaseService } from 'src/app/core/http-base.abstract.service';
 import { AuthStateService, User } from './auth.state.service';
 import { map, of, switchMap, tap, throwError } from 'rxjs';
@@ -8,6 +8,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NGOsApiService } from 'src/app/features/ngo/data-access/ngos.api.service';
 import { USER_ROLES, UserRoles } from 'src/app/core/user-roles.enum';
 import { KeycloakService } from 'keycloak-angular';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 export type RegisterFormValue = {
   fullName: string;
@@ -31,18 +33,45 @@ export interface FirstLoginFormValue {
 
 type Token = string;
 
+@Component({
+  template: `
+    <h1 mat-dialog-title>Aktualna sesja wygasła</h1>
+    <div mat-dialog-content>
+      <p>Ze względów bezpieczeństwa zostałeś wylogowany!</p>
+    </div>
+
+    <div mat-dialog-actions>
+      <button mat-button [mat-dialog-close]="false">Ok, rozumiem!</button>
+    </div>
+  `,
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule],
+})
+export class TokenExpiredDialogComponent {
+  private dialogRef = inject<MatDialogRef<TokenExpiredDialogComponent>>(MatDialogRef);
+  private keycloak = inject(KeycloakService);
+
+  ngOnInit() {
+    this.dialogRef.afterClosed().subscribe(() => {
+      this.keycloak.logout();
+    });
+  }
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService extends HttpBaseService {
+  handleTokenExpiration() {
+    this.dialog.open(TokenExpiredDialogComponent);
+  }
   router = inject(Router);
   authStateService = inject(AuthStateService);
   apiURL = inject(API_URL);
 
+  private dialog = inject(MatDialog);
   private kc = inject(KeycloakService);
-
   private snack = inject(MatSnackBar);
-
   private ngoService = inject(NGOsApiService);
 
   constructor() {
@@ -74,7 +103,7 @@ export class AuthService extends HttpBaseService {
         tap(user => {
           this.setAuthenticatedUser(user);
 
-          this.router.navigateByUrl(user.firstLogin ? 'auth/first-login' : '/');
+          this.router.navigateByUrl('/');
         })
       )
       .subscribe({

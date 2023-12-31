@@ -10,15 +10,17 @@ import { PaginationFilters } from 'src/app/core/types/pagination.type';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-messages.page',
   standalone: true,
-  imports: [CommonModule, ListShellComponent, DatePipe, CommonFiltersComponent, PaginationComponent, LoadingComponent],
+  imports: [CommonModule, ListShellComponent, DatePipe, CommonFiltersComponent, PaginationComponent, LoadingComponent, CenterDirective],
   template: `
+    <div appCenterDirective>
     <ng-container *ngIf="state() as state">
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
-      <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="Wiadomości" [list]="state.list">
+      <app-list-shell class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" listName="Wiadomości" [list]="state.list">
         <ng-template #item let-message>
           <div class="mb-4"><strong>Tytuł: </strong>{{ message.title }}</div>
           <div class="mb-4"><strong>Treść: </strong>{{ message.message }}</div>
@@ -32,7 +34,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
       <app-loader text="Ładowanie wiadomości..."></app-loader>
       }
     </ng-container>
-    <br />
+    </div>
     @if (state(); as state) {
     <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }

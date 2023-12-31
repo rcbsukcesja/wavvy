@@ -9,11 +9,11 @@ import localePl from '@angular/common/locales/pl';
 import { LOCALE_ID } from '@angular/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from './auth/data_access/auth.service';
-import { tap } from 'rxjs';
+import { takeWhile, tap } from 'rxjs';
 import { HttpErrorInterceptor } from './core/http-error.interceptor';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
-import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+import { KeycloakAngularModule, KeycloakEventType, KeycloakService } from 'keycloak-angular';
 import { environment } from 'src/environment';
 import { USER_ROLES, UserRoles } from './core/user-roles.enum';
 import { NGOsApiService } from './features/ngo/data-access/ngos.api.service';
@@ -38,11 +38,9 @@ function checkTokenFactory(authService: AuthService, keycloak: KeycloakService) 
           const keycloakRoles = keycloak.getUserRoles();
 
           authService.setAuthenticatedUser({
-            firstLogin: false,
             id: user.id!,
             login: user.username!,
             offersFollowed: [],
-            profileCompleted: false,
             role: keycloakRoles[0] as UserRoles,
           });
         });
@@ -52,6 +50,12 @@ function checkTokenFactory(authService: AuthService, keycloak: KeycloakService) 
 }
 
 function initializeKeycloak(keycloak: KeycloakService, auth: AuthService, ngoService: NGOsApiService) {
+  keycloak.keycloakEvents$.pipe(takeWhile(({ type }) => type !== KeycloakEventType.OnTokenExpired)).subscribe({
+    complete: () => {
+      auth.handleTokenExpiration();
+    },
+  });
+
   return () =>
     keycloak
       .init({
@@ -70,6 +74,8 @@ function initializeKeycloak(keycloak: KeycloakService, auth: AuthService, ngoSer
           return;
         }
 
+        // keycloak.keycloakEvents$.pipe(takeWhile).subscribe(x => x.type === KeycloakEventType.OnTokenExpired)
+
         return keycloak.loadUserProfile();
       })
       .then(user => {
@@ -79,11 +85,9 @@ function initializeKeycloak(keycloak: KeycloakService, auth: AuthService, ngoSer
         const keycloakRoles = keycloak.getUserRoles();
 
         auth.setAuthenticatedUser({
-          firstLogin: false,
           id: user.id!,
           login: user.username!,
           offersFollowed: [],
-          profileCompleted: false,
           role: keycloakRoles[0] as UserRoles,
         });
 
@@ -99,6 +103,7 @@ function initializeKeycloak(keycloak: KeycloakService, auth: AuthService, ngoSer
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    importProvidersFrom(MatDialogModule),
     { provide: LOCALE_ID, useValue: 'pl-PL' },
     {
       provide: APP_INITIALIZER,
@@ -114,7 +119,6 @@ export const appConfig: ApplicationConfig = {
     },
     importProvidersFrom(KeycloakAngularModule),
     importProvidersFrom(MatNativeDateModule),
-    importProvidersFrom(MatDialogModule),
     provideHttpClient(withInterceptors([HttpErrorInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimations(),

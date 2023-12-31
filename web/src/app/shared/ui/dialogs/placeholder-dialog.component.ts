@@ -18,7 +18,6 @@ export type PlaceholderDialogData<C, T extends Record<any, any>> = {
     </div>
     <div mat-dialog-actions>
       <button mat-button [mat-dialog-close]="false">Zamknij</button>
-      <!-- <button mat-button (click)="retry()">Powtórz!</button> -->
     </div>
   `,
   styles: `

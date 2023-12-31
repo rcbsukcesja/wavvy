@@ -3,6 +3,7 @@ package com.rcbsukcesja.hack2react.service;
 import com.rcbsukcesja.hack2react.exceptions.io.StorageException;
 import com.rcbsukcesja.hack2react.exceptions.messages.ErrorMessages;
 import com.rcbsukcesja.hack2react.exceptions.notFound.OrganizationNotFoundException;
+import com.rcbsukcesja.hack2react.model.dto.view.ImageLinkView;
 import com.rcbsukcesja.hack2react.model.entity.Organization;
 import com.rcbsukcesja.hack2react.repositories.OrganizationRepository;
 import com.rcbsukcesja.hack2react.utils.FileUtils;
@@ -31,7 +32,7 @@ public class OrganizationService {
     private String logoUrl;
 
     @Transactional
-    public void updateLogo(MultipartFile file, UUID organizationId, String directory) {
+    public ImageLinkView updateLogo(MultipartFile file, UUID organizationId, String directory) {
         Organization organization = getOrganizationByIdOrThrowException(organizationId);
         userValidation.checkIfIsOwner(organization.getOwner().getId());
         String oldFilePath = removeLogoPathAndLinkAndReturnPath(organization);
@@ -41,13 +42,15 @@ public class OrganizationService {
             throw new StorageException(FILE_EXTENSION_FAILURE);
         }
         String newFilePath = FileUtils.getPathAsString(fileExtension, organizationId, directory);
+        String newLogoUrl = logoUrl + "/" + organizationId + "." + fileExtension.toLowerCase();
         organization.setLogoPath(newFilePath);
-        organization.setLogoUrl(logoUrl + "/" + organizationId + "." + fileExtension.toLowerCase());
+        organization.setLogoUrl(newLogoUrl);
         organization.setUpdatedAt(TimeUtils.nowInUTC());
         organizationRepository.saveAndFlush(organization);
         if (oldFilePath != null && !oldFilePath.equals(newFilePath)) {
             removeLogo(oldFilePath);
         }
+        return ImageLinkView.builder().imageLink(newLogoUrl).build();
     }
 
     @Transactional

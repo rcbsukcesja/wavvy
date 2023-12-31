@@ -31,6 +31,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { CustomValidators } from 'src/app/shared/custom.validator';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export type NgoProfileFormModel = FormGroup<{
   name: FormControl<string>;
@@ -67,6 +68,7 @@ export type NgoProfileFormModel = FormGroup<{
     MatDividerModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTooltipModule,
   ],
   styles: [``],
   template: `
@@ -94,7 +96,7 @@ export type NgoProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>KRS</mat-label>
             <input formControlName="krs" matInput />
-            <mat-hint *ngIf="!form.controls.krs.disabled">Numer KRS składa się z 9 cyfr</mat-hint>
+            <mat-hint *ngIf="!form.controls.krs.disabled">Numer KRS składa się z 10 cyfr</mat-hint>
           </mat-form-field>
           <br />
           <mat-form-field class="md:w-1/2">
@@ -104,7 +106,7 @@ export type NgoProfileFormModel = FormGroup<{
           </mat-form-field>
           <br />
         </div>
-
+        <br />
         <div class="flex flex-col md:gap-4">
           <label>Adres</label>
           <mat-form-field>
@@ -143,7 +145,7 @@ export type NgoProfileFormModel = FormGroup<{
         </div>
         <div class="flex flex-col md:flex-row  md:gap-4">
           <mat-form-field class="md:w-1/2">
-            <mat-label>Data utworzenia</mat-label>
+            <mat-label>Data założenia organizacji</mat-label>
             <input
               matInput
               formControlName="foundedAt"
@@ -158,8 +160,11 @@ export type NgoProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>Strona internetowa</mat-label>
             <input formControlName="website" matInput />
-            <mat-hint [class.text-red-500]="form.controls.website.errors"
-              >Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https</mat-hint
+            <mat-icon matSuffix matTooltip="Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub https"
+              >info</mat-icon
+            >
+            <mat-hint *ngIf="form.controls.website.errors && form.controls.website.touched" [class.text-red-500]=""
+              >Podaj prawidłowy adres strony</mat-hint
             >
           </mat-form-field>
           <br />
@@ -184,8 +189,19 @@ export type NgoProfileFormModel = FormGroup<{
             <div class="w-full flex flex-col">
               <label [class.text-red-500]="logo$.value.error" for="logo">Logo</label>
               <input [class.text-red-500]="logo$.value.error" id="logo" formControlName="logo" #logoInput type="file" />
+              <p class="text-xs !mt-4 !mb-0">
+                By zapisać wybrane logo, kliknij ikonę dyskietki.
+                <mat-icon
+                  class="align-sub text-base !w-4 !h-4 leading-none"
+                  matSuffix
+                  matTooltip="Akceptowalne rozszerzenia pliku to jpg, jpeg lub png. Dodatkowo logo może mieć maksymalny rozmiar 1 MB"
+                  >info</mat-icon
+                >
+              </p>
             </div>
-            <button type="button" (click)="upload()"><mat-icon>save</mat-icon></button>
+            <button [disabled]="logo$.value.error" type="button" (click)="upload()">
+              <mat-icon [class.text-gray-500]="logo$.value.error">save</mat-icon>
+            </button>
           </div>
 
           <br />
@@ -221,7 +237,7 @@ export type NgoProfileFormModel = FormGroup<{
                 (matChipInputTokenEnd)="add($event)" />
             </mat-chip-grid>
             <mat-hint *ngIf="form.controls.tags as ctrl" [class.text-red-500]="ctrl.invalid && ctrl.touched"
-              >Podaj przynajmniej 3 tagi</mat-hint
+              >Podaj przynajmniej 3 tagi. By dodać tag po jego wpisaniu naciśnij enter</mat-hint
             >
           </mat-form-field>
 
@@ -238,7 +254,6 @@ export type NgoProfileFormModel = FormGroup<{
             <p class="font-semibold">Zasoby organizacji</p>
             <div *ngFor="let ctrl of form.controls.resources.controls; let i = index" class="flex">
               <mat-form-field class="w-full">
-                <!-- <mat-label>Opis</mat-label> -->
                 <input [formControl]="ctrl" matInput />
               </mat-form-field>
               <button *ngIf="ctrl.disabled" (click)="ctrl.enable()"><mat-icon>edit</mat-icon></button>
@@ -254,7 +269,7 @@ export type NgoProfileFormModel = FormGroup<{
                   temacie! Daj znać o swoich super mocach 😎</mat-hint
                 >
               </mat-form-field>
-              <button (click)="addResource(newResource.value)" type="button">Dodaj</button>
+              <button (click)="addResource(newResource.value); newResource.value = ''" type="button">Dodaj</button>
             </div>
           </section>
         </div>
@@ -270,8 +285,6 @@ export type NgoProfileFormModel = FormGroup<{
 export class NgoProfileFirstCompletionComponent implements OnInit {
   @Input({ required: true }) profile!: NGO;
   @Input({ required: true }) bussinessAreas!: BusinessArea[];
-  @Input() firstCompletion = false;
-  @Input() adminMode = false;
   @Output() save = new EventEmitter<Required<typeof this.form.value>>();
   @Output() saveLogo = new EventEmitter<File>();
   @ViewChild('logoInput') logoInput!: ElementRef<HTMLInputElement>;
@@ -308,8 +321,8 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       ]),
       logo: this.builder.control<File | null>(null),
       krs: this.builder.control({ value: this.profile.krs, disabled: this.profile.confirmed }, [
-        Validators.minLength(9),
-        Validators.maxLength(9),
+        Validators.minLength(10),
+        Validators.maxLength(10),
       ]),
       nip: this.builder.control({ value: this.profile.nip, disabled: this.profile.confirmed }, [
         Validators.minLength(10),
@@ -369,7 +382,7 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
       const logoFile = this.logoInput.nativeElement.files?.[0];
 
       if (logoFile) {
-        const validTypes = ['image/png', 'image/jpeg'];
+        const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
         if (!validTypes.includes(logoFile.type)) {
           this.logo$.next({
             url: this.logo$.value.url,

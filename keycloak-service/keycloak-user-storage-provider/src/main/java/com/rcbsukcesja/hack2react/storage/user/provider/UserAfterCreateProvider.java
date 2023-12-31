@@ -41,22 +41,14 @@ public class UserAfterCreateProvider implements EventListenerProvider {
                 }
             }
             String organizationName = user.getFirstAttribute("organization-name");
-            String krs = user.getFirstAttribute("krs");
-            String nip = user.getFirstAttribute("nip");
-            String regon = user.getFirstAttribute("regon");
 
             CustomUserAdapter userAdapter = (CustomUserAdapter) user;
             Organization organization = userAdapter.getOrganization();
             organization.setName(organizationName);
-            organization.setKrs(krs);
-            organization.setNip(nip);
-            organization.setRegon(regon);
             organization.setConfirmed(false);
             organization.setDisabled(false);
 
             userAdapter.setOrganization(organization);
-
-//            userAdapter.removeOrganizationAttributes(userId);
 
         }
     }

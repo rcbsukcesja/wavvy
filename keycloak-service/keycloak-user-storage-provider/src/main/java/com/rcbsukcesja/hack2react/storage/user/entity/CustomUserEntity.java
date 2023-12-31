@@ -57,9 +57,6 @@ public class CustomUserEntity {
     @Column(name = "EMAIL")
     private String email;
 
-    @Column(name = "PHONE")
-    private String phone;
-
     @Column(name = "DELETED")
     private boolean deleted;
 

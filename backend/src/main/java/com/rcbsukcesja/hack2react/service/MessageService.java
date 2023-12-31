@@ -16,11 +16,15 @@ import com.rcbsukcesja.hack2react.model.mappers.MessageMapper;
 import com.rcbsukcesja.hack2react.repositories.MessageRepository;
 import com.rcbsukcesja.hack2react.repositories.OrganizationRepository;
 import com.rcbsukcesja.hack2react.repositories.UserRepository;
+import com.rcbsukcesja.hack2react.specifications.MessageSpecifications;
 import com.rcbsukcesja.hack2react.utils.TimeUtils;
 import com.rcbsukcesja.hack2react.utils.TokenUtils;
 import com.rcbsukcesja.hack2react.validations.UserValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,16 +144,20 @@ public class MessageService {
         messageRepository.delete(message);
     }
 
-    public List<MessageView> getSentMessages() {
+    public Page<MessageView> getSentMessages(String search, Pageable pageable) {
         log.info("getSentMessage()");
-        List<Message> messages = messageRepository.getMessageBySender(getLoggedUser());
-        return messageMapper.messageListToMessageViewList(messages);
+        Specification<Message> spec = MessageSpecifications.hasSender(getLoggedUser());
+        spec = spec.and(MessageSpecifications.titleOrNameContain(search));
+        return messageRepository.findAll(spec, pageable)
+                .map(messageMapper::messageToMessageView);
     }
 
-    public List<MessageView> getReceivedMessages() {
+    public Page<MessageView> getReceivedMessages(String search, Pageable pageable) {
         log.info("getReceivedMessages()");
-        List<Message> messages = messageRepository.getMessageByReceiver(getLoggedUser());
-        return messageMapper.messageListToMessageViewList(messages);
+        Specification<Message> spec = MessageSpecifications.hasReceiver(getLoggedUser());
+        spec = spec.and(MessageSpecifications.titleOrNameContain(search));
+        return messageRepository.findAll(spec, pageable)
+                .map(messageMapper::messageToMessageView);
     }
 
     private Message getMessageOrThrowException(UUID id) {

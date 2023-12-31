@@ -85,7 +85,10 @@ import { CustomValidators } from 'src/app/shared/custom.validator';
       <mat-form-field>
         <mat-label>Link do BIP</mat-label>
         <input formControlName="link" matInput />
-        <mat-hint>Dodaj link do szczegółów oferty</mat-hint>
+        <mat-hint
+          >Dodaj link do szczegółów oferty. Pamiętaj, że prawidłowy link zaczyna się od przedrostka http lub
+          https</mat-hint
+        >
       </mat-form-field>
       <br />
       <button mat-raised-button color="primary">Zapisz</button>
@@ -133,7 +136,11 @@ export class AddOfferFormComponent implements OnInit {
       fundingLevel: this.builder.control(this.formValue?.fundingLevel || 0, [Validators.required, Validators.max(100)]),
       startDate: this.builder.control(this.formValue?.startDate || '', [Validators.required]),
       endDate: this.builder.control(this.formValue?.endDate || '', [Validators.required]),
-      link: this.builder.control(this.formValue?.link || '', [Validators.required, CustomValidators.maxLength]),
+      link: this.builder.control(this.formValue?.link || '', [
+        Validators.required,
+        CustomValidators.maxLength,
+        CustomValidators.link,
+      ]),
     });
   }
 

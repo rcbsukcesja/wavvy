@@ -134,9 +134,8 @@ public class CompanyService {
         if (dto.confirmed() != null) {
             AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
                     ForbiddenErrorMessageResources.CONFIRMED);
+            organizationValidation.validateOfficialOrganizationFieldsDuringConfirmation(company);
             company.setConfirmed(dto.confirmed());
-        } else {
-            company.setConfirmed(false);
         }
         if (dto.disabled() != null) {
             AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
@@ -232,6 +231,7 @@ public class CompanyService {
         if (dto.confirmed() != null && !(dto.confirmed() == actual.isConfirmed())) {
             AuthenticationUtils.checkIfCityUser(SecurityContextHolder.getContext().getAuthentication(),
                     ForbiddenErrorMessageResources.CONFIRMED);
+            organizationValidation.validateOfficialOrganizationFieldsDuringConfirmation(actual);
             actual.setConfirmed(dto.confirmed());
         }
         if (dto.disabled() != null) {

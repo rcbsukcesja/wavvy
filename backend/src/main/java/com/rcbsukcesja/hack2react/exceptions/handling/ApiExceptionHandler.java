@@ -11,9 +11,12 @@ import com.rcbsukcesja.hack2react.exceptions.alreadyExists.UsernameAlreadyExists
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidDateRangeException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidEnumParameterException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidFileException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidKrsException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidNipException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferScopeException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidOfferStatusException;
 import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidProjectStatusException;
+import com.rcbsukcesja.hack2react.exceptions.badrequest.InvalidRegonException;
 import com.rcbsukcesja.hack2react.exceptions.forbidden.ForbiddenAccessDeniedException;
 import com.rcbsukcesja.hack2react.exceptions.forbidden.InvalidConfirmedStatusException;
 import com.rcbsukcesja.hack2react.exceptions.notFound.BusinessAreaNotFoundException;
@@ -77,7 +80,10 @@ public class ApiExceptionHandler {
             InvalidEnumParameterException.class,
             InvalidOfferScopeException.class,
             InvalidOfferStatusException.class,
-            InvalidProjectStatusException.class
+            InvalidProjectStatusException.class,
+            InvalidKrsException.class,
+            InvalidNipException.class,
+            InvalidRegonException.class
     })
     public ResponseEntity<Object> handleBadRequestTypeException(ApiRequestException e) {
 
