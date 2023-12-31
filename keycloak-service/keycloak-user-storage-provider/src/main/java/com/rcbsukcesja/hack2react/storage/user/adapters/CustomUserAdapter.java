@@ -13,9 +13,7 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.adapter.AbstractUserAdapterFederatedStorage;
-import org.keycloak.storage.federated.UserFederatedStorageProvider;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -108,14 +106,6 @@ public class CustomUserAdapter extends AbstractUserAdapterFederatedStorage {
         entity.setEmailVerified(verified);
     }
 
-    public String getPhone() {
-        return entity.getPhone();
-    }
-
-    public void setPhone(String phone) {
-        entity.setPhone(phone);
-    }
-
     public String getUserType() {
         return entity.getUserType().name();
     }
@@ -134,67 +124,49 @@ public class CustomUserAdapter extends AbstractUserAdapterFederatedStorage {
 
     @Override
     public void setSingleAttribute(String name, String value) {
-        if (name.equals("phone")) {
-            entity.setPhone(value);
-        } else if (name.equals(UserModel.FIRST_NAME)) {
-            entity.setFirstName(value);
-        } else if (name.equals(UserModel.LAST_NAME)) {
-            entity.setLastName(value);
-        } else if (name.equals(UserModel.EMAIL)) {
-            entity.setEmail(value);
-        } else if (name.equals(UserModel.ENABLED)) {
-            entity.setEnabled(Boolean.parseBoolean(value));
-        } else if (name.equals(UserModel.EMAIL_VERIFIED)) {
-            entity.setEmailVerified(Boolean.parseBoolean(value));
-        } else if (name.equals(USER_TYPE)) {
-            entity.setUserType(UserType.getByName(value));
-        } else if (name.equals(ORGANIZATION_TYPE)) {
-            if (value.equals("COMPANY")) {
-                entity.setOrganization(Company.builder().owner(entity).build());
-            } else {
-                entity.setOrganization(OrganizationNGO.builder().owner(entity).legalStatus(LegalStatus.valueOf(value)).build());
+        switch (name) {
+            case UserModel.FIRST_NAME -> entity.setFirstName(value);
+            case UserModel.LAST_NAME -> entity.setLastName(value);
+            case UserModel.EMAIL -> entity.setEmail(value);
+            case UserModel.ENABLED -> entity.setEnabled(Boolean.parseBoolean(value));
+            case UserModel.EMAIL_VERIFIED -> entity.setEmailVerified(Boolean.parseBoolean(value));
+            case USER_TYPE -> entity.setUserType(UserType.getByName(value));
+            case ORGANIZATION_TYPE -> {
+                if (value.equals("COMPANY")) {
+                    entity.setOrganization(Company.builder().owner(entity).build());
+                } else {
+                    entity.setOrganization(OrganizationNGO.builder().owner(entity).legalStatus(LegalStatus.valueOf(value)).build());
+                }
+                super.setSingleAttribute(name, value);
             }
-            super.setSingleAttribute(name, value);
-        } else {
-            super.setSingleAttribute(name, value);
+            default -> super.setSingleAttribute(name, value);
         }
     }
 
     @Override
     public void setAttribute(String name, List<String> values) {
-        if (name.equals("phone")) {
-            entity.setPhone(values.get(0));
-        } else if (name.equals(UserModel.FIRST_NAME)) {
-            entity.setFirstName(values.get(0));
-        } else if (name.equals(UserModel.LAST_NAME)) {
-            entity.setLastName(values.get(0));
-        } else if (name.equals(UserModel.EMAIL)) {
-            entity.setEmail(values.get(0));
-        } else if (name.equals(UserModel.ENABLED)) {
-            entity.setEnabled(Boolean.parseBoolean(values.get(0)));
-        } else if (name.equals(UserModel.EMAIL_VERIFIED)) {
-            entity.setEmailVerified(Boolean.parseBoolean(values.get(0)));
-        } else if (name.equals(USER_TYPE)) {
-            entity.setUserType(UserType.getByName(values.get(0)));
-        } else if (name.equals(ORGANIZATION_TYPE)) {
-            if (values.get(0).equals("COMPANY")) {
-                entity.setOrganization(Company.builder().owner(entity).build());
-            } else {
-                entity.setOrganization(OrganizationNGO.builder().owner(entity).legalStatus(LegalStatus.valueOf(values.get(0))).build());
+        switch (name) {
+            case UserModel.FIRST_NAME -> entity.setFirstName(values.get(0));
+            case UserModel.LAST_NAME -> entity.setLastName(values.get(0));
+            case UserModel.EMAIL -> entity.setEmail(values.get(0));
+            case UserModel.ENABLED -> entity.setEnabled(Boolean.parseBoolean(values.get(0)));
+            case UserModel.EMAIL_VERIFIED -> entity.setEmailVerified(Boolean.parseBoolean(values.get(0)));
+            case USER_TYPE -> entity.setUserType(UserType.getByName(values.get(0)));
+            case ORGANIZATION_TYPE -> {
+                if (values.get(0).equals("COMPANY")) {
+                    entity.setOrganization(Company.builder().owner(entity).build());
+                } else {
+                    entity.setOrganization(OrganizationNGO.builder().owner(entity).legalStatus(LegalStatus.valueOf(values.get(0))).build());
+                }
+                super.setAttribute(name, values);
             }
-            super.setAttribute(name, values);
-        } else {
-            super.setAttribute(name, values);
+            default -> super.setAttribute(name, values);
         }
     }
 
     @Override
     public String getFirstAttribute(String name) {
-        if (name.equals("phone")) {
-            return entity.getPhone();
-        } else {
-            return super.getFirstAttribute(name);
-        }
+        return super.getFirstAttribute(name);
     }
 
     @Override
@@ -202,38 +174,17 @@ public class CustomUserAdapter extends AbstractUserAdapterFederatedStorage {
         Map<String, List<String>> attrs = super.getAttributes();
         MultivaluedHashMap<String, String> all = new MultivaluedHashMap<>();
         all.putAll(attrs);
-        all.add("phone", entity.getPhone());
         return all;
     }
 
     @Override
     public Stream<String> getAttributeStream(String name) {
-        if (name.equals("phone")) {
-            List<String> phone = new LinkedList<>();
-            phone.add(entity.getPhone());
-            return phone.stream();
-        } else {
-            return super.getAttributeStream(name);
-        }
+        return super.getAttributeStream(name);
     }
 
     @Override
     public void removeAttribute(String name) {
-        if (name.equals("phone")) {
-            entity.setPhone(null);
-        } else {
-            super.removeAttribute(name);
-        }
-    }
-
-    public void removeOrganizationAttributes(String userId) {
-        var provider = session.getProvider(UserFederatedStorageProvider.class);
-        RealmModel realm = session.getContext().getRealm();
-        provider.removeAttribute(realm, userId, "organization-name");
-        provider.removeAttribute(realm, userId, "krs");
-        provider.removeAttribute(realm, userId, "nip");
-        provider.removeAttribute(realm, userId, "regon");
-        provider.removeAttribute(realm, userId, "organization-type");
+        super.removeAttribute(name);
     }
 
 }
