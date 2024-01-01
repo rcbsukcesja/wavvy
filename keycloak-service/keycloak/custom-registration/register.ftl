@@ -1,6 +1,6 @@
 <#import "template.ftl" as layout>
 <#import "register-commons.ftl" as registerCommons>
-<@layout.registrationLayout displayMessage=!messagesPerField.existsError('firstName','lastName','email','username' 'user.attributes.phone','user.attributes.organization-name''user.attributes.nip','user.attributes.regon','user.attributes.krs','user.attributes.organization-type','password','password-confirm','termsAccepted'); section>
+<@layout.registrationLayout displayMessage=!messagesPerField.existsError('firstName','lastName','email','username','user.attributes.organization-name','user.attributes.organization-type','password','password-confirm','termsAccepted'); section>
     <#if section = "header">
         ${msg("registerTitle")}
     <#elseif section = "form">
@@ -56,23 +56,6 @@
                             <#if messagesPerField.existsError('email')>
                                 <span id="input-error-email" class="${properties.kcInputErrorMessageClass!}" aria-live="polite">
                                     ${kcSanitize(messagesPerField.get('email'))?no_esc}
-                                </span>
-                            </#if>
-                        </div>
-                    </div>
-
-                    <div class="${properties.kcFormGroupClass!}">
-                        <div class="${properties.kcLabelWrapperClass!}">
-                            <label for="user.attributes.phone" class="${properties.kcLabelClass!}">${msg("phoneNumber")}</label>
-                        </div>
-                        <div class="${properties.kcInputWrapperClass!}">
-                            <input type="tel" id="user.attributes.phone" class="${properties.kcInputClass!}" name="user.attributes.phone"
-                                value="${(register.formData['user.attributes.phone']!'')}" autocomplete="tel"
-                                aria-invalid="<#if messagesPerField.existsError('user.attributes.phone')>true</#if>"
-                            />
-                            <#if messagesPerField.existsError('user.attributes.phone')>
-                                <span id="input-error-phone" class="${properties.kcInputErrorMessageClass!}" aria-live="polite">
-                                    ${kcSanitize(messagesPerField.get('user.attributes.phone'))?no_esc}
                                 </span>
                             </#if>
                         </div>
@@ -136,8 +119,7 @@
                             </div>
                         </div>
                     </#if>
-                </div>
-                <div class="form-column">
+
                     <div class="${properties.kcFormGroupClass!}">
                         <div class="${properties.kcLabelWrapperClass!}">
                             <label for="user.attributes.organization-name" class="${properties.kcLabelClass!}">${msg("organizationName")}</label>
@@ -155,56 +137,7 @@
                         </div>
                     </div>
 
-                    <div class="${properties.kcFormGroupClass!}">
-                        <div class="${properties.kcLabelWrapperClass!}">
-                            <label for="user.attributes.nip" class="${properties.kcLabelClass!}">${msg("nip")}</label>
-                        </div>
-                        <div class="${properties.kcInputWrapperClass!}">
-                            <input type="text" id="user.attributes.nip" class="${properties.kcInputClass!}" name="user.attributes.nip"
-                                value="${(register.formData['user.attributes.nip']!'')}"
-                                aria-invalid="<#if messagesPerField.existsError('user.attributes.nip')>true</#if>"
-                            />
-                            <#if messagesPerField.existsError('user.attributes.nip')>
-                                <span id="input-error-nip" class="${properties.kcInputErrorMessageClass!}" aria-live="polite">
-                                    ${kcSanitize(messagesPerField.get('user.attributes.nip'))?no_esc}
-                                </span>
-                            </#if>
-                        </div>
-                    </div>
 
-                    <div class="${properties.kcFormGroupClass!}">
-                        <div class="${properties.kcLabelWrapperClass!}">
-                            <label for="user.attributes.regon" class="${properties.kcLabelClass!}">${msg("regon")}</label>
-                        </div>
-                        <div class="${properties.kcInputWrapperClass!}">
-                            <input type="text" id="user.attributes.regon" class="${properties.kcInputClass!}" name="user.attributes.regon"
-                                value="${(register.formData['user.attributes.regon']!'')}"
-                                aria-invalid="<#if messagesPerField.existsError('user.attributes.regon')>true</#if>"
-                            />
-                            <#if messagesPerField.existsError('user.attributes.regon')>
-                                <span id="input-error-regon" class="${properties.kcInputErrorMessageClass!}" aria-live="polite">
-                                    ${kcSanitize(messagesPerField.get('user.attributes.regon'))?no_esc}
-                                </span>
-                            </#if>
-                        </div>
-                    </div>
-
-                    <div class="${properties.kcFormGroupClass!}">
-                        <div class="${properties.kcLabelWrapperClass!}">
-                            <label for="user.attributes.krs" class="${properties.kcLabelClass!}">${msg("krs")}</label>
-                        </div>
-                        <div class="${properties.kcInputWrapperClass!}">
-                            <input type="text" id="user.attributes.krs" class="${properties.kcInputClass!}" name="user.attributes.krs"
-                                value="${(register.formData['user.attributes.krs']!'')}"
-                                aria-invalid="<#if messagesPerField.existsError('user.attributes.krs')>true</#if>"
-                            />
-                            <#if messagesPerField.existsError('user.attributes.krs')>
-                                <span id="input-error-krs" class="${properties.kcInputErrorMessageClass!}" aria-live="polite">
-                                    ${kcSanitize(messagesPerField.get('user.attributes.krs'))?no_esc}
-                                </span>
-                            </#if>
-                        </div>
-                    </div>
 
                     <div class="${properties.kcFormGroupClass!}">
                         <div class="${properties.kcLabelWrapperClass!}">
@@ -244,7 +177,7 @@
                         </div>
 
                         <div id="kc-form-buttons" class="${properties.kcFormButtonsClass!}">
-                            <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}" type="submit" value="${msg("doRegister")}"/>
+                            <input class="${properties.kcButtonClass!} ${properties.kcButtonPrimaryClass!} ${properties.kcButtonBlockClass!} ${properties.kcButtonLargeClass!}" type="submit" value="${msg("doSubmit")}"/>
                         </div>
                     </div>
                 </div>

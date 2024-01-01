@@ -1,3 +1,5 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,7 +12,7 @@ import {
   Output,
 } from '@angular/core';
 import { MatPaginatorIntl, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { Subject } from 'rxjs';
+import { Observable, Subject, map, shareReplay } from 'rxjs';
 import { INITIAL_PAGINATION_STATE } from 'src/app/features/projects/data-access/projects.state.service';
 
 @Injectable()
@@ -40,10 +42,11 @@ export class MyCustomPaginatorIntl implements MatPaginatorIntl {
 @Component({
   selector: 'app-pagination',
   standalone: true,
+
   template: `
     <mat-paginator
       #paginator
-      class="demo-paginator"
+      class="!bg-transparent"
       (page)="handlePageEvent($event)"
       [length]="totalElements"
       [pageSize]="pageSize"
@@ -51,12 +54,13 @@ export class MyCustomPaginatorIntl implements MatPaginatorIntl {
       [showFirstLastButtons]="showFirstLastButtons"
       [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
       [pageIndex]="pageIndex"
+      [hidePageSize]="(isAsideHidden$ | async) ?? hidePageSize"
       aria-label="Select page">
     </mat-paginator>
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatPaginatorModule],
+  imports: [MatPaginatorModule, AsyncPipe],
   providers: [{ provide: MatPaginatorIntl, useClass: MyCustomPaginatorIntl }],
 })
 export default class PaginationComponent {
@@ -65,7 +69,8 @@ export default class PaginationComponent {
     pageSize: number;
     pageIndex: number;
   }>();
-
+  private breakpointObserver = inject(BreakpointObserver);
+  hidePageSize = false
   pageSize = INITIAL_PAGINATION_STATE.size;
   pageIndex = INITIAL_PAGINATION_STATE.number;
   pageSizeOptions = [6, 12, 24];
@@ -86,4 +91,9 @@ export default class PaginationComponent {
       this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
     }
   }
+
+  isAsideHidden$: Observable<boolean> = this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).pipe(
+    map(result => result.matches),
+    shareReplay()
+  );
 }

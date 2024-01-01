@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 export type CommonFilters = {
@@ -14,11 +17,12 @@ export const DEFAULT_SORT = 'desc';
 @Component({
   selector: 'app-common-filters',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatInputModule,MatFormFieldModule ],
   template: `
     <section #filters class="mb-4">
-      <div class="ml-auto flex gap-4">
+      <div class="ml-auto flex flex-col gap-4">
         @if (!hideSort) {
+          <div class="flex items-center justify-start gap-4 py-2">
         <span> Sortuj:</span>
         <button (click)="sortBy = 'desc'; emitFiltersChanged()" [class.font-bold]="sortBy === 'desc'">
           od najnowszych
@@ -26,9 +30,12 @@ export const DEFAULT_SORT = 'desc';
         <button (click)="sortBy = 'asc'; emitFiltersChanged()" [class.font-bold]="sortBy === 'asc'">
           od najstarszych
         </button>
+        </div>
         }
-
-        <input [formControl]="searchCtrl" class="bg-transparent border-b border-b-black " placeholder="Wyszukaj" />
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [formControl]="searchCtrl" placeholder="Wyszukaj" />
+        </mat-form-field>
       </div>
     </section>
   `,

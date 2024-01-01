@@ -20,18 +20,25 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatButtonModule,
     NgClass,
+    MatIconModule,
   ],
   template: ` <h1 mat-dialog-title>
       {{ dialogData.element.name }}
     </h1>
     <div mat-dialog-content>
-      <p [ngClass]="validREGON ? 'text-green-500' : 'text-red-500'">
-        Prawidłowy numer REGON <span *ngIf="!dialogData.isCompany">lub jego brak</span>
+      <p class="text-xs">Wymagania:</p>
+      <p [ngClass]="validREGON ? 'text-green-500' : 'text-red-500'" class="text-xs flex items-center">
+        <mat-icon class="mr-2 text-base !w-4 !h-4 leading-none">{{ !validREGON ? 'error' : 'check' }}</mat-icon
+        >Prawidłowy numer REGON <span class="pl-1" *ngIf="!dialogData.isCompany">lub jego brak</span>
       </p>
-      <p [ngClass]="validNIP ? 'text-green-500' : 'text-red-500'">
-        Prawidłowy NIP <span *ngIf="!dialogData.isCompany">lub jego brak</span>
+      <p [ngClass]="validNIP ? 'text-green-500' : 'text-red-500'" class="text-xs">
+        <mat-icon class="mr-2 text-base !w-4 !h-4 leading-none">{{ !validNIP ? 'error' : 'check' }}</mat-icon
+        >Prawidłowy NIP <span *ngIf="!dialogData.isCompany">lub jego brak</span>
       </p>
-      <p [ngClass]="validKRS ? 'text-green-500' : 'text-red-500'">Prawidłowy numer KRS lub jego brak</p>
+      <p [ngClass]="validKRS ? 'text-green-500' : 'text-red-500'" class="text-xs">
+        <mat-icon class="mr-2 text-base !w-4 !h-4 leading-none">{{ !validKRS ? 'error' : 'check' }}</mat-icon
+        >Prawidłowy numer KRS lub jego brak
+      </p>
       <br />
       <p>
         Zatwierdzona organizacja będzie widoczna publicznie. Zawszę będziesz mógł ją tymczasowo zablokować korzystając z

@@ -147,7 +147,7 @@ public class MessageService {
     public Page<MessageView> getSentMessages(String search, Pageable pageable) {
         log.info("getSentMessage()");
         Specification<Message> spec = MessageSpecifications.hasSender(getLoggedUser());
-        spec.and(MessageSpecifications.titleOrNameContain(search));
+        spec = spec.and(MessageSpecifications.titleOrNameContain(search));
         return messageRepository.findAll(spec, pageable)
                 .map(messageMapper::messageToMessageView);
     }
@@ -155,7 +155,7 @@ public class MessageService {
     public Page<MessageView> getReceivedMessages(String search, Pageable pageable) {
         log.info("getReceivedMessages()");
         Specification<Message> spec = MessageSpecifications.hasReceiver(getLoggedUser());
-        spec.and(MessageSpecifications.titleOrNameContain(search));
+        spec = spec.and(MessageSpecifications.titleOrNameContain(search));
         return messageRepository.findAll(spec, pageable)
                 .map(messageMapper::messageToMessageView);
     }

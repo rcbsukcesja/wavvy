@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { PROJECT_STATUS, Project, ProjectStatus, projectStatusMap } from './model/project.model';
 import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,6 +17,7 @@ import { BehaviorSubject, map } from 'rxjs';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomValidators } from 'src/app/shared/custom.validator';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export type ProjectForm = FormGroup<{
   status: FormControl<ProjectStatus>;
@@ -66,9 +67,9 @@ export type ProjectForm = FormGroup<{
   template: `
     <h2>{{ project ? 'Edytowanie projektu' : 'Dodawanie projektu' }}</h2>
     @if (project?.imageLink; as link) {
-    <section class="flex w-1/4 mb-4">
-      <img [src]="link" />
-    </section>
+      <section class="flex w-1/4 mb-4">
+        <img [src]="link" />
+      </section>
     }
 
     <form [formGroup]="form" (ngSubmit)="addProject()" class="flex flex-col">
@@ -147,7 +148,7 @@ export type ProjectForm = FormGroup<{
       <br />
 
       <div class="flex gap-4">
-        <mat-form-field class="flex-1">
+        <mat-form-field *ngIf="form.controls.setEndDate.value" class="flex-1">
           <mat-label>Data zakończenia </mat-label>
           <input
             matInput
@@ -158,7 +159,7 @@ export type ProjectForm = FormGroup<{
           <mat-datepicker-toggle matIconSuffix [for]="datepicker2"></mat-datepicker-toggle>
           <mat-datepicker #datepicker2> </mat-datepicker>
         </mat-form-field>
-        <mat-form-field class="flex-1">
+        <mat-form-field *ngIf="form.controls.setEndTimeHour.value" class="flex-1">
           <mat-label>Godzina zakończenia </mat-label>
           <input formControlName="endTimeHour" matInput type="time" />
           <mat-hint>Podaj godzinę zakończenia</mat-hint>
@@ -254,7 +255,9 @@ export default class ProjectFormPageComponent implements OnInit {
     };
   });
 
-  builder = inject(NonNullableFormBuilder);
+  private destroy$ = inject(DestroyRef);
+
+  private builder = inject(NonNullableFormBuilder);
 
   form!: ProjectForm;
 
@@ -294,7 +297,7 @@ export default class ProjectFormPageComponent implements OnInit {
   }
 
   blockAfterEndDate = (current: Date | null) => {
-    if (!current || !this.form.controls.endTime.value) {
+    if (!current || !this.form.controls.endTime.value || !this.form.controls.setEndDate.value) {
       return true;
     }
 
@@ -343,15 +346,32 @@ export default class ProjectFormPageComponent implements OnInit {
 
     this.tags = this.project?.tags || [];
 
+    let setEndDateValue = false;
+    let setEndTimeValue = false;
+
+    if (this.project) {
+      const startDate = new Date(this.project.startTime);
+      const endDate = new Date(this.project.endTime);
+
+      setEndDateValue = startDate.getTime() !== endDate.getTime();
+
+      const startH = startDate.getHours();
+      const endH = endDate.getHours();
+      const startM = startDate.getMinutes();
+      const endM = endDate.getMinutes();
+
+      setEndTimeValue = (startH === endH && startM !== endM) || startH !== endH;
+    }
+
     this.form = this.builder.group({
-      setEndDate: this.builder.control(!!this.project?.endTime),
-      setEndTimeHour: this.builder.control(!!this.project?.endTime),
+      setEndDate: this.builder.control(setEndDateValue),
+      setEndTimeHour: this.builder.control(setEndTimeValue),
       status: this.builder.control<ProjectStatus>(this.project?.status || PROJECT_STATUS.IDEA),
       tags: this.builder.control(this.tags, [Validators.required, Validators.minLength(1)]),
       name: this.builder.control(this.project?.name || '', [Validators.required, CustomValidators.maxLength]),
       description: this.builder.control(this.project?.description || '', [Validators.required]),
-      endTime: this.builder.control(this.project ? new Date(this.project.endTime) : new Date(), [Validators.required]),
-      endTimeHour: this.builder.control(endTimeHour || '', [Validators.required]),
+      endTime: this.builder.control(this.project ? new Date(this.project.endTime) : new Date(), []),
+      endTimeHour: this.builder.control(endTimeHour || '', []),
       startTime: this.builder.control(this.project ? new Date(this.project.startTime) : new Date(), [
         Validators.required,
       ]),
@@ -365,10 +385,32 @@ export default class ProjectFormPageComponent implements OnInit {
       cooperationMessage: this.builder.control(this.project?.cooperationMessage || ''),
     });
 
-    this.form.controls.startTimeHour.valueChanges.pipe(map(value => value.split(':'))).subscribe(([endH, endM]) => {
-      const { value } = this.form.controls.startTime;
+    this.form.controls.startTimeHour.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroy$),
+        map(value => value.split(':'))
+      )
+      .subscribe(([endH, endM]) => {
+        const { value } = this.form.controls.startTime;
 
-      this.form.controls.startTime.patchValue(new Date(value.setHours(+endH, +endM)));
+        this.form.controls.startTime.patchValue(new Date(value.setHours(+endH, +endM)));
+      });
+
+    this.form.controls.endTimeHour.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroy$),
+        map(value => value.split(':'))
+      )
+      .subscribe(([endH, endM]) => {
+        const { value } = this.form.controls.endTime;
+
+        this.form.controls.endTime.patchValue(new Date(value.setHours(+endH, +endM)));
+      });
+
+    this.form.controls.setEndDate.valueChanges.pipe(takeUntilDestroyed(this.destroy$)).subscribe(value => {
+      if (value) {
+        this.form.controls.endTime.patchValue(new Date(this.form.controls.startTime.value));
+      }
     });
   }
 
@@ -447,6 +489,8 @@ export default class ProjectFormPageComponent implements OnInit {
         country: 'Polska',
       },
     };
+
+    console.log(payload);
     if (this.project) {
       this.service.update(this.project.id, payload);
     } else {

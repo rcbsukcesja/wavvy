@@ -20,6 +20,7 @@ import PaginationComponent from 'src/app/shared/ui/pagination.component';
 import { NGOsStateService } from '../ngo/data-access/ngos.state.service';
 import { INITIAL_PAGINATION_STATE } from '../projects/data-access/projects.state.service';
 import { LoadingComponent } from 'src/app/shared/ui/loading.component';
+import { CenterDirective } from 'src/app/shared/center-directive.directive';
 
 @Component({
   selector: 'app-offers.page',
@@ -35,11 +36,13 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
     MatSnackBarModule,
     PaginationComponent,
     LoadingComponent,
+    CenterDirective
   ],
   template: `
+  <div appCenterDirective>
     <ng-container *ngIf="state() as state">
       <app-common-filters (filtersChanged)="onFiltersChanged($event)" />
-      <app-list-shell *ngIf="state.loadListCallState === 'LOADED'" listName="Oferty" [list]="state.list">
+      <app-list-shell class="flex flex-col grow" *ngIf="state.loadListCallState === 'LOADED'" listName="Oferty" [list]="[]">
         <ng-template #item let-offer>
           <div class="relative">
             <div class="flex justify-between items-center h-10">
@@ -97,7 +100,7 @@ import { LoadingComponent } from 'src/app/shared/ui/loading.component';
       <app-loader text="Ładowanie ofert..."></app-loader>
       }
     </ng-container>
-    <br />
+    </div>
     @if (state(); as state) {
     <app-pagination [totalElements]="state.totalElements" (paginationChange)="handlePageEvent($event)" />
     }
