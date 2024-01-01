@@ -31,6 +31,7 @@ import { BehaviorSubject } from 'rxjs';
 import { NGO, BusinessArea } from '../../ngo/model/ngo.model';
 import { Company } from '../model/company.model';
 import { CustomValidators } from 'src/app/shared/custom.validator';
+import { regonValidator } from '../../ngo/profile/ngo-profile-form.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 export type CompanyProfileFormModel = FormGroup<{
@@ -84,7 +85,7 @@ export type CompanyProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>REGON</mat-label>
             <input formControlName="regon" matInput />
-            <mat-hint *ngIf="!form.controls.regon.disabled">REGON składa się z 9 cyfr</mat-hint>
+            <mat-hint *ngIf="!form.controls.regon.disabled">REGON składa się z 9 lub 14 cyfr</mat-hint>
           </mat-form-field>
           <br />
         </div>
@@ -282,10 +283,7 @@ export class CompanyProfileFirstCompletionComponent implements OnInit {
         Validators.minLength(10),
         Validators.maxLength(10),
       ]),
-      regon: this.builder.control({ value: this.profile.regon, disabled: this.profile.confirmed }, [
-        Validators.minLength(9),
-        Validators.maxLength(9),
-      ]),
+      regon: this.builder.control({ value: this.profile.regon, disabled: this.profile.confirmed }, [regonValidator]),
       description: this.builder.control(this.profile.description || '', [Validators.required]),
       street: this.builder.control(this.profile.address?.street || '', [Validators.required]),
       city: this.builder.control(this.profile.address?.city || '', [Validators.required]),

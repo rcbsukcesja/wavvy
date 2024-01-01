@@ -17,6 +17,7 @@ import {
   FormGroup,
   NonNullableFormBuilder,
   ReactiveFormsModule,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -32,6 +33,12 @@ import { BehaviorSubject } from 'rxjs';
 import { CustomValidators } from 'src/app/shared/custom.validator';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
+export const regonValidator: ValidatorFn = ctrl => {
+  const trimmed = ctrl.value?.trim();
+
+  return trimmed?.length === 9 || trimmed?.length === 14 ? null : { badFormat: true };
+};
 
 export type NgoProfileFormModel = FormGroup<{
   name: FormControl<string>;
@@ -88,7 +95,7 @@ export type NgoProfileFormModel = FormGroup<{
           <mat-form-field class="md:w-1/2">
             <mat-label>REGON</mat-label>
             <input formControlName="regon" matInput />
-            <mat-hint *ngIf="!form.controls.regon.disabled">REGON składa się z 9 cyfr</mat-hint>
+            <mat-hint *ngIf="!form.controls.regon.disabled">REGON składa się z 9 lub 14 cyfr</mat-hint>
           </mat-form-field>
           <br />
         </div>
@@ -328,10 +335,7 @@ export class NgoProfileFirstCompletionComponent implements OnInit {
         Validators.minLength(10),
         Validators.maxLength(10),
       ]),
-      regon: this.builder.control({ value: this.profile.regon, disabled: this.profile.confirmed }, [
-        Validators.minLength(9),
-        Validators.maxLength(9),
-      ]),
+      regon: this.builder.control({ value: this.profile.regon, disabled: this.profile.confirmed }, [regonValidator]),
       bankAccount: this.builder.control(this.profile.bankAccount || '', [
         Validators.minLength(26),
         Validators.maxLength(26),
